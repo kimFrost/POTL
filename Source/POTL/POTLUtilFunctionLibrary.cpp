@@ -23,18 +23,18 @@ FString UPOTLUtilFunctionLibrary::FindThisFunction(FString ReturnString)
 }
 
 
-TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int Range)
+TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int const Range)
 {
 	struct Fridge
 	{
 		TArray<FVector> CubeCoords;
 	};
 
-	TArray<FVector> HexesInRange;
 	TArray<FVector> VisitedCubeCoords;
 	TArray<FVector> ReachableCubeCoords;
-	TArray<Fridge> Fridges;
-
+	//TArray<Fridge> Fridges;
+	FVector Fridges[100][6];
+	
 	TArray<FVector> CubeDirections;
 
 	CubeDirections.Add({ 1, 0, -1 });
@@ -45,11 +45,26 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 	CubeDirections.Add({ 0, 1, -1 });
 
 	// Add StartPosition to cubecoords already visited 
-	VisitedCubeCoords.Add(StartPosition);
+	//VisitedCubeCoords.Add(StartPosition);
+	//Fridges[0] = FVector[];
 
-	Fridge fridge = Fridge{0, 0, 0};
-	Fridges.Add(fridge);
+	//Fridge fridge = Fridge{0, 0, 0};
+	//Fridges.Add(fridge);
 
+	Fridges[0][0] = FVector{ StartPosition };
+
+
+	for (int32 k = 1; k < Range; k++)
+	{
+		//Fridges[0][0] = FVector[];
+		
+		//FVector asdasasd[] = Fridges[0];
+
+		for (int32 k = 1; k < Range; k++)
+		{
+
+		}
+	}
 
 
 
@@ -58,5 +73,5 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 
 
 
-	return HexesInRange;
+	return VisitedCubeCoords;
 }
