@@ -16,7 +16,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Hex")
 	static FString FindThisFunction(FString ReturnString);
 
-
-	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int Range);
+	UFUNCTION(BlueprintCallable, Category = "Hex")
+	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range);
 
 };

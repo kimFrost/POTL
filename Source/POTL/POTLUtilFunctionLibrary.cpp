@@ -23,7 +23,7 @@ FString UPOTLUtilFunctionLibrary::FindThisFunction(FString ReturnString)
 }
 
 
-TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int const Range)
+TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range)
 {
 	struct Fridge
 	{
@@ -49,10 +49,10 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 	VisitedCubeCoords.Add(StartPosition);
 
 	Fridge fridge;
-	fridge.CubeCoords = Obstacles;
+	fridge.CubeCoords.Add(StartPosition);
 	Fridges.Add(fridge);
 
-	for (int32 k = 1; k < Range; k++)
+	for (int32 k = 1; k <= Range; k++)
 	{
 		Fridge fridge;
 		Fridges.Add(fridge);
