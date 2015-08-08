@@ -19,4 +19,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hex")
 	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range);
 
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	static void TraceLandscape();
+
+
 };

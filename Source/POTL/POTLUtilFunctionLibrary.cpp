@@ -23,6 +23,12 @@ FString UPOTLUtilFunctionLibrary::FindThisFunction(FString ReturnString)
 }
 
 
+void UPOTLUtilFunctionLibrary::TraceLandscape()
+{
+
+}
+
+
 TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range)
 {
 	struct Fridge
