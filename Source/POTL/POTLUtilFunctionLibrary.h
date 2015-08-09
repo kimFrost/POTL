@@ -22,5 +22,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	static void TraceLandscape();
 
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static int32 GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap);
 
 };

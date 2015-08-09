@@ -29,6 +29,19 @@ void UPOTLUtilFunctionLibrary::TraceLandscape()
 }
 
 
+int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
+{
+	int32 index;
+	float insideGrid;
+
+	// -1 == Outside grid || 0 == Inside grid
+	insideGrid = FMath::Floor((Column + 1) / (GridWidth + 2)) * -1;
+	index = ((Row * GridWidth) + Column + Row) * (1 + (2 * insideGrid));
+
+	return index;
+}
+
+
 TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range)
 {
 	struct Fridge
