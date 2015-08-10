@@ -29,19 +29,72 @@ void UPOTLUtilFunctionLibrary::TraceLandscape()
 }
 
 
+// Get Grid Index
 int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
 {
 	int32 index;
 	float insideGrid;
-
 	// -1 == Outside grid || 0 == Inside grid
-	insideGrid = FMath::Floor((Column + 1) / (GridWidth + 2)) * -1;
+	insideGrid = FMath::FloorToInt((Column + 1) / (GridWidth + 2)) * -1;
 	index = ((Row * GridWidth) + Column + Row) * (1 + (2 * insideGrid));
-
 	return index;
 }
 
 
+// Get Hex Index
+int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCount)
+{
+	int32 GridWidth = (GridXCount - (GridXCount % 2)) / 2 - 1;
+	int32 Index = GetGridIndex(GridWidth, FMath::FloorToInt(OffsetCoord.X), FMath::FloorToInt(OffsetCoord.Y), true);
+	Index = Index - (FMath::FloorToInt(OffsetCoord.Y) * ((GridXCount + 1 ) % 2));
+	return Index;
+}
+
+
+
+/**--- AMIT ------------------------*/
+
+// GetCubeDistance
+int32 UPOTLUtilFunctionLibrary::GetCubeDistance(FVector CubeCoordsFrom, FVector CubeCoordsTo)
+{
+	int32 Distance;
+	FVector DistanceVector = CubeCoordsFrom - CubeCoordsTo;
+	Distance = DistanceVector.GetAbsMax();
+	//float X = FMath::Max(DistanceVector.X);
+	return Distance;
+}
+
+FVector UPOTLUtilFunctionLibrary::ConvertOffsetToCube(FVector2D OffsetCoords)
+{
+	FVector CubeCoords;
+	CubeCoords.X = OffsetCoords.X - ((FMath::FloorToInt(OffsetCoords.Y) - (FMath::FloorToInt(OffsetCoords.Y) % 2)) / 2);
+	CubeCoords.Y = (CubeCoords.X * -1) - OffsetCoords.Y;
+	CubeCoords.Z = OffsetCoords.Y;
+	return CubeCoords;
+}
+
+FVector2D UPOTLUtilFunctionLibrary::ConvertCubeToOffset(FVector CubeCoords)
+{
+	int32 CubeCoordsZFloored = FMath::FloorToInt(CubeCoords.Z);
+	FVector2D OffsetCoords;
+	OffsetCoords.X = (FMath::FloorToInt(CubeCoords.X) + ((CubeCoordsZFloored - CubeCoordsZFloored % 2) / 2));
+	OffsetCoords.Y = CubeCoords.Z;
+	return OffsetCoords;
+}
+
+FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
+{
+	FVector CubeCoords;
+	CubeCoords.X = Q;
+	CubeCoords.Y = (Q * -1) - R;
+	CubeCoords.Z = R;
+	return CubeCoords;
+}
+
+
+/** -- PATCHING --------------------*/
+
+// GetHexesWithFloodFill
 TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range)
 {
 	struct Fridge

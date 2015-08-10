@@ -22,7 +22,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	static void TraceLandscape();
 
+
+	/** AMIT */
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static int32 GetCubeDistance(FVector CubeCoordsFrom, FVector CubeCoordsTo);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static FVector ConvertOffsetToCube(FVector2D OffsetCoords);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static FVector2D ConvertCubeToOffset(FVector CubeCoords);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static FVector AxialToCube(float Q, float R);
+
+
+	/** Macro */
+
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static int32 GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap);
 
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static int32 GetHexIndex(FVector2D OffsetCoord, int32 GridXCount);
 };
