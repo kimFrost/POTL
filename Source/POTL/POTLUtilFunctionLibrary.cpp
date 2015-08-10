@@ -102,10 +102,7 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 	};
 
 	TArray<FVector> VisitedCubeCoords;
-	//TArray<Fridge> Fridges;
-	//FVector Fridges[100][6];
 	TArray<Fridge> Fridges;
-
 
 	TArray<FVector> CubeDirections;
 
@@ -151,51 +148,6 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 				}
 			}
 		}
-
-		/*
-		TArray<FVector> CubeCoords = fridge.CubeCoords;
-		for each (CubeCoord var in CubeCoords)
-		{
-
-		}
-		*/
 	}
-
-	
-
-
-
-
-
-	// Add StartPosition to cubecoords already visited 
-	//VisitedCubeCoords.Add(StartPosition);
-	//Fridges[0] = FVector[];
-
-	//Fridge fridge = Fridge{0, 0, 0};
-	//Fridges.Add(fridge);
-
-
-	/*
-	Fridges[0][0] = FVector{ StartPosition };
-
-	for (int32 k = 1; k < Range; k++)
-	{
-		//Fridges[0][0] = FVector[];
-		
-		//FVector asdasasd[] = Fridges[0];
-
-		for (int32 k = 1; k < Range; k++)
-		{
-
-		}
-	}
-	*/
-
-
-	//auto array = new double[5][5];
-	//int **ary = new int*[];
-
-
-
 	return VisitedCubeCoords;
 }
