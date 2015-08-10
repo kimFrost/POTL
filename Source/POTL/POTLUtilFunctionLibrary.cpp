@@ -54,7 +54,6 @@ int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCo
 
 /**--- AMIT ------------------------*/
 
-// GetCubeDistance
 int32 UPOTLUtilFunctionLibrary::GetCubeDistance(FVector CubeCoordsFrom, FVector CubeCoordsTo)
 {
 	int32 Distance;
@@ -92,9 +91,9 @@ FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
 }
 
 
+
 /** -- PATCHING --------------------*/
 
-// GetHexesWithFloodFill
 TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range)
 {
 	struct Fridge

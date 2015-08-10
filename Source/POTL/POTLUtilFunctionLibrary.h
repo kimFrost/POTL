@@ -5,6 +5,18 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "POTLUtilFunctionLibrary.generated.h"
 
+
+USTRUCT(BlueprintType)
+struct FHex
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Hex")
+	int32 SampleInt32;
+};
+
+
+
 UCLASS()
 class POTL_API UPOTLUtilFunctionLibrary : public UBlueprintFunctionLibrary
 {
@@ -22,6 +34,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	static void TraceLandscape();
 
+
+	
 
 	/** AMIT */
 
