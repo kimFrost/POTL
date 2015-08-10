@@ -7,12 +7,83 @@
 
 
 USTRUCT(BlueprintType)
-struct FHex
+struct FST_Point2
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
+	int32 Column;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
+	int32 Row;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
+	bool IsCreator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
+	bool Exits;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
+	int32 Hex0Index;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
+	int32 Hex1Index;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
+	int32 Hex2Index;
+};
+
+
+USTRUCT(BlueprintType)
+struct FST_HexNew
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Hex")
-	int32 SampleInt32;
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FRotator Rotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FST_Point2 Point0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FST_Point2 Point1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FST_Point2 Point2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FST_Point2 Point3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FST_Point2 Point4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FST_Point2 Point5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	bool Remove;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	AActor* AttachedBuilding;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	AActor* AttachedActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	AActor* AttachedMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FVector HexCubeCoords;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FVector2D HexOffsetCoords;
+
 };
 
 
