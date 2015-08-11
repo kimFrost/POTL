@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include <string>
 #include "POTLUtilFunctionLibrary.h"
 
 
@@ -232,25 +233,47 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CleanHexes(TArray<FST_Hex> Hexes)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CleanHexes");
 	TArray<FST_Hex> ValidHexes;
+	int32 Count = 0;
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{
 		FST_Hex Hex = Hexes[i];
 		bool Remove = (!Hex.Point0.Exits || !Hex.Point1.Exits || !Hex.Point2.Exits || !Hex.Point3.Exits || !Hex.Point4.Exits || !Hex.Point5.Exits);
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, Remove ? "true" : "false");
 		if (Remove)
 		{
+			Count++;
 			Hex.Remove = true;
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Remove Hex");
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Remove Hex");
 		}
 		else 
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Add Hex : " + Hex.Remove ? "true" : "false");
+			FString Msg = "Add Hex : ";
+			Msg += Hex.Remove ? "true" : "false";
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Msg);
 			ValidHexes.Add(Hex);
 		}
 	}
+	FString CountMsg = FString::FromInt(Count);
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, CountMsg);
 	return ValidHexes;
 }
 
+TArray<FST_Hex> UPOTLUtilFunctionLibrary::CalcHexesRot(TArray<FST_Hex> Hexes, float HexWidth)
+{
+	//TArray<FST_Hex> CalcedHexes;
+	float HexRealHeight = HexWidth / FMath::Sqrt(3) * 2;
+	for (int32 i = 0; i < Hexes.Num(); i++)
+	{
+		FST_Hex Hex = Hexes[i];
+		FRotator Rotation;
+		Rotation.Pitch = (HexWidth / (Hex.Point2.Location.Z - Hex.Point0.Location.Z)) / 100 * 45 / 100;
+		Rotation.Yaw = 0.0f;
+		Rotation.Roll = (HexRealHeight / (Hex.Point1.Location.Z - Hex.Point4.Location.Z)) / 100 * 45 / 100;
+		Hex.Rotation = Rotation;
+	}
+	//return CalcedHexes;
+	return Hexes;
+}
 
 
 

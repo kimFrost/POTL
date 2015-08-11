@@ -21,19 +21,19 @@ struct FST_Point
 	int32 Row;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	bool IsCreator;
+	bool IsCreator = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	bool Exits;
+	bool Exits = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	int32 Hex0Index;
+	int32 Hex0Index = -1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	int32 Hex1Index;
+	int32 Hex1Index = -1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	int32 Hex2Index;
+	int32 Hex2Index = -1;
 };
 
 
@@ -67,7 +67,7 @@ struct FST_Hex
 	FST_Point Point5;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
-	bool Remove;
+	bool Remove = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	AActor* AttachedBuilding;
@@ -148,6 +148,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	static TArray<FST_Hex> CleanHexes(TArray<FST_Hex> Hexes);
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	static TArray<FST_Hex> CalcHexesRot(TArray<FST_Hex> Hexes,  float HexWidth);
 
 
 };
