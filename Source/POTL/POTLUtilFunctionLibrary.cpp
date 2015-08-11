@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
 #include "POTLUtilFunctionLibrary.h"
 
 
@@ -20,12 +21,6 @@ FString UPOTLUtilFunctionLibrary::FindThisFunction(FString ReturnString)
 
 
 	return ReturnString;
-}
-
-
-void UPOTLUtilFunctionLibrary::TraceLandscape()
-{
-
 }
 
 
@@ -50,7 +45,11 @@ int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCo
 	return Index;
 }
 
-
+bool UPOTLUtilFunctionLibrary::PointIndexValid(TArray<FST_Point> Points, int32 Index)
+{
+	bool valid = (Index < Points.Num()) && (Index >= 0);
+	return valid;
+}
 
 /**--- AMIT ------------------------*/
 
@@ -89,6 +88,169 @@ FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
 	CubeCoords.Z = R;
 	return CubeCoords;
 }
+
+
+/** Map - Creation */
+
+TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, int32 GridXCount, int32 GridYCount, float HexWidth)
+{
+	//UGameplayStatics::
+	TArray<FST_Point> Points;
+	
+	if (Landscape != NULL)
+	{
+		FVector ActorLocation = Landscape->GetActorLocation();
+		// Get player controller at index 0
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+		if (PlayerController)
+		{
+			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+			RV_TraceParams.bTraceComplex = true;
+			RV_TraceParams.bTraceAsyncScene = true;
+			RV_TraceParams.bReturnPhysicalMaterial = false;
+
+			ECollisionChannel CollisionChannel = ECC_Pawn;
+
+			//Re-initialize hit info
+			FHitResult RV_Hit(ForceInit);
+
+			for (int32 Row = 0; Row <= GridYCount; Row++)
+			{
+				for (int32 Column = 0; Column <= GridXCount; Column++)
+				{
+					float X = Column * (HexWidth / 2);
+					float Y = (Column + Row + 1) % 2 * 74 + (Row * 255) - (34 * Row);
+					FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
+					FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
+
+					PlayerController->GetWorld()->LineTraceSingle(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					if (RV_Hit.GetActor() != NULL)
+					{
+						FST_Point Point;
+						Point.Location = RV_Hit.Location;
+						Point.Row = Row;
+						Point.Column = Column;
+						Point.Exits = true;
+						Points.Add(Point);
+					}
+				}
+			}
+		}
+	}
+	return Points;
+}
+
+TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, TArray<FST_Point> Points, int32 GridXCount,  float HexWidth)
+{
+	TArray<FST_Hex> Hexes;
+	
+	if (Landscape != NULL) {
+		// Get player controller at index 0
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+
+		if (PlayerController)
+		{
+			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+			RV_TraceParams.bTraceComplex = true;
+			RV_TraceParams.bTraceAsyncScene = true;
+			RV_TraceParams.bReturnPhysicalMaterial = false;
+
+			ECollisionChannel CollisionChannel = ECC_Pawn;
+
+			//Re-initialize hit info
+			FHitResult RV_Hit(ForceInit);
+
+			float X = HexWidth / 2;
+			float Y = HexWidth / FMath::Sqrt(3) * 2 / 4;
+
+			for (int32 i = 0; i < Points.Num(); i++)
+			{
+				FST_Point Point = Points[i];
+				FVector LineTraceFrom = Point.Location + FVector{ X, Y, 3000 };
+				FVector LineTraceTo = Point.Location + FVector{ X, Y, -3000 };
+
+				int32 Creator = ((Point.Row + 1) % 2) + ((Point.Column + 2) % 2);
+				if (Creator == 1)
+				{
+					Point.IsCreator = true;
+					PlayerController->GetWorld()->LineTraceSingle(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					if (RV_Hit.GetActor() != NULL)
+					{
+						FST_Hex Hex;
+						Hex.Location = RV_Hit.Location;
+						Hex.HexCubeCoords = FVector{ 0, 0, 0 };
+						Hex.HexOffsetCoords = FVector2D{ (float)Point.Column / 2, (float)Point.Row };
+
+						// Points Ref
+						int PointIndex;
+						Hex.Point0 = Point;
+
+						PointIndex = GetGridIndex(GridXCount, Point.Column + 1, Point.Row, true);
+						if (PointIndexValid(Points, PointIndex))
+						{
+							Hex.Point1 = Points[PointIndex];
+						}
+						PointIndex = GetGridIndex(GridXCount, Point.Column + 2, Point.Row, true);
+						if (PointIndexValid(Points, PointIndex))
+						{
+							Hex.Point2 = Points[PointIndex];
+						}
+						PointIndex = GetGridIndex(GridXCount, Point.Column + 2, Point.Row + 1, true);
+						if (PointIndexValid(Points, PointIndex))
+						{
+							Hex.Point3 = Points[PointIndex];
+						}
+						PointIndex = GetGridIndex(GridXCount, Point.Column + 1, Point.Row + 1, true);
+						if (PointIndexValid(Points, PointIndex))
+						{
+							Hex.Point4 = Points[PointIndex];
+						}
+						PointIndex = GetGridIndex(GridXCount, Point.Column, Point.Row + 1, true);
+						if (PointIndexValid(Points, PointIndex))
+						{
+							Hex.Point5 = Points[PointIndex];
+						}
+
+						/*
+						Hex.Point1 = Points[GetGridIndex(GridXCount, Point.Column + 1, Point.Row, true)];
+						Hex.Point2 = Points[GetGridIndex(GridXCount, Point.Column + 2, Point.Row, true)];
+						Hex.Point3 = Points[GetGridIndex(GridXCount, Point.Column + 2, Point.Row + 1, true)];
+						Hex.Point4 = Points[GetGridIndex(GridXCount, Point.Column + 1, Point.Row + 1, true)];
+						Hex.Point5 = Points[GetGridIndex(GridXCount, Point.Column, Point.Row + 1, true)];
+						*/
+
+						Hexes.Add(Hex);
+					}
+				}
+			}
+		}
+	}
+	return Hexes;
+}
+
+TArray<FST_Hex> UPOTLUtilFunctionLibrary::CleanHexes(TArray<FST_Hex> Hexes)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CleanHexes");
+	TArray<FST_Hex> ValidHexes;
+	for (int32 i = 0; i < Hexes.Num(); i++)
+	{
+		FST_Hex Hex = Hexes[i];
+		bool Remove = (!Hex.Point0.Exits || !Hex.Point1.Exits || !Hex.Point2.Exits || !Hex.Point3.Exits || !Hex.Point4.Exits || !Hex.Point5.Exits);
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, Remove ? "true" : "false");
+		if (Remove)
+		{
+			Hex.Remove = true;
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Remove Hex");
+		}
+		else 
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Add Hex : " + Hex.Remove ? "true" : "false");
+			ValidHexes.Add(Hex);
+		}
+	}
+	return ValidHexes;
+}
+
 
 
 
