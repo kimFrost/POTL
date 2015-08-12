@@ -25,7 +25,8 @@ FString UPOTLUtilFunctionLibrary::FindThisFunction(FString ReturnString)
 }
 
 
-// Get Grid Index
+
+
 int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
 {
 	int32 index;
@@ -36,15 +37,14 @@ int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int3
 	return index;
 }
 
-
-// Get Hex Index
 int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCount)
 {
 	int32 GridWidth = (GridXCount - (GridXCount % 2)) / 2 - 1;
 	int32 Index = GetGridIndex(GridWidth, FMath::FloorToInt(OffsetCoord.X), FMath::FloorToInt(OffsetCoord.Y), true);
-	Index = Index - (FMath::FloorToInt(OffsetCoord.Y) * ((GridXCount + 1 ) % 2));
+	Index = Index - (FMath::FloorToInt(OffsetCoord.Y) / 2 * ((GridXCount + 1) % 2));
 	return Index;
 }
+
 
 bool UPOTLUtilFunctionLibrary::PointIndexValid(TArray<FST_Point> Points, int32 Index)
 {
@@ -215,8 +215,10 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, TArray<
 					{
 						FST_Hex Hex;
 						Hex.Location = RV_Hit.Location;
-						Hex.HexOffsetCoords = FVector2D{ (float)Point.Column / 2, (float)Point.Row };
+						Hex.HexOffsetCoords = FVector2D{ (float)FMath::FloorToInt((float)Point.Column / 2), (float)FMath::FloorToInt((float)Point.Row) };
 						Hex.HexCubeCoords = ConvertOffsetToCube(Hex.HexOffsetCoords);
+
+						Log(FString::FromInt(Point.Column) + ", " + FString::FromInt(Point.Row), 15.0f, FColor::Yellow, -1);
 
 						// Points Ref
 						int PointIndex;
@@ -254,6 +256,8 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, TArray<
 						Hex.Point4 = Points[GetGridIndex(GridXCount, Point.Column + 1, Point.Row + 1, true)];
 						Hex.Point5 = Points[GetGridIndex(GridXCount, Point.Column, Point.Row + 1, true)];
 						*/
+
+						//DrawDebugLine(Landscape->GetWorld(), Point.Location + FVector{ 0, 0, -2000 }, Point.Location + FVector{ 0, 0, 2000 }, FColor(255, 0, 0), true, -1, 0, 15.0f);
 
 						Hexes.Add(Hex);
 					}
@@ -370,4 +374,10 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 		}
 	}
 	return VisitedCubeCoords;
+}
+
+
+void UPOTLUtilFunctionLibrary::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
+{
+	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);
 }
