@@ -52,6 +52,29 @@ bool UPOTLUtilFunctionLibrary::PointIndexValid(TArray<FST_Point> Points, int32 I
 	return valid;
 }
 
+void UPOTLUtilFunctionLibrary::GetPoint(const TArray<FST_Point> Points, const int32 Index, bool &Found, FST_Point &Point)
+{;
+	Found = PointIndexValid(Points, Index);
+	if (Found) {
+		Point = Points[Index];
+	}
+}
+
+bool UPOTLUtilFunctionLibrary::HexIndexValid(TArray<FST_Hex> Hexes, int32 Index)
+{
+	bool valid = (Index < Hexes.Num()) && (Index >= 0);
+	return valid;
+}
+
+void UPOTLUtilFunctionLibrary::GetHex(const TArray<FST_Hex> Hexes, const int32 Index, bool &Found, FST_Hex &Hex)
+{
+	Found = HexIndexValid(Hexes, Index);
+	if (Found) {
+		Hex = Hexes[Index];
+	}
+}
+
+
 /**--- AMIT ------------------------*/
 
 int32 UPOTLUtilFunctionLibrary::GetCubeDistance(FVector CubeCoordsFrom, FVector CubeCoordsTo)
@@ -66,8 +89,11 @@ int32 UPOTLUtilFunctionLibrary::GetCubeDistance(FVector CubeCoordsFrom, FVector 
 FVector UPOTLUtilFunctionLibrary::ConvertOffsetToCube(FVector2D OffsetCoords)
 {
 	FVector CubeCoords;
-	CubeCoords.X = OffsetCoords.X - ((FMath::FloorToInt(OffsetCoords.Y) - (FMath::FloorToInt(OffsetCoords.Y) % 2)) / 2);
-	CubeCoords.Y = (CubeCoords.X * -1) - OffsetCoords.Y;
+	//CubeCoords.X = OffsetCoords.X - ((FMath::FloorToInt(OffsetCoords.Y) - (FMath::FloorToInt(OffsetCoords.Y) % 2)) / 2);
+	//CubeCoords.Y = (CubeCoords.X * -1) - OffsetCoords.Y;
+	//CubeCoords.Z = OffsetCoords.Y;
+	CubeCoords.X = OffsetCoords.X - (OffsetCoords.Y - (FMath::FloorToInt(OffsetCoords.Y) % 2)) / 2;
+	CubeCoords.Y = -CubeCoords.X - OffsetCoords.Y;
 	CubeCoords.Z = OffsetCoords.Y;
 	return CubeCoords;
 }
@@ -105,10 +131,17 @@ TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, in
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
 		if (PlayerController)
 		{
+			//UWorld *World = Landscape->GetWorld();
+			//const FName TraceTag("MyTraceTag");
+			//World->DebugDrawTraceTag = TraceTag;
+
+			//Landscape->GetWorld()->DebugDrawTraceTag = TraceTag;
+
 			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
 			RV_TraceParams.bTraceComplex = true;
 			RV_TraceParams.bTraceAsyncScene = true;
 			RV_TraceParams.bReturnPhysicalMaterial = false;
+			//RV_TraceParams.TraceTag = TraceTag;
 
 			ECollisionChannel CollisionChannel = ECC_Pawn;
 
@@ -134,6 +167,9 @@ TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, in
 						Point.Exits = true;
 						Points.Add(Point);
 					}
+
+					//DrawDebugLine(Landscape->GetWorld(), LineTraceFrom, LineTraceTo, FColor(255, 0, 0), true, -1, 0, 15.0f);
+
 				}
 			}
 		}
@@ -179,13 +215,12 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, TArray<
 					{
 						FST_Hex Hex;
 						Hex.Location = RV_Hit.Location;
-						Hex.HexCubeCoords = FVector{ 0, 0, 0 };
 						Hex.HexOffsetCoords = FVector2D{ (float)Point.Column / 2, (float)Point.Row };
+						Hex.HexCubeCoords = ConvertOffsetToCube(Hex.HexOffsetCoords);
 
 						// Points Ref
 						int PointIndex;
 						Hex.Point0 = Point;
-
 						PointIndex = GetGridIndex(GridXCount, Point.Column + 1, Point.Row, true);
 						if (PointIndexValid(Points, PointIndex))
 						{

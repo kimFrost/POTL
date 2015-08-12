@@ -138,6 +138,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static bool PointIndexValid(TArray<FST_Point> Points, int32 Index);
 
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static void GetPoint(const TArray<FST_Point> Points, const int32 Index, bool& Found, FST_Point& Point);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static bool HexIndexValid(TArray<FST_Hex> Hexes, int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static void GetHex(const TArray<FST_Hex> Hexes, const int32 Index, bool &Found, FST_Hex &Hex);
+
 	/** Map - Creation */
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
@@ -152,5 +161,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	static TArray<FST_Hex> CalcHexesRot(TArray<FST_Hex> Hexes,  float HexWidth);
 
+	
 
 };
