@@ -238,7 +238,7 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, TArray<
 						Hex.HexOffsetCoords = FVector2D{ (float)FMath::FloorToInt((float)Point.Column / 2), (float)FMath::FloorToInt((float)Point.Row) };
 						Hex.HexCubeCoords = ConvertOffsetToCube(Hex.HexOffsetCoords);
 
-						Log(FString::FromInt(Point.Column) + ", " + FString::FromInt(Point.Row), 15.0f, FColor::Yellow, -1);
+						//Log(FString::FromInt(Point.Column) + ", " + FString::FromInt(Point.Row), 15.0f, FColor::Yellow, -1);
 
 						// Points Ref
 						int PointIndex;
@@ -319,19 +319,24 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CleanHexes(TArray<FST_Hex> Hexes)
 
 TArray<FST_Hex> UPOTLUtilFunctionLibrary::CalcHexesRot(TArray<FST_Hex> Hexes, float HexWidth)
 {
-	//TArray<FST_Hex> CalcedHexes;
+	TArray<FST_Hex> CalcedHexes;
 	float HexRealHeight = HexWidth / FMath::Sqrt(3) * 2;
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{
 		FST_Hex Hex = Hexes[i];
 		FRotator Rotation;
-		Rotation.Pitch = (HexWidth / (Hex.Point2.Location.Z - Hex.Point0.Location.Z)) / 100 * 45 / 100;
+		//Rotation.Pitch = (HexWidth / (Hex.Point2.Location.Z - Hex.Point0.Location.Z)) / 100 * 45 / 100;
+		Rotation.Pitch = 45.0f;
 		Rotation.Yaw = 0.0f;
-		Rotation.Roll = (HexRealHeight / (Hex.Point1.Location.Z - Hex.Point4.Location.Z)) / 100 * 45 / 100;
+		//Rotation.Roll = (HexRealHeight / (Hex.Point1.Location.Z - Hex.Point4.Location.Z)) / 100 * 45 / 100;
+		Rotation.Roll = 45.0f;
 		Hex.Rotation = Rotation;
+
+		CalcedHexes.Add(Hex);
+		//Log(FString::SanitizeFloat(Rotation.Pitch), 15.0f, FColor::Yellow, -1);
 	}
-	//return CalcedHexes;
-	return Hexes;
+	return CalcedHexes;
+	//return Hexes;
 }
 
 
