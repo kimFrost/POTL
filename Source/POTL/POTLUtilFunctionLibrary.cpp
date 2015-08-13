@@ -15,17 +15,31 @@ UPOTLUtilFunctionLibrary::UPOTLUtilFunctionLibrary(const FObjectInitializer& Obj
 
 
 
-FString UPOTLUtilFunctionLibrary::FindThisFunction(FString ReturnString)
+FST_Hex UPOTLUtilFunctionLibrary::CubeToHex(FVector CubeCoord, TArray<FST_Hex> Hexes, int32 GridXCount)
 {
-
-
-
-
-	return ReturnString;
+	FST_Hex Hex;
+	bool Found;
+	FVector2D OffsetCoords = ConvertCubeToOffset(CubeCoord);
+	int32 Index = GetHexIndex(OffsetCoords, GridXCount);
+	if (HexIndexValid(Hexes, Index))
+	{
+		GetHex(Hexes, Index, Found, Hex); //const TArray<FST_Hex> Hexes, const int32 Index, bool &Found, FST_Hex &Hex
+	}
+	return Hex;
 }
 
-
-
+TArray<FST_Hex> UPOTLUtilFunctionLibrary::CubesToHexes(TArray<FVector> CubeCoords, TArray<FST_Hex> Hexes, int32 GridXCount)
+{
+	TArray<FST_Hex> ConvertedHexes;
+	FST_Hex Hex;
+	for (int32 i = 0; i < CubeCoords.Num(); i++)
+	{
+		FVector CubeCoord = CubeCoords[i];
+		Hex = CubeToHex(CubeCoord, Hexes, GridXCount);
+		ConvertedHexes.Add(Hex);
+	}
+	return ConvertedHexes;
+}
 
 int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
 {
@@ -43,6 +57,12 @@ int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCo
 	int32 Index = GetGridIndex(GridWidth, FMath::FloorToInt(OffsetCoord.X), FMath::FloorToInt(OffsetCoord.Y), true);
 	Index = Index - (FMath::FloorToInt(OffsetCoord.Y) / 2 * ((GridXCount + 1) % 2));
 	return Index;
+}
+
+
+void UPOTLUtilFunctionLibrary::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
+{
+	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);
 }
 
 
@@ -377,7 +397,3 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 }
 
 
-void UPOTLUtilFunctionLibrary::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
-{
-	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);
-}

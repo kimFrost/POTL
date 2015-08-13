@@ -102,15 +102,18 @@ class POTL_API UPOTLUtilFunctionLibrary : public UBlueprintFunctionLibrary
 	
 public:
 	UPOTLUtilFunctionLibrary(const FObjectInitializer& ObjectInitializer);
-	
-	UFUNCTION(BlueprintCallable, Category="Hex")
-	static FString FindThisFunction(FString ReturnString);
 
 	UFUNCTION(BlueprintCallable, Category = "Hex")
 	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range);
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
+
+	UFUNCTION(BlueprintCallable, Category = "Hex")
+	static FST_Hex CubeToHex(FVector CubeCoord, TArray<FST_Hex> Hexes, int32 GridXCount);
+
+	UFUNCTION(BlueprintCallable, Category = "Hex")
+	static TArray<FST_Hex> CubesToHexes(TArray<FVector> CubeCoords, TArray<FST_Hex> Hexes, int32 GridXCount);
 
 	
 
