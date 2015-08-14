@@ -21,19 +21,31 @@ struct FST_Point
 	int32 Row;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	bool IsCreator = false;
+	bool IsCreator;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	bool Exits = false;
+	bool Exits;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	int32 Hex0Index = -1;
+	int32 Hex0Index;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	int32 Hex1Index = -1;
+	int32 Hex1Index;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	int32 Hex2Index = -1;
+	int32 Hex2Index;
+
+	FST_Point()
+	{
+		Location = {-1, -1, -1};
+		Column = 0;
+		Row = 0;
+		IsCreator = false;
+		Exits = false;
+		Hex0Index = -1;
+		Hex1Index = -1;
+		Hex2Index = -1;
+	};
 };
 
 
@@ -42,7 +54,7 @@ struct FST_Hex
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Hex")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	FVector Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
@@ -67,7 +79,7 @@ struct FST_Hex
 	FST_Point Point5;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
-	bool Remove = false;
+	bool Remove;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	AActor* AttachedBuilding;
@@ -84,13 +96,23 @@ struct FST_Hex
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	FVector2D HexOffsetCoords;
 
-	/*
-	FVector GetVector(int32 someInt)
+	FST_Hex()
 	{
-		FVector Test;
-		return Test;
-	}
-	*/
+		Location = {-1, -1, -1};
+		Rotation = {-1, -1, -1};
+		//Point0;
+		//Point1;
+		//Point2;
+		//Point3;
+		//Point4;
+		//Point5;
+		Remove = false;
+		AttachedBuilding = NULL;
+		AttachedActor = NULL;
+		AttachedMesh = NULL;
+		//HexCubeCoords;
+		//HexOffsetCoords;
+	};
 };
 
 
