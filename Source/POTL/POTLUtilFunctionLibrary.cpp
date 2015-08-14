@@ -325,11 +325,40 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CalcHexesRot(TArray<FST_Hex> Hexes, fl
 	{
 		FST_Hex Hex = Hexes[i];
 		FRotator Rotation;
+
+		float Angle;
+		float xDiff;
+		float yDiff;
+
+		/*
+		FVector FirstPoint = (Hex.Point2.Location - Hex.Location).GetSafeNormal();
+		FVector SecondPoint = (Hex.Point0.Location - Hex.Location).GetSafeNormal();
+
+		// float AimAtAngle = ((acosf(FVector::DotProduct(PlayerDirection, MouseDirection))) * (180 / 3.1415926));
+		// float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));
+
+		float DotProduct = FVector::DotProduct(FirstPoint, SecondPoint);
+		float Radians = acosf(DotProduct);
+		Angle = FMath::RadiansToDegrees(Radians);
+		*/
+
+		xDiff = Hex.Point2.Location.X - Hex.Point0.Location.X;
+		yDiff = Hex.Point2.Location.Z - Hex.Point0.Location.Z;
+		Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592);
+		Rotation.Pitch = Angle;
+
 		//Rotation.Pitch = (HexWidth / (Hex.Point2.Location.Z - Hex.Point0.Location.Z)) / 100 * 45 / 100;
-		Rotation.Pitch = 45.0f;
+		//Rotation.Pitch = 45.0f;
+
 		Rotation.Yaw = 0.0f;
+
+		xDiff = Hex.Point4.Location.Y - Hex.Point1.Location.Y;
+		yDiff = Hex.Point4.Location.Z - Hex.Point1.Location.Z;
+		Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592) * -1;
+		Rotation.Roll = Angle;
+
 		//Rotation.Roll = (HexRealHeight / (Hex.Point1.Location.Z - Hex.Point4.Location.Z)) / 100 * 45 / 100;
-		Rotation.Roll = 45.0f;
+		//Rotation.Roll = 0.0f;
 		Hex.Rotation = Rotation;
 
 		CalcedHexes.Add(Hex);
