@@ -136,6 +136,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Hex")
 	static TArray<FST_Hex> CubesToHexes(TArray<FVector> CubeCoords, TArray<FST_Hex> Hexes, int32 GridXCount);
+	
+	UFUNCTION(BlueprintCallable, Category = "Hex")
+	static TArray<FVector> RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube);
 
 	
 
@@ -174,6 +177,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static void GetHex(const TArray<FST_Hex> Hexes, const int32 Index, bool &Found, FST_Hex &Hex);
+
 
 	/** Map - Creation */
 

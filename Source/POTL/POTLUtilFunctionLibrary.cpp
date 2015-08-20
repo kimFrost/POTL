@@ -41,6 +41,56 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CubesToHexes(TArray<FVector> CubeCoord
 	return ConvertedHexes;
 }
 
+TArray<FVector> UPOTLUtilFunctionLibrary::RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube)
+{
+	Direction = Direction % 6;
+	TArray<FVector> RotatedCubes;
+	for (int32 i = 0; i < CubeCoords.Num(); i++)
+	{
+		FVector CubeCoord = CubeCoords[i];
+		FVector CubeLocal = CubeCoord - CenterCube;
+		switch(Direction)
+		{
+			case 0:
+			{
+				RotatedCubes.Add(CubeCoord);
+				break;
+			}
+			case 1:
+			{
+				CubeCoord = FVector{ -CubeLocal.Z, -CubeLocal.X, -CubeLocal.Y } + CenterCube;
+				RotatedCubes.Add(CubeCoord);
+				break;
+			}
+			case 2:
+			{
+				CubeCoord = FVector{ CubeLocal.Y, CubeLocal.Z, CubeLocal.X } + CenterCube;
+				RotatedCubes.Add(CubeCoord);
+				break;
+			}
+			case 3:
+			{
+				CubeCoord = FVector{ -CubeLocal.X, -CubeLocal.Y, -CubeLocal.Z } + CenterCube;
+				RotatedCubes.Add(CubeCoord);
+				break;
+			}
+			case 4:
+			{
+				CubeCoord = FVector{ CubeLocal.Z, CubeLocal.X, CubeLocal.Y } + CenterCube;
+				RotatedCubes.Add(CubeCoord);
+				break;
+			}
+			case 5:
+			{
+				CubeCoord = FVector{ -CubeLocal.Y, -CubeLocal.Z, -CubeLocal.X } + CenterCube;
+				RotatedCubes.Add(CubeCoord);
+				break;
+			}
+		}
+	}
+	return RotatedCubes;
+}
+
 int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
 {
 	int32 index;
@@ -93,6 +143,8 @@ void UPOTLUtilFunctionLibrary::GetHex(const TArray<FST_Hex> Hexes, const int32 I
 		Hex = Hexes[Index];
 	}
 }
+
+
 
 
 /**--- AMIT ------------------------*/
