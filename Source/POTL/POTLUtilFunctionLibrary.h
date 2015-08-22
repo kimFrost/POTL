@@ -132,7 +132,7 @@ public:
 	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Hex")
-	static FST_Hex CubeToHex(FVector CubeCoord, TArray<FST_Hex> Hexes, int32 GridXCount);
+	static FST_Hex CubeToHex(FVector CubeCoord, const TArray<FST_Hex>& Hexes, int32 GridXCount);
 
 	UFUNCTION(BlueprintCallable, Category = "Hex")
 	static TArray<FST_Hex> CubesToHexes(TArray<FVector> CubeCoords, TArray<FST_Hex> Hexes, int32 GridXCount);
@@ -140,7 +140,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hex")
 	static TArray<FVector> RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube);
 
-	
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static FVector RoundCube(FVector Cube);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static FVector LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location);
+
+
+
 
 	/** AMIT */
 
@@ -176,7 +183,7 @@ public:
 	static bool HexIndexValid(TArray<FST_Hex> Hexes, int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	static void GetHex(const TArray<FST_Hex> Hexes, const int32 Index, bool &Found, FST_Hex &Hex);
+	static void GetHex(const TArray<FST_Hex>& Hexes, const int32 Index, bool &Found, FST_Hex &Hex);
 
 
 	/** Map - Creation */

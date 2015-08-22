@@ -15,16 +15,18 @@ UPOTLUtilFunctionLibrary::UPOTLUtilFunctionLibrary(const FObjectInitializer& Obj
 
 
 
-FST_Hex UPOTLUtilFunctionLibrary::CubeToHex(FVector CubeCoord, TArray<FST_Hex> Hexes, int32 GridXCount)
+FST_Hex UPOTLUtilFunctionLibrary::CubeToHex(FVector CubeCoord, const TArray<FST_Hex>& Hexes, int32 GridXCount)
 {
 	FST_Hex Hex;
-	bool Found;
+	
+	bool Found = false;
 	FVector2D OffsetCoords = ConvertCubeToOffset(CubeCoord);
 	int32 Index = GetHexIndex(OffsetCoords, GridXCount);
 	if (HexIndexValid(Hexes, Index))
 	{
 		GetHex(Hexes, Index, Found, Hex); //const TArray<FST_Hex> Hexes, const int32 Index, bool &Found, FST_Hex &Hex
 	}
+	
 	return Hex;
 }
 
@@ -91,6 +93,42 @@ TArray<FVector> UPOTLUtilFunctionLibrary::RotateCubes(TArray<FVector> CubeCoords
 	return RotatedCubes;
 }
 
+FVector UPOTLUtilFunctionLibrary::RoundCube(FVector Cube)
+{	
+	FVector RoundedCube;
+	int32 Rx = FMath::RoundToInt(Cube.X);
+	int32 Ry = FMath::RoundToInt(Cube.Y);
+	int32 Rz = FMath::RoundToInt(Cube.Z);
+
+	float XDiff = FMath::Abs(Rx - Cube.X);
+	float YDiff = FMath::Abs(Ry - Cube.Y);
+	float ZDiff = FMath::Abs(Rz - Cube.Z);
+
+	if (XDiff > YDiff && XDiff > ZDiff)
+	{
+		Rx = -Ry - Rz;
+	}
+	else if (YDiff > ZDiff)
+	{
+		Ry = -Rx - Rz;
+	}
+	else
+	{
+		Rz = -Rx - Ry;
+	}
+
+	RoundedCube = FVector{ (float)(Rx), (float)(Ry), (float)(Rz) };
+	return RoundedCube;
+}
+
+FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location)
+{
+	float q = (Location.X * FMath::Sqrt(3) / 3) / (HexHeight / 2);
+	float r = Location.Y * 2 / 3 / (HexHeight / 2);
+
+	return RoundCube(ConvertOffsetToCube(FVector2D{ q, r }));
+}
+
 int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
 {
 	int32 index;
@@ -136,7 +174,7 @@ bool UPOTLUtilFunctionLibrary::HexIndexValid(TArray<FST_Hex> Hexes, int32 Index)
 	return valid;
 }
 
-void UPOTLUtilFunctionLibrary::GetHex(const TArray<FST_Hex> Hexes, const int32 Index, bool &Found, FST_Hex &Hex)
+void UPOTLUtilFunctionLibrary::GetHex(const TArray<FST_Hex>& Hexes, const int32 Index, bool &Found, FST_Hex &Hex)
 {
 	Found = HexIndexValid(Hexes, Index);
 	if (Found) {
