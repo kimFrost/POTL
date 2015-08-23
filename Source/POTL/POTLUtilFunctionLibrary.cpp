@@ -519,7 +519,7 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CalcHexesRot(TArray<FST_Hex> Hexes, fl
 
 /** -- PATCHING --------------------*/
 
-TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range)
+TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, const TArray<FVector>& Obstacles, int32 Range)
 {
 	struct Fridge
 	{

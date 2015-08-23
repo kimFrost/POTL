@@ -126,7 +126,7 @@ public:
 	UPOTLUtilFunctionLibrary(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = "Hex")
-	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, TArray<FVector> Obstacles, int32 Range);
+	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, const TArray<FVector>& Obstacles, int32 Range);
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
