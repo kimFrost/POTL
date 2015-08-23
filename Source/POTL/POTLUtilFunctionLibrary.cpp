@@ -124,6 +124,8 @@ FVector UPOTLUtilFunctionLibrary::RoundCube(FVector Cube)
 FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location)
 {
 
+	Location = Location - FVector{ HexWidth / 2, HexHeight / 2, 0 };
+
 	float Q = (Location.X * FMath::Sqrt(3) / 3 - Location.Y / 3) / (HexHeight / 2);
 	float R = Location.Y * 2 / 3 / (HexHeight / 2);
 
@@ -131,9 +133,10 @@ FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidt
 	//float Q = FMath::FloorToFloat((FMath::FloorToFloat(2 * Location.X + 1) + Temp) / 3);
 	//float R = FMath::FloorToFloat((Temp + FMath::FloorToFloat(-Location.X + FMath::Sqrt(3) * Location.Y + 1)) / 3);
 
-	//Log("Q: " + FString::FromInt(Q) + ", R: " + FString::FromInt(R), 15.0f, FColor::Yellow, -1);
-
-	return RoundCube(ConvertOffsetToCube(FVector2D{ Q, R }));
+	Log("Q: " + FString::FromInt(Q) + ", R: " + FString::FromInt(R), 15.0f, FColor::Yellow, 1);
+	
+	return RoundCube(AxialToCube(Q, R ));
+	//return RoundCube(ConvertOffsetToCube(FVector2D{ Q, R }));
 }
 
 FST_Hex UPOTLUtilFunctionLibrary::LocationToHex(int32 GridXCount, float HexWidth, float HexHeight, FVector Location, const TArray<FST_Hex>& Hexes)
