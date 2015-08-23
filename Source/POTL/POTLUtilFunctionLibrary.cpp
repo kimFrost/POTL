@@ -30,7 +30,7 @@ FST_Hex UPOTLUtilFunctionLibrary::CubeToHex(FVector CubeCoord, const TArray<FST_
 	return Hex;
 }
 
-TArray<FST_Hex> UPOTLUtilFunctionLibrary::CubesToHexes(TArray<FVector> CubeCoords, TArray<FST_Hex> Hexes, int32 GridXCount)
+TArray<FST_Hex> UPOTLUtilFunctionLibrary::CubesToHexes(TArray<FVector> CubeCoords, const TArray<FST_Hex>& Hexes, int32 GridXCount)
 {
 	TArray<FST_Hex> ConvertedHexes;
 	FST_Hex Hex;
@@ -123,11 +123,58 @@ FVector UPOTLUtilFunctionLibrary::RoundCube(FVector Cube)
 
 FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location)
 {
-	float q = (Location.X * FMath::Sqrt(3) / 3) / (HexHeight / 2);
-	float r = Location.Y * 2 / 3 / (HexHeight / 2);
 
-	return RoundCube(ConvertOffsetToCube(FVector2D{ q, r }));
+	float Q = (Location.X * FMath::Sqrt(3) / 3 - Location.Y / 3) / (HexHeight / 2);
+	float R = Location.Y * 2 / 3 / (HexHeight / 2);
+
+	//float Temp = FMath::FloorToFloat(Location.X + FMath::Sqrt(3) * Location.Y + 1);
+	//float Q = FMath::FloorToFloat((FMath::FloorToFloat(2 * Location.X + 1) + Temp) / 3);
+	//float R = FMath::FloorToFloat((Temp + FMath::FloorToFloat(-Location.X + FMath::Sqrt(3) * Location.Y + 1)) / 3);
+
+	//Log("Q: " + FString::FromInt(Q) + ", R: " + FString::FromInt(R), 15.0f, FColor::Yellow, -1);
+
+	return RoundCube(ConvertOffsetToCube(FVector2D{ Q, R }));
 }
+
+FST_Hex UPOTLUtilFunctionLibrary::LocationToHex(int32 GridXCount, float HexWidth, float HexHeight, FVector Location, const TArray<FST_Hex>& Hexes)
+{
+	float Size = HexHeight / 2;
+	float S = HexWidth / FMath::Sqrt(3) * (3 / 2);
+	int32 Odd = FMath::FloorToInt(Location.Y / Size) % 2; // Is Odd == 1 || Even == 0
+	int32 IndexX = (HexWidth - (HexWidth / 2 * Odd)) / HexWidth;
+	int32 IndexY = FMath::FloorToInt(Location.Y / S);
+	int32 HexIndex = -1;
+
+	FVector HexBaseLocation = FVector{ IndexX * HexWidth + (HexWidth / 2 * Odd), IndexY / S, 0 };
+	FVector HexRelativeLocation = Location - HexBaseLocation;
+
+	FVector YLeft = FVector{ (float)(HexRelativeLocation.X), (HexRelativeLocation.X * (100 / 90 * 50 / 100)) - (HexHeight - S), 0 } +HexBaseLocation;
+	FVector YRight = FVector{ (float)(HexRelativeLocation.X), (HexRelativeLocation.X * (100 / 90 * -50 / 100)) + (HexHeight - S), 0 } +HexBaseLocation;
+
+	bool LocYSmallerThanCalYRight = (Location.Y < YLeft.Y);
+	bool LocYSmallerThanCalYLeft = (Location.Y < YRight.Y);
+
+	if (LocYSmallerThanCalYRight)
+	{
+		IndexX = IndexX + (IndexY % 2);
+	}
+	else if (LocYSmallerThanCalYLeft)
+	{
+		IndexX = IndexX - ((IndexY + 1) % 2);
+	}
+	IndexY = IndexY - 1;
+
+	HexIndex = GetGridIndex((GridXCount - (GridXCount % 2)) / 2 - 1, IndexX, IndexY, true);
+
+	bool Found = false;
+	FST_Hex Hex;
+	GetHex(Hexes, HexIndex, Found, Hex);
+	return Hex;
+}
+
+
+
+
 
 int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
 {
@@ -154,13 +201,13 @@ void UPOTLUtilFunctionLibrary::Log(FString Msg = "", float Duration = 5.0f, FCol
 }
 
 
-bool UPOTLUtilFunctionLibrary::PointIndexValid(TArray<FST_Point> Points, int32 Index)
+bool UPOTLUtilFunctionLibrary::PointIndexValid(const TArray<FST_Point>& Points, int32 Index)
 {
 	bool valid = (Index < Points.Num()) && (Index >= 0);
 	return valid;
 }
 
-void UPOTLUtilFunctionLibrary::GetPoint(const TArray<FST_Point> Points, const int32 Index, bool &Found, FST_Point &Point)
+void UPOTLUtilFunctionLibrary::GetPoint(const TArray<FST_Point>& Points, const int32 Index, bool &Found, FST_Point &Point)
 {;
 	Found = PointIndexValid(Points, Index);
 	if (Found) {
@@ -168,7 +215,7 @@ void UPOTLUtilFunctionLibrary::GetPoint(const TArray<FST_Point> Points, const in
 	}
 }
 
-bool UPOTLUtilFunctionLibrary::HexIndexValid(TArray<FST_Hex> Hexes, int32 Index)
+bool UPOTLUtilFunctionLibrary::HexIndexValid(const TArray<FST_Hex>& Hexes, int32 Index)
 {
 	bool valid = (Index < Hexes.Num()) && (Index >= 0);
 	return valid;
@@ -229,7 +276,7 @@ FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
 
 /** Map - Creation */
 
-TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, int32 GridXCount, int32 GridYCount, float HexWidth)
+TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, int32 GridXCount, int32 GridYCount, float HexWidth, ECollisionChannel CollisionChannel)
 {
 	//UGameplayStatics::
 	TArray<FST_Point> Points;
@@ -253,7 +300,7 @@ TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, in
 			RV_TraceParams.bReturnPhysicalMaterial = false;
 			//RV_TraceParams.TraceTag = TraceTag;
 
-			ECollisionChannel CollisionChannel = ECC_Pawn;
+			//ECollisionChannel CollisionChannel = ECC_Pawn;
 
 			//Re-initialize hit info
 			FHitResult RV_Hit(ForceInit);
@@ -263,12 +310,13 @@ TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, in
 				for (int32 Column = 0; Column <= GridXCount; Column++)
 				{
 					float X = Column * (HexWidth / 2);
-					float Y = (Column + Row + 1) % 2 * 74 + (Row * 255) - (34 * Row);
+					float Y = (Column + Row + 1) % 2 * 74 + (Row * 255) - (34 * Row); // FindMe
 					FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
 					FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
 
 					PlayerController->GetWorld()->LineTraceSingle(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
-					if (RV_Hit.GetActor() != NULL)
+					//if (RV_Hit.GetActor() != NULL)
+					if (RV_Hit.bBlockingHit)
 					{
 						FST_Point Point;
 						Point.Location = RV_Hit.Location;
@@ -287,7 +335,7 @@ TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, in
 	return Points;
 }
 
-TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, TArray<FST_Point> Points, int32 GridXCount,  float HexWidth)
+TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, const TArray<FST_Point>& Points, int32 GridXCount, float HexWidth, ECollisionChannel CollisionChannel)
 {
 	TArray<FST_Hex> Hexes;
 	
@@ -302,7 +350,12 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, TArray<
 			RV_TraceParams.bTraceAsyncScene = true;
 			RV_TraceParams.bReturnPhysicalMaterial = false;
 
-			ECollisionChannel CollisionChannel = ECC_Pawn;
+			//const FName TraceTag("Persistent");
+			//Landscape->GetWorld()->DebugDrawTraceTag = TraceTag;
+			//RV_TraceParams.TraceTag = TraceTag;
+
+			//ECollisionChannel CollisionChannel = ECC_Pawn;
+			// LandscapesObjectChannel
 
 			//Re-initialize hit info
 			FHitResult RV_Hit(ForceInit);
@@ -321,7 +374,8 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, TArray<
 				{
 					Point.IsCreator = true;
 					PlayerController->GetWorld()->LineTraceSingle(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
-					if (RV_Hit.GetActor() != NULL)
+					//if (RV_Hit.GetActor() != NULL)
+					if (RV_Hit.bBlockingHit)
 					{
 						FST_Hex Hex;
 						Hex.Location = RV_Hit.Location;

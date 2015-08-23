@@ -135,7 +135,7 @@ public:
 	static FST_Hex CubeToHex(FVector CubeCoord, const TArray<FST_Hex>& Hexes, int32 GridXCount);
 
 	UFUNCTION(BlueprintCallable, Category = "Hex")
-	static TArray<FST_Hex> CubesToHexes(TArray<FVector> CubeCoords, TArray<FST_Hex> Hexes, int32 GridXCount);
+	static TArray<FST_Hex> CubesToHexes(TArray<FVector> CubeCoords, const TArray<FST_Hex>& Hexes, int32 GridXCount);
 	
 	UFUNCTION(BlueprintCallable, Category = "Hex")
 	static TArray<FVector> RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube);
@@ -145,6 +145,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static FVector LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static FST_Hex LocationToHex(int32 GridXCount, float HexWidth, float HexHeight, FVector Location, const TArray<FST_Hex>& Hexes);
+
 
 
 
@@ -174,13 +178,13 @@ public:
 	static int32 GetHexIndex(FVector2D OffsetCoord, int32 GridXCount);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	static bool PointIndexValid(TArray<FST_Point> Points, int32 Index);
+	static bool PointIndexValid(const TArray<FST_Point>& Points, int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	static void GetPoint(const TArray<FST_Point> Points, const int32 Index, bool& Found, FST_Point& Point);
+	static void GetPoint(const TArray<FST_Point>& Points, const int32 Index, bool& Found, FST_Point& Point);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	static bool HexIndexValid(TArray<FST_Hex> Hexes, int32 Index);
+	static bool HexIndexValid(const TArray<FST_Hex>& Hexes, int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static void GetHex(const TArray<FST_Hex>& Hexes, const int32 Index, bool &Found, FST_Hex &Hex);
@@ -189,10 +193,10 @@ public:
 	/** Map - Creation */
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
-	static TArray<FST_Point> TraceLandscape(AActor* Landscape, int32 GridXCount, int32 GridCount, float HexWidth);
+	static TArray<FST_Point> TraceLandscape(AActor* Landscape, int32 GridXCount, int32 GridCount, float HexWidth, ECollisionChannel CollisionChannel);
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
-	static TArray<FST_Hex> CreateHexes(AActor* Landscape, TArray<FST_Point> Points, int32 GridXCount, float HexWidth);
+	static TArray<FST_Hex> CreateHexes(AActor* Landscape, const TArray<FST_Point>& Points, int32 GridXCount, float HexWidth, ECollisionChannel CollisionChannel);
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	static TArray<FST_Hex> CleanHexes(TArray<FST_Hex> Hexes);
