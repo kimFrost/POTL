@@ -123,7 +123,6 @@ FVector UPOTLUtilFunctionLibrary::RoundCube(FVector Cube)
 
 FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location)
 {
-
 	Location = Location - FVector{ HexWidth / 2, HexHeight / 2, 0 };
 
 	float Q = (Location.X * FMath::Sqrt(3) / 3 - Location.Y / 3) / (HexHeight / 2);
@@ -135,7 +134,7 @@ FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidt
 
 	Log("Q: " + FString::FromInt(Q) + ", R: " + FString::FromInt(R), 15.0f, FColor::Yellow, 1);
 	
-	return RoundCube(AxialToCube(Q, R ));
+	return RoundCube(AxialToCube(Q, R));
 	//return RoundCube(ConvertOffsetToCube(FVector2D{ Q, R }));
 }
 
@@ -317,7 +316,7 @@ TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, in
 					FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
 					FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
 
-					PlayerController->GetWorld()->LineTraceSingle(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
 					//if (RV_Hit.GetActor() != NULL)
 					if (RV_Hit.bBlockingHit)
 					{
@@ -376,7 +375,7 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, const T
 				if (Creator == 1)
 				{
 					Point.IsCreator = true;
-					PlayerController->GetWorld()->LineTraceSingle(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
 					//if (RV_Hit.GetActor() != NULL)
 					if (RV_Hit.bBlockingHit)
 					{
