@@ -463,6 +463,43 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CleanHexes(TArray<FST_Hex> Hexes)
 	return ValidHexes;
 }
 
+TArray<FST_Hex> UPOTLUtilFunctionLibrary::EnrichHexes(TArray<FST_Hex> Hexes, int32 GridXCount)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "EnrichHexes");
+	TArray<FST_Hex> EnrichedHexes;
+	int32 Count = 0;
+	for (int32 i = 0; i < Hexes.Num(); i++)
+	{
+		FST_Hex Hex = Hexes[i];
+		// Set HexIndex
+		Hex.HexIndex = i;
+
+		TArray<FVector> CubeDirections;
+		CubeDirections.Add({ 0, 1, -1 });
+		CubeDirections.Add({ 1, 0, -1 });
+		CubeDirections.Add({ 1, -1, 0 });
+		CubeDirections.Add({ 0, -1, 1 });
+		CubeDirections.Add({ -1, 0, 1 });
+		CubeDirections.Add({ -1, 1, 0 });
+
+		FVector CubeCoord = Hex.HexCubeCoords;
+		for (int32 ii = 0; ii < CubeDirections.Num(); ii++)
+		{
+			FVector CubeDirection = CubeDirections[ii];
+			FVector CombinedVector = CubeCoord + CubeDirection;
+			FVector2D OffsetCoords = ConvertCubeToOffset(CombinedVector);
+			int32 HexDirectionIndex = GetHexIndex(OffsetCoords, GridXCount);
+			if (Hexes.IsValidIndex(HexDirectionIndex))
+			{
+				Hex.HexNeighborIndexes[ii] = HexDirectionIndex;
+			}
+		}
+
+		EnrichedHexes.Add(Hex);
+	}
+	return EnrichedHexes;
+}
+
 TArray<FST_Hex> UPOTLUtilFunctionLibrary::CalcHexesRot(TArray<FST_Hex> Hexes, float HexWidth)
 {
 	TArray<FST_Hex> CalcedHexes;

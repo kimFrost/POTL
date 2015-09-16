@@ -102,7 +102,6 @@ struct FST_Hex
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	TArray<int32> HexNeighborIndexes;
 
-
 	FST_Hex()
 	{
 		Location = {-1, -1, -1};
@@ -211,8 +210,9 @@ public:
 	static TArray<FST_Hex> CleanHexes(TArray<FST_Hex> Hexes);
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
-	static TArray<FST_Hex> CalcHexesRot(TArray<FST_Hex> Hexes,  float HexWidth);
+	static TArray<FST_Hex> EnrichHexes(TArray<FST_Hex> Hexes, int32 GridXCount);
 
-	
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	static TArray<FST_Hex> CalcHexesRot(TArray<FST_Hex> Hexes, float HexWidth);
 
 };
