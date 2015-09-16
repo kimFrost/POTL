@@ -96,6 +96,13 @@ struct FST_Hex
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	FVector2D HexOffsetCoords;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	int32 HexIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	TArray<int32> HexNeighborIndexes;
+
+
 	FST_Hex()
 	{
 		Location = {-1, -1, -1};
@@ -112,6 +119,8 @@ struct FST_Hex
 		AttachedMesh = NULL;
 		//HexCubeCoords;
 		//HexOffsetCoords;
+		HexIndex = -1;
+		HexNeighborIndexes.Init(-1, 6);
 	};
 };
 
