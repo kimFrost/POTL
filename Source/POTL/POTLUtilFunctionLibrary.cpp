@@ -554,7 +554,7 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CalcHexesRot(TArray<FST_Hex> Hexes, fl
 
 
 
-/** -- PATCHING --------------------*/
+/** -- MAP - PATHING --------------------*/
 
 TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPosition, const TArray<FVector>& Obstacles, int32 Range)
 {

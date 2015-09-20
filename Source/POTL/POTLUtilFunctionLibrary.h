@@ -18,9 +18,7 @@ class POTL_API UPOTLUtilFunctionLibrary : public UBlueprintFunctionLibrary
 public:
 	UPOTLUtilFunctionLibrary(const FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION(BlueprintCallable, Category = "Hex")
-	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, const TArray<FVector>& Obstacles, int32 Range);
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
 
@@ -99,5 +97,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	static TArray<FST_Hex> CalcHexesRot(TArray<FST_Hex> Hexes, float HexWidth);
+
+	/** Map - Pathing */
+
+	UFUNCTION(BlueprintCallable, Category = "Hex")
+	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, const TArray<FVector>& Obstacles, int32 Range);
+
 
 };
