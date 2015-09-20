@@ -3,6 +3,7 @@
 #include "POTL.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include <string>
+#include "POTLGameInstance.h"
 #include "POTLUtilFunctionLibrary.h"
 
 
