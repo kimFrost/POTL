@@ -14,8 +14,11 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 }
 
 
-TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
+TArray<FST_ConstructLocation> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
 {
-	TArray<FST_Hex> TempArray;
-	return TempArray;
+	TArray<FST_ConstructLocation> ConstructLocationes;
+
+
+	return ConstructLocationes;
 }
+

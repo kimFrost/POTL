@@ -3,11 +3,16 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
-#include "POTLStructure.h"
 #include "POTLGameInstance.generated.h"
 
 
+//~~~~~ Forward Declarations~~~~~
+class APOTLStructure;
 
+
+
+
+//~~~~~ STRUCTS ~~~~~
 USTRUCT(BlueprintType)
 struct FST_Point
 {
@@ -131,9 +136,28 @@ struct FST_ConstructLocation
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	FVector Cube;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	FST_Hex Hex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	TArray<FST_Hex> AttachTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	TArray<FST_Hex> EmitTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	TArray<FST_Hex> AttachToStructureBroadcastRoot;
+
 	FST_ConstructLocation()
 	{
-
+		Location = { -1, -1, -1 };
+		Cube = { 0, 0, 0 };
 	}
 };
 
@@ -169,8 +193,8 @@ public:
 	TArray<FST_Hex> Hexes;
 	
 
-	UFUNCTION(BlueprintCallable, Category = "Util")
-	TArray<FST_Hex> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
+	UFUNCTION(BlueprintCallable, Category = "Structure")
+	TArray<FST_ConstructLocation> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
 
 
 
