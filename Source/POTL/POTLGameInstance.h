@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "POTLStructure.h"
 #include "POTLGameInstance.generated.h"
 
 
@@ -125,6 +126,19 @@ struct FST_Hex
 };
 
 
+USTRUCT(BlueprintType)
+struct FST_ConstructLocation
+{
+	GENERATED_USTRUCT_BODY()
+
+	FST_ConstructLocation()
+	{
+
+	}
+};
+
+
+
 /**
 *
 */
@@ -140,11 +154,23 @@ public:
 
 	// Map
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	float HexWidth;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Calculated")
+	float HexHeight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Calculated")
+	int32 GridXCount;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	TArray<FST_Point> Points;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	TArray<FST_Hex> Hexes;
+	
 
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	TArray<FST_Hex> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
 
 
 
