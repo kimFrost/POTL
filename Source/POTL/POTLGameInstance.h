@@ -196,6 +196,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	TArray<FST_ConstructLocation> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
 
+	UFUNCTION(BlueprintCallable, Category = "Structure")
+	bool IsHexBuildable(FST_Hex& Hex);
+
 
 
 };

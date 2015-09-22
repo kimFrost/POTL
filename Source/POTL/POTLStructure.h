@@ -26,6 +26,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool IsRoot;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FName TreeId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FST_Hex Hex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	int32 BroadcastRange;
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
