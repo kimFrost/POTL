@@ -177,6 +177,8 @@ struct FST_Struture
 };
 
 
+
+
 USTRUCT(BlueprintType)
 struct FST_ConstructLocation
 {
@@ -244,6 +246,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexBuildable(FST_Hex& Hex);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
 
 
 
