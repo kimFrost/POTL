@@ -6,7 +6,7 @@
 #include "POTLGameInstance.generated.h"
 
 
-//~~~~~ Forward Declarations~~~~~
+//~~~~~ Forward Declarations ~~~~~
 class APOTLStructure;
 
 
@@ -128,6 +128,52 @@ struct FST_Hex
 		HexIndex = -1;
 		HexNeighborIndexes.Init(-1, 6);
 	};
+};
+
+
+USTRUCT(BlueprintType)
+struct FST_Struture
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FName Id;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FString Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	bool Burnable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	//class APOTLStructure* StructureClass;
+	TSubclassOf<APOTLStructure> StructureClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FName> AttachTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FName> EmitTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	int32 BaseBroadcastRange;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FVector> CubeSizes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FVector CubeRotationRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FVector BroadcastRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	int32 RotationDirection;
+
+	FST_Struture()
+	{
+		
+	}
 };
 
 
