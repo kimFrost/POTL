@@ -34,7 +34,32 @@ TArray<FST_ConstructLocation> UPOTLGameInstance::GetConstructLocations(APOTLStru
 	frontier.Hexes.Add(Structure->Hex);
 	Frontiers.Add(frontier);
 
-	Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);
+	//Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);
+
+	/*
+	for (int32 testI = 0; testI < Structure->Hex.HexNeighborIndexes.Num(); testI++)
+	{
+		int32 Index = Structure->Hex.HexNeighborIndexes[testI];
+
+		//Log("testI: " + FString::FromInt(testI) + "  Index:" + FString::FromInt(Index) + FString::Printf(TEXT("Bool: %s"), (Index != -1 && Hexes.IsValidIndex(Index) ? TEXT("true") : TEXT("false"))), 15.0f, FColor::Green, -1);
+
+		if (Index != -1 && Hexes.IsValidIndex(Index))
+		{
+			FST_Hex& NeighborHex = Hexes[Index];
+
+			// Make Construct Location
+			FST_ConstructLocation ConstructLocation;
+			ConstructLocation.Cube = NeighborHex.HexCubeCoords;
+			ConstructLocation.Hex = NeighborHex;
+			ConstructLocation.EmitTo.Add(NeighborHex);
+			ConstructLocations.Add(ConstructLocation);
+		}
+	}
+	Log("ConstructLocations.Num(): " + FString::FromInt(ConstructLocations.Num()), 15.0f, FColor::Green, 4);
+	return ConstructLocations;
+	*/
+
+
 
 	for (int32 k = 1; k <= Structure->BroadcastRange; k++)
 	{
@@ -51,26 +76,27 @@ TArray<FST_ConstructLocation> UPOTLGameInstance::GetConstructLocations(APOTLStru
 			//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
 			//Log("hex cube: " + Hex.HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
 
+			// Make Construct Location
+			FST_ConstructLocation ConstructLocation;
+			ConstructLocation.Cube = Hex.HexCubeCoords;
+			ConstructLocation.Hex = Hex;
+			//ConstructLocation.EmitTo.Add(Structure); // Don't know if it should be a hex or structure reference to, for it to be the best solution.
+			ConstructLocation.EmitTo.Add(Hex);
+			ConstructLocations.Add(ConstructLocation);
+			//VisitedHexIndexes.Add(Hex.HexIndex); // Add to visited Indexes
+
+			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
 			{
 				int32 Index = Hex.HexNeighborIndexes[i];
-				if (Index != -1 && Hexes.IsValidIndex(Index))
+				if (Index != -1 && Hexes.IsValidIndex(Index) && !VisitedHexIndexes.Contains(Index))
 				{
 					FST_Hex& NeighborHex = Hexes[Index];
-					if (!VisitedHexIndexes.Contains(Index) && IsHexBuildable(NeighborHex))
+					if (IsHexBuildable(NeighborHex))
 					{
-						//VisitedHexIndexes.Add(Index); // Add to visited Indexes
-						Frontiers[k].Hexes.Add(NeighborHex);
-
-						// Make Construct Location
-						FST_ConstructLocation ConstructLocation;
-						ConstructLocation.Cube = Hex.HexCubeCoords;
-						ConstructLocation.Hex = Hex;
-						//ConstructLocation.EmitTo.Add(Structure); // Don't know if it should be a hex or structure reference to, for it to be the best solution.
-						ConstructLocation.EmitTo.Add(Hex);
-						ConstructLocations.Add(ConstructLocation);
+						Frontiers[k].Hexes.Add(NeighborHex); // Add Neighbor Hex to the next frontier
+						VisitedHexIndexes.Add(Index); // Add index to visited indexes, so that neighbors don't overlap each other.
 					}
-					VisitedHexIndexes.Add(Index); // Add to visited Indexes
 				}
 			}
 		}

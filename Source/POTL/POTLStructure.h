@@ -33,6 +33,9 @@ public:
 	FST_Hex Hex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FST_Struture StructureBaseData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BroadcastRange;
 
 
