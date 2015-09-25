@@ -14,11 +14,12 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 }
 
 
-TArray<FST_ConstructLocation> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
+TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
 {
 	Log("GetConstructLocations", 15.0f, FColor::Yellow, 2);
 
-	TArray<FST_ConstructLocation> ConstructLocations;
+	//TArray<FST_ConstructLocation> ConstructLocations;
+	TArray<FST_Hex> ConstructHexes;
 
 	TArray<int32> VisitedHexIndexes;
 	struct Frontier
@@ -70,7 +71,6 @@ TArray<FST_ConstructLocation> UPOTLGameInstance::GetConstructLocations(APOTLStru
 
 		for (int32 m = 0; m < frontier.Hexes.Num(); m++)
 		{
-
 			FST_Hex& Hex = frontier.Hexes[m];
 
 			//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
@@ -79,11 +79,12 @@ TArray<FST_ConstructLocation> UPOTLGameInstance::GetConstructLocations(APOTLStru
 			// Make Construct Location
 			FST_ConstructLocation ConstructLocation;
 			ConstructLocation.Cube = Hex.HexCubeCoords;
-			ConstructLocation.Hex = Hex;
-			//ConstructLocation.EmitTo.Add(Structure); // Don't know if it should be a hex or structure reference to, for it to be the best solution.
-			ConstructLocation.EmitTo.Add(Hex);
-			ConstructLocations.Add(ConstructLocation);
-			//VisitedHexIndexes.Add(Hex.HexIndex); // Add to visited Indexes
+			Hex.ConstructLocations.Add(ConstructLocation);
+			//ConstructLocation.Hex = Hex;
+			////ConstructLocation.EmitTo.Add(Structure); // Don't know if it should be a hex or structure reference to, for it to be the best solution.
+			//ConstructLocation.EmitTo.Add(Hex);
+			//ConstructLocations.Add(ConstructLocation);
+			ConstructHexes.Add(Hex);
 
 			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
@@ -141,7 +142,7 @@ TArray<FST_ConstructLocation> UPOTLGameInstance::GetConstructLocations(APOTLStru
 	*/
 
 
-	Log("ConstructLocations.Num(): " + FString::FromInt(ConstructLocations.Num()), 15.0f, FColor::Yellow, 4);
+	Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, 4);
 
 	if (IncludeChildren) {
 		for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
@@ -150,7 +151,7 @@ TArray<FST_ConstructLocation> UPOTLGameInstance::GetConstructLocations(APOTLStru
 		}
 	}
 
-	return ConstructLocations;
+	return ConstructHexes;
 }
 
 
