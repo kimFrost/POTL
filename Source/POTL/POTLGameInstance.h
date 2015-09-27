@@ -143,6 +143,9 @@ struct FST_Hex
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	TArray<FST_ConstructLocation> ConstructLocations;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	AActor* HighlightDecal;
+
 	FST_Hex()
 	{
 		Location = { -1, -1, -1 };
