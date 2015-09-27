@@ -79,11 +79,11 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			// Make Construct Location
 			FST_ConstructLocation ConstructLocation;
 			ConstructLocation.Cube = Hex.HexCubeCoords;
-			Hex.ConstructLocations.Add(ConstructLocation);
 			//ConstructLocation.Hex = Hex;
 			////ConstructLocation.EmitTo.Add(Structure); // Don't know if it should be a hex or structure reference to, for it to be the best solution.
 			//ConstructLocation.EmitTo.Add(Hex);
 			//ConstructLocations.Add(ConstructLocation);
+			Hex.ConstructLocations.Add(ConstructLocation);
 			ConstructHexes.Add(Hex);
 
 			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
@@ -157,7 +157,11 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 
 bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 {
-	if (Hex.AttachedBuilding == NULL)
+	//FRotator HexRotation = Hex.Rotation;
+	FVector HexRotation = FVector(Hex.Rotation.Pitch, Hex.Rotation.Yaw, Hex.Rotation.Roll);
+	float maxFlatDiviation = HexRotation.GetAbsMax();
+
+	if (Hex.AttachedBuilding == NULL && maxFlatDiviation <= 15.f)
 	{
 		return true;
 	}
