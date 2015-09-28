@@ -37,7 +37,6 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 
 	FName TreeId = Structure->TreeId;
 
-
 	//Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);
 
 	/*
@@ -63,9 +62,7 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	return ConstructLocations;
 	*/
 
-
-
-	for (int32 k = 1; k <= Structure->BroadcastRange; k++)
+	for (int32 k = 1; k <= 3; k++)
 	{
 		Frontier frontier;
 		Frontiers.Add(frontier);
@@ -87,10 +84,8 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			
 			// Make Construct Location
 			Hex.ConstructInfo.Cube = Hex.HexCubeCoords;
-			//ConstructInfo.Hex = Hex;
-			////ConstructInfo.EmitTo.Add(Structure); // Don't know if it should be a hex or structure reference to, for it to be the best solution.
+			Hex.ConstructInfo.EmitTo.Add(Structure);  // Don't know if it should be a hex or structure reference to, for it to be the best solution.
 			//ConstructInfo.EmitTo.Add(Hex);
-			//ConstructLocations.Add(ConstructLocation);
 			
 			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)

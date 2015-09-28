@@ -92,6 +92,7 @@ struct FST_ConstructLocation
 	{
 		Location = { -1, -1, -1 };
 		Cube = { 0, 0, 0 };
+		TreeId = FName(TEXT(""));
 	}
 };
 
@@ -153,8 +154,14 @@ struct FST_Hex
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	FST_ConstructLocation ConstructInfo;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
-	AActor* HighlightDecal;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	//AActor* HighlightDecal; // This caused a Pointer Access violation somewhere. Thus crash the game on the first gabage collection.
+
+	// [2015.09.28-17.57.23:650][ 63]LogWindows: === Critical error: ===
+	//Fatal error : [File:D : \BuildFarm\buildmachine_++depot + UE4 - Releases + 4.9\Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp] [Line:383]
+	// Invalid object in GC : 0x000007fe028f000a, ReferencingObject : GI_POTL_C / Engine / Transient.UnrealEdEngine_0 : GI_POTL_C_0, ReferencingObjectClass : BlueprintGeneratedClass / Game / Blueprint / GameInstance / GI_POTL.GI_POTL_C, Property Name : HighlightDecal, Offset : 384, TokenIndex : 16
+
+
 
 	FST_Hex()
 	{
@@ -170,8 +177,8 @@ struct FST_Hex
 		AttachedBuilding = NULL;
 		AttachedActor = NULL;
 		AttachedMesh = NULL;
-		//HexCubeCoords;
-		//HexOffsetCoords;
+		HexCubeCoords = {-1, -1, -1};
+		HexOffsetCoords = {-1, -1};
 		HexIndex = -1;
 		HexNeighborIndexes.Init(-1, 6);
 	};
@@ -219,7 +226,13 @@ struct FST_Struture
 
 	FST_Struture()
 	{
-		
+		Id = FName(TEXT(""));
+		Title = "";
+		Burnable = false;
+		BaseBroadcastRange = 0;
+		CubeRotationRoot = { 0, 0, 0 };
+		BroadcastRoot = { 0, 0, 0 };
+		RotationDirection = 0;
 	}
 };
 
