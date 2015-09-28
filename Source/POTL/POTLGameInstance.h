@@ -67,6 +67,15 @@ struct FST_ConstructLocation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	FVector Cube;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	FName TreeId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	TArray<APOTLStructure*> AttachTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	TArray<APOTLStructure*> EmitTo;
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	//FST_Hex Hex;
 
@@ -120,7 +129,7 @@ struct FST_Hex
 	bool Remove;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
-	AActor* AttachedBuilding;
+	APOTLStructure* AttachedBuilding;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	AActor* AttachedActor;
@@ -141,7 +150,8 @@ struct FST_Hex
 	TArray<int32> HexNeighborIndexes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
-	TArray<FST_ConstructLocation> ConstructLocations;
+	//TArray<FST_ConstructLocation> ConstructLocations;
+	FST_ConstructLocation ConstructInfo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	AActor* HighlightDecal;

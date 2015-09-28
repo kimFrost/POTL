@@ -35,6 +35,9 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	frontier.Hexes.Add(Structure->Hex);
 	Frontiers.Add(frontier);
 
+	FName TreeId = Structure->TreeId;
+
+
 	//Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);
 
 	/*
@@ -76,16 +79,19 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
 			//Log("hex cube: " + Hex.HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
 
+			// Reset construct info if the storred tre id ain't the same.
+			if (Hex.ConstructInfo.TreeId != TreeId) 
+			{
+				Hex.ConstructInfo = FST_ConstructLocation{};
+			}
+			
 			// Make Construct Location
-			FST_ConstructLocation ConstructLocation;
-			ConstructLocation.Cube = Hex.HexCubeCoords;
-			//ConstructLocation.Hex = Hex;
-			////ConstructLocation.EmitTo.Add(Structure); // Don't know if it should be a hex or structure reference to, for it to be the best solution.
-			//ConstructLocation.EmitTo.Add(Hex);
+			Hex.ConstructInfo.Cube = Hex.HexCubeCoords;
+			//ConstructInfo.Hex = Hex;
+			////ConstructInfo.EmitTo.Add(Structure); // Don't know if it should be a hex or structure reference to, for it to be the best solution.
+			//ConstructInfo.EmitTo.Add(Hex);
 			//ConstructLocations.Add(ConstructLocation);
-			Hex.ConstructLocations.Add(ConstructLocation);
-			ConstructHexes.Add(Hex);
-
+			
 			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
 			{
@@ -93,6 +99,13 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 				if (Index != -1 && Hexes.IsValidIndex(Index) && !VisitedHexIndexes.Contains(Index))
 				{
 					FST_Hex& NeighborHex = Hexes[Index];
+
+					// Search for attachments/adjacent buildings and store them in hexes
+					if (NeighborHex.AttachedBuilding != NULL)
+					{
+						Hex.ConstructInfo.AttachTo.Add(NeighborHex.AttachedBuilding);
+					}
+
 					if (IsHexBuildable(NeighborHex))
 					{
 						Frontiers[k].Hexes.Add(NeighborHex); // Add Neighbor Hex to the next frontier
@@ -100,47 +113,10 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 					}
 				}
 			}
-		}
-
-	}
-
-	/*
-	Fridge fridge;
-	fridge.CubeCoords.Add(StartPosition);
-	Fridges.Add(fridge);
-
-	for (int32 k = 1; k <= Range; k++)
-	{
-		Fridge fridge;
-		Fridges.Add(fridge);
-
-		fridge = Fridges[k - 1];
-
-		int arrayLength = fridge.CubeCoords.Num();
-		for (int32 m = 0; m < arrayLength; m++)
-		{
-			FVector CubeCoord = fridge.CubeCoords[m];
-			for (int32 l = 0; l < CubeDirections.Num(); l++)
-			{
-				FVector CubeDirection = CubeDirections[l];
-				FVector CombinedVector = CubeCoord + CubeDirection;
-				bool ExistsInVisited = VisitedCubeCoords.Contains(CombinedVector);
-				bool ExistsInObstacles = Obstacles.Contains(CombinedVector);
-				if (ExistsInVisited || ExistsInObstacles)
-				{
-
-				}
-				else
-				{
-					VisitedCubeCoords.Add(CombinedVector);
-					Fridges[k].CubeCoords.Add(CombinedVector);
-				}
-			}
+			//Hex.ConstructLocations.Add(ConstructLocation);
+			ConstructHexes.Add(Hex);
 		}
 	}
-	return VisitedCubeCoords;
-	*/
-
 
 	Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, 4);
 
