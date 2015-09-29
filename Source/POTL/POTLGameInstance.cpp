@@ -66,13 +66,10 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	{
 		Frontier frontier;
 		Frontiers.Add(frontier);
-
 		frontier = Frontiers[k - 1];
-
 		for (int32 m = 0; m < frontier.Hexes.Num(); m++)
 		{
 			FST_Hex& Hex = frontier.Hexes[m];
-
 			//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
 			//Log("hex cube: " + Hex.HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
 
@@ -81,11 +78,10 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			{
 				Hex.ConstructInfo = FST_ConstructLocation{};
 			}
-			
 			// Make Construct Location
 			Hex.ConstructInfo.Cube = Hex.HexCubeCoords;
 			Hex.ConstructInfo.EmitTo.Add(Structure);  // Don't know if it should be a hex or structure reference to, for it to be the best solution.
-			//ConstructInfo.EmitTo.Add(Hex);
+			//Hex.ConstructInfo.EmitTo.Add(Hex);
 			
 			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
@@ -94,13 +90,11 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 				if (Index != -1 && Hexes.IsValidIndex(Index) && !VisitedHexIndexes.Contains(Index))
 				{
 					FST_Hex& NeighborHex = Hexes[Index];
-
 					// Search for attachments/adjacent buildings and store them in hexes
-					if (NeighborHex.AttachedBuilding != NULL)
+					if (NeighborHex.AttachedBuilding != nullptr)
 					{
 						Hex.ConstructInfo.AttachTo.Add(NeighborHex.AttachedBuilding);
 					}
-
 					if (IsHexBuildable(NeighborHex))
 					{
 						Frontiers[k].Hexes.Add(NeighborHex); // Add Neighbor Hex to the next frontier
@@ -132,7 +126,7 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 	FVector HexRotation = FVector(Hex.Rotation.Pitch, Hex.Rotation.Yaw, Hex.Rotation.Roll);
 	float maxFlatDiviation = HexRotation.GetAbsMax();
 
-	if (Hex.AttachedBuilding == NULL && maxFlatDiviation <= 15.f)
+	if (Hex.AttachedBuilding == nullptr && maxFlatDiviation <= 15.f)
 	{
 		return true;
 	}

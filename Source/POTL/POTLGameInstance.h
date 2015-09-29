@@ -51,7 +51,7 @@ struct FST_Point
 		Hex0Index = -1;
 		Hex1Index = -1;
 		Hex2Index = -1;
-	};
+	}
 };
 
 
@@ -169,22 +169,22 @@ struct FST_Hex
 	{
 		Location = { -1, -1, -1 };
 		Rotation = { -1, -1, -1 };
-		//Point0;
-		//Point1;
-		//Point2;
-		//Point3;
-		//Point4;
-		//Point5;
+		//Point0 = nullptr;
+		//Point1 = nullptr;
+		//Point2 = nullptr;
+		//Point3 = nullptr;
+		//Point4 = nullptr;
+		//Point5 = nullptr;
 		Remove = false;
-		AttachedBuilding = NULL;
-		AttachedActor = NULL;
-		AttachedMesh = NULL;
+		AttachedBuilding = nullptr;
+		AttachedActor = nullptr;
+		AttachedMesh = nullptr;
 		HexCubeCoords = {-1, -1, -1};
 		HexOffsetCoords = {-1, -1};
 		HexIndex = -1;
 		HexNeighborIndexes.Init(-1, 6);
 		HighlightDecal = nullptr;
-	};
+	}
 };
 
 
@@ -282,7 +282,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
-
-
 
 };
