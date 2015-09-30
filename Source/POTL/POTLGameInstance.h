@@ -257,6 +257,7 @@ public:
 	// Sets default values for this's properties
 	UPOTLGameInstance(const FObjectInitializer &ObjectInitializer);
 
+
 	// Map
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	float HexWidth;

@@ -14,7 +14,8 @@ class POTL_API APOTLStructure : public AActor
 public:	
 
 	// Sets default values for this actor's properties
-	APOTLStructure();
+	APOTLStructure(const FObjectInitializer &ObjectInitializer);
+	//AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -33,6 +34,10 @@ public:
 	FST_Hex Hex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	int32 HexIndex;
+	//FST_Hex& HSSSS;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FST_Struture StructureBaseData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -44,9 +49,6 @@ public:
 	
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
-
-	
-	
 
 	
 };

@@ -32,7 +32,8 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	VisitedHexIndexes.Add(Structure->Hex.HexIndex);
 
 	Frontier frontier;
-	frontier.Hexes.Add(Structure->Hex);
+	//frontier.Hexes.Add(Structure->Hex);
+	frontier.Hexes.Add(Hexes[Structure->Hex.HexIndex]);
 	Frontiers.Add(frontier);
 
 	FName TreeId = Structure->TreeId;
