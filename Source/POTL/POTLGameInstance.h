@@ -273,7 +273,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	TArray<FST_Hex> Hexes;
 	
-
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	TArray<FST_Hex> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
 

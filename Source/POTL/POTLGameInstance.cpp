@@ -62,6 +62,10 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	return ConstructLocations;
 	*/
 
+	//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
+	//Log("hex cube: " + Hex.HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
+
+	//for (int32 k = 1; k <= Structure->BroadcastRange; k++)
 	for (int32 k = 1; k <= 3; k++)
 	{
 		Frontier frontier;
@@ -70,9 +74,6 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 		for (int32 m = 0; m < frontier.Hexes.Num(); m++)
 		{
 			FST_Hex& Hex = frontier.Hexes[m];
-			//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
-			//Log("hex cube: " + Hex.HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
-
 			// Reset construct info if the storred tre id ain't the same.
 			if (Hex.ConstructInfo.TreeId != TreeId) 
 			{
@@ -87,18 +88,23 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
 			{
 				int32 Index = Hex.HexNeighborIndexes[i];
-				if (Index != -1 && Hexes.IsValidIndex(Index) && !VisitedHexIndexes.Contains(Index))
+				if (Index != -1 && Hexes.IsValidIndex(Index))
 				{
 					FST_Hex& NeighborHex = Hexes[Index];
-					// Search for attachments/adjacent buildings and store them in hexes
-					if (NeighborHex.AttachedBuilding != nullptr)
+					// Make sure that the neighbor structure isn't null && the structure isn't alredy stored in attachTo
+					if (NeighborHex.AttachedBuilding != nullptr && !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding))
 					{
 						Hex.ConstructInfo.AttachTo.Add(NeighborHex.AttachedBuilding);
 					}
-					if (IsHexBuildable(NeighborHex))
+					if (!VisitedHexIndexes.Contains(Index))
 					{
-						Frontiers[k].Hexes.Add(NeighborHex); // Add Neighbor Hex to the next frontier
-						VisitedHexIndexes.Add(Index); // Add index to visited indexes, so that neighbors don't overlap each other.
+						// Search for attachments/adjacent buildings and store them in hexes
+						//NeighborHex.ConstructInfo.AttachTo.Add(Structure);
+						if (IsHexBuildable(NeighborHex))
+						{
+							Frontiers[k].Hexes.Add(NeighborHex); // Add Neighbor Hex to the next frontier
+							VisitedHexIndexes.Add(Index); // Add index to visited indexes, so that neighbors don't overlap each other.
+						}
 					}
 				}
 			}
