@@ -21,8 +21,6 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	TArray<FST_Hex> ConstructHexes;
 
-	
-
 	TArray<int32> VisitedHexIndexes;
 	struct Frontier
 	{
@@ -35,16 +33,11 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	//VisitedHexIndexes.Add(Structure->Hex.HexIndex);
 	VisitedHexIndexes.Add(Structure->HexIndex);
 
-	
-	
-
-	
 	Frontier frontier;
 	//frontier.Hexes.Add(Structure->Hex);
 	frontier.Hexes.Add(Hexes[Structure->HexIndex]);
 	//frontier.HexIndexes.Add(Structure->HexIndex);
 	Frontiers.Add(frontier);
-
 
 	//FST_Hex& RealHex = Hexes[Structure->HexIndex];
 	//RealHex.DebugMe = true;
@@ -54,8 +47,6 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 
 	//Hexes[Structure->HexIndex].DebugMe = true; // the hex stored in the structure is now no longer up to date
 	//ConstructHexes.Add(Frontiers[0].Hexes[0]);
-
-	
 
 	//for (int32 k = 1; k <= Structure->BroadcastRange; k++)
 	for (int32 k = 1; k <= 3; k++)
@@ -76,6 +67,9 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			Hex.ConstructInfo.EmitTo.Add(Structure);  // Don't know if it should be a hex or structure reference to, for it to be the best solution.
 			//Hex.ConstructInfo.EmitTo.Add(Hex);
 			
+			// Store broadcasted resources?
+
+
 			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
 			{
@@ -83,8 +77,9 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 				if (Index != -1 && Hexes.IsValidIndex(Index))
 				{
 					FST_Hex& NeighborHex = Hexes[Index];
-					// Make sure that the neighbor structure isn't null && the structure isn't alredy stored in attachTo
-					if (NeighborHex.AttachedBuilding != nullptr && !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding))
+					if (NeighborHex.AttachedBuilding != nullptr // Only if pointer to structure isn't null
+						&& !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding) // Only if structure isn't already stored in attachments. Will cause structure to block for itself
+						&& NeighborHex.AttachedBuilding->TreeId == TreeId) //  Only structures in same Tree
 					{
 						Hex.ConstructInfo.AttachTo.Add(NeighborHex.AttachedBuilding);
 					}
@@ -106,9 +101,6 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 		}
 	}
 
-	
-	
-
 	Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, 4);
 
 	if (IncludeChildren) {
@@ -127,7 +119,6 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 	//FRotator HexRotation = Hex.Rotation;
 	FVector HexRotation = FVector(Hex.Rotation.Pitch, Hex.Rotation.Yaw, Hex.Rotation.Roll);
 	float maxFlatDiviation = HexRotation.GetAbsMax();
-
 	if (Hex.AttachedBuilding == nullptr && maxFlatDiviation <= 15.f)
 	{
 		return true;

@@ -154,8 +154,6 @@ struct FST_Hex
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	FST_ConstructLocation ConstructInfo;
 
-
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	AActor* HighlightDecal; 
 	// This caused a Pointer Access violation somewhere. Thus crash the game on the first gabage collection.
@@ -168,7 +166,6 @@ struct FST_Hex
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	bool DebugMe;
-
 
 	FST_Hex()
 	{

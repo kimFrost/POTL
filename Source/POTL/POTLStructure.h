@@ -30,12 +30,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FName TreeId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	FST_Hex Hex;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	//FST_Hex Hex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 HexIndex;
-	//FST_Hex& HSSSS;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FST_Struture StructureBaseData;
