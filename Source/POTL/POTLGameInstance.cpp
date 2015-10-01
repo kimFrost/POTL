@@ -48,8 +48,8 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	//Hexes[Structure->HexIndex].DebugMe = true; // the hex stored in the structure is now no longer up to date
 	//ConstructHexes.Add(Frontiers[0].Hexes[0]);
 
-	//for (int32 k = 1; k <= Structure->BroadcastRange; k++)
-	for (int32 k = 1; k <= 3; k++)
+	for (int32 k = 1; k <= Structure->BroadcastRange; k++)
+	//for (int32 k = 1; k <= 7; k++)
 	{
 		Frontier frontier;
 		Frontiers.Add(frontier);
