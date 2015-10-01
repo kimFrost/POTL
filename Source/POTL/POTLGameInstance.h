@@ -154,6 +154,8 @@ struct FST_Hex
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	FST_ConstructLocation ConstructInfo;
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	AActor* HighlightDecal; 
 	// This caused a Pointer Access violation somewhere. Thus crash the game on the first gabage collection.
@@ -163,6 +165,9 @@ struct FST_Hex
 	//Fatal error : [File:D : \BuildFarm\buildmachine_++depot + UE4 - Releases + 4.9\Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp] [Line:383]
 	// Invalid object in GC : 0x000007fe028f000a, ReferencingObject : GI_POTL_C / Engine / Transient.UnrealEdEngine_0 : GI_POTL_C_0, ReferencingObjectClass : BlueprintGeneratedClass / Game / Blueprint / GameInstance / GI_POTL.GI_POTL_C, Property Name : HighlightDecal, Offset : 384, TokenIndex : 16
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	//TArray<FST_ConstructLocation> ConstructLocations;
+	bool DebugMe;
 
 
 	FST_Hex()
@@ -184,6 +189,7 @@ struct FST_Hex
 		HexIndex = -1;
 		HexNeighborIndexes.Init(-1, 6);
 		HighlightDecal = nullptr;
+		DebugMe = false;
 	}
 };
 

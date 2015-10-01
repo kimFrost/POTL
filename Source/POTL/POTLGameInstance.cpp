@@ -21,50 +21,41 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	TArray<FST_Hex> ConstructHexes;
 
+	
+
 	TArray<int32> VisitedHexIndexes;
 	struct Frontier
 	{
 		TArray<FST_Hex> Hexes;
+		//TArray<int32> HexIndexes;
 	};
 	TArray<Frontier> Frontiers;
 
 	// Add Start Hex to VisitedHexes
-	VisitedHexIndexes.Add(Structure->Hex.HexIndex);
+	//VisitedHexIndexes.Add(Structure->Hex.HexIndex);
+	VisitedHexIndexes.Add(Structure->HexIndex);
 
+	
+	
+
+	
 	Frontier frontier;
 	//frontier.Hexes.Add(Structure->Hex);
-	frontier.Hexes.Add(Hexes[Structure->Hex.HexIndex]);
+	frontier.Hexes.Add(Hexes[Structure->HexIndex]);
+	//frontier.HexIndexes.Add(Structure->HexIndex);
 	Frontiers.Add(frontier);
+
+
+	//FST_Hex& RealHex = Hexes[Structure->HexIndex];
+	//RealHex.DebugMe = true;
+	//Structure->Hex.DebugMe = true;
 
 	FName TreeId = Structure->TreeId;
 
-	//Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);
+	//Hexes[Structure->HexIndex].DebugMe = true; // the hex stored in the structure is now no longer up to date
+	//ConstructHexes.Add(Frontiers[0].Hexes[0]);
 
-	/*
-	for (int32 testI = 0; testI < Structure->Hex.HexNeighborIndexes.Num(); testI++)
-	{
-		int32 Index = Structure->Hex.HexNeighborIndexes[testI];
-
-		//Log("testI: " + FString::FromInt(testI) + "  Index:" + FString::FromInt(Index) + FString::Printf(TEXT("Bool: %s"), (Index != -1 && Hexes.IsValidIndex(Index) ? TEXT("true") : TEXT("false"))), 15.0f, FColor::Green, -1);
-
-		if (Index != -1 && Hexes.IsValidIndex(Index))
-		{
-			FST_Hex& NeighborHex = Hexes[Index];
-
-			// Make Construct Location
-			FST_ConstructLocation ConstructLocation;
-			ConstructLocation.Cube = NeighborHex.HexCubeCoords;
-			ConstructLocation.Hex = NeighborHex;
-			ConstructLocation.EmitTo.Add(NeighborHex);
-			ConstructLocations.Add(ConstructLocation);
-		}
-	}
-	Log("ConstructLocations.Num(): " + FString::FromInt(ConstructLocations.Num()), 15.0f, FColor::Green, 4);
-	return ConstructLocations;
-	*/
-
-	//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
-	//Log("hex cube: " + Hex.HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
+	
 
 	//for (int32 k = 1; k <= Structure->BroadcastRange; k++)
 	for (int32 k = 1; k <= 3; k++)
@@ -110,9 +101,13 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 				}
 			}
 			//Hex.ConstructLocations.Add(ConstructLocation);
+			//Hex.DebugMe = true;
 			ConstructHexes.Add(Hex);
 		}
 	}
+
+	
+	
 
 	Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, 4);
 
@@ -146,3 +141,36 @@ void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor Debu
 {
 	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);
 }
+
+
+
+
+
+//Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);
+
+//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
+//Log("hex cube: " + Hex.HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
+
+
+/*
+for (int32 testI = 0; testI < Structure->Hex.HexNeighborIndexes.Num(); testI++)
+{
+int32 Index = Structure->Hex.HexNeighborIndexes[testI];
+
+//Log("testI: " + FString::FromInt(testI) + "  Index:" + FString::FromInt(Index) + FString::Printf(TEXT("Bool: %s"), (Index != -1 && Hexes.IsValidIndex(Index) ? TEXT("true") : TEXT("false"))), 15.0f, FColor::Green, -1);
+
+if (Index != -1 && Hexes.IsValidIndex(Index))
+{
+FST_Hex& NeighborHex = Hexes[Index];
+
+// Make Construct Location
+FST_ConstructLocation ConstructLocation;
+ConstructLocation.Cube = NeighborHex.HexCubeCoords;
+ConstructLocation.Hex = NeighborHex;
+ConstructLocation.EmitTo.Add(NeighborHex);
+ConstructLocations.Add(ConstructLocation);
+}
+}
+Log("ConstructLocations.Num(): " + FString::FromInt(ConstructLocations.Num()), 15.0f, FColor::Green, 4);
+return ConstructLocations;
+*/
