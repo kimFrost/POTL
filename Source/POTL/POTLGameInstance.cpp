@@ -14,19 +14,16 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 }
 
 
+/******************** GetConstructLocations *************************/
 TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
 {
-	Log("GetConstructLocations", 15.0f, FColor::Yellow, 2);
-	//TArray<FST_ConstructLocation> ConstructLocations;
+	//Log("GetConstructLocations", 15.0f, FColor::Yellow, 2);
 	TArray<FST_Hex> ConstructHexes;
 	TArray<int32> ConstructHexIndexes;
-	
-	// Get self hex indexes
-	ConstructHexIndexes = GetConstructLocationIndexes(Structure, IncludeChildren);
-
+	ConstructHexIndexes = GetConstructLocationIndexes(Structure, IncludeChildren); // Get self hex indexes
 	// Get children hex indexes
 	if (IncludeChildren) {
-		Log("Structure->BroadcastTo.Num(): " + FString::FromInt(Structure->BroadcastTo.Num()), 15.0f, FColor::Yellow, 5);
+		//Log("Structure->BroadcastTo.Num(): " + FString::FromInt(Structure->BroadcastTo.Num()), 15.0f, FColor::Yellow, 5);
 		for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
 		{
 			TArray<int32> ChildrenConstructLocationIndexes = GetConstructLocationIndexes(Structure->BroadcastTo[i], IncludeChildren);
@@ -36,31 +33,28 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			}
 		}
 	}
-
-	
 	// Convert indexes into real hexes and send a array of copies of them
 	for (int32 h = 0; h < ConstructHexIndexes.Num(); h++)
 	{
 		ConstructHexes.Add(Hexes[ConstructHexIndexes[h]]);
 	}
-
 	Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, 4);
 	return ConstructHexes;
 }
 
+
+/******************** GetConstructLocationIndexes *************************/
 TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Structure, bool IncludeChildren)
 {
 	TArray<int32> ConstructHexIndexes;
 	TArray<int32> VisitedHexIndexes;
 	struct Frontier
 	{
-		//TArray<FST_Hex> Hexes;
 		TArray<int32> HexIndexes;
 	};
 	TArray<Frontier> Frontiers;
 
-	// Add Start Hex to VisitedHexes
-	VisitedHexIndexes.Add(Structure->HexIndex);
+	VisitedHexIndexes.Add(Structure->HexIndex); // Add Start Hex to VisitedHexes
 
 	Frontier frontier;
 	frontier.HexIndexes.Add(Structure->HexIndex);
@@ -80,14 +74,12 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 	}
 
 	for (int32 k = 1; k <= Structure->BroadcastRange + 1; k++)
-	//for (int32 k = 1; k <= 7; k++)
 	{
 		Frontier frontier;
 		Frontiers.Add(frontier);
 		frontier = Frontiers[k - 1];
 		for (int32 m = 0; m < frontier.HexIndexes.Num(); m++)
 		{
-			//FST_Hex& Hex = frontier.Hexes[m];
 			FST_Hex& Hex = Hexes[frontier.HexIndexes[m]];
 			// Reset construct info if the storred tre id ain't the same.
 			if (Hex.ConstructInfo.TreeId != TreeId)
@@ -118,28 +110,25 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 					if (!VisitedHexIndexes.Contains(Index))
 					{
 						// Search for attachments/adjacent buildings and store them in hexes
-						//NeighborHex.ConstructInfo.AttachTo.Add(Structure);
 						if (IsHexBuildable(NeighborHex))
 						{
-							//Frontiers[k].Hexes.Add(NeighborHex); // Add Neighbor Hex to the next frontier
 							Frontiers[k].HexIndexes.Add(Index); // Add Neighbor Hex to the next frontier
 							VisitedHexIndexes.Add(Index); // Add index to visited indexes, so that neighbors don't overlap each other.
 						}
 					}
 				}
 			}
-			//Hex.ConstructLocations.Add(ConstructLocation);
 			Hex.DebugMe = true;
-			//ConstructHexes.Add(Hex);
 			//ConstructHexIndexes.Add(Hex.HexIndex);
 			ConstructHexIndexes.AddUnique(Hex.HexIndex);
 		}
 	}
-	
-	return ConstructHexIndexes;
+	Structure->BroadcastGridHexIndexes = ConstructHexIndexes; // Store indexes in structure. It cludes all hex broadcast grid index, including childrens hex indexes
+	return ConstructHexIndexes; // Return
 }
 
 
+/******************** IsHexBuildable *************************/
 bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 {
 	//FRotator HexRotation = Hex.Rotation;
@@ -154,6 +143,8 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 	}
 }
 
+
+/******************** Log *************************/
 void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
 {
 	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);

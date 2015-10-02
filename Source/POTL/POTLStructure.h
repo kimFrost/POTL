@@ -42,6 +42,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BroadcastRange;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<int32> BroadcastGridHexIndexes;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
