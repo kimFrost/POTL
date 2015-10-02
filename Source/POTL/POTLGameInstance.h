@@ -281,6 +281,9 @@ public:
 	TArray<FST_Hex> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
+	TArray<int32> GetConstructLocationIndexes(APOTLStructure* Structure, bool IncludeChildren);
+
+	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexBuildable(FST_Hex& Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")
