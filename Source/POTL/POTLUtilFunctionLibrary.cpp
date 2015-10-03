@@ -3,7 +3,6 @@
 #include "POTL.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include <string>
-#include "POTLGameInstance.h"
 #include "POTLUtilFunctionLibrary.h"
 
 
@@ -11,11 +10,11 @@
 // Sets default values
 UPOTLUtilFunctionLibrary::UPOTLUtilFunctionLibrary(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	
+
 }
 
 
-
+/*
 FST_Hex UPOTLUtilFunctionLibrary::CubeToHex(FVector CubeCoord, const TArray<FST_Hex>& Hexes, int32 GridXCount)
 {
 	FST_Hex Hex;
@@ -30,7 +29,9 @@ FST_Hex UPOTLUtilFunctionLibrary::CubeToHex(FVector CubeCoord, const TArray<FST_
 	
 	return Hex;
 }
+*/
 
+/*
 TArray<FST_Hex> UPOTLUtilFunctionLibrary::CubesToHexes(TArray<FVector> CubeCoords, const TArray<FST_Hex>& Hexes, int32 GridXCount)
 {
 	TArray<FST_Hex> ConvertedHexes;
@@ -43,6 +44,7 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::CubesToHexes(TArray<FVector> CubeCoord
 	}
 	return ConvertedHexes;
 }
+*/
 
 TArray<FVector> UPOTLUtilFunctionLibrary::RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube)
 {
@@ -133,12 +135,13 @@ FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidt
 	//float Q = FMath::FloorToFloat((FMath::FloorToFloat(2 * Location.X + 1) + Temp) / 3);
 	//float R = FMath::FloorToFloat((Temp + FMath::FloorToFloat(-Location.X + FMath::Sqrt(3) * Location.Y + 1)) / 3);
 
-	Log("Q: " + FString::FromInt(Q) + ", R: " + FString::FromInt(R), 15.0f, FColor::Yellow, 1);
+	LogMsg("Q: " + FString::FromInt(Q) + ", R: " + FString::FromInt(R), 15.0f, FColor::Yellow, 1);
 	
 	return RoundCube(AxialToCube(Q, R));
 	//return RoundCube(ConvertOffsetToCube(FVector2D{ Q, R }));
 }
 
+/*
 FST_Hex UPOTLUtilFunctionLibrary::LocationToHex(int32 GridXCount, float HexWidth, float HexHeight, FVector Location, const TArray<FST_Hex>& Hexes)
 {
 	float Size = HexHeight / 2;
@@ -174,8 +177,7 @@ FST_Hex UPOTLUtilFunctionLibrary::LocationToHex(int32 GridXCount, float HexWidth
 	GetHex(Hexes, HexIndex, Found, Hex);
 	return Hex;
 }
-
-
+*/
 
 
 
@@ -198,18 +200,20 @@ int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCo
 }
 
 
-void UPOTLUtilFunctionLibrary::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
+void UPOTLUtilFunctionLibrary::LogMsg(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
 {
 	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);
 }
 
-
+/*
 bool UPOTLUtilFunctionLibrary::PointIndexValid(const TArray<FST_Point>& Points, int32 Index)
 {
 	bool valid = (Index < Points.Num()) && (Index >= 0);
 	return valid;
 }
+*/
 
+/*
 void UPOTLUtilFunctionLibrary::GetPoint(const TArray<FST_Point>& Points, const int32 Index, bool &Found, FST_Point &Point)
 {;
 	Found = PointIndexValid(Points, Index);
@@ -217,13 +221,17 @@ void UPOTLUtilFunctionLibrary::GetPoint(const TArray<FST_Point>& Points, const i
 		Point = Points[Index];
 	}
 }
+*/
 
+/*
 bool UPOTLUtilFunctionLibrary::HexIndexValid(const TArray<FST_Hex>& Hexes, int32 Index)
 {
 	bool valid = (Index < Hexes.Num()) && (Index >= 0);
 	return valid;
 }
+*/
 
+/*
 void UPOTLUtilFunctionLibrary::GetHex(const TArray<FST_Hex>& Hexes, const int32 Index, bool &Found, FST_Hex &Hex)
 {
 	Found = HexIndexValid(Hexes, Index);
@@ -231,7 +239,7 @@ void UPOTLUtilFunctionLibrary::GetHex(const TArray<FST_Hex>& Hexes, const int32 
 		Hex = Hexes[Index];
 	}
 }
-
+*/
 
 
 
@@ -274,282 +282,6 @@ FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
 	CubeCoords.Y = (Q * -1) - R;
 	CubeCoords.Z = R;
 	return CubeCoords;
-}
-
-
-/** Map - Creation */
-
-TArray<FST_Point> UPOTLUtilFunctionLibrary::TraceLandscape(AActor* Landscape, int32 GridXCount, int32 GridYCount, float HexWidth, ECollisionChannel CollisionChannel)
-{
-	//UGameplayStatics::
-	TArray<FST_Point> Points;
-	
-	if (Landscape != NULL)
-	{
-		FVector ActorLocation = Landscape->GetActorLocation();
-		// Get player controller at index 0
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
-		if (PlayerController)
-		{
-			//UWorld *World = Landscape->GetWorld();
-			//const FName TraceTag("MyTraceTag");
-			//World->DebugDrawTraceTag = TraceTag;
-
-			//Landscape->GetWorld()->DebugDrawTraceTag = TraceTag;
-
-			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
-			RV_TraceParams.bTraceComplex = true;
-			RV_TraceParams.bTraceAsyncScene = true;
-			RV_TraceParams.bReturnPhysicalMaterial = false;
-			//RV_TraceParams.TraceTag = TraceTag;
-
-			//ECollisionChannel CollisionChannel = ECC_Pawn;
-
-			//Re-initialize hit info
-			FHitResult RV_Hit(ForceInit);
-
-			for (int32 Row = 0; Row <= GridYCount; Row++)
-			{
-				for (int32 Column = 0; Column <= GridXCount; Column++)
-				{
-					float X = Column * (HexWidth / 2);
-					float Y = (Column + Row + 1) % 2 * 74 + (Row * 255) - (34 * Row); // FindMe
-					FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
-					FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
-
-					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
-					//if (RV_Hit.GetActor() != NULL)
-					if (RV_Hit.bBlockingHit)
-					{
-						FST_Point Point;
-						Point.Location = RV_Hit.Location;
-						Point.Row = Row;
-						Point.Column = Column;
-						Point.Exits = true;
-						Points.Add(Point);
-					}
-
-					//DrawDebugLine(Landscape->GetWorld(), LineTraceFrom, LineTraceTo, FColor(255, 0, 0), true, -1, 0, 15.0f);
-
-				}
-			}
-		}
-	}
-	return Points;
-}
-
-TArray<FST_Hex> UPOTLUtilFunctionLibrary::CreateHexes(AActor* Landscape, const TArray<FST_Point>& Points, int32 GridXCount, float HexWidth, ECollisionChannel CollisionChannel)
-{
-	TArray<FST_Hex> Hexes;
-	
-	if (Landscape != NULL) {
-		// Get player controller at index 0
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
-
-		if (PlayerController)
-		{
-			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
-			RV_TraceParams.bTraceComplex = true;
-			RV_TraceParams.bTraceAsyncScene = true;
-			RV_TraceParams.bReturnPhysicalMaterial = false;
-
-			//const FName TraceTag("Persistent");
-			//Landscape->GetWorld()->DebugDrawTraceTag = TraceTag;
-			//RV_TraceParams.TraceTag = TraceTag;
-
-			//ECollisionChannel CollisionChannel = ECC_Pawn;
-			// LandscapesObjectChannel
-
-			//Re-initialize hit info
-			FHitResult RV_Hit(ForceInit);
-
-			float X = HexWidth / 2;
-			float Y = HexWidth / FMath::Sqrt(3) * 2 / 4;
-
-			for (int32 i = 0; i < Points.Num(); i++)
-			{
-				FST_Point Point = Points[i];
-				FVector LineTraceFrom = Point.Location + FVector{ X, Y, 3000 };
-				FVector LineTraceTo = Point.Location + FVector{ X, Y, -3000 };
-
-				int32 Creator = ((Point.Row + 1) % 2) + ((Point.Column + 2) % 2);
-				if (Creator == 1)
-				{
-					Point.IsCreator = true;
-					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
-					//if (RV_Hit.GetActor() != NULL)
-					if (RV_Hit.bBlockingHit)
-					{
-						FST_Hex Hex;
-						Hex.Location = RV_Hit.Location;
-						Hex.HexOffsetCoords = FVector2D{ (float)FMath::FloorToInt((float)Point.Column / 2), (float)FMath::FloorToInt((float)Point.Row) };
-						Hex.HexCubeCoords = ConvertOffsetToCube(Hex.HexOffsetCoords);
-
-						//Log(FString::FromInt(Point.Column) + ", " + FString::FromInt(Point.Row), 15.0f, FColor::Yellow, -1);
-
-						// Points Ref
-						int PointIndex;
-						Hex.Point0 = Point;
-						PointIndex = GetGridIndex(GridXCount, Point.Column + 1, Point.Row, true);
-						if (PointIndexValid(Points, PointIndex))
-						{
-							Hex.Point1 = Points[PointIndex];
-						}
-						PointIndex = GetGridIndex(GridXCount, Point.Column + 2, Point.Row, true);
-						if (PointIndexValid(Points, PointIndex))
-						{
-							Hex.Point2 = Points[PointIndex];
-						}
-						PointIndex = GetGridIndex(GridXCount, Point.Column + 2, Point.Row + 1, true);
-						if (PointIndexValid(Points, PointIndex))
-						{
-							Hex.Point3 = Points[PointIndex];
-						}
-						PointIndex = GetGridIndex(GridXCount, Point.Column + 1, Point.Row + 1, true);
-						if (PointIndexValid(Points, PointIndex))
-						{
-							Hex.Point4 = Points[PointIndex];
-						}
-						PointIndex = GetGridIndex(GridXCount, Point.Column, Point.Row + 1, true);
-						if (PointIndexValid(Points, PointIndex))
-						{
-							Hex.Point5 = Points[PointIndex];
-						}
-
-						/*
-						Hex.Point1 = Points[GetGridIndex(GridXCount, Point.Column + 1, Point.Row, true)];
-						Hex.Point2 = Points[GetGridIndex(GridXCount, Point.Column + 2, Point.Row, true)];
-						Hex.Point3 = Points[GetGridIndex(GridXCount, Point.Column + 2, Point.Row + 1, true)];
-						Hex.Point4 = Points[GetGridIndex(GridXCount, Point.Column + 1, Point.Row + 1, true)];
-						Hex.Point5 = Points[GetGridIndex(GridXCount, Point.Column, Point.Row + 1, true)];
-						*/
-
-						//DrawDebugLine(Landscape->GetWorld(), Point.Location + FVector{ 0, 0, -2000 }, Point.Location + FVector{ 0, 0, 2000 }, FColor(255, 0, 0), true, -1, 0, 15.0f);
-
-						Hexes.Add(Hex);
-					}
-				}
-			}
-		}
-	}
-	return Hexes;
-}
-
-TArray<FST_Hex> UPOTLUtilFunctionLibrary::CleanHexes(TArray<FST_Hex> Hexes)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CleanHexes");
-	TArray<FST_Hex> ValidHexes;
-	int32 Count = 0;
-	for (int32 i = 0; i < Hexes.Num(); i++)
-	{
-		FST_Hex Hex = Hexes[i];
-		bool Remove = (!Hex.Point0.Exits || !Hex.Point1.Exits || !Hex.Point2.Exits || !Hex.Point3.Exits || !Hex.Point4.Exits || !Hex.Point5.Exits);
-		if (Remove)
-		{
-			Count++;
-			Hex.Remove = true;
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Remove Hex");
-		}
-		else 
-		{
-			FString Msg = "Add Hex : ";
-			Msg += Hex.Remove ? "true" : "false";
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Msg);
-			ValidHexes.Add(Hex);
-		}
-	}
-	FString CountMsg = FString::FromInt(Count);
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, CountMsg);
-	return ValidHexes;
-}
-
-TArray<FST_Hex> UPOTLUtilFunctionLibrary::EnrichHexes(TArray<FST_Hex> Hexes, int32 GridXCount)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "EnrichHexes");
-	TArray<FST_Hex> EnrichedHexes;
-	int32 Count = 0;
-	for (int32 i = 0; i < Hexes.Num(); i++)
-	{
-		FST_Hex Hex = Hexes[i];
-		// Set HexIndex
-		Hex.HexIndex = i;
-
-		TArray<FVector> CubeDirections;
-		CubeDirections.Add({ 0, 1, -1 });
-		CubeDirections.Add({ 1, 0, -1 });
-		CubeDirections.Add({ 1, -1, 0 });
-		CubeDirections.Add({ 0, -1, 1 });
-		CubeDirections.Add({ -1, 0, 1 });
-		CubeDirections.Add({ -1, 1, 0 });
-
-		FVector CubeCoord = Hex.HexCubeCoords;
-		for (int32 ii = 0; ii < CubeDirections.Num(); ii++)
-		{
-			FVector CubeDirection = CubeDirections[ii];
-			FVector CombinedVector = CubeCoord + CubeDirection;
-			FVector2D OffsetCoords = ConvertCubeToOffset(CombinedVector);
-			int32 HexDirectionIndex = GetHexIndex(OffsetCoords, GridXCount);
-			if (Hexes.IsValidIndex(HexDirectionIndex))
-			{
-				Hex.HexNeighborIndexes[ii] = HexDirectionIndex;
-			}
-		}
-
-		EnrichedHexes.Add(Hex);
-	}
-	return EnrichedHexes;
-}
-
-TArray<FST_Hex> UPOTLUtilFunctionLibrary::CalcHexesRot(TArray<FST_Hex> Hexes, float HexWidth)
-{
-	TArray<FST_Hex> CalcedHexes;
-	float HexRealHeight = HexWidth / FMath::Sqrt(3) * 2;
-	for (int32 i = 0; i < Hexes.Num(); i++)
-	{
-		FST_Hex Hex = Hexes[i];
-		FRotator Rotation;
-
-		float Angle;
-		float xDiff;
-		float yDiff;
-
-		/*
-		FVector FirstPoint = (Hex.Point2.Location - Hex.Location).GetSafeNormal();
-		FVector SecondPoint = (Hex.Point0.Location - Hex.Location).GetSafeNormal();
-
-		// float AimAtAngle = ((acosf(FVector::DotProduct(PlayerDirection, MouseDirection))) * (180 / 3.1415926));
-		// float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));
-
-		float DotProduct = FVector::DotProduct(FirstPoint, SecondPoint);
-		float Radians = acosf(DotProduct);
-		Angle = FMath::RadiansToDegrees(Radians);
-		*/
-
-		xDiff = Hex.Point2.Location.X - Hex.Point0.Location.X;
-		yDiff = Hex.Point2.Location.Z - Hex.Point0.Location.Z;
-		Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592);
-		Rotation.Pitch = Angle;
-
-		//Rotation.Pitch = (HexWidth / (Hex.Point2.Location.Z - Hex.Point0.Location.Z)) / 100 * 45 / 100;
-		//Rotation.Pitch = 45.0f;
-
-		Rotation.Yaw = 0.0f;
-
-		xDiff = Hex.Point4.Location.Y - Hex.Point1.Location.Y;
-		yDiff = Hex.Point4.Location.Z - Hex.Point1.Location.Z;
-		Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592) * -1;
-		Rotation.Roll = Angle;
-
-		//Rotation.Roll = (HexRealHeight / (Hex.Point1.Location.Z - Hex.Point4.Location.Z)) / 100 * 45 / 100;
-		//Rotation.Roll = 0.0f;
-		Hex.Rotation = Rotation;
-
-		CalcedHexes.Add(Hex);
-		//Log(FString::SanitizeFloat(Rotation.Pitch), 15.0f, FColor::Yellow, -1);
-	}
-	return CalcedHexes;
-	//return Hexes;
 }
 
 

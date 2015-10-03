@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "POTLUtilFunctionLibrary.h"
 #include "POTLGameInstance.generated.h"
 
 
@@ -261,6 +262,8 @@ public:
 	UPOTLGameInstance(const FObjectInitializer &ObjectInitializer);
 
 
+	/*********** VARIABLES **************/
+
 	// Map
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	float HexWidth;
@@ -271,12 +274,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Calculated")
 	int32 GridXCount;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Calculated")
+	int32 GridYCount;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	TArray<FST_Point> Points;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	TArray<FST_Hex> Hexes;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	AActor* Landscape;
+
+	/*********** FUNCTIONS **************/
+
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	TArray<FST_Hex> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
 
@@ -285,6 +296,25 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexBuildable(FST_Hex& Hex);
+
+	/** Map - Creation */
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	void TraceLandscape(ECollisionChannel CollisionChannel);
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	void CreateHexes(ECollisionChannel CollisionChannel);
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	void CleanHexes();
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	void EnrichHexes();
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	void CalcHexesRot();
+
+	/** Debug - Log */
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);

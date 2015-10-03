@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
+#include "POTLUtilFunctionLibrary.h"
 #include "POTLStructure.h"
 #include "POTLGameInstance.h"
 
@@ -9,8 +10,11 @@
 // Sets default values
 UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer) : Super(ObjectInitializer)
 {
-
-
+	HexWidth = 255.0f;
+	HexHeight = HexWidth / FMath::Sqrt(3) * 2.f;
+	Landscape = nullptr;
+	GridXCount = 200; // Temp. Needs to be calc in point creation.
+	GridYCount = 200; // Temp. Needs to be calc in point creation.
 }
 
 
@@ -118,7 +122,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 					}
 				}
 			}
-			Hex.DebugMe = true;
+			//Hex.DebugMe = true;
 			//ConstructHexIndexes.Add(Hex.HexIndex);
 			ConstructHexIndexes.AddUnique(Hex.HexIndex);
 		}
@@ -143,6 +147,245 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 	}
 }
 
+
+/***************************************************************************************************** /
+/**************************************** MAP - CREATION ********************************************* /
+/***************************************************************************************************** /
+
+/******************** TraceLandscape *************************/
+void UPOTLGameInstance::TraceLandscape(ECollisionChannel CollisionChannel)
+{
+	//UGameplayStatics::
+
+	if (Landscape)
+	{
+		FVector ActorLocation = Landscape->GetActorLocation();
+		// Get player controller at index 0
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+		if (PlayerController)
+		{
+			//UWorld *World = Landscape->GetWorld();
+			//const FName TraceTag("MyTraceTag");
+			//World->DebugDrawTraceTag = TraceTag;
+
+			//Landscape->GetWorld()->DebugDrawTraceTag = TraceTag;
+
+			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+			RV_TraceParams.bTraceComplex = true;
+			RV_TraceParams.bTraceAsyncScene = true;
+			RV_TraceParams.bReturnPhysicalMaterial = false;
+			//RV_TraceParams.TraceTag = TraceTag;
+
+			//ECollisionChannel CollisionChannel = ECC_Pawn;
+
+			//Re-initialize hit info
+			FHitResult RV_Hit(ForceInit);
+
+			for (int32 Row = 0; Row <= GridYCount; Row++)
+			{
+				for (int32 Column = 0; Column <= GridXCount; Column++)
+				{
+					float X = Column * (HexWidth / 2);
+					float Y = (Column + Row + 1) % 2 * 74 + (Row * 255) - (34 * Row); 
+					FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
+					FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
+
+					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					//if (RV_Hit.GetActor() != NULL)
+					if (RV_Hit.bBlockingHit)
+					{
+						FST_Point Point;
+						Point.Location = RV_Hit.Location;
+						Point.Row = Row;
+						Point.Column = Column;
+						Point.Exits = true;
+						Points.Add(Point);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/******************** CreateHexes *************************/
+void UPOTLGameInstance::CreateHexes(ECollisionChannel CollisionChannel)
+{
+	if (Landscape != NULL) {
+		// Get player controller at index 0
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+
+		if (PlayerController)
+		{
+			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+			RV_TraceParams.bTraceComplex = true;
+			RV_TraceParams.bTraceAsyncScene = true;
+			RV_TraceParams.bReturnPhysicalMaterial = false;
+
+			// Reset hexes
+			Hexes.Empty();
+
+			//Re-initialize hit info
+			FHitResult RV_Hit(ForceInit);
+
+			float X = HexWidth / 2;
+			float Y = HexWidth / FMath::Sqrt(3) * 2 / 4;
+
+			for (int32 i = 0; i < Points.Num(); i++)
+			{
+				FST_Point& Point = Points[i];
+				FVector LineTraceFrom = Point.Location + FVector{ X, Y, 3000 };
+				FVector LineTraceTo = Point.Location + FVector{ X, Y, -3000 };
+
+				int32 Creator = ((Point.Row + 1) % 2) + ((Point.Column + 2) % 2);
+				if (Creator == 1)
+				{
+					Point.IsCreator = true;
+					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					if (RV_Hit.bBlockingHit)
+					{
+						FST_Hex Hex;
+						Hex.Location = RV_Hit.Location;
+						Hex.HexOffsetCoords = FVector2D{ (float)FMath::FloorToInt((float)Point.Column / 2), (float)FMath::FloorToInt((float)Point.Row) };
+						Hex.HexCubeCoords = UPOTLUtilFunctionLibrary::ConvertOffsetToCube(Hex.HexOffsetCoords);
+
+						// Points Ref
+						int32 PointIndex = -1;
+						Hex.Point0 = Point;
+						
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column + 1, Point.Row, true);
+						
+						if (Points.IsValidIndex(PointIndex))
+						{
+							Hex.Point1 = Points[PointIndex];
+						}
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column + 2, Point.Row, true);
+						if (Points.IsValidIndex(PointIndex))
+						{
+							Hex.Point2 = Points[PointIndex];
+						}
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column + 2, Point.Row + 1, true);
+						if (Points.IsValidIndex(PointIndex))
+						{
+							Hex.Point3 = Points[PointIndex];
+						}
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column + 1, Point.Row + 1, true);
+						if (Points.IsValidIndex(PointIndex))
+						{
+							Hex.Point4 = Points[PointIndex];
+						}
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column, Point.Row + 1, true);
+						if (Points.IsValidIndex(PointIndex))
+						{
+							Hex.Point5 = Points[PointIndex];
+						}
+						Hexes.Add(Hex);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/******************** CleanHexes *************************/
+void UPOTLGameInstance::CleanHexes()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CleanHexes");
+	TArray<FST_Hex> ValidHexes;
+	int32 Count = 0;
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hexes.Num() - before clean" + FString::FromInt(Hexes.Num()));
+	for (int32 i = 0; i < Hexes.Num(); i++)
+	{
+		FST_Hex Hex = Hexes[i];
+		bool Remove = (!Hex.Point0.Exits || !Hex.Point1.Exits || !Hex.Point2.Exits || !Hex.Point3.Exits || !Hex.Point4.Exits || !Hex.Point5.Exits);
+		if (Remove)
+		{
+			Count++;
+			Hex.Remove = true;
+		}
+		else
+		{
+			FString Msg = "Add Hex : ";
+			Msg += Hex.Remove ? "true" : "false";
+			ValidHexes.Add(Hex);
+		}
+	}
+	FString CountMsg = FString::FromInt(Count);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, CountMsg);
+
+	Hexes = ValidHexes;
+}
+
+
+/******************** EnrichHexes *************************/
+void UPOTLGameInstance::EnrichHexes()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "EnrichHexes");
+	int32 Count = 0;
+	for (int32 i = 0; i < Hexes.Num(); i++)
+	{
+		FST_Hex& Hex = Hexes[i];
+		Hex.HexIndex = i; // Set HexIndex
+
+		TArray<FVector> CubeDirections;
+		CubeDirections.Add({ 0, 1, -1 });
+		CubeDirections.Add({ 1, 0, -1 });
+		CubeDirections.Add({ 1, -1, 0 });
+		CubeDirections.Add({ 0, -1, 1 });
+		CubeDirections.Add({ -1, 0, 1 });
+		CubeDirections.Add({ -1, 1, 0 });
+
+		FVector CubeCoord = Hex.HexCubeCoords;
+		for (int32 ii = 0; ii < CubeDirections.Num(); ii++)
+		{
+			FVector CubeDirection = CubeDirections[ii];
+			FVector CombinedVector = CubeCoord + CubeDirection;
+			
+			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CombinedVector);
+			int32 HexDirectionIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+			if (Hexes.IsValidIndex(HexDirectionIndex))
+			{
+				Hex.HexNeighborIndexes[ii] = HexDirectionIndex;
+			}
+		}
+	}
+}
+
+
+/******************** CalcHexesRot *************************/
+void UPOTLGameInstance::CalcHexesRot()
+{
+	float HexRealHeight = HexWidth / FMath::Sqrt(3) * 2;
+	for (int32 i = 0; i < Hexes.Num(); i++)
+	{
+		FST_Hex& Hex = Hexes[i];
+		FRotator Rotation;
+
+		float Angle;
+		float xDiff;
+		float yDiff;
+
+		xDiff = Hex.Point2.Location.X - Hex.Point0.Location.X;
+		yDiff = Hex.Point2.Location.Z - Hex.Point0.Location.Z;
+		Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592);
+		Rotation.Pitch = Angle;
+
+		Rotation.Yaw = 0.0f;
+
+		xDiff = Hex.Point4.Location.Y - Hex.Point1.Location.Y;
+		yDiff = Hex.Point4.Location.Z - Hex.Point1.Location.Z;
+		Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592) * -1;
+		Rotation.Roll = Angle;
+
+		Hex.Rotation = Rotation;
+	}
+}
+
+
+/***************************************************************************************************** /
+/**************************************** DEBUG - LOG ************************************************ /
+/***************************************************************************************************** /
 
 /******************** Log *************************/
 void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
