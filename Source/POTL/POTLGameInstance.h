@@ -314,6 +314,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void CalcHexesRot();
 
+	/** Util - Hex */
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	FST_Hex MouseToHex(ECollisionChannel CollisionChannel);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	FST_Hex LocationToHex(FVector Location);
+
 	/** Debug - Log */
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")

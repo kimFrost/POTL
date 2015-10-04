@@ -148,9 +148,9 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 }
 
 
-/***************************************************************************************************** /
-/**************************************** MAP - CREATION ********************************************* /
-/***************************************************************************************************** /
+/*****************************************************************************************************/
+/**************************************** MAP - CREATION *********************************************/
+/*****************************************************************************************************/
 
 /******************** TraceLandscape *************************/
 void UPOTLGameInstance::TraceLandscape(ECollisionChannel CollisionChannel)
@@ -382,10 +382,68 @@ void UPOTLGameInstance::CalcHexesRot()
 	}
 }
 
+/*****************************************************************************************************/
+/**************************************** UTIL - Hex *************************************************/
+/*****************************************************************************************************/
 
-/***************************************************************************************************** /
-/**************************************** DEBUG - LOG ************************************************ /
-/***************************************************************************************************** /
+/******************** MouseToHex *************************/
+FST_Hex UPOTLGameInstance::MouseToHex(ECollisionChannel CollisionChannel)
+{
+	FST_Hex Hex = FST_Hex{};
+	if (Landscape)
+	{
+		FVector LandscapeLocation = Landscape->GetActorLocation();
+		// Get player controller at index 0
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+		if (PlayerController)
+		{
+			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+			RV_TraceParams.bTraceComplex = true;
+			RV_TraceParams.bTraceAsyncScene = true;
+			RV_TraceParams.bReturnPhysicalMaterial = false;
+
+			//Re-initialize hit info
+			FHitResult RV_Hit(ForceInit);
+
+			FVector WorldLocation;
+			FVector WorldDirection;
+			PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+
+			//FRotator currentCharacterRotation = this->GetActorRotation();
+			//FRotator targetRotation = mouseDirection.Rotation();
+
+			//WorldLocation = WorldLocation + LandscapeLocation;
+
+			FVector LineTraceFrom = WorldLocation + FVector{ 1.f, 1.f, 0.f };
+			FVector LineTraceTo = WorldDirection * 50000 + WorldLocation + FVector{ 1.f, 1.f, 0.f };
+
+			PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+			if (RV_Hit.bBlockingHit)
+			{
+				// Point.Location = RV_Hit.Location;
+				Hex = LocationToHex(RV_Hit.Location);
+			}
+		}
+	}
+	return Hex;
+}
+
+
+/******************** LocationToHex *************************/
+FST_Hex UPOTLGameInstance::LocationToHex(FVector Location)
+{
+	FST_Hex Hex = FST_Hex{};
+	FVector Cube = UPOTLUtilFunctionLibrary::LocationToCube(GridXCount, HexWidth, HexHeight, Location);
+	int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cube), GridXCount);
+	if (Hexes.IsValidIndex(HexIndex)) {
+		Hex = Hexes[HexIndex];
+	}
+	return Hex;
+}
+
+/*****************************************************************************************************/
+/**************************************** DEBUG - LOG ************************************************/
+/*****************************************************************************************************/
 
 /******************** Log *************************/
 void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
