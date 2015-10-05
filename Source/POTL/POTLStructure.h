@@ -6,6 +6,14 @@
 #include "POTLGameInstance.h"
 #include "POTLStructure.generated.h"
 
+
+//~~~~~ Forward Declarations ~~~~~
+
+
+//~~~~~ STRUCTS ~~~~~
+
+
+
 UCLASS()
 class POTL_API APOTLStructure : public AActor
 {
@@ -37,7 +45,7 @@ public:
 	int32 HexIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	FST_Struture StructureBaseData;
+	FST_Structure StructureBaseData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BroadcastRange;
@@ -45,6 +53,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<int32> BroadcastGridHexIndexes;
 
+	/** Resources */
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	TArray<FST_Resource> Resources;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	TArray<FST_Resource> ResourceAlterations;
+
+
+	/*********** FUNCTIONS **************/
+
+
+	/** Resources */
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void ResolveTree();
 
 
 	// Called when the game starts or when spawned

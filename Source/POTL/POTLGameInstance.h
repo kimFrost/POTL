@@ -11,6 +11,18 @@
 class APOTLStructure;
 
 
+//~~~~~ ENUMS ~~~~~
+UENUM(BlueprintType)
+enum class EPersonTypesEnum : uint8
+{
+	Boy UMETA(DisplayName = "Boy"),
+	Girl UMETA(DisplayName = "Girl"),
+	Man UMETA(DisplayName = "Man"),
+	Women UMETA(DisplayName = "Women"),
+	OldMan UMETA(DisplayName = "OldMan"),
+	OldWomen UMETA(DisplayName = "OldWomen")
+};
+
 
 //~~~~~ STRUCTS ~~~~~
 USTRUCT(BlueprintType)
@@ -55,8 +67,6 @@ struct FST_Point
 	}
 };
 
-
-
 USTRUCT(BlueprintType)
 struct FST_ConstructLocation
 {
@@ -96,7 +106,6 @@ struct FST_ConstructLocation
 		TreeId = FName(TEXT(""));
 	}
 };
-
 
 USTRUCT(BlueprintType)
 struct FST_Hex
@@ -191,9 +200,8 @@ struct FST_Hex
 	}
 };
 
-
 USTRUCT(BlueprintType)
-struct FST_Struture
+struct FST_Structure
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -231,7 +239,7 @@ struct FST_Struture
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 RotationDirection;
 
-	FST_Struture()
+	FST_Structure()
 	{
 		Id = FName(TEXT(""));
 		Title = "";
@@ -243,10 +251,75 @@ struct FST_Struture
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FST_Person
+{
+	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	FString Title;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	EPersonTypesEnum Type; // Boy, Girl, Man, Women, Old man, Old women
 
+	FST_Person()
+	{
+		Title = "";
+		Type = EPersonTypesEnum::Man;
+	}
+};
 
+USTRUCT(BlueprintType)
+struct FST_Resource
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	float UnitMass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	bool Stackable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	bool Burnable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 StackSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 Quantity;
+
+	FST_Resource()
+	{
+		Title = "";
+		UnitMass = 1.f;
+		Stackable = true;
+		Burnable = true;
+		StackSize = 64;
+		Quantity = 0;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FST_Skill
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	float XP;
+
+	FST_Skill()
+	{
+		Title = "";
+		XP = 0.f;
+	}
+};
 
 /**
 *
