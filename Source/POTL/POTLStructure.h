@@ -30,7 +30,8 @@ public:
 	TArray<APOTLStructure*> BroadcastTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<APOTLStructure*> EmitTo;
+	//TArray<APOTLStructure*> EmitTo;
+	APOTLStructure* EmitTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool IsRoot;
@@ -68,8 +69,10 @@ public:
 	/** Resources */
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ResolveTree();
+	void ResolveTree(bool Bubble);
 
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const FST_Resource& Request);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
