@@ -275,6 +275,9 @@ struct FST_Resource
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FName Id;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	FString Title;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
@@ -294,6 +297,7 @@ struct FST_Resource
 
 	FST_Resource()
 	{
+		Id = FName(TEXT(""));
 		Title = "";
 		UnitMass = 1.f;
 		Stackable = true;

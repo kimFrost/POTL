@@ -106,8 +106,8 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 				{
 					FST_Hex& NeighborHex = Hexes[Index];
 					if (NeighborHex.AttachedBuilding != nullptr // Only if pointer to structure isn't null
-						&& !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding) // Only if structure isn't already stored in attachments. Will cause structure to block for itself
-						&& NeighborHex.AttachedBuilding->TreeId == TreeId) //  Only structures in same Tree
+					&& !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding) // Only if structure isn't already stored in attachments. Will cause structure to block for itself
+					&& NeighborHex.AttachedBuilding->TreeId == TreeId) //  Only structures in same Tree
 					{
 						Hex.ConstructInfo.AttachTo.Add(NeighborHex.AttachedBuilding);
 					}

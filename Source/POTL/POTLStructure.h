@@ -72,7 +72,7 @@ public:
 	void ResolveTree(bool Bubble);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const FST_Resource& Request);
+	TArray<FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TArray<FST_Resource>& Request, int32 Steps);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
