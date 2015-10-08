@@ -24,6 +24,14 @@ enum class EPersonTypesEnum : uint8
 };
 
 
+//~~~~~ Delegates/Event dispatcher ~~~~~
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTurnSwitched);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams();
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnSwitched, float, Turn);
+//DECLARE_EVENT(FTurnSwitched);
+
+
+
 //~~~~~ STRUCTS ~~~~~
 USTRUCT(BlueprintType)
 struct FST_Point
@@ -86,18 +94,6 @@ struct FST_ConstructLocation
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	TArray<APOTLStructure*> EmitTo;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
-	//FST_Hex Hex;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
-	//TArray<FST_Hex> AttachTo;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
-	//TArray<FST_Hex> EmitTo;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
-	//TArray<FST_Hex> AttachToStructureBroadcastRoot;
 
 	FST_ConstructLocation()
 	{
@@ -394,7 +390,7 @@ public:
 	/** Turn */
 
 	UFUNCTION(BlueprintCallable, Category = "Turn")
-	void SwitchTurnNew();
+	void SwitchTurn();
 
 	/** Util - Hex */
 
@@ -408,5 +404,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
+
+
+	/*********** Delegates **************/
+
+	UPROPERTY(BlueprintAssignable, Category = "Turn")
+	FTurnSwitched OnTurnSwitched;
 
 };

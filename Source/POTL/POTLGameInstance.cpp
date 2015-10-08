@@ -387,9 +387,9 @@ void UPOTLGameInstance::CalcHexesRot()
 /*****************************************************************************************************/
 
 /******************** SwitchTurn *************************/
-void UPOTLGameInstance::SwitchTurnNew()
+void UPOTLGameInstance::SwitchTurn()
 {
-
+	OnTurnSwitched.Broadcast(32.f); // Test broadcast
 }
 
 /*****************************************************************************************************/
@@ -463,6 +463,14 @@ void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor Debu
 
 
 
+
+/*****************************************************************************************************/
+/**************************************** DELEGATES **************************************************/
+/*****************************************************************************************************/
+
+//OnTurnSwitched.AddDynamic(this);
+// Broadcast Delegate 
+//OnTurnSwitched.Broadcast(CurrentHouer, CurrentMinute, CurrentSeconds);
 
 
 //Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);

@@ -65,7 +65,6 @@ public:
 
 	/*********** FUNCTIONS **************/
 
-
 	/** Resources */
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
