@@ -42,14 +42,14 @@ void APOTLStructure::ResolveTree(bool Bubble)
 
 	if (EmitTo != nullptr)
 	{
-		EmitTo->RequestResources(true, this, TestResourcesRequest);
+		EmitTo->RequestResourcesNew(true, this, TestResourcesRequest, 0);
 	}
 
 	// Broadcast resources to children/broadcastTo
 
 }
 
-TArray<FST_Resource> APOTLStructure::RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TArray<FST_Resource>& Request, int32 Steps)
+TArray<FST_Resource> APOTLStructure::RequestResourcesNew(bool Bubble, const APOTLStructure* RequestFrom, const TArray<FST_Resource>& Request, int32 Steps)
 {
 	TArray<FST_Resource> RequestedResources;
 	bool RequestFulfilled = true;
@@ -93,8 +93,8 @@ TArray<FST_Resource> APOTLStructure::RequestResources(bool Bubble, const APOTLSt
 	EmitTo != nullptr)
 	{
 		
-		TArray<FST_Resource> ResourcesFromParent = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
-		//EmitTo->RequestResources(Bubble, this);
+		TArray<FST_Resource> ResourcesFromParent = EmitTo->RequestResourcesNew(Bubble, this, RequestedResources, Steps);
+		//EmitTo->RequestResourcesNew(Bubble, this);
 
 		// Combine requested resources
 

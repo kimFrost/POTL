@@ -201,7 +201,7 @@ struct FST_Hex
 };
 
 USTRUCT(BlueprintType)
-struct FST_Structure
+struct FST_Structure : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -270,7 +270,7 @@ struct FST_Person
 };
 
 USTRUCT(BlueprintType)
-struct FST_Resource
+struct FST_Resource : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -390,6 +390,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void CalcHexesRot();
+
+	/** Turn */
+
+	UFUNCTION(BlueprintCallable, Category = "Turn")
+	void SwitchTurnNew();
 
 	/** Util - Hex */
 
