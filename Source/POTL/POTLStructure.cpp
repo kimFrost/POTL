@@ -16,6 +16,27 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};
 
+	// Add test resources
+	FST_Resource TestResource;
+	TestResource.Id = FName(TEXT("Wood"));
+	TestResource.Quantity = 100.f;
+	Resources.Add(TestResource);
+
+	// Add test resources
+	TestResource = FST_Resource{};
+	TestResource.Id = FName(TEXT("Stone"));
+	TestResource.Quantity = 50.f;
+	Resources.Add(TestResource);
+
+
+	//Id = FName(TEXT(""));
+	//Title = "";
+	//UnitMass = 1.f;
+	//Stackable = true;
+	//Burnable = true;
+	//StackSize = 64;
+	//Quantity = 0;
+
 	//HSSSS = nullptr;
 	//HSSSS = FST_Hex{};
 }
@@ -108,7 +129,12 @@ TArray<FST_Resource> APOTLStructure::RequestResourcesNew(bool Bubble, const APOT
 void APOTLStructure::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	/*********** BINDINGS **************/
+	//UPOTLGameInstance::OnTurnSwitched.AddDynamic(this, &APOTLStructure::RequestResourcesNew);
+	UPOTLGameInstance::OnTurnSwitched.Add(this, &APOTLStructure::RequestResourcesNew);
+
+
 }
 
 // Called every frame

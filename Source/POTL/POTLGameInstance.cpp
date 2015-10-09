@@ -97,7 +97,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 
 			// Store broadcasted resources? NO. Will result in a lot of hex updating. Could then result in bugs with imcomplete data.
 
-
+			int32 ValidNeighborCount = 0;
 			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
 			{
@@ -105,6 +105,8 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 				if (Index != -1 && Hexes.IsValidIndex(Index))
 				{
 					FST_Hex& NeighborHex = Hexes[Index];
+					ValidNeighborCount++;
+
 					if (NeighborHex.AttachedBuilding != nullptr // Only if pointer to structure isn't null
 					&& !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding) // Only if structure isn't already stored in attachments. Will cause structure to block for itself
 					&& NeighborHex.AttachedBuilding->TreeId == TreeId) //  Only structures in same Tree
@@ -124,6 +126,10 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 			}
 			//Hex.DebugMe = true;
 			//ConstructHexIndexes.Add(Hex.HexIndex);
+			if (ValidNeighborCount < 6) // If ValidNeighborCount is less than 6 the hex is on the ridge of the city limit
+			{
+				Hex.ConstructInfo.OnRidge = true;
+			}
 			ConstructHexIndexes.AddUnique(Hex.HexIndex);
 		}
 	}

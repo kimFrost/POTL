@@ -90,6 +90,9 @@ struct FST_ConstructLocation
 	FName TreeId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	bool OnRidge;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	TArray<APOTLStructure*> AttachTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
@@ -100,6 +103,7 @@ struct FST_ConstructLocation
 		Location = { -1, -1, -1 };
 		Cube = { 0, 0, 0 };
 		TreeId = FName(TEXT(""));
+		OnRidge = false;
 	}
 };
 
