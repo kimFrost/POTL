@@ -20,13 +20,14 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	FST_Resource TestResource;
 	TestResource.Id = FName(TEXT("Wood"));
 	TestResource.Quantity = 100.f;
-	Resources.Add(TestResource);
+	//Resources.Add(TestResource);
+	Resources.Add(FName(TEXT("Wood")), TestResource);
 
 	// Add test resources
 	TestResource = FST_Resource{};
 	TestResource.Id = FName(TEXT("Stone"));
 	TestResource.Quantity = 50.f;
-	Resources.Add(TestResource);
+	Resources.Add(FName(TEXT("Stone")), TestResource);
 
 
 	//Id = FName(TEXT(""));
@@ -63,14 +64,14 @@ void APOTLStructure::ResolveTree(bool Bubble)
 
 	if (EmitTo != nullptr)
 	{
-		EmitTo->RequestResourcesNew(true, this, TestResourcesRequest, 0);
+		EmitTo->RequestResources(true, this, TestResourcesRequest, 0);
 	}
 
 	// Broadcast resources to children/broadcastTo
 
 }
 
-TArray<FST_Resource> APOTLStructure::RequestResourcesNew(bool Bubble, const APOTLStructure* RequestFrom, const TArray<FST_Resource>& Request, int32 Steps)
+TArray<FST_Resource> APOTLStructure::RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TArray<FST_Resource>& Request, int32 Steps)
 {
 	TArray<FST_Resource> RequestedResources;
 	bool RequestFulfilled = true;
@@ -79,6 +80,9 @@ TArray<FST_Resource> APOTLStructure::RequestResourcesNew(bool Bubble, const APOT
 	// Should the emitTo structor require manpower to transport resources?? 
 
 	// Handle request and Try to meet the resource request
+
+	// Rewrite from TArray to TMap
+	/*
 	for (int32 i = 0; i < Request.Num(); i++)
 	{
 		FST_Resource& RequestResource = Resources[i];
@@ -104,6 +108,9 @@ TArray<FST_Resource> APOTLStructure::RequestResourcesNew(bool Bubble, const APOT
 			}
 		}
 	}
+	*/
+
+
 	// Clean resources, if fx is empty, then remove from list
 
 
@@ -114,8 +121,8 @@ TArray<FST_Resource> APOTLStructure::RequestResourcesNew(bool Bubble, const APOT
 	EmitTo != nullptr)
 	{
 		
-		TArray<FST_Resource> ResourcesFromParent = EmitTo->RequestResourcesNew(Bubble, this, RequestedResources, Steps);
-		//EmitTo->RequestResourcesNew(Bubble, this);
+		TArray<FST_Resource> ResourcesFromParent = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
+		//EmitTo->RequestResources(Bubble, this);
 
 		// Combine requested resources
 
@@ -131,9 +138,8 @@ void APOTLStructure::BeginPlay()
 	Super::BeginPlay();
 
 	/*********** BINDINGS **************/
-	//UPOTLGameInstance::OnTurnSwitched.AddDynamic(this, &APOTLStructure::RequestResourcesNew);
-	UPOTLGameInstance::OnTurnSwitched.Add(this, &APOTLStructure::RequestResourcesNew);
-
+	//UPOTLGameInstance::OnTurnSwitched.AddDynamic(this, &APOTLStructure::RequestResources);
+	//UPOTLGameInstance::OnTurnSwitched.Add(this, &APOTLStructure::RequestResources);
 
 }
 

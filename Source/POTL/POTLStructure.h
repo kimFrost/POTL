@@ -56,8 +56,9 @@ public:
 
 	/** Resources */
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	TArray<FST_Resource> Resources;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	//TArray<FST_Resource> Resources;
+	TMap<FName, FST_Resource> Resources;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TArray<FST_Resource> ResourceAlterations;
@@ -71,7 +72,7 @@ public:
 	void ResolveTree(bool Bubble);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	TArray<FST_Resource> RequestResourcesNew(bool Bubble, const APOTLStructure* RequestFrom, const TArray<FST_Resource>& Request, int32 Steps);
+	TArray<FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TArray<FST_Resource>& Request, int32 Steps);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
