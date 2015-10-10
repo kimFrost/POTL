@@ -60,7 +60,11 @@ void APOTLStructure::ResolveTree(bool Bubble)
 	// Resolve self
 	// Request resources from parent/emitTo
 
-	TArray<FST_Resource> TestResourcesRequest;
+	TMap<FName, FST_Resource> TestResourcesRequest;
+	FST_Resource TestResourceRequest;
+	TestResourceRequest.Id = FName(TEXT("Stone"));
+	TestResourceRequest.Quantity = 10.f;
+	TestResourcesRequest.Add(FName(TEXT("Stone")), TestResourceRequest);
 
 	if (EmitTo != nullptr)
 	{
@@ -71,17 +75,52 @@ void APOTLStructure::ResolveTree(bool Bubble)
 
 }
 
-TArray<FST_Resource> APOTLStructure::RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TArray<FST_Resource>& Request, int32 Steps)
+
+/******************** GetResourcesAsList *************************/
+TArray<FST_Resource> APOTLStructure::GetResourcesAsList()
 {
-	TArray<FST_Resource> RequestedResources;
+	TArray<FST_Resource> List;
+	for (auto& ResourceRequest : Resources)
+	{
+		List.Add(ResourceRequest.Value);
+	}
+	return List;
+}
+
+
+/******************** RequestResources *************************/
+TMap<FName, FST_Resource> APOTLStructure::RequestResources(bool Bubble, const APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps)
+{
+	TMap<FName, FST_Resource> RequestedResources;
 	bool RequestFulfilled = true;
 	Steps++; // Increase steps, resulting in more resource loss from many reroutes
 
 	// Should the emitTo structor require manpower to transport resources?? 
 
 	// Handle request and Try to meet the resource request
+	for (auto& ResourceRequest : Request)
+	{
+		//ResourceRequest.Key
+		//ResourceRequest.Value
+		//ResourceRequest.Remove(ResourceRequest.Key)
+		if (Resources.Contains(ResourceRequest.Key))
+		{
+			if (ResourceRequest.Value.Quantity > Resources[ResourceRequest.Key].Quantity)
+			{
+				ResourceRequest.Value.Quantity = ResourceRequest.Value.Quantity - Resources[ResourceRequest.Key].Quantity;
+				Resources[ResourceRequest.Key].Quantity = 0;
+				RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
+				Resources.Remove(ResourceRequest.Key); // Remove the empty resourecm
+			}
+			else if (ResourceRequest.Value.Quantity <= Resources[ResourceRequest.Key].Quantity)
+			{
+				RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
+				Resources[ResourceRequest.Key].Quantity = Resources[ResourceRequest.Key].Quantity - ResourceRequest.Value.Quantity;
+				ResourceRequest.Value.Quantity = 0;
+			}
+		}
+	}
 
-	// Rewrite from TArray to TMap
 	/*
 	for (int32 i = 0; i < Request.Num(); i++)
 	{
@@ -108,10 +147,8 @@ TArray<FST_Resource> APOTLStructure::RequestResources(bool Bubble, const APOTLSt
 			}
 		}
 	}
-	*/
-
-
 	// Clean resources, if fx is empty, then remove from list
+	*/
 
 
 	// if Bubble then then RequestResources on parent/emitTo.
@@ -121,9 +158,7 @@ TArray<FST_Resource> APOTLStructure::RequestResources(bool Bubble, const APOTLSt
 	EmitTo != nullptr)
 	{
 		
-		TArray<FST_Resource> ResourcesFromParent = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
-		//EmitTo->RequestResources(Bubble, this);
-
+		TMap<FName, FST_Resource> ResourcesFromParent = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
 		// Combine requested resources
 
 	}
