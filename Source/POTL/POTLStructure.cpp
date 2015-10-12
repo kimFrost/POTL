@@ -49,6 +49,87 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 /******************************************* RESOURCES ***********************************************/
 /*****************************************************************************************************/
 
+
+/******************** AddResource *************************/
+bool APOTLStructure::AddResource(FST_Resource Resource, EResourceList Type)
+{
+	bool Added = false;
+	switch (Type)
+	{
+	case EResourceList::Storage:
+		if (Resources.Contains(Resource.Id))
+		{
+			Resources[Resource.Id].Quantity += Resource.Quantity; // No check for storage and negative size yet ?
+			Added = true;
+		}
+		else
+		{
+			Resources.Add(Resource.Id, Resource);
+			Added = true;
+		}
+		break;
+	case EResourceList::Requirements:
+		if (ResourceRequirements.Contains(Resource.Id))
+		{
+			ResourceRequirements[Resource.Id].Quantity += Resource.Quantity; // No check for storage and negative size yet ?
+			Added = true;
+		}
+		else
+		{
+			ResourceRequirements.Add(Resource.Id, Resource);
+			Added = true;
+		}
+		break;
+	case EResourceList::Alterations:
+		if (ResourceAlterations.Contains(Resource.Id))
+		{
+			ResourceAlterations[Resource.Id].Quantity += Resource.Quantity; // No check for storage and negative size yet ?
+			Added = true;
+		}
+		else
+		{
+			ResourceAlterations.Add(Resource.Id, Resource);
+			Added = true;
+		}
+		break;
+	default:
+		break;
+	}
+	return Added;
+}
+
+
+/******************** GetResourcesAsList *************************/
+TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
+{
+	TArray<FST_Resource> List;
+	switch (Type)
+	{
+	case EResourceList::Storage:
+		for (auto& ResourceRequest : Resources)
+		{
+			List.Add(ResourceRequest.Value);
+		}
+		break;
+	case EResourceList::Requirements:
+		for (auto& ResourceRequest : ResourceRequirements)
+		{
+			List.Add(ResourceRequest.Value);
+		}
+		break;
+	case EResourceList::Alterations:
+		for (auto& ResourceRequest : ResourceAlterations)
+		{
+			List.Add(ResourceRequest.Value);
+		}
+		break;
+	default:
+		break;
+	}
+	return List;
+}
+
+
 /******************** ResolveTree *************************/
 void APOTLStructure::ResolveTree(bool Bubble)
 {
@@ -60,52 +141,23 @@ void APOTLStructure::ResolveTree(bool Bubble)
 	// Resolve self
 	// Request resources from parent/emitTo
 
+	/*
 	TMap<FName, FST_Resource> TestResourcesRequest;
 	FST_Resource TestResourceRequest;
 	TestResourceRequest.Id = FName(TEXT("Stone"));
 	TestResourceRequest.Quantity = 1.f;
 	TestResourcesRequest.Add(FName(TEXT("Stone")), TestResourceRequest);
+	*/
 
 	if (EmitTo != nullptr)
 	{
-		TMap<FName, FST_Resource> RequestedResources = EmitTo->RequestResources(true, this, TestResourcesRequest, 0);
+		TMap<FName, FST_Resource> RequestedResources = EmitTo->RequestResources(true, this, ResourceRequirements, 0);
 		// Store RequestedResources in self?
 
 	}
 
 	// Broadcast resources to children/broadcastTo
 
-}
-
-
-/******************** AddResource *************************/
-bool APOTLStructure::AddResource(FST_Resource& Resource)
-{
-	bool Added = false;
-	if (Resources.Contains(Resource.Id))
-	{
-		// No check for storage and negative size yet ?
-		Resources[Resource.Id].Quantity += Resource.Quantity;
-		Added = true;
-	}
-	else
-	{
-		Resources.Add(Resource.Id, Resource);
-		Added = true;
-	}
-	return Added;
-}
-
-
-/******************** GetResourcesAsList *************************/
-TArray<FST_Resource> APOTLStructure::GetResourcesAsList()
-{
-	TArray<FST_Resource> List;
-	for (auto& ResourceRequest : Resources)
-	{
-		List.Add(ResourceRequest.Value);
-	}
-	return List;
 }
 
 
@@ -118,7 +170,7 @@ TMap<FName, FST_Resource> APOTLStructure::RequestResources(bool Bubble, APOTLStr
 
 	// Should the emitTo structor require manpower to transport resources?? 
 
-	// Handle request and Try to meet the resource request
+	// Handle request and Try to meet the resource request with own storage // Or parent
 	for (auto& ResourceRequest : Request)
 	{
 		//ResourceRequest.Key
@@ -128,16 +180,22 @@ TMap<FName, FST_Resource> APOTLStructure::RequestResources(bool Bubble, APOTLStr
 		{
 			if (ResourceRequest.Value.Quantity > Resources[ResourceRequest.Key].Quantity)
 			{
-				bool Success = RequestFrom->AddResource(ResourceRequest.Value); // May send too large value ?
+				bool Success = RequestFrom->AddResource(ResourceRequest.Value, EResourceList::Storage); // May send too large value ?
 				ResourceRequest.Value.Quantity = ResourceRequest.Value.Quantity - Resources[ResourceRequest.Key].Quantity;
 				Resources[ResourceRequest.Key].Quantity = 0;
 				RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
 				Resources.Remove(ResourceRequest.Key); // Remove the empty resource
+				
+				// Use resource alterations list instead
+
+				// Should resource requirement list be emptied and then refilled by the structure again? // Mayby yes. Then the calculation is propperly correct each time. // 
+				// Then the structure and turnBegin will calculate their resource requirements
+
 				//RequestFrom->Resources.Add // Add requested resource to structures resource alterations ?
 			}
 			else if (ResourceRequest.Value.Quantity <= Resources[ResourceRequest.Key].Quantity)
 			{
-				bool Success = RequestFrom->AddResource(ResourceRequest.Value); 
+				bool Success = RequestFrom->AddResource(ResourceRequest.Value, EResourceList::Storage); 
 				RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
 				Resources[ResourceRequest.Key].Quantity = Resources[ResourceRequest.Key].Quantity - ResourceRequest.Value.Quantity;
 				ResourceRequest.Value.Quantity = 0;
@@ -145,34 +203,6 @@ TMap<FName, FST_Resource> APOTLStructure::RequestResources(bool Bubble, APOTLStr
 		}
 	}
 
-	/*
-	for (int32 i = 0; i < Request.Num(); i++)
-	{
-		FST_Resource& RequestResource = Resources[i];
-		for (int32 ii = Resources.Num() - 1; ii >= 0; ii--) // Loop the stored resources in reverse
-		{
-			FST_Resource& Resource = Resources[ii];
-			if (RequestResource.Id == Resource.Id)
-			{
-				if (RequestResource.Quantity > Resource.Quantity)
-				{
-					RequestResource.Quantity = RequestResource.Quantity - Resource.Quantity;
-					Resource.Quantity = 0;
-					RequestedResources.Add(Resource);
-					RequestFulfilled = false;
-					Resources.RemoveAt(ii); // Remove the empty resource
-				}
-				else if (RequestResource.Quantity <= Resource.Quantity)
-				{
-					RequestedResources.Add(Resource);
-					Resource.Quantity = Resource.Quantity - RequestResource.Quantity;
-					RequestResource.Quantity = 0;
-				}
-			}
-		}
-	}
-	// Clean resources, if fx is empty, then remove from list
-	*/
 
 
 	// if Bubble then then RequestResources on parent/emitTo.
@@ -181,10 +211,8 @@ TMap<FName, FST_Resource> APOTLStructure::RequestResources(bool Bubble, APOTLStr
 	RequestFulfilled &&
 	EmitTo != nullptr)
 	{
-		
 		TMap<FName, FST_Resource> ResourcesFromParent = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
 		// Combine requested resources
-
 
 	}
 

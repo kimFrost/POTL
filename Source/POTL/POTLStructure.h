@@ -12,6 +12,14 @@
 
 //~~~~~ STRUCTS ~~~~~
 
+//~~~~~ ENUMS ~~~~~
+UENUM(BlueprintType)
+enum class EResourceList : uint8
+{
+	Storage UMETA(DisplayName = "Storage"),
+	Requirements UMETA(DisplayName = "Requirements"),
+	Alterations UMETA(DisplayName = "Alterations")
+};
 
 
 UCLASS()
@@ -60,8 +68,13 @@ public:
 	//TArray<FST_Resource> Resources;
 	TMap<FName, FST_Resource> Resources;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	TArray<FST_Resource> ResourceAlterations;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	//TArray<FST_Resource> ResourceAlterations;
+	TMap<FName, FST_Resource> ResourceAlterations;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	//TArray<FST_Resource> ResourceRequirements;
+	TMap<FName, FST_Resource> ResourceRequirements;
 
 
 	/*********** FUNCTIONS **************/
@@ -69,13 +82,13 @@ public:
 	/** Resources */
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
+	bool AddResource(FST_Resource Resource, EResourceList Type);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveTree(bool Bubble);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	bool AddResource(FST_Resource& Resource);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	TArray<FST_Resource> GetResourcesAsList();
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
