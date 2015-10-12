@@ -72,18 +72,20 @@ public:
 	void ResolveTree(bool Bubble);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
+	bool AddResource(FST_Resource& Resource);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
 	TArray<FST_Resource> GetResourcesAsList();
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
-	TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
+	TMap<FName, FST_Resource> RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
-
 
 	
 };
