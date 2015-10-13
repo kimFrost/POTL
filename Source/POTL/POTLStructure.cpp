@@ -17,17 +17,16 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	StructureBaseData = FST_Structure{};
 
 	// Add test resources
-	FST_Resource TestResource;
-	TestResource.Id = FName(TEXT("Wood"));
-	TestResource.Quantity = 100.f;
-	//Resources.Add(TestResource);
-	Resources.Add(FName(TEXT("Wood")), TestResource);
+	//FST_Resource TestResource;
+	//TestResource.Id = FName(TEXT("Wood"));
+	//TestResource.Quantity = 100.f;
+	Resources.Add(FName(TEXT("Wood")), 100.f);
 
 	// Add test resources
-	TestResource = FST_Resource{};
-	TestResource.Id = FName(TEXT("Stone"));
-	TestResource.Quantity = 50.f;
-	Resources.Add(FName(TEXT("Stone")), TestResource);
+	//TestResource = FST_Resource{};
+	//TestResource.Id = FName(TEXT("Stone"));
+	//TestResource.Quantity = 50.f;
+	Resources.Add(FName(TEXT("Stone")), 50.f);
 
 
 	//Id = FName(TEXT(""));
@@ -51,44 +50,44 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 
 
 /******************** AddResource *************************/
-bool APOTLStructure::AddResource(FST_Resource Resource, EResourceList Type)
+bool APOTLStructure::AddResource(FName Id, int32 Quantity, EResourceList Type)
 {
 	bool Added = false;
 	switch (Type)
 	{
 	case EResourceList::Storage:
-		if (Resources.Contains(Resource.Id))
+		if (Resources.Contains(Id))
 		{
-			Resources[Resource.Id].Quantity += Resource.Quantity; // No check for storage and negative size yet ?
+			Resources[Id] += Quantity;
 			Added = true;
 		}
 		else
 		{
-			Resources.Add(Resource.Id, Resource);
+			Resources.Add(Id, Quantity);
 			Added = true;
 		}
 		break;
 	case EResourceList::Requirements:
-		if (ResourceRequirements.Contains(Resource.Id))
+		if (ResourceRequirements.Contains(Id))
 		{
-			ResourceRequirements[Resource.Id].Quantity += Resource.Quantity; // No check for storage and negative size yet ?
+			ResourceRequirements[Id] += Quantity;
 			Added = true;
 		}
 		else
 		{
-			ResourceRequirements.Add(Resource.Id, Resource);
+			ResourceRequirements.Add(Id, Quantity);
 			Added = true;
 		}
 		break;
 	case EResourceList::Alterations:
-		if (ResourceAlterations.Contains(Resource.Id))
+		if (ResourceAlterations.Contains(Id))
 		{
-			ResourceAlterations[Resource.Id].Quantity += Resource.Quantity; // No check for storage and negative size yet ?
+			ResourceAlterations[Id] += Quantity;
 			Added = true;
 		}
 		else
 		{
-			ResourceAlterations.Add(Resource.Id, Resource);
+			ResourceAlterations.Add(Id, Quantity);
 			Added = true;
 		}
 		break;
@@ -108,19 +107,28 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 	case EResourceList::Storage:
 		for (auto& ResourceRequest : Resources)
 		{
-			List.Add(ResourceRequest.Value);
+			FST_Resource Resource;
+			Resource.Id = ResourceRequest.Key;
+			Resource.Quantity = ResourceRequest.Value;
+			List.Add(Resource);
 		}
 		break;
 	case EResourceList::Requirements:
 		for (auto& ResourceRequest : ResourceRequirements)
 		{
-			List.Add(ResourceRequest.Value);
+			FST_Resource Resource;
+			Resource.Id = ResourceRequest.Key;
+			Resource.Quantity = ResourceRequest.Value;
+			List.Add(Resource);
 		}
 		break;
 	case EResourceList::Alterations:
 		for (auto& ResourceRequest : ResourceAlterations)
 		{
-			List.Add(ResourceRequest.Value);
+			FST_Resource Resource;
+			Resource.Id = ResourceRequest.Key;
+			Resource.Quantity = ResourceRequest.Value;
+			List.Add(Resource);
 		}
 		break;
 	default:
@@ -130,103 +138,109 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 }
 
 
-/******************** ResolveTree *************************/
-void APOTLStructure::ResolveTree(bool Bubble)
+/******************** CalculateUpkeep *************************/
+void APOTLStructure::CalculateUpkeep()
 {
-	// Resolve children
+	//~~ Resolve children ~~//
 	for (int32 i = 0; i < BroadcastTo.Num(); i++)
 	{
-		BroadcastTo[i]->ResolveTree(Bubble);
+		BroadcastTo[i]->CalculateUpkeep();
 	}
-	// Resolve self
-	// Request resources from parent/emitTo
-
-	/*
-	TMap<FName, FST_Resource> TestResourcesRequest;
-	FST_Resource TestResourceRequest;
-	TestResourceRequest.Id = FName(TEXT("Stone"));
-	TestResourceRequest.Quantity = 1.f;
-	TestResourcesRequest.Add(FName(TEXT("Stone")), TestResourceRequest);
-	*/
-
-	if (EmitTo != nullptr)
-	{
-		TMap<FName, FST_Resource> RequestedResources = EmitTo->RequestResources(true, this, ResourceRequirements, 0);
-		// Store RequestedResources in self?
-
-	}
-
-	// Broadcast resources to children/broadcastTo
+	//~~ Resolve self / The function logic ~~//
 
 }
 
 
-/******************** RequestResources *************************/
-TMap<FName, FST_Resource> APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps)
+/******************** ResolveTree *************************/
+void APOTLStructure::ResolveTree()
 {
-	TMap<FName, FST_Resource> RequestedResources;
+	//~~ Resolve children ~~//
+	for (int32 i = 0; i < BroadcastTo.Num(); i++)
+	{
+		BroadcastTo[i]->ResolveTree();
+	}
+	//~~ Resolve self ~~//
+	//~~ Request resources from self, then parent/emitTo ~~//
+	if (EmitTo != nullptr) 
+	{
+		bool Fulfilled = RequestResources(false, this, ResourceRequirements, 0); //~~ Do self have the required resources ~~//
+		if (!Fulfilled)
+		{
+			EmitTo->RequestResources(true, this, ResourceRequirements, 0); //~~ Else get resources from emitTo parent ~~//
+		}
+	}
+	//~~ Broadcast resources to children/broadcastTo ? ~~//
+}
+
+
+/******************** RequestResources *************************/
+bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, int32>& Request, int32 Steps)
+{
+	TMap<FName, int32> RequestedResources; //~~ FName Id, Int32 Quantity ~~//
 	bool RequestFulfilled = true;
-	Steps++; // Increase steps, resulting in more resource loss from many reroutes
+	Steps++; //~~ Increase steps, resulting in more resource loss from many reroutes ~~//
 
-	// Should the emitTo structor require manpower to transport resources?? 
+	//~~ Should the emitTo structor require manpower to transport resources?? ~~//
 
-	// Handle request and Try to meet the resource request with own storage // Or parent
+	//~~ Handle request and Try to meet the resource request with own storage. If not then request parent of current ~~//
 	for (auto& ResourceRequest : Request)
 	{
-		//ResourceRequest.Key
-		//ResourceRequest.Value
-		//ResourceRequest.Remove(ResourceRequest.Key)
 		if (Resources.Contains(ResourceRequest.Key))
 		{
-			if (ResourceRequest.Value.Quantity > Resources[ResourceRequest.Key].Quantity)
+			if (ResourceRequest.Value > Resources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
 			{
-				bool Success = RequestFrom->AddResource(ResourceRequest.Value, EResourceList::Storage); // May send too large value ?
-				ResourceRequest.Value.Quantity = ResourceRequest.Value.Quantity - Resources[ResourceRequest.Key].Quantity;
-				Resources[ResourceRequest.Key].Quantity = 0;
-				RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
-				Resources.Remove(ResourceRequest.Key); // Remove the empty resource
-				
-				// Use resource alterations list instead
+				bool Success = RequestFrom->AddResource(ResourceRequest.Key, Resources[ResourceRequest.Key], EResourceList::Alterations);
+				ResourceRequest.Value -= Resources[ResourceRequest.Key];
+				Resources[ResourceRequest.Key] = 0;
+				//RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
+				Resources.Remove(ResourceRequest.Key); //~~ Remove the empty resource ~~//
+				RequestFulfilled = false;
+				//TODO: Use resource alterations list instead
 
-				// Should resource requirement list be emptied and then refilled by the structure again? // Mayby yes. Then the calculation is propperly correct each time. // 
-				// Then the structure and turnBegin will calculate their resource requirements
+				//~~ Should resource requirement list be emptied and then refilled by the structure again? // Mayby yes. Then the calculation is propperly correct each time. ~~// 
+				//~~ Then the structure on turnBegin will calculate their resource requirements ~~//
 
 				//RequestFrom->Resources.Add // Add requested resource to structures resource alterations ?
 			}
-			else if (ResourceRequest.Value.Quantity <= Resources[ResourceRequest.Key].Quantity)
+			else if (ResourceRequest.Value <= Resources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
 			{
-				bool Success = RequestFrom->AddResource(ResourceRequest.Value, EResourceList::Storage); 
-				RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
-				Resources[ResourceRequest.Key].Quantity = Resources[ResourceRequest.Key].Quantity - ResourceRequest.Value.Quantity;
-				ResourceRequest.Value.Quantity = 0;
+				bool Success = RequestFrom->AddResource(ResourceRequest.Key, ResourceRequest.Value, EResourceList::Alterations);
+				//RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
+				Resources[ResourceRequest.Key] = Resources[ResourceRequest.Key] - ResourceRequest.Value;
+				ResourceRequest.Value = 0;
 			}
 		}
 	}
 
 
 
-	// if Bubble then then RequestResources on parent/emitTo.
-	// and resource request haven't been met.
+	//~~ if Bubble then then RequestResources on parent/emitTo. ~~//
+	//~~ and resource request haven't been met. ~~//
 	if (Bubble &&
-	RequestFulfilled &&
+	!RequestFulfilled &&
 	EmitTo != nullptr)
 	{
-		TMap<FName, FST_Resource> ResourcesFromParent = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
-		// Combine requested resources
-
+		//TMap<FName, FST_Resource> ResourcesFromParent = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
+		//bool Fulfilled = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
+		bool Fulfilled = EmitTo->RequestResources(Bubble, this, Request, Steps);
+		//~~ Combine requested resources ~~//
+		 
 	}
 
-	// Store RequestedResources in self?
+	/*
+	//~~ Store RequestedResources in self? ~~//
 	for (auto& RequestedResource : RequestedResources)
 	{
 
 	}
+	*/
 
-	return RequestedResources;
+	//return RequestedResources;
+	return RequestFulfilled; //~~ True / false ~~//
 }
 
 
-// Called when the game starts or when spawned
+//~~ Called when the game starts or when spawned ~~//
 void APOTLStructure::BeginPlay()
 {
 	Super::BeginPlay();
@@ -237,7 +251,7 @@ void APOTLStructure::BeginPlay()
 
 }
 
-// Called every frame
+//~~ Called every frame ~~//
 void APOTLStructure::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );

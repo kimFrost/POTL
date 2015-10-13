@@ -66,15 +66,18 @@ public:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	//TArray<FST_Resource> Resources;
-	TMap<FName, FST_Resource> Resources;
+	//TMap<FName, FST_Resource> Resources;
+	TMap<FName, int32> Resources;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	//TArray<FST_Resource> ResourceAlterations;
-	TMap<FName, FST_Resource> ResourceAlterations;
+	//TMap<FName, FST_Resource> ResourceAlterations;
+	TMap<FName, int32> ResourceAlterations;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	//TArray<FST_Resource> ResourceRequirements;
-	TMap<FName, FST_Resource> ResourceRequirements;
+	//TMap<FName, FST_Resource> ResourceRequirements;
+	TMap<FName, int32> ResourceRequirements;
 
 
 	/*********** FUNCTIONS **************/
@@ -82,17 +85,21 @@ public:
 	/** Resources */
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	bool AddResource(FST_Resource Resource, EResourceList Type);
+	bool AddResource(FName Id, int32 Quantity , EResourceList Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ResolveTree(bool Bubble);
+	void CalculateUpkeep();
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void ResolveTree();
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
-	TMap<FName, FST_Resource> RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
+	//TMap<FName, FST_Resource> RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
+	bool RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, int32>& Request, int32 Steps);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
