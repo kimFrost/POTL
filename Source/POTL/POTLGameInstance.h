@@ -7,11 +7,11 @@
 #include "POTLGameInstance.generated.h"
 
 
-//~~~~~ Forward Declarations ~~~~~
+//~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
 
 
-//~~~~~ ENUMS ~~~~~
+//~~~~~ ENUMS ~~~~~//
 UENUM(BlueprintType)
 enum class EPersonTypesEnum : uint8
 {
@@ -24,7 +24,7 @@ enum class EPersonTypesEnum : uint8
 };
 
 
-//~~~~~ Delegates/Event dispatcher ~~~~~
+//~~~~~ Delegates/Event dispatcher ~~~~~//
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTurnSwitched);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams();
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnSwitched, float, Turn);
@@ -32,7 +32,24 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnSwitched, float, Turn);
 
 
 
-//~~~~~ STRUCTS ~~~~~
+
+//~~~~~ TEST DATA IMPORT ~~~~~//
+USTRUCT(BlueprintType)
+struct FItemInformation : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Information System")
+	FText ItemName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Information System")
+	FString ItemCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Information System")
+	FText ItemInfo;
+};
+
+
+
+//~~~~~ STRUCTS ~~~~~//
 USTRUCT(BlueprintType)
 struct FST_Point
 {
