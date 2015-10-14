@@ -325,6 +325,75 @@ struct FST_Skill
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FST_TMap
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FName Id;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 Value;
+
+	FST_TMap()
+	{
+		Id = FName(TEXT(""));
+		Value = 0.f;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FST_Factory
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	TMap<FName, int32> Requirements;
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	TMap<FName, int32> Allocations;
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	TMap<FName, int32> Invoice;
+
+	//~~ Calculate Requirements for total allocation ~~//
+	void const ProcessInvoice()
+	{
+		for (auto& Item : Invoice)
+		{
+
+		}
+	}
+
+	// Resolve factory
+	void const Resolve(TMap<FName, int32>& SendTo)
+	{
+		TMap<FName, int32> Production;
+		//~~ The production ~~//
+		for (auto& Item : Invoice)
+		{
+			
+
+
+		}
+		//~~ Send the remaining resource back with the production, if any ~~//
+		for (auto& Resource : Allocations)
+		{
+			if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
+			else								SendTo.Add(Resource.Key, Resource.Value);
+		}
+		Allocations.Empty();
+	}
+	// Constructor
+	FST_Factory()
+	{
+		
+	}
+};
+
+
+
 /**
 *
 */

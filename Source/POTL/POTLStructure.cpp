@@ -17,17 +17,21 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	StructureBaseData = FST_Structure{};
 
 	// Add test resources
-	//FST_Resource TestResource;
-	//TestResource.Id = FName(TEXT("Wood"));
-	//TestResource.Quantity = 100.f;
-	Resources.Add(FName(TEXT("Wood")), 100.f);
-
-	// Add test resources
-	//TestResource = FST_Resource{};
-	//TestResource.Id = FName(TEXT("Stone"));
-	//TestResource.Quantity = 50.f;
+	Resources.Add(FName(TEXT("Wood")), 50.f);
 	Resources.Add(FName(TEXT("Stone")), 50.f);
 
+	// Add test factory for resource process
+	/*
+	FST_Factory Factory;
+	FST_TMap Requirement;
+	Requirement.Id = FName(TEXT("Wood"));
+	Requirement.Value = 5.f;
+	Factory.Requirements.Add(Requirement);
+	Factories.Add(Factory);
+	*/
+	FST_Factory Factory;
+	Factory.Requirements.Add(FName(TEXT("Wood")), 2.f);
+	Factories.Add(Factory);
 
 	//Id = FName(TEXT(""));
 	//Title = "";
@@ -159,22 +163,28 @@ void APOTLStructure::ResolveTree()
 	{
 		BroadcastTo[i]->ResolveTree();
 	}
-	//~~ Resolve self ~~//
-	//~~ Request resources from self, then parent/emitTo ~~//
-	if (EmitTo != nullptr) 
+	//~~ Resolve self / The function logic ~~//
+	bool Fulfilled = false;
+	//~~ Resolve upkeep ~~//
+	Fulfilled = RequestResources(false, this, ResourceUpkeep, ResourceAlterations, 0); //~~ Do self have the required resources ~~//
+	if (EmitTo != nullptr)
 	{
-		bool Fulfilled = RequestResources(false, this, ResourceRequirements, 0); //~~ Do self have the required resources ~~//
-		if (!Fulfilled)
-		{
-			EmitTo->RequestResources(true, this, ResourceRequirements, 0); //~~ Else get resources from emitTo parent ~~//
-		}
+		if (!Fulfilled)		EmitTo->RequestResources(true, this, ResourceUpkeep, ResourceAlterations, 0); //~~ Else get resources from emitTo parent ~~//
 	}
+	//~~ Resolve factories ~~//
+	for (auto& Factory : Factories)
+	{
+		Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
+		if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, Factory.Allocations, 0);
+		Factory.Resolve(ResourceAlterations); // Resolve factory and get the results/production
+	}
+
 	//~~ Broadcast resources to children/broadcastTo ? ~~//
 }
 
 
 /******************** RequestResources *************************/
-bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, int32>& Request, int32 Steps)
+bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, int32>& Request, TMap<FName, int32>& Allocations, int32 Steps)
 {
 	TMap<FName, int32> RequestedResources; //~~ FName Id, Int32 Quantity ~~//
 	bool RequestFulfilled = true;
@@ -195,12 +205,9 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 				//RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
 				Resources.Remove(ResourceRequest.Key); //~~ Remove the empty resource ~~//
 				RequestFulfilled = false;
-				//TODO: Use resource alterations list instead
 
 				//~~ Should resource requirement list be emptied and then refilled by the structure again? // Mayby yes. Then the calculation is propperly correct each time. ~~// 
 				//~~ Then the structure on turnBegin will calculate their resource requirements ~~//
-
-				//RequestFrom->Resources.Add // Add requested resource to structures resource alterations ?
 			}
 			else if (ResourceRequest.Value <= Resources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
 			{
@@ -222,13 +229,14 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 	{
 		//TMap<FName, FST_Resource> ResourcesFromParent = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
 		//bool Fulfilled = EmitTo->RequestResources(Bubble, this, RequestedResources, Steps);
-		bool Fulfilled = EmitTo->RequestResources(Bubble, this, Request, Steps);
+		bool Fulfilled = EmitTo->RequestResources(Bubble, this, Request, Allocations, Steps);
 		//~~ Combine requested resources ~~//
-		 
 	}
 
+
+
 	/*
-	//~~ Store RequestedResources in self? ~~//
+	//~~ TEMP Move alterations to resources. Should go through a provider/production chain with a resolver ~~//
 	for (auto& RequestedResource : RequestedResources)
 	{
 
