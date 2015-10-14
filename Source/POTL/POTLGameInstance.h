@@ -251,6 +251,22 @@ struct FST_Structure : public FTableRowBase
 	}
 };
 
+
+USTRUCT(BlueprintType)
+struct FST_ResourceConversion : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FName Id;
+
+	FST_ResourceConversion()
+	{
+		Id = FName(TEXT(""));
+	}
+};
+
+
 USTRUCT(BlueprintType)
 struct FST_Person
 {
