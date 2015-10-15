@@ -1,0 +1,3 @@
+RowName,Recipes
+Wood,"((Product=Wood,Quantity=5))"
+Planks,"((Product=Wood,Quantity=5),(Product=Stone,Quantity=3))"

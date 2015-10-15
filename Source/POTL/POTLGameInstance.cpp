@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "POTLUtilFunctionLibrary.h"
+#include "POTLResourceConversion.h"
 #include "POTLStructure.h"
 #include "POTLGameInstance.h"
 
@@ -15,8 +16,27 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	Landscape = nullptr;
 	GridXCount = 200; // Temp. Needs to be calc in point creation.
 	GridYCount = 200; // Temp. Needs to be calc in point creation.
-}
 
+
+	
+	//DataTable'/Game/Resources/TestData.TestData'
+	//DataTable'/Game/Resources/ResourceConversion.ResourceConversion'
+	InformationTable = nullptr;
+	static ConstructorHelpers::FObjectFinder<UDataTable>InformationTable_BP(TEXT("DataTable'/Game/Resources/ResourceConversion.ResourceConversion'")); //~~ Get the Uassets file reference ~~//
+	InformationTable = InformationTable_BP.Object;
+	if (InformationTable)
+	{
+		TArray<FName> RowNames = InformationTable->GetRowNames();
+		static const FString ContextString(TEXT("GENERAL")); // Key value for each column of values
+		FItemInformation* LookUpRow = InformationTable->FindRow<FItemInformation>(FName(TEXT("0")), ContextString); // o-- Search using FindRow. It returns a handle to the row.
+		// Access the variables like LookUpRow->Blueprint_Class, GOLookupRow->Usecode
+		//uint8 SkillsCount = InformationTable->GetTableData().Num(); 
+		if (LookUpRow)
+		{
+
+		}
+	}
+}
 
 /******************** GetConstructLocations *************************/
 TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
@@ -24,8 +44,8 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	//Log("GetConstructLocations", 15.0f, FColor::Yellow, 2);
 	TArray<FST_Hex> ConstructHexes;
 	TArray<int32> ConstructHexIndexes;
-	ConstructHexIndexes = GetConstructLocationIndexes(Structure, IncludeChildren); // Get self hex indexes
-	// Get children hex indexes
+	ConstructHexIndexes = GetConstructLocationIndexes(Structure, IncludeChildren); //~~ Get self hex indexes ~~//
+	//~~ Get children hex indexes ~~//
 	if (IncludeChildren) {
 		//Log("Structure->BroadcastTo.Num(): " + FString::FromInt(Structure->BroadcastTo.Num()), 15.0f, FColor::Yellow, 5);
 		for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
@@ -37,7 +57,7 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			}
 		}
 	}
-	// Convert indexes into real hexes and send a array of copies of them
+	//~~ Convert indexes into real hexes and send a array of copies of them ~~//
 	for (int32 h = 0; h < ConstructHexIndexes.Num(); h++)
 	{
 		ConstructHexes.Add(Hexes[ConstructHexIndexes[h]]);
@@ -58,7 +78,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 	};
 	TArray<Frontier> Frontiers;
 
-	VisitedHexIndexes.Add(Structure->HexIndex); // Add Start Hex to VisitedHexes
+	VisitedHexIndexes.Add(Structure->HexIndex); //~~ Add Start Hex to VisitedHexes ~~//
 
 	Frontier frontier;
 	frontier.HexIndexes.Add(Structure->HexIndex);
@@ -85,20 +105,20 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 		for (int32 m = 0; m < frontier.HexIndexes.Num(); m++)
 		{
 			FST_Hex& Hex = Hexes[frontier.HexIndexes[m]];
-			// Reset construct info if the storred tre id ain't the same.
+			//~~ Reset construct info if the storred tre id ain't the same. ~~//
 			if (Hex.ConstructInfo.TreeId != TreeId)
 			{
 				Hex.ConstructInfo = FST_ConstructLocation{};
 			}
-			// Make Construct Location
+			//~~ Make Construct Location ~~//
 			Hex.ConstructInfo.Cube = Hex.HexCubeCoords;
 			Hex.ConstructInfo.EmitTo.Add(Structure);  // Don't know if it should be a hex or structure reference to, for it to be the best solution.
 			//Hex.ConstructInfo.EmitTo.Add(Hex);
 
-			// Store broadcasted resources? NO. Will result in a lot of hex updating. Could then result in bugs with imcomplete data.
+			//~~ Store broadcasted resources? NO. Will result in a lot of hex updating. Could then result in bugs with imcomplete data. ~~//
 
 			int32 ValidNeighborCount = 0;
-			// Add neighbors to the new frontier/next step. Only if they haven't been visited yet.
+			//~~ Add neighbors to the new frontier/next step. Only if they haven't been visited yet. ~~//
 			for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
 			{
 				int32 Index = Hex.HexNeighborIndexes[i];
@@ -107,34 +127,34 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 					FST_Hex& NeighborHex = Hexes[Index];
 					ValidNeighborCount++;
 
-					if (NeighborHex.AttachedBuilding != nullptr // Only if pointer to structure isn't null
-					&& !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding) // Only if structure isn't already stored in attachments. Will cause structure to block for itself
-					&& NeighborHex.AttachedBuilding->TreeId == TreeId) //  Only structures in same Tree
+					if (NeighborHex.AttachedBuilding != nullptr //~~ Only if pointer to structure isn't null ~~//
+					&& !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding) //~~ Only if structure isn't already stored in attachments. Will cause structure to block for itself ~~//
+					&& NeighborHex.AttachedBuilding->TreeId == TreeId) //~~  Only structures in same Tree ~~//
 					{
 						Hex.ConstructInfo.AttachTo.Add(NeighborHex.AttachedBuilding);
 					}
 					if (!VisitedHexIndexes.Contains(Index))
 					{
-						// Search for attachments/adjacent buildings and store them in hexes
+						//~~ Search for attachments/adjacent buildings and store them in hexes ~~//
 						if (IsHexBuildable(NeighborHex))
 						{
-							Frontiers[k].HexIndexes.Add(Index); // Add Neighbor Hex to the next frontier
-							VisitedHexIndexes.Add(Index); // Add index to visited indexes, so that neighbors don't overlap each other.
+							Frontiers[k].HexIndexes.Add(Index); //~~ Add Neighbor Hex to the next frontier ~~//
+							VisitedHexIndexes.Add(Index); //~~ Add index to visited indexes, so that neighbors don't overlap each other. ~~//
 						}
 					}
 				}
 			}
 			//Hex.DebugMe = true;
 			//ConstructHexIndexes.Add(Hex.HexIndex);
-			if (ValidNeighborCount < 6) // If ValidNeighborCount is less than 6 the hex is on the ridge of the city limit
+			if (ValidNeighborCount < 6) //~~ If ValidNeighborCount is less than 6 the hex is on the ridge of the city limit ~~//
 			{
 				Hex.ConstructInfo.OnRidge = true;
 			}
 			ConstructHexIndexes.AddUnique(Hex.HexIndex);
 		}
 	}
-	Structure->BroadcastGridHexIndexes = ConstructHexIndexes; // Store indexes in structure. It cludes all hex broadcast grid index, including childrens hex indexes
-	return ConstructHexIndexes; // Return
+	Structure->BroadcastGridHexIndexes = ConstructHexIndexes; //~~ Store indexes in structure. It cludes all hex broadcast grid index, including childrens hex indexes ~~//
+	return ConstructHexIndexes; //~~ Return ~~//
 }
 
 

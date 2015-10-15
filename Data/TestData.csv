@@ -1,4 +1,5 @@
-Name,ItemName,ItemCost,ItemInfo
-0,Fire Sword,600.45,You can feel the heat simmering off of this obviously firey sword
-1,Battery,0.95,I wonder if it still has charge...
-2,Shotgun,23.75,The sword look cooler.
+RowName,Id,ItemName,ItemCost,ItemInfo,ItemList
+0,0,Fire Sword,600.45,You can feel the heat simmering off of this obviously firey sword,(2)
+1,1,Battery,0.95,I wonder if it still has charge...,()
+2,2,Shotgun,23.75,The sword look cooler.,"(0,1)"
+3,3,NewTest,,Thekasdsadsad,()

@@ -4,6 +4,7 @@
 
 #include "Engine/GameInstance.h"
 #include "POTLUtilFunctionLibrary.h"
+#include "POTLResourceConversion.h"
 #include "POTLGameInstance.generated.h"
 
 
@@ -39,13 +40,27 @@ struct FItemInformation : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 public:
+	FItemInformation()
+		: Id(FName(TEXT("")))
+		, ItemName(TEXT(""))
+		, ItemCost(0.f)
+		, ItemInfo(TEXT(""))
+	{}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Information System")
-	FText ItemName;
+	FName Id;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Information System")
-	FString ItemCost;
+	FString ItemName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Information System")
-	FText ItemInfo;
+	float ItemCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Information System")
+	FString ItemInfo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Information System")
+	TArray<FName> ItemList;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SkillData)
+	//TAssetPtr<UTexture> SkillIcon;
 };
+
+
 
 
 
@@ -270,21 +285,6 @@ struct FST_Structure : public FTableRowBase
 
 
 USTRUCT(BlueprintType)
-struct FST_ResourceConversion : public FTableRowBase
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	FName Id;
-
-	FST_ResourceConversion()
-	{
-		Id = FName(TEXT(""));
-	}
-};
-
-
-USTRUCT(BlueprintType)
 struct FST_Person
 {
 	GENERATED_USTRUCT_BODY()
@@ -464,6 +464,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	AActor* Landscape;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resources")
+	UDataTable* InformationTable;
 
 	/*********** FUNCTIONS **************/
 
