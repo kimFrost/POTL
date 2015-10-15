@@ -1,3 +1,4 @@
-RowName,Recipes
-Wood,"((Product=Wood,Quantity=5))"
-Planks,"((Product=Wood,Quantity=5),(Product=Stone,Quantity=3))"
+RowName,Ingredients,Quantity
+Something,"((Ingredient=Wood,Quantity=5),(Ingredient=Stone,Quantity=3))",1
+Stick,"((Ingredient=Wood,Quantity=1))",16
+Plank,"((Ingredient=Wood,Quantity=2))",1
