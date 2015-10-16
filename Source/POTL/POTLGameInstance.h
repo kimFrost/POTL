@@ -401,48 +401,55 @@ struct FST_Factory
 			{
 				for (auto& Ingredient : Recipe->Ingredients)
 				{
-					if (Requirements.Contains(Ingredient.Ingredient))	Requirements[Ingredient.Ingredient] += Ingredient.Quantity;
-					else												Requirements.Add(Ingredient.Ingredient, Ingredient.Quantity);
+					if (Requirements.Contains(Ingredient.Id))	Requirements[Ingredient.Id] += Ingredient.Quantity;
+					else												Requirements.Add(Ingredient.Id, Ingredient.Quantity);
 				}
 			}
 		}
 	}
 
-	// Resolve factory
+	//~~ Resolve factor ~~//
 	void const Resolve(TMap<FName, int32>& SendTo, UDataTable* RecipeTable)
 	{
 		//~~ The production ~~//
 		TMap<FName, int32> Production;
 		for (auto& InvoiceItem : Invoice)
 		{
-			bool InvoiceFurfilled = true;
+			bool InvoiceFulfilled = true;
 			static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
 			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
-			if (Recipe)
+			if (Recipe) //~~ If recipe for invoce item is found ~~//
 			{
+				// I have an invoice for X*planks, and want to have it produced
+				for (int32 i = 0; i < InvoiceItem.Value; i++)
+				{
+					 
+				}
+
+				int32 MaxInvoiceProductionSupported = 0;
+
 				for (auto& Ingredient : Recipe->Ingredients)
 				{
-					if (Requirements.Contains(Ingredient.Ingredient))
+					if (Requirements.Contains(Ingredient.Id) && Requirements[Ingredient.Id] > InvoiceItem.Value)
 					{
-						if (Requirements[Ingredient.Ingredient] > Ingredient.Quantity)
+						int32 MaxItemProduction = FMath::FloorToInt(Requirements[Ingredient.Id] / InvoiceItem.Value);
+						if (MaxInvoiceProductionSupported > MaxItemProduction)
 						{
-							//Production
-
-							//InvoiceItem.Key
-							//InvoiceItem.Value
-
+							MaxInvoiceProductionSupported = MaxItemProduction;
 						}
-						else 
-						{
-
-						}
-					}
-					else 
-					{
-
 					}
 				}
+
+				//~~ MaxInvoiceProductionSupported should now be the max items supported by the allocated resources in requirements ~~//
+
+				//Production
+				//InvoiceItem.Key
+				//InvoiceItem.Value
 				//Recipe->Servings
+			}
+			else 
+			{
+				InvoiceFulfilled = false;
 			}
 		}
 		//~~ Send the remaining resource back with the production, if any ~~//

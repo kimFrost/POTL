@@ -23,16 +23,16 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FST_RecipeItem
+struct FST_Ingredient
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	FName Ingredient;
+	FName Id;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	int32 Quantity;
 
-	FST_RecipeItem()
+	FST_Ingredient()
 	{
 	}
 };
@@ -49,7 +49,7 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	//FName Product;
 	UPROPERTY(EditAnywhere, Category = "Resources")
-	TArray<FST_RecipeItem> Ingredients;
+	TArray<FST_Ingredient> Ingredients;
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	int32 Servings;
 };
