@@ -33,6 +33,8 @@ public:
 	APOTLStructure(const FObjectInitializer &ObjectInitializer);
 	//AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	UPOTLGameInstance* GameInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<APOTLStructure*> BroadcastTo;
@@ -61,6 +63,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<int32> BroadcastGridHexIndexes;
+
+	
 
 	/** Resources */
 

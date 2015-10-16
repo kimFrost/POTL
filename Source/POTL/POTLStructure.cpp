@@ -16,33 +16,37 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};
 
-	// Add test resources
-	Resources.Add(FName(TEXT("Wood")), 50.f);
-	Resources.Add(FName(TEXT("Stone")), 50.f);
+	GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+	if (GameInstance)
+	{
+		// Add test resources
+		Resources.Add(FName(TEXT("Wood")), 50.f);
+		Resources.Add(FName(TEXT("Stone")), 50.f);
 
-	// Add test factory for resource process
-	/*
-	FST_Factory Factory;
-	FST_TMap Requirement;
-	Requirement.Id = FName(TEXT("Wood"));
-	Requirement.Value = 5.f;
-	Factory.Requirements.Add(Requirement);
-	Factories.Add(Factory);
-	*/
-	FST_Factory Factory;
-	Factory.Requirements.Add(FName(TEXT("Wood")), 2.f);
-	Factories.Add(Factory);
+		// Add test factory for resource process
+		/*
+		FST_Factory Factory;
+		FST_TMap Requirement;
+		Requirement.Id = FName(TEXT("Wood"));
+		Requirement.Value = 5.f;
+		Factory.Requirements.Add(Requirement);
+		Factories.Add(Factory);
+		*/
+		FST_Factory Factory;
+		Factory.Requirements.Add(FName(TEXT("Wood")), 2.f);
+		Factories.Add(Factory);
 
-	//Id = FName(TEXT(""));
-	//Title = "";
-	//UnitMass = 1.f;
-	//Stackable = true;
-	//Burnable = true;
-	//StackSize = 64;
-	//Quantity = 0;
+		//Id = FName(TEXT(""));
+		//Title = "";
+		//UnitMass = 1.f;
+		//Stackable = true;
+		//Burnable = true;
+		//StackSize = 64;
+		//Quantity = 0;
 
-	//HSSSS = nullptr;
-	//HSSSS = FST_Hex{};
+		//HSSSS = nullptr;
+		//HSSSS = FST_Hex{};
+	}
 }
 
 //AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);
@@ -174,9 +178,11 @@ void APOTLStructure::ResolveTree()
 	//~~ Resolve factories ~~//
 	for (auto& Factory : Factories)
 	{
+		
+		Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
 		Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
 		if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, Factory.Allocations, 0);
-		Factory.Resolve(ResourceAlterations); // Resolve factory and get the results/production
+		Factory.Resolve(ResourceAlterations, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
 	}
 
 	//~~ Broadcast resources to children/broadcastTo ? ~~//

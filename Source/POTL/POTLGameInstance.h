@@ -391,24 +391,59 @@ struct FST_Factory
 	TMap<FName, int32> Invoice;
 
 	//~~ Calculate Requirements for total allocation ~~//
-	void const ProcessInvoice()
+	void const ProcessInvoice(UDataTable* RecipeTable)
 	{
-		for (auto& Item : Invoice)
+		for (auto& InvoiceItem : Invoice)
 		{
-
+			static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
+			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
+			if (Recipe)
+			{
+				for (auto& Ingredient : Recipe->Ingredients)
+				{
+					if (Requirements.Contains(Ingredient.Ingredient))	Requirements[Ingredient.Ingredient] += Ingredient.Quantity;
+					else												Requirements.Add(Ingredient.Ingredient, Ingredient.Quantity);
+				}
+			}
 		}
 	}
 
 	// Resolve factory
-	void const Resolve(TMap<FName, int32>& SendTo)
+	void const Resolve(TMap<FName, int32>& SendTo, UDataTable* RecipeTable)
 	{
-		TMap<FName, int32> Production;
 		//~~ The production ~~//
-		for (auto& Item : Invoice)
+		TMap<FName, int32> Production;
+		for (auto& InvoiceItem : Invoice)
 		{
-			
+			bool InvoiceFurfilled = true;
+			static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
+			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
+			if (Recipe)
+			{
+				for (auto& Ingredient : Recipe->Ingredients)
+				{
+					if (Requirements.Contains(Ingredient.Ingredient))
+					{
+						if (Requirements[Ingredient.Ingredient] > Ingredient.Quantity)
+						{
+							//Production
 
+							//InvoiceItem.Key
+							//InvoiceItem.Value
 
+						}
+						else 
+						{
+
+						}
+					}
+					else 
+					{
+
+					}
+				}
+				//Recipe->Servings
+			}
 		}
 		//~~ Send the remaining resource back with the production, if any ~~//
 		for (auto& Resource : Allocations)
@@ -417,6 +452,12 @@ struct FST_Factory
 			else								SendTo.Add(Resource.Key, Resource.Value);
 		}
 		Allocations.Empty();
+		//~~ Send production to SendTo's resource reference ~~//
+		for (auto& Resource : Production)
+		{
+			if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
+			else								SendTo.Add(Resource.Key, Resource.Value);
+		}
 	}
 	// Constructor
 	FST_Factory()
@@ -466,7 +507,8 @@ public:
 	AActor* Landscape;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resources")
-	UDataTable* InformationTable;
+	UDataTable* RecipeTable;
+
 
 	/*********** FUNCTIONS **************/
 

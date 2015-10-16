@@ -23,7 +23,7 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FST_Recipe
+struct FST_RecipeItem
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -32,7 +32,7 @@ struct FST_Recipe
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	int32 Quantity;
 
-	FST_Recipe()
+	FST_RecipeItem()
 	{
 	}
 };
@@ -49,10 +49,9 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	//FName Product;
 	UPROPERTY(EditAnywhere, Category = "Resources")
-	TArray<FST_Recipe> Ingredients;
+	TArray<FST_RecipeItem> Ingredients;
 	UPROPERTY(EditAnywhere, Category = "Resources")
-	int32 Quantity;
-	//TMap<FName, int32> Recipes;
+	int32 Servings;
 };
 
 

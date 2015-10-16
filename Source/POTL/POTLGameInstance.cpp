@@ -21,14 +21,14 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	
 	//DataTable'/Game/Resources/TestData.TestData'
 	//DataTable'/Game/Resources/ResourceConversion.ResourceConversion'
-	InformationTable = nullptr;
-	static ConstructorHelpers::FObjectFinder<UDataTable>InformationTable_BP(TEXT("DataTable'/Game/Resources/ResourceConversion.ResourceConversion'")); //~~ Get the Uassets file reference ~~//
-	InformationTable = InformationTable_BP.Object;
-	if (InformationTable)
+	RecipeTable = nullptr;
+	static ConstructorHelpers::FObjectFinder<UDataTable>RecipeTable_BP(TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'")); //~~ Get the Uassets file reference ~~//
+	RecipeTable = RecipeTable_BP.Object;
+	if (RecipeTable)
 	{
-		TArray<FName> RowNames = InformationTable->GetRowNames();
+		TArray<FName> RowNames = RecipeTable->GetRowNames();
 		static const FString ContextString(TEXT("GENERAL")); // Key value for each column of values
-		FItemInformation* LookUpRow = InformationTable->FindRow<FItemInformation>(FName(TEXT("0")), ContextString); // o-- Search using FindRow. It returns a handle to the row.
+		FST_ResourceRecipe* LookUpRow = RecipeTable->FindRow<FST_ResourceRecipe>(FName(TEXT("0")), ContextString); // o-- Search using FindRow. It returns a handle to the row.
 		// Access the variables like LookUpRow->Blueprint_Class, GOLookupRow->Usecode
 		//uint8 SkillsCount = InformationTable->GetTableData().Num(); 
 		if (LookUpRow)
