@@ -292,12 +292,27 @@ struct FST_Person
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	FString Title;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	FName FamilyName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	TArray<FName> Groups;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	int32 Age;
+
+	UPROPERTY(EditAnywhere, Category = "Person")
+	TMap<FName, int32> Modifiers; // Starvation, Hunger, Cold, Lonely, Insane, Power hungry, etc.
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	EPersonTypesEnum Type; // Boy, Girl, Man, Women, Old man, Old women
+
 
 	FST_Person()
 	{
 		Title = "";
+		FamilyName = FName(TEXT(""));
+		Age = 0;
 		Type = EPersonTypesEnum::Man;
 	}
 };
@@ -402,7 +417,7 @@ struct FST_Factory
 				for (auto& Ingredient : Recipe->Ingredients)
 				{
 					if (Requirements.Contains(Ingredient.Id))	Requirements[Ingredient.Id] += Ingredient.Quantity;
-					else												Requirements.Add(Ingredient.Id, Ingredient.Quantity);
+					else										Requirements.Add(Ingredient.Id, Ingredient.Quantity);
 				}
 			}
 		}
@@ -413,6 +428,59 @@ struct FST_Factory
 	{
 		//~~ The production ~~//
 		TMap<FName, int32> Production;
+
+		int32 i = 0;
+
+		TArray<FName> IdList;
+		TArray<int32> ValueList;
+		Invoice.GenerateKeyArray(IdList);
+		Invoice.GenerateValueArray(ValueList);
+
+		//~~ Calculate total singleton length of production ~~//
+		int32 SingletonLength = 0;
+		for (i = 0; i < ValueList.Num(); i++)
+		{
+			SingletonLength += ValueList[i];
+		}
+
+		TMultiMap<FName, int32> SingletonInvoice;
+		//~~ Loop through SingletonLength and pull values from the invoice ~~//
+		for (i = 0; i < SingletonLength; i++)
+		{
+			//~~ Here the sorting logic will be
+
+
+			//SingletonInvoice.Add(InvoiceItem.Key, 1);
+		}
+
+
+		//~~ Make a mixed list of all invoiceItems. Ex. [a, b, c, a, b, c, a, b, c, etc.] ~~//
+		
+		/*
+		int32 TypesCount = 0;
+		for (auto& InvoiceItem : Invoice)
+		{
+			TypesCount++;
+			for (i = 0; i < InvoiceItem.Value; i++)
+			{
+				SingletonInvoice.Add(InvoiceItem.Key, 1);
+			}
+		}
+
+		//~~ [a, a, a, a, b, b, b, b] / 2 ~~~//
+		//~~ [a, a, a, a, b, b, b, b, c, c, c, c] / 3 ~~~//
+		//~~ [a, a, b, b, b, b, c] / 3 ~~~//
+
+		//SingletonInvoice.GetKeys();
+
+		for (auto& SingletonInvoiceItem : SingletonInvoice)
+		{
+
+		}
+		*/
+
+
+
 		for (auto& InvoiceItem : Invoice)
 		{
 			bool InvoiceFulfilled = true;
@@ -420,6 +488,13 @@ struct FST_Factory
 			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
 			if (Recipe) //~~ If recipe for invoce item is found ~~//
 			{
+				
+
+				
+
+
+
+
 				// I have an invoice for X*planks, and want to have it produced
 				for (int32 i = 0; i < InvoiceItem.Value; i++)
 				{
@@ -442,6 +517,7 @@ struct FST_Factory
 
 				//~~ MaxInvoiceProductionSupported should now be the max items supported by the allocated resources in requirements ~~//
 
+
 				//Production
 				//InvoiceItem.Key
 				//InvoiceItem.Value
@@ -451,6 +527,9 @@ struct FST_Factory
 			{
 				InvoiceFulfilled = false;
 			}
+
+
+
 		}
 		//~~ Send the remaining resource back with the production, if any ~~//
 		for (auto& Resource : Allocations)
