@@ -403,7 +403,8 @@ struct FST_Factory
 	TMap<FName, int32> Allocations;
 
 	UPROPERTY(EditAnywhere, Category = "Resource")
-	TMap<FName, int32> Invoice;
+	//TMap<FName, int32> Invoice;
+	TMap<FString, int32> Invoice;
 
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	TMap<FString, int32> TestTMap;
@@ -412,21 +413,42 @@ struct FST_Factory
 	//~~ Calculate Requirements for total allocation ~~//
 	void const ProcessInvoice(UDataTable* RecipeTable)
 	{
+		/*
 		TArray<FString> TestArray;
 		TestTMap.GenerateKeyArray(TestArray);
 		for (int32 i = 0; i < TestArray.Num(); i++)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TestArray[i]);
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TestArray[i]);
 		}
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::FromInt(TestTMap[TEXT("TestKey")]));
+		*/
 
 		if (RecipeTable)
 		{
+			static const FString ContextString(TEXT("RowName"));
+			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(TEXT("Plank"), ContextString);
+			if (Recipe)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::FromInt(Recipe->Servings));
+			}
+
+			/*
+			TArray<FName> TestArray = RecipeTable->GetRowNames();
+			for (int32 i = 0; i < TestArray.Num(); i++)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TestArray[i].ToString());
+			}
+			*/
+
+
+
 			for (auto& InvoiceItem : Invoice)
 			{
 				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, InvoiceItem.Key.ToString());
 
 				static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
-				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
+				//FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
+				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*InvoiceItem.Key, ContextString);
 				if (Recipe)
 				{
 					for (auto& Ingredient : Recipe->Ingredients)
@@ -445,7 +467,7 @@ struct FST_Factory
 		if (RecipeTable)
 		{ 
 			//~~ The production ~~//
-			TMap<FName, int32> Production;
+			TMap<FString, int32> Production;
 			int32 i = 0;
 			//TArray<FName> IdList;
 			//Invoice.GenerateKeyArray(IdList);
@@ -459,7 +481,7 @@ struct FST_Factory
 				SingletonLength += ValueList[i];
 			}
 
-			TMultiMap<FName, int32> SingletonQue;
+			TMultiMap<FString, int32> SingletonQue;
 			//~~ Loop through SingletonLength and pull values from the invoice ~~//
 			for (i = 0; i < SingletonLength; i++)
 			{
@@ -486,7 +508,8 @@ struct FST_Factory
 			for (auto& Singleton : SingletonQue)
 			{
 				static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
-				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(Singleton.Key, ContextString);
+				//FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(Singleton.Key, ContextString);
+				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*Singleton.Key, ContextString);
 				if (Recipe) //~~ If recipe for invoce item is found ~~//
 				{
 					bool ResourcesRequirementFulfilled = true;
@@ -558,8 +581,10 @@ struct FST_Factory
 			//~~ Send production to SendTo's resource reference ~~//
 			for (auto& Resource : Production)
 			{
-				if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
-				else								SendTo.Add(Resource.Key, Resource.Value);
+				//if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
+				//else									SendTo.Add(Resource.Key, Resource.Value);
+				if (SendTo.Contains(*Resource.Key))	SendTo[*Resource.Key] += Resource.Value;
+				else								SendTo.Add(*Resource.Key, Resource.Value);
 			}
 		}
 	}

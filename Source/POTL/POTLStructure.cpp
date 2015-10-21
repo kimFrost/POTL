@@ -277,7 +277,7 @@ void APOTLStructure::BeginPlay()
 		// Add test factory for resource process
 		FST_Factory Factory;
 		//Factory.Invoice.Add(FName(TEXT("Plank"), 1));
-		Factory.Invoice.Add(FName(TEXT("Plank"), 1));
+		Factory.Invoice.Add(TEXT("Plank"), 1);
 
 		Factory.TestTMap.Add(TEXT("TestKey"), 6);
 
