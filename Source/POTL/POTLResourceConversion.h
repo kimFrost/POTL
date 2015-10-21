@@ -28,12 +28,13 @@ struct FST_Ingredient
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	FName Id;
+	FString Id;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	int32 Quantity;
 
 	FST_Ingredient()
 	{
+		Id = TEXT("");
 	}
 };
 

@@ -64,7 +64,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 
 
 /******************** AddResource *************************/
-bool APOTLStructure::AddResource(FName Id, int32 Quantity, EResourceList Type)
+bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
 {
 	bool Added = false;
 	switch (Type)
@@ -189,7 +189,11 @@ void APOTLStructure::ResolveTree()
 			Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
 			Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
 			if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, Factory.Allocations, 0);
-			Factory.Resolve(ResourceAlterations, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
+		
+			//~~ Resources are not being drained from the source ???
+
+			//Factory.Resolve(ResourceAlterations, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
+			/* TEMP FOR TESTING => */Factory.Resolve(Resources, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
 		}
 	}
 
@@ -198,9 +202,9 @@ void APOTLStructure::ResolveTree()
 
 
 /******************** RequestResources *************************/
-bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, int32>& Request, TMap<FName, int32>& Allocations, int32 Steps)
+bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, TMap<FString, int32>& Allocations, int32 Steps)
 {
-	TMap<FName, int32> RequestedResources; //~~ FName Id, Int32 Quantity ~~//
+	TMap<FString, int32> RequestedResources; //~~ FString Id, Int32 Quantity ~~//
 	bool RequestFulfilled = true;
 	Steps++; //~~ Increase steps, resulting in more resource loss from many reroutes ~~//
 
@@ -271,8 +275,8 @@ void APOTLStructure::BeginPlay()
 	if (GameInstance)
 	{
 		// Add test resources
-		Resources.Add(FName(TEXT("Wood")), 50.f);
-		Resources.Add(FName(TEXT("Stone")), 50.f);
+		Resources.Add(TEXT("Wood"), 50.f);
+		Resources.Add(TEXT("Stone"), 50.f);
 
 		// Add test factory for resource process
 		FST_Factory Factory;
