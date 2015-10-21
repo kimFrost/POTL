@@ -405,19 +405,35 @@ struct FST_Factory
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	TMap<FName, int32> Invoice;
 
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	TMap<FString, int32> TestTMap;
+
+
 	//~~ Calculate Requirements for total allocation ~~//
 	void const ProcessInvoice(UDataTable* RecipeTable)
 	{
-		for (auto& InvoiceItem : Invoice)
+		TArray<FString> TestArray;
+		TestTMap.GenerateKeyArray(TestArray);
+		for (int32 i = 0; i < TestArray.Num(); i++)
 		{
-			static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
-			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
-			if (Recipe)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TestArray[i]);
+		}
+
+		if (RecipeTable)
+		{
+			for (auto& InvoiceItem : Invoice)
 			{
-				for (auto& Ingredient : Recipe->Ingredients)
+				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, InvoiceItem.Key.ToString());
+
+				static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
+				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
+				if (Recipe)
 				{
-					if (Requirements.Contains(Ingredient.Id))	Requirements[Ingredient.Id] += Ingredient.Quantity;
-					else										Requirements.Add(Ingredient.Id, Ingredient.Quantity);
+					for (auto& Ingredient : Recipe->Ingredients)
+					{
+						if (Requirements.Contains(Ingredient.Id))	Requirements[Ingredient.Id] += Ingredient.Quantity;
+						else										Requirements.Add(Ingredient.Id, Ingredient.Quantity);
+					}
 				}
 			}
 		}
@@ -426,123 +442,125 @@ struct FST_Factory
 	//~~ Resolve factor ~~//
 	void const Resolve(TMap<FName, int32>& SendTo, UDataTable* RecipeTable)
 	{
-		//~~ The production ~~//
-		TMap<FName, int32> Production;
+		if (RecipeTable)
+		{ 
+			//~~ The production ~~//
+			TMap<FName, int32> Production;
+			int32 i = 0;
+			//TArray<FName> IdList;
+			//Invoice.GenerateKeyArray(IdList);
+			TArray<int32> ValueList;
+			Invoice.GenerateValueArray(ValueList);
 
-		int32 i = 0;
-
-		TArray<FName> IdList;
-		TArray<int32> ValueList;
-		Invoice.GenerateKeyArray(IdList);
-		Invoice.GenerateValueArray(ValueList);
-
-		//~~ Calculate total singleton length of production ~~//
-		int32 SingletonLength = 0;
-		for (i = 0; i < ValueList.Num(); i++)
-		{
-			SingletonLength += ValueList[i];
-		}
-
-		TMultiMap<FName, int32> SingletonInvoice;
-		//~~ Loop through SingletonLength and pull values from the invoice ~~//
-		for (i = 0; i < SingletonLength; i++)
-		{
-			//~~ Here the sorting logic will be
-
-
-			//SingletonInvoice.Add(InvoiceItem.Key, 1);
-		}
-
-
-		//~~ Make a mixed list of all invoiceItems. Ex. [a, b, c, a, b, c, a, b, c, etc.] ~~//
-		
-		/*
-		int32 TypesCount = 0;
-		for (auto& InvoiceItem : Invoice)
-		{
-			TypesCount++;
-			for (i = 0; i < InvoiceItem.Value; i++)
+			//~~ Calculate total singleton length of production ~~//
+			int32 SingletonLength = 0;
+			for (i = 0; i < ValueList.Num(); i++)
 			{
-				SingletonInvoice.Add(InvoiceItem.Key, 1);
+				SingletonLength += ValueList[i];
 			}
-		}
 
-		//~~ [a, a, a, a, b, b, b, b] / 2 ~~~//
-		//~~ [a, a, a, a, b, b, b, b, c, c, c, c] / 3 ~~~//
-		//~~ [a, a, b, b, b, b, c] / 3 ~~~//
-
-		//SingletonInvoice.GetKeys();
-
-		for (auto& SingletonInvoiceItem : SingletonInvoice)
-		{
-
-		}
-		*/
-
-
-
-		for (auto& InvoiceItem : Invoice)
-		{
-			bool InvoiceFulfilled = true;
-			static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
-			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
-			if (Recipe) //~~ If recipe for invoce item is found ~~//
+			TMultiMap<FName, int32> SingletonQue;
+			//~~ Loop through SingletonLength and pull values from the invoice ~~//
+			for (i = 0; i < SingletonLength; i++)
 			{
-				
-
-				
-
-
-
-
-				// I have an invoice for X*planks, and want to have it produced
-				for (int32 i = 0; i < InvoiceItem.Value; i++)
+				if (SingletonQue.Num() < SingletonLength)
 				{
-					 
-				}
-
-				int32 MaxInvoiceProductionSupported = 0;
-
-				for (auto& Ingredient : Recipe->Ingredients)
-				{
-					if (Requirements.Contains(Ingredient.Id) && Requirements[Ingredient.Id] > InvoiceItem.Value)
+					//~~ Here the sorting logic will be
+					for (auto& InvoiceItem : Invoice)
 					{
-						int32 MaxItemProduction = FMath::FloorToInt(Requirements[Ingredient.Id] / InvoiceItem.Value);
-						if (MaxInvoiceProductionSupported > MaxItemProduction)
+						if (InvoiceItem.Value > 0)
 						{
-							MaxInvoiceProductionSupported = MaxItemProduction;
+							SingletonQue.Add(InvoiceItem.Key, 1);
+							InvoiceItem.Value -= 1;
 						}
 					}
 				}
-
-				//~~ MaxInvoiceProductionSupported should now be the max items supported by the allocated resources in requirements ~~//
-
-
-				//Production
-				//InvoiceItem.Key
-				//InvoiceItem.Value
-				//Recipe->Servings
+				else
+				{
+					break;
+				}
 			}
-			else 
+
+			//~~ Produce items ~~//
+			bool InvoiceFulfilled = true;
+			for (auto& Singleton : SingletonQue)
 			{
-				InvoiceFulfilled = false;
+				static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
+				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(Singleton.Key, ContextString);
+				if (Recipe) //~~ If recipe for invoce item is found ~~//
+				{
+					bool ResourcesRequirementFulfilled = true;
+					for (auto& Ingredient : Recipe->Ingredients)
+					{
+						if (!Requirements.Contains(Ingredient.Id) && Requirements[Ingredient.Id] < 1)
+						{
+							ResourcesRequirementFulfilled = false;
+						}
+					}
+					if (ResourcesRequirementFulfilled)
+					{
+						//~~ Remove resources ~~//
+						for (auto& Ingredient : Recipe->Ingredients)
+						{
+							Requirements[Ingredient.Id] -= Ingredient.Quantity;
+						}
+						//~~ Add to production ~~//
+						Production.Add(Singleton.Key, Recipe->Servings);
+					}
+				}
 			}
 
+			/*
+			for (auto& InvoiceItem : Invoice)
+			{
+				bool InvoiceFulfilled = true;
+			
+				if (Recipe) //~~ If recipe for invoce item is found ~~//
+				{
+					// I have an invoice for X*planks, and want to have it produced
+					for (int32 i = 0; i < InvoiceItem.Value; i++)
+					{
+					 
+					}
+					int32 MaxInvoiceProductionSupported = 0;
+					for (auto& Ingredient : Recipe->Ingredients)
+					{
+						if (Requirements.Contains(Ingredient.Id) && Requirements[Ingredient.Id] > InvoiceItem.Value)
+						{
+							int32 MaxItemProduction = FMath::FloorToInt(Requirements[Ingredient.Id] / InvoiceItem.Value);
+							if (MaxInvoiceProductionSupported > MaxItemProduction)
+							{
+								MaxInvoiceProductionSupported = MaxItemProduction;
+							}
+						}
+					}
+					//~~ MaxInvoiceProductionSupported should now be the max items supported by the allocated resources in requirements ~~//
 
+					//Production
+					//InvoiceItem.Key
+					//InvoiceItem.Value
+					//Recipe->Servings
+				}
+				else 
+				{
+					InvoiceFulfilled = false;
+				}
+			}
+			*/
 
-		}
-		//~~ Send the remaining resource back with the production, if any ~~//
-		for (auto& Resource : Allocations)
-		{
-			if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
-			else								SendTo.Add(Resource.Key, Resource.Value);
-		}
-		Allocations.Empty();
-		//~~ Send production to SendTo's resource reference ~~//
-		for (auto& Resource : Production)
-		{
-			if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
-			else								SendTo.Add(Resource.Key, Resource.Value);
+			//~~ Send the remaining resource back with the production, if any ~~//
+			for (auto& Resource : Allocations)
+			{
+				if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
+				else								SendTo.Add(Resource.Key, Resource.Value);
+			}
+			Allocations.Empty();
+			//~~ Send production to SendTo's resource reference ~~//
+			for (auto& Resource : Production)
+			{
+				if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
+				else								SendTo.Add(Resource.Key, Resource.Value);
+			}
 		}
 	}
 	// Constructor

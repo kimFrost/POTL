@@ -16,6 +16,18 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};
 
+
+	//GameInstance = Cast<UPOTLGameInstance>(GetGameInstance()); //~~ <== Will crash. The game instance is not ready at this point ~~//
+
+	/*
+	GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+	if (GameInstance != nullptr)
+	{
+
+	}
+	*/
+
+	/*
 	GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
 	if (GameInstance)
 	{
@@ -24,14 +36,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 		Resources.Add(FName(TEXT("Stone")), 50.f);
 
 		// Add test factory for resource process
-		/*
-		FST_Factory Factory;
-		FST_TMap Requirement;
-		Requirement.Id = FName(TEXT("Wood"));
-		Requirement.Value = 5.f;
-		Factory.Requirements.Add(Requirement);
-		Factories.Add(Factory);
-		*/
+
 		FST_Factory Factory;
 		Factory.Requirements.Add(FName(TEXT("Wood")), 2.f);
 		Factories.Add(Factory);
@@ -47,6 +52,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 		//HSSSS = nullptr;
 		//HSSSS = FST_Hex{};
 	}
+	*/
 }
 
 //AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);
@@ -176,13 +182,15 @@ void APOTLStructure::ResolveTree()
 		if (!Fulfilled)		EmitTo->RequestResources(true, this, ResourceUpkeep, ResourceAlterations, 0); //~~ Else get resources from emitTo parent ~~//
 	}
 	//~~ Resolve factories ~~//
-	for (auto& Factory : Factories)
+	if (GameInstance)
 	{
-		
-		Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
-		Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
-		if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, Factory.Allocations, 0);
-		Factory.Resolve(ResourceAlterations, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
+		for (auto& Factory : Factories)
+		{
+			Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
+			Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
+			if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, Factory.Allocations, 0);
+			Factory.Resolve(ResourceAlterations, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
+		}
 	}
 
 	//~~ Broadcast resources to children/broadcastTo ? ~~//
@@ -258,6 +266,29 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 void APOTLStructure::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+	if (GameInstance)
+	{
+		// Add test resources
+		Resources.Add(FName(TEXT("Wood")), 50.f);
+		Resources.Add(FName(TEXT("Stone")), 50.f);
+
+		// Add test factory for resource process
+		FST_Factory Factory;
+		//Factory.Invoice.Add(FName(TEXT("Plank"), 1));
+		Factory.Invoice.Add(FName(TEXT("Plank"), 1));
+
+		Factory.TestTMap.Add(TEXT("TestKey"), 6);
+
+		Factories.Add(Factory);
+
+
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, Factory.Invoice[FName(TEXT("Plank")]);
+	}
+
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FName(TEXT("Plank")).ToString());
+	
 
 	/*********** BINDINGS **************/
 	//UPOTLGameInstance::OnTurnSwitched.AddDynamic(this, &APOTLStructure::RequestResources);

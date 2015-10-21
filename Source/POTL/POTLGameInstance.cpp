@@ -22,12 +22,18 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	//DataTable'/Game/Resources/TestData.TestData'
 	//DataTable'/Game/Resources/ResourceConversion.ResourceConversion'
 	RecipeTable = nullptr;
+	
 	static ConstructorHelpers::FObjectFinder<UDataTable>RecipeTable_BP(TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'")); //~~ Get the Uassets file reference ~~//
-	RecipeTable = RecipeTable_BP.Object;
+	if (RecipeTable_BP.Succeeded())
+	{
+		RecipeTable = RecipeTable_BP.Object;
+	}
+
+	/*
 	if (RecipeTable)
 	{
 		TArray<FName> RowNames = RecipeTable->GetRowNames();
-		static const FString ContextString(TEXT("GENERAL")); // Key value for each column of values
+		static const FString ContextString(TEXT("RowName")); // Key value for each column of values
 		FST_ResourceRecipe* LookUpRow = RecipeTable->FindRow<FST_ResourceRecipe>(FName(TEXT("0")), ContextString); // o-- Search using FindRow. It returns a handle to the row.
 		// Access the variables like LookUpRow->Blueprint_Class, GOLookupRow->Usecode
 		//uint8 SkillsCount = InformationTable->GetTableData().Num(); 
@@ -36,6 +42,8 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 
 		}
 	}
+	*/
+	
 }
 
 /******************** GetConstructLocations *************************/
