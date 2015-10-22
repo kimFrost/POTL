@@ -68,21 +68,25 @@ public:
 
 	/** Resources */
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	UPROPERTY(EditAnywhere, Category = "Resources")
+	TMap<FString, int32> Resources;
 	//TArray<FST_Resource> Resources;
 	//TMap<FName, FST_Resource> Resources;
-	TMap<FString, int32> Resources;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	UPROPERTY(EditAnywhere, Category = "Resources")
+	TMap<FString, int32> ResourceAlterations;
 	//TArray<FST_Resource> ResourceAlterations;
 	//TMap<FName, FST_Resource> ResourceAlterations;
-	TMap<FString, int32> ResourceAlterations;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	
+	UPROPERTY(EditAnywhere, Category = "Resources")
+	TMap<FString, int32> ResourceRequirements;
 	//TArray<FST_Resource> ResourceRequirements;
 	//TMap<FName, FST_Resource> ResourceRequirements;
-	TMap<FString, int32> ResourceRequirements;
+	
+	UPROPERTY(EditAnywhere, Category = "Resources")
+	TMap<FString, int32> ResourcesPromisedAway;
 
+	UPROPERTY(EditAnywhere, Category = "Resources")
 	TMap<FString, int32> ResourceUpkeep;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")

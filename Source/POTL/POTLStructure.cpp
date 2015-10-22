@@ -192,8 +192,7 @@ void APOTLStructure::ResolveTree()
 		
 			//~~ Resources are not being drained from the source ???
 
-			//Factory.Resolve(ResourceAlterations, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
-			/* TEMP FOR TESTING => */Factory.Resolve(Resources, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
+			Factory.Resolve(ResourceAlterations, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
 		}
 	}
 
@@ -217,7 +216,9 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 		{
 			if (ResourceRequest.Value > Resources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
 			{
-				bool Success = RequestFrom->AddResource(ResourceRequest.Key, Resources[ResourceRequest.Key], EResourceList::Alterations);
+				//bool Success = RequestFrom->AddResource(ResourceRequest.Key, Resources[ResourceRequest.Key], EResourceList::Alterations);
+				if (Allocations.Contains(ResourceRequest.Key))	Allocations[ResourceRequest.Key] += Resources[ResourceRequest.Key];
+				else											Allocations.Add(ResourceRequest.Key, Resources[ResourceRequest.Key]);
 				ResourceRequest.Value -= Resources[ResourceRequest.Key];
 				Resources[ResourceRequest.Key] = 0;
 				//RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
@@ -229,15 +230,15 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 			}
 			else if (ResourceRequest.Value <= Resources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
 			{
-				bool Success = RequestFrom->AddResource(ResourceRequest.Key, ResourceRequest.Value, EResourceList::Alterations);
+				//bool Success = RequestFrom->AddResource(ResourceRequest.Key, ResourceRequest.Value, EResourceList::Alterations);
+				if (Allocations.Contains(ResourceRequest.Key))	Allocations[ResourceRequest.Key] += Resources[ResourceRequest.Key];
+				else											Allocations.Add(ResourceRequest.Key, Resources[ResourceRequest.Key]);
 				//RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
 				Resources[ResourceRequest.Key] = Resources[ResourceRequest.Key] - ResourceRequest.Value;
 				ResourceRequest.Value = 0;
 			}
 		}
 	}
-
-
 
 	//~~ if Bubble then then RequestResources on parent/emitTo. ~~//
 	//~~ and resource request haven't been met. ~~//
@@ -250,7 +251,6 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 		bool Fulfilled = EmitTo->RequestResources(Bubble, this, Request, Allocations, Steps);
 		//~~ Combine requested resources ~~//
 	}
-
 
 
 	/*
@@ -282,17 +282,12 @@ void APOTLStructure::BeginPlay()
 		FST_Factory Factory;
 		//Factory.Invoice.Add(FName(TEXT("Plank"), 1));
 		Factory.Invoice.Add(TEXT("Plank"), 1);
-
-		Factory.TestTMap.Add(TEXT("TestKey"), 6);
-
 		Factories.Add(Factory);
-
 
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, Factory.Invoice[FName(TEXT("Plank")]);
 	}
 
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FName(TEXT("Plank")).ToString());
-	
 
 	/*********** BINDINGS **************/
 	//UPOTLGameInstance::OnTurnSwitched.AddDynamic(this, &APOTLStructure::RequestResources);

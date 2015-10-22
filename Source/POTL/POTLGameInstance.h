@@ -406,46 +406,14 @@ struct FST_Factory
 	//TMap<FName, int32> Invoice;
 	TMap<FString, int32> Invoice;
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
-	TMap<FString, int32> TestTMap;
-
-
 	//~~ Calculate Requirements for total allocation ~~//
 	void const ProcessInvoice(UDataTable* RecipeTable)
 	{
-		/*
-		TArray<FString> TestArray;
-		TestTMap.GenerateKeyArray(TestArray);
-		for (int32 i = 0; i < TestArray.Num(); i++)
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TestArray[i]);
-		}
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::FromInt(TestTMap[TEXT("TestKey")]));
-		*/
-
 		if (RecipeTable)
 		{
-			/*
-			static const FString ContextString(TEXT("RowName"));
-			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(TEXT("Plank"), ContextString);
-			if (Recipe)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::FromInt(Recipe->Servings));
-			}
-			*/
-
-			/*
-			TArray<FName> TestArray = RecipeTable->GetRowNames();
-			for (int32 i = 0; i < TestArray.Num(); i++)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TestArray[i].ToString());
-			}
-			*/
-
 			for (auto& InvoiceItem : Invoice)
 			{
 				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, InvoiceItem.Key);
-
 				static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
 				//FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
 				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*InvoiceItem.Key, ContextString);
@@ -466,11 +434,6 @@ struct FST_Factory
 	{
 		if (RecipeTable)
 		{ 
-
-			GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Start production");
-
-
-
 			//~~ The production ~~//
 			TMap<FString, int32> Production;
 			int32 i = 0;
@@ -486,16 +449,14 @@ struct FST_Factory
 				SingletonLength += ValueList[i];
 			}
 
-			
-
+			TMap<FString, int32> InvoiceCopy = Invoice;
 			TMultiMap<FString, int32> SingletonQue;
 			//~~ Loop through SingletonLength and pull values from the invoice ~~//
 			for (i = 0; i < SingletonLength; i++)
 			{
 				if (SingletonQue.Num() < SingletonLength)
 				{
-					//~~ Here the sorting logic will be
-					for (auto& InvoiceItem : Invoice)
+					for (auto& InvoiceItem : InvoiceCopy)
 					{
 						if (InvoiceItem.Value > 0)
 						{
@@ -509,8 +470,6 @@ struct FST_Factory
 					break;
 				}
 			}
-
-			
 
 			//~~ Produce items ~~//
 			bool InvoiceFulfilled = true;
