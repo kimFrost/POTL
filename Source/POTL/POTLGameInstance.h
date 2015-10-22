@@ -317,6 +317,7 @@ struct FST_Person
 	}
 };
 
+
 USTRUCT(BlueprintType)
 struct FST_Resource : public FTableRowBase
 {
@@ -355,6 +356,29 @@ struct FST_Resource : public FTableRowBase
 	}
 };
 
+
+USTRUCT(BlueprintType)
+struct FST_ResourceAllocation
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	TMap<FString, int32> Allocation;
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	APOTLStructure* From;
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	APOTLStructure* To;
+
+	FST_ResourceAllocation()
+	{
+		From = nullptr;
+		To = nullptr;
+	}
+};
+
+
 USTRUCT(BlueprintType)
 struct FST_Skill
 {
@@ -368,10 +392,11 @@ struct FST_Skill
 
 	FST_Skill()
 	{
-		Title = "";
+		Title = TEXT("");
 		XP = 0.f;
 	}
 };
+
 
 USTRUCT(BlueprintType)
 struct FST_TMap
@@ -409,6 +434,7 @@ struct FST_Factory
 	//~~ Calculate Requirements for total allocation ~~//
 	void const ProcessInvoice(UDataTable* RecipeTable)
 	{
+		Requirements.Empty();
 		if (RecipeTable)
 		{
 			for (auto& InvoiceItem : Invoice)
@@ -430,7 +456,7 @@ struct FST_Factory
 	}
 
 	//~~ Resolve factor ~~//
-	void const Resolve(TMap<FString, int32>& SendTo, UDataTable* RecipeTable)
+	void const Resolve(TMap<FString, int32>& SendTo, APOTLStructure* To, UDataTable* RecipeTable)
 	{
 		if (RecipeTable)
 		{ 
@@ -483,7 +509,7 @@ struct FST_Factory
 					bool ResourcesRequirementFulfilled = true;
 					for (auto& Ingredient : Recipe->Ingredients)
 					{
-						if (!Requirements.Contains(Ingredient.Id) && Requirements[Ingredient.Id] < 1)
+						if (!Allocations.Contains(Ingredient.Id) && Allocations[Ingredient.Id] < 1)
 						{
 							ResourcesRequirementFulfilled = false;
 						}
@@ -493,7 +519,7 @@ struct FST_Factory
 						//~~ Remove resources ~~//
 						for (auto& Ingredient : Recipe->Ingredients)
 						{
-							Requirements[Ingredient.Id] -= Ingredient.Quantity;
+							Allocations[Ingredient.Id] -= Ingredient.Quantity;
 						}
 						//~~ Add to production ~~//
 						Production.Add(Singleton.Key, Recipe->Servings);
@@ -541,22 +567,23 @@ struct FST_Factory
 			}
 			*/
 
+			//!! Should send to resource allocations instead
+
 			//~~ Send the remaining resource back with the production, if any ~~//
 			for (auto& Resource : Allocations)
 			{
-				if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
-				else								SendTo.Add(Resource.Key, Resource.Value);
+				// Cannot use APOTLStructure functions!!!!
+				//To->ResolveUpkeep(false);
+				//To->AllocateResource(To, Resource.Key, Resource.Value);
+				//if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Key;
+				//else									SendTo.Add(Resource.Key, Resource.Value);
 			}
 			Allocations.Empty();
 			//~~ Send production to SendTo's resource reference ~~//
 			for (auto& Resource : Production)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Send Resource: " + Resource.Key + ", " + FString::FromInt(Resource.Value));
-
 				if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
 				else								SendTo.Add(Resource.Key, Resource.Value);
-				//if (SendTo.Contains(*Resource.Key))	SendTo[*Resource.Key] += Resource.Value;
-				//else								SendTo.Add(*Resource.Key, Resource.Value);
 			}
 		}
 	}

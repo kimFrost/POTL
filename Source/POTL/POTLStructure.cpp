@@ -70,14 +70,14 @@ bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
 	switch (Type)
 	{
 	case EResourceList::Storage:
-		if (Resources.Contains(Id))
+		if (FreeResources.Contains(Id))
 		{
-			Resources[Id] += Quantity;
+			FreeResources[Id] += Quantity;
 			Added = true;
 		}
 		else
 		{
-			Resources.Add(Id, Quantity);
+			FreeResources.Add(Id, Quantity);
 			Added = true;
 		}
 		break;
@@ -164,41 +164,88 @@ void APOTLStructure::CalculateUpkeep()
 
 }
 
-
-/******************** ResolveTree *************************/
-void APOTLStructure::ResolveTree()
+/******************** ResolveUpkeep *************************/
+void APOTLStructure::ResolveUpkeep(bool Broadcast)
 {
 	//~~ Resolve children ~~//
-	for (int32 i = 0; i < BroadcastTo.Num(); i++)
+	if (Broadcast)
 	{
-		BroadcastTo[i]->ResolveTree();
+		for (int32 i = 0; i < BroadcastTo.Num(); i++)
+		{
+			BroadcastTo[i]->ResolveUpkeep(Broadcast);
+		}
 	}
 	//~~ Resolve self / The function logic ~~//
-	bool Fulfilled = false;
 	//~~ Resolve upkeep ~~//
-	Fulfilled = RequestResources(false, this, ResourceUpkeep, ResourceAlterations, 0); //~~ Do self have the required resources ~~//
+	bool Fulfilled = RequestResources(false, this, ResourceUpkeep, ResourceAlterations, 0); //~~ Do self have the required resources ~~//
 	if (EmitTo != nullptr)
 	{
 		if (!Fulfilled)		EmitTo->RequestResources(true, this, ResourceUpkeep, ResourceAlterations, 0); //~~ Else get resources from emitTo parent ~~//
 	}
+}
+
+/******************** ResolveFactories *************************/
+void APOTLStructure::ResolveFactories(bool Broadcast)
+{
+	//~~ Resolve children ~~//
+	if (Broadcast)
+	{
+		for (int32 i = 0; i < BroadcastTo.Num(); i++)
+		{
+			BroadcastTo[i]->ResolveFactories(Broadcast);
+		}
+	}
+	//~~ Resolve self / The function logic ~~//
 	//~~ Resolve factories ~~//
 	if (GameInstance)
 	{
 		for (auto& Factory : Factories)
 		{
 			Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
-			Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
+			bool Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
 			if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, Factory.Allocations, 0);
-		
+
 			//~~ Resources are not being drained from the source ???
 
-			Factory.Resolve(ResourceAlterations, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
+			Factory.Resolve(ResourceAlterations, this, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
 		}
 	}
+}
 
+
+/******************** ResolveTree *************************/
+void APOTLStructure::ResolveTree()
+{
+	ResolveUpkeep(true);
+	ResolveFactories(true); 
+
+	/*
+	//~~ Resolve children ~~//
+	for (int32 i = 0; i < BroadcastTo.Num(); i++)
+	{
+		BroadcastTo[i]->ResolveTree();
+	}
+	*/
+
+	//~~ Resolve self / The function logic ~~//
+	
 	//~~ Broadcast resources to children/broadcastTo ? ~~//
 }
 
+
+/******************** ResolveTree *************************/
+int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString Type, int32 Quantity)
+{
+	FST_ResourceAllocation Allocation;
+	Allocation.From = From;
+	Allocation.From = this;
+
+	//Allocation.Type = Type;
+	//Allocation.Quantity = Quantity;
+
+	int32 Index = AllocatedResources.Add(Allocation);
+	return Index;
+}
 
 /******************** RequestResources *************************/
 bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, TMap<FString, int32>& Allocations, int32 Steps)
@@ -212,29 +259,33 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 	//~~ Handle request and Try to meet the resource request with own storage. If not then request parent of current ~~//
 	for (auto& ResourceRequest : Request)
 	{
-		if (Resources.Contains(ResourceRequest.Key))
+		if (FreeResources.Contains(ResourceRequest.Key))
 		{
-			if (ResourceRequest.Value > Resources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
+			if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
 			{
+
+				//!! Use AllocateResource instead. But Allocations parameters properly need to be changed
+
+
 				//bool Success = RequestFrom->AddResource(ResourceRequest.Key, Resources[ResourceRequest.Key], EResourceList::Alterations);
-				if (Allocations.Contains(ResourceRequest.Key))	Allocations[ResourceRequest.Key] += Resources[ResourceRequest.Key];
-				else											Allocations.Add(ResourceRequest.Key, Resources[ResourceRequest.Key]);
-				ResourceRequest.Value -= Resources[ResourceRequest.Key];
-				Resources[ResourceRequest.Key] = 0;
+				if (Allocations.Contains(ResourceRequest.Key))	Allocations[ResourceRequest.Key] += FreeResources[ResourceRequest.Key];
+				else											Allocations.Add(ResourceRequest.Key, FreeResources[ResourceRequest.Key]);
+				ResourceRequest.Value -= FreeResources[ResourceRequest.Key];
+				FreeResources[ResourceRequest.Key] = 0;
 				//RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
-				Resources.Remove(ResourceRequest.Key); //~~ Remove the empty resource ~~//
+				FreeResources.Remove(ResourceRequest.Key); //~~ Remove the empty resource ~~//
 				RequestFulfilled = false;
 
 				//~~ Should resource requirement list be emptied and then refilled by the structure again? // Mayby yes. Then the calculation is propperly correct each time. ~~// 
 				//~~ Then the structure on turnBegin will calculate their resource requirements ~~//
 			}
-			else if (ResourceRequest.Value <= Resources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
+			else if (ResourceRequest.Value <= FreeResources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
 			{
 				//bool Success = RequestFrom->AddResource(ResourceRequest.Key, ResourceRequest.Value, EResourceList::Alterations);
-				if (Allocations.Contains(ResourceRequest.Key))	Allocations[ResourceRequest.Key] += Resources[ResourceRequest.Key];
-				else											Allocations.Add(ResourceRequest.Key, Resources[ResourceRequest.Key]);
+				if (Allocations.Contains(ResourceRequest.Key))	Allocations[ResourceRequest.Key] += FreeResources[ResourceRequest.Key];
+				else											Allocations.Add(ResourceRequest.Key, FreeResources[ResourceRequest.Key]);
 				//RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
-				Resources[ResourceRequest.Key] = Resources[ResourceRequest.Key] - ResourceRequest.Value;
+				FreeResources[ResourceRequest.Key] = FreeResources[ResourceRequest.Key] - ResourceRequest.Value;
 				ResourceRequest.Value = 0;
 			}
 		}
@@ -275,8 +326,8 @@ void APOTLStructure::BeginPlay()
 	if (GameInstance)
 	{
 		// Add test resources
-		Resources.Add(TEXT("Wood"), 50.f);
-		Resources.Add(TEXT("Stone"), 50.f);
+		FreeResources.Add(TEXT("Wood"), 50.f);
+		FreeResources.Add(TEXT("Stone"), 50.f);
 
 		// Add test factory for resource process
 		FST_Factory Factory;

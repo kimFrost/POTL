@@ -12,6 +12,9 @@
 
 //~~~~~ STRUCTS ~~~~~
 
+
+
+
 //~~~~~ ENUMS ~~~~~
 UENUM(BlueprintType)
 enum class EResourceList : uint8
@@ -69,6 +72,13 @@ public:
 	/** Resources */
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
+	TMap<FString, int32> FreeResources;
+
+	UPROPERTY(EditAnywhere, Category = "Resources")
+	TArray<FST_ResourceAllocation> AllocatedResources;
+	// Key, Allocated from, Allocated To, Allocation type
+
+	UPROPERTY(EditAnywhere, Category = "Resources")
 	TMap<FString, int32> Resources;
 	//TArray<FST_Resource> Resources;
 	//TMap<FName, FST_Resource> Resources;
@@ -82,7 +92,8 @@ public:
 	TMap<FString, int32> ResourceRequirements;
 	//TArray<FST_Resource> ResourceRequirements;
 	//TMap<FName, FST_Resource> ResourceRequirements;
-	
+
+
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	TMap<FString, int32> ResourcesPromisedAway;
 
@@ -107,6 +118,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveTree();
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	int32 AllocateResource(APOTLStructure* From, FString Type, int32 Quantity);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void ResolveUpkeep(bool Broadcast);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void ResolveFactories(bool Broadcast);
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
