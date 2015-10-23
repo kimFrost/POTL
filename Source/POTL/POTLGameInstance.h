@@ -24,6 +24,15 @@ enum class EPersonTypesEnum : uint8
 	OldWomen UMETA(DisplayName = "OldWomen")
 };
 
+UENUM(BlueprintType)
+enum class EAllocationType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	RequestDirect UMETA(DisplayName = "RequestDirect"),
+	FactoryProduction UMETA(DisplayName = "FactoryProduction"),
+	FactoryLeftover UMETA(DisplayName = "FactoryLeftover")
+};
+
 
 //~~~~~ Delegates/Event dispatcher ~~~~~//
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTurnSwitched);
@@ -362,8 +371,8 @@ struct FST_ResourceAllocation
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
-	TMap<FString, int32> Allocation;
+	//UPROPERTY(EditAnywhere, Category = "Resource")
+	//TMap<FString, int32> Allocation;
 
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	APOTLStructure* From;
@@ -371,10 +380,22 @@ struct FST_ResourceAllocation
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	APOTLStructure* To;
 
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	FString ResourceKey;
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	int32 Quantity;
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	EAllocationType Type;
+
 	FST_ResourceAllocation()
 	{
 		From = nullptr;
 		To = nullptr;
+		ResourceKey = "";
+		Quantity = 0;
+		Type = EAllocationType::None;
 	}
 };
 
@@ -456,7 +477,10 @@ struct FST_Factory
 	}
 
 	//~~ Resolve factor ~~//
-	void const Resolve(TMap<FString, int32>& SendTo, APOTLStructure* To, UDataTable* RecipeTable)
+	//void const Resolve(TMap<FString, int32>& SendTo, APOTLStructure* To, UDataTable* RecipeTable, TArray<FST_ResourceAllocation>& StructureResourceAllocations)
+	//void const Resolve(TMap<FString, int32>& StructureFreeResources, UDataTable* RecipeTable, const TMap<FString, int32>& Production)
+	// Leftovers const parameter? Or just don't request it?
+	void const Resolve(TMap<FString, int32>& SendTo, APOTLStructure* To, UDataTable* RecipeTable, TArray<FST_ResourceAllocation>& StructureResourceAllocations)
 	{
 		if (RecipeTable)
 		{ 
@@ -573,8 +597,14 @@ struct FST_Factory
 			for (auto& Resource : Allocations)
 			{
 				// Cannot use APOTLStructure functions!!!!
-				//To->ResolveUpkeep(false);
 				//To->AllocateResource(To, Resource.Key, Resource.Value);
+				FST_ResourceAllocation Allocation;
+				Allocation.From = To;
+				Allocation.To = To;
+				Allocation.ResourceKey = Resource.Key;
+				Allocation.Quantity = Resource.Value;
+				Allocation.Type = EAllocationType::FactoryProduction;
+				StructureResourceAllocations.Add(Allocation);
 				//if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Key;
 				//else									SendTo.Add(Resource.Key, Resource.Value);
 			}
@@ -582,8 +612,15 @@ struct FST_Factory
 			//~~ Send production to SendTo's resource reference ~~//
 			for (auto& Resource : Production)
 			{
-				if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
-				else								SendTo.Add(Resource.Key, Resource.Value);
+				FST_ResourceAllocation Allocation;
+				Allocation.From = To;
+				Allocation.To = To; 
+				Allocation.ResourceKey = Resource.Key;
+				Allocation.Quantity = Resource.Value;
+				Allocation.Type = EAllocationType::FactoryProduction;
+				StructureResourceAllocations.Add(Allocation);
+				//if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
+				//else								SendTo.Add(Resource.Key, Resource.Value);
 			}
 		}
 	}

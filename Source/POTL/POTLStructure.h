@@ -120,7 +120,10 @@ public:
 	void ResolveTree();
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	int32 AllocateResource(APOTLStructure* From, FString Type, int32 Quantity);
+	void ResolveAllocations(EAllocationType Type, bool Broadcast);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	int32 AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveUpkeep(bool Broadcast);

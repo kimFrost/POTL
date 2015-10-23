@@ -207,7 +207,16 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 
 			//~~ Resources are not being drained from the source ???
 
-			Factory.Resolve(ResourceAlterations, this, GameInstance->RecipeTable); //~~ Resolve factory and get the results/production ~~//
+			//Factory.Resolve(ResourceAlterations, this, GameInstance->RecipeTable, AllocatedResources); //~~ Resolve factory and get the results/production ~~//
+			Factory.Resolve(ResourceAlterations, this, GameInstance->RecipeTable, AllocatedResources); //~~ Resolve factory and get the results/production ~~//
+			
+			//Factory.Resolve(TMap<FString, int32>& StructureFreeResources, UDataTable* RecipeTable, const TMap<FString, int32>& Production)
+
+			// Use parameters for production and leftovers
+			// Then make resource allocations from here
+			//AllocateResource(this, Key, Value, EAllocationType::FactoryLeftover);
+			//AllocateResource(this, Key, Value, EAllocationType::FactoryProduction);
+
 		}
 	}
 }
@@ -217,35 +226,51 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 void APOTLStructure::ResolveTree()
 {
 	ResolveUpkeep(true);
+	ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
 	ResolveFactories(true); 
+	ResolveAllocations(EAllocationType::None, true); //~~ Resolve all other allocations ~~//
+}
 
-	/*
+
+/******************** ResolveAllocations *************************/
+void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
+{
 	//~~ Resolve children ~~//
-	for (int32 i = 0; i < BroadcastTo.Num(); i++)
+	if (Broadcast)
 	{
-		BroadcastTo[i]->ResolveTree();
+		for (int32 i = 0; i < BroadcastTo.Num(); i++)
+		{
+			BroadcastTo[i]->ResolveAllocations(Type, Broadcast);
+		}
 	}
-	*/
-
 	//~~ Resolve self / The function logic ~~//
-	
-	//~~ Broadcast resources to children/broadcastTo ? ~~//
+	for (int32 i = 0; i < AllocatedResources.Num(); i++)
+	{
+		if (Type == EAllocationType::None)
+		{
+
+		}
+		else
+		{
+
+		}
+	}
 }
 
 
 /******************** ResolveTree *************************/
-int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString Type, int32 Quantity)
+int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type)
 {
 	FST_ResourceAllocation Allocation;
 	Allocation.From = From;
-	Allocation.From = this;
-
-	//Allocation.Type = Type;
-	//Allocation.Quantity = Quantity;
-
+	Allocation.To = this;
+	Allocation.ResourceKey = ResourceKey;
+	Allocation.Type = Type;
+	Allocation.Quantity = Quantity;
 	int32 Index = AllocatedResources.Add(Allocation);
 	return Index;
 }
+
 
 /******************** RequestResources *************************/
 bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, TMap<FString, int32>& Allocations, int32 Steps)
@@ -263,9 +288,9 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 		{
 			if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
 			{
-
 				//!! Use AllocateResource instead. But Allocations parameters properly need to be changed
 
+				//AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::RequestDirect);
 
 				//bool Success = RequestFrom->AddResource(ResourceRequest.Key, Resources[ResourceRequest.Key], EResourceList::Alterations);
 				if (Allocations.Contains(ResourceRequest.Key))	Allocations[ResourceRequest.Key] += FreeResources[ResourceRequest.Key];
@@ -276,15 +301,14 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 				FreeResources.Remove(ResourceRequest.Key); //~~ Remove the empty resource ~~//
 				RequestFulfilled = false;
 
-				//~~ Should resource requirement list be emptied and then refilled by the structure again? // Mayby yes. Then the calculation is propperly correct each time. ~~// 
-				//~~ Then the structure on turnBegin will calculate their resource requirements ~~//
 			}
 			else if (ResourceRequest.Value <= FreeResources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
 			{
+				AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::RequestDirect);
+
 				//bool Success = RequestFrom->AddResource(ResourceRequest.Key, ResourceRequest.Value, EResourceList::Alterations);
 				if (Allocations.Contains(ResourceRequest.Key))	Allocations[ResourceRequest.Key] += FreeResources[ResourceRequest.Key];
 				else											Allocations.Add(ResourceRequest.Key, FreeResources[ResourceRequest.Key]);
-				//RequestedResources.Add(ResourceRequest.Key, ResourceRequest.Value);
 				FreeResources[ResourceRequest.Key] = FreeResources[ResourceRequest.Key] - ResourceRequest.Value;
 				ResourceRequest.Value = 0;
 			}
