@@ -445,8 +445,8 @@ struct FST_Factory
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	TMap<FString, int32> Requirements;
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
-	TMap<FString, int32> Allocations;
+	//UPROPERTY(EditAnywhere, Category = "Resource")
+	//TMap<FString, int32> Allocations;
 
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	//TMap<FName, int32> Invoice;
@@ -476,16 +476,15 @@ struct FST_Factory
 		}
 	}
 
-	//~~ Resolve factor ~~//
+	//~~ Resolve factory ~~//
 	//void const Resolve(TMap<FString, int32>& SendTo, APOTLStructure* To, UDataTable* RecipeTable, TArray<FST_ResourceAllocation>& StructureResourceAllocations)
 	//void const Resolve(TMap<FString, int32>& StructureFreeResources, UDataTable* RecipeTable, const TMap<FString, int32>& Production)
-	// Leftovers const parameter? Or just don't request it?
-	void const Resolve(TMap<FString, int32>& SendTo, APOTLStructure* To, UDataTable* RecipeTable, TArray<FST_ResourceAllocation>& StructureResourceAllocations)
+	// Leftovers const parameter? Or just request what is needed it?
+	void const Resolve(APOTLStructure* Caller, TMap<FString, int32>& FreeResources, UDataTable* RecipeTable, const TMap<FString, int32>& Production)
 	{
 		if (RecipeTable)
 		{ 
 			//~~ The production ~~//
-			TMap<FString, int32> Production;
 			int32 i = 0;
 			//TArray<FName> IdList;
 			//Invoice.GenerateKeyArray(IdList);
@@ -533,7 +532,7 @@ struct FST_Factory
 					bool ResourcesRequirementFulfilled = true;
 					for (auto& Ingredient : Recipe->Ingredients)
 					{
-						if (!Allocations.Contains(Ingredient.Id) && Allocations[Ingredient.Id] < 1)
+						if (!FreeResources.Contains(Ingredient.Id) && FreeResources[Ingredient.Id] < 1)
 						{
 							ResourcesRequirementFulfilled = false;
 						}
@@ -543,7 +542,7 @@ struct FST_Factory
 						//~~ Remove resources ~~//
 						for (auto& Ingredient : Recipe->Ingredients)
 						{
-							Allocations[Ingredient.Id] -= Ingredient.Quantity;
+							FreeResources[Ingredient.Id] -= Ingredient.Quantity;
 						}
 						//~~ Add to production ~~//
 						Production.Add(Singleton.Key, Recipe->Servings);
@@ -594,6 +593,7 @@ struct FST_Factory
 			//!! Should send to resource allocations instead
 
 			//~~ Send the remaining resource back with the production, if any ~~//
+			/*
 			for (auto& Resource : Allocations)
 			{
 				// Cannot use APOTLStructure functions!!!!
@@ -608,8 +608,10 @@ struct FST_Factory
 				//if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Key;
 				//else									SendTo.Add(Resource.Key, Resource.Value);
 			}
-			Allocations.Empty();
+			*/
+			//Allocations.Empty();
 			//~~ Send production to SendTo's resource reference ~~//
+			/*
 			for (auto& Resource : Production)
 			{
 				FST_ResourceAllocation Allocation;
@@ -622,6 +624,7 @@ struct FST_Factory
 				//if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
 				//else								SendTo.Add(Resource.Key, Resource.Value);
 			}
+			*/
 		}
 	}
 	// Constructor

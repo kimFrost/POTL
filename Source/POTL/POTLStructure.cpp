@@ -185,6 +185,37 @@ void APOTLStructure::ResolveUpkeep(bool Broadcast)
 }
 
 /******************** ResolveFactories *************************/
+void APOTLStructure::ProcessFactories(bool Broadcast)
+{
+	//~~ Resolve children ~~//
+	if (Broadcast)
+	{
+		for (int32 i = 0; i < BroadcastTo.Num(); i++)
+		{
+			BroadcastTo[i]->ProcessFactories(Broadcast);
+		}
+	}
+	//~~ Resolve self / The function logic ~~//
+	if (GameInstance)
+	{
+		for (auto& Factory : Factories)
+		{
+			Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
+
+			bool Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
+			if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, Factory.Allocations, 0);
+
+
+			RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
+			for (auto& Requirement : Factory.Requirements)
+			{
+				
+			}
+		}
+	}
+}
+
+/******************** ResolveFactories *************************/
 void APOTLStructure::ResolveFactories(bool Broadcast)
 {
 	//~~ Resolve children ~~//
@@ -201,14 +232,18 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 	{
 		for (auto& Factory : Factories)
 		{
-			Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
-			bool Fulfilled = RequestResources(false, this, Factory.Requirements, Factory.Allocations, 0);
-			if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, Factory.Allocations, 0);
+			//Factory.Resolve(ResourceAlterations, this, GameInstance->RecipeTable, AllocatedResources); //~~ Resolve factory and get the results/production ~~//
+			TMap<FString, int32> FactoryProduction;
+			Factory.Resolve(this, FreeResources, GameInstance->RecipeTable, FactoryProduction);
 
-			//~~ Resources are not being drained from the source ???
+			for (auto& Resource : FactoryProduction)
+			{
+				//AllocateResource();
+			}
+
+			//~~ Resources are not being drained from the source ???  
 
 			//Factory.Resolve(ResourceAlterations, this, GameInstance->RecipeTable, AllocatedResources); //~~ Resolve factory and get the results/production ~~//
-			Factory.Resolve(ResourceAlterations, this, GameInstance->RecipeTable, AllocatedResources); //~~ Resolve factory and get the results/production ~~//
 			
 			//Factory.Resolve(TMap<FString, int32>& StructureFreeResources, UDataTable* RecipeTable, const TMap<FString, int32>& Production)
 

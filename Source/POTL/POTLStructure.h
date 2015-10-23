@@ -129,6 +129,9 @@ public:
 	void ResolveUpkeep(bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void ProcessFactories(bool Broadcast);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveFactories(bool Broadcast);
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
