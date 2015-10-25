@@ -46,6 +46,7 @@ enum class EResourceList : uint8
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTurnSwitched);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams();
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnSwitched, float, Turn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewTurn, float, Turn);
 //DECLARE_EVENT(FTurnSwitched);
 
 
@@ -670,4 +671,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Turn")
 	FTurnSwitched OnTurnSwitched;
 
+	UPROPERTY(BlueprintAssignable, Category = "Turn")
+	FNewTurn OnNewTurn;
 };

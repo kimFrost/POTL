@@ -424,6 +424,7 @@ void UPOTLGameInstance::CalcHexesRot()
 void UPOTLGameInstance::SwitchTurn()
 {
 	OnTurnSwitched.Broadcast(32.f); // Test broadcast <- Works
+	OnNewTurn.Broadcast(16.f);
 }
 
 /*****************************************************************************************************/

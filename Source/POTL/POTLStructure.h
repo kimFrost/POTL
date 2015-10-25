@@ -101,7 +101,7 @@ public:
 	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void CalculateUpkeep();
+		void CalculateUpkeep(bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveTree();
@@ -125,6 +125,12 @@ public:
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
 	bool RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Steps, EAllocationType Type);
+
+
+	//Delegates
+	UFUNCTION()
+	void BindToDelegate(float Turn);
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

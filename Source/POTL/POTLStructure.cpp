@@ -139,12 +139,15 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 
 
 /******************** CalculateUpkeep *************************/
-void APOTLStructure::CalculateUpkeep()
+void APOTLStructure::CalculateUpkeep(bool Broadcast)
 {
 	//~~ Resolve children ~~//
-	for (int32 i = 0; i < BroadcastTo.Num(); i++)
+	if (Broadcast)
 	{
-		BroadcastTo[i]->CalculateUpkeep();
+		for (int32 i = 0; i < BroadcastTo.Num(); i++)
+		{
+			BroadcastTo[i]->CalculateUpkeep(Broadcast);
+		}
 	}
 	//~~ Resolve self / The function logic ~~//
 
@@ -329,6 +332,12 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 }
 
 
+void APOTLStructure::BindToDelegate(float Turn)
+{
+
+}
+
+
 //~~ Called when the game starts or when spawned ~~//
 void APOTLStructure::BeginPlay()
 {
@@ -355,7 +364,7 @@ void APOTLStructure::BeginPlay()
 	/*********** BINDINGS **************/
 	//UPOTLGameInstance::OnTurnSwitched.AddDynamic(this, &APOTLStructure::RequestResources);
 	//UPOTLGameInstance::OnTurnSwitched.Add(this, &APOTLStructure::RequestResources);
-
+	//UPOTLGameInstance::OnNewTurn.Add(this, &APOTLStructure::BindToDelegate);
 }
 
 //~~ Called every frame ~~//
