@@ -1,4 +1,4 @@
 RowName,Ingredients,Servings
-Something,"((Ingredient=Wood,Quantity=5),(Ingredient=Stone,Quantity=3))",1
-Stick,"((Ingredient=Wood,Quantity=1))",16
-Plank,"((Ingredient=Wood,Quantity=2))",1
+Something,"((Id=Wood,Quantity=5),(Id=Stone,Quantity=3))",1
+Stick,"((Id=Wood,Quantity=1))",16
+Plank,"((Id=Wood,Quantity=2))",1

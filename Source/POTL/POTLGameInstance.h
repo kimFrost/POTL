@@ -27,10 +27,18 @@ enum class EPersonTypesEnum : uint8
 UENUM(BlueprintType)
 enum class EAllocationType : uint8
 {
+	All UMETA(DisplayName = "All"),
 	None UMETA(DisplayName = "None"),
 	RequestDirect UMETA(DisplayName = "RequestDirect"),
 	FactoryProduction UMETA(DisplayName = "FactoryProduction"),
 	FactoryLeftover UMETA(DisplayName = "FactoryLeftover")
+};
+
+UENUM(BlueprintType)
+enum class EResourceList : uint8
+{
+	Free UMETA(DisplayName = "Free"),
+	Upkeep UMETA(DisplayName = "Upkeep")
 };
 
 
@@ -468,8 +476,8 @@ struct FST_Factory
 				{
 					for (auto& Ingredient : Recipe->Ingredients)
 					{
-						if (Requirements.Contains(Ingredient.Id))	Requirements[Ingredient.Id] += Ingredient.Quantity;
-						else										Requirements.Add(Ingredient.Id, Ingredient.Quantity);
+						if (Requirements.Contains(Ingredient.Id.ToString()))	Requirements[Ingredient.Id.ToString()] += Ingredient.Quantity;
+						else										Requirements.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
 					}
 				}
 			}
@@ -477,10 +485,7 @@ struct FST_Factory
 	}
 
 	//~~ Resolve factory ~~//
-	//void const Resolve(TMap<FString, int32>& SendTo, APOTLStructure* To, UDataTable* RecipeTable, TArray<FST_ResourceAllocation>& StructureResourceAllocations)
-	//void const Resolve(TMap<FString, int32>& StructureFreeResources, UDataTable* RecipeTable, const TMap<FString, int32>& Production)
-	// Leftovers const parameter? Or just request what is needed it?
-	void const Resolve(APOTLStructure* Caller, TMap<FString, int32>& FreeResources, UDataTable* RecipeTable, const TMap<FString, int32>& Production)
+	void const Resolve(APOTLStructure* Caller, TMap<FString, int32>& FreeResources, UDataTable* RecipeTable, TMap<FString, int32>& Production)
 	{
 		if (RecipeTable)
 		{ 
@@ -520,6 +525,8 @@ struct FST_Factory
 				}
 			}
 
+			
+
 			//~~ Produce items ~~//
 			bool InvoiceFulfilled = true;
 			for (auto& Singleton : SingletonQue)
@@ -529,14 +536,21 @@ struct FST_Factory
 				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*Singleton.Key, ContextString);
 				if (Recipe) //~~ If recipe for invoce item is found ~~//
 				{
+
+					//Problem assigning string '((Ingredient=Wood,Quantity=5),(Ingredient=Stone,Quantity=3))' to property 'Ingredients' on row 'Something' : Unknown property in ST_Ingredient : Ingredient = Wood, Quantity = 5), (Ingredient = Stone, Quantity = 3)) Unknown property in ST_Ingredient : Ingredient = Stone, Quantity = 3))
+					//Problem assigning string '((Ingredient=Wood,Quantity=1))' to property 'Ingredients' on row 'Stick' : Unknown property in ST_Ingredient : Ingredient = Wood, Quantity = 1))
+					//Problem assigning string '((Ingredient=Wood,Quantity=2))' to property 'Ingredients' on row 'Plank' : Unknown property in ST_Ingredient : Ingredient = Wood, Quantity = 2))
+
 					bool ResourcesRequirementFulfilled = true;
 					for (auto& Ingredient : Recipe->Ingredients)
 					{
-						if (!FreeResources.Contains(Ingredient.Id) && FreeResources[Ingredient.Id] < 1)
+						GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Ingredient.Id: " + Ingredient.Id.ToString());
+						if (!FreeResources.Contains(Ingredient.Id.ToString()) && FreeResources[Ingredient.Id.ToString()] < 1)
 						{
 							ResourcesRequirementFulfilled = false;
 						}
 					}
+					/*
 					if (ResourcesRequirementFulfilled)
 					{
 						//~~ Remove resources ~~//
@@ -547,84 +561,10 @@ struct FST_Factory
 						//~~ Add to production ~~//
 						Production.Add(Singleton.Key, Recipe->Servings);
 					}
+					*/
 				}
 			}
-
 			GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Production.Num(): " + FString::FromInt(Production.Num()));
-
-			/*
-			for (auto& InvoiceItem : Invoice)
-			{
-				bool InvoiceFulfilled = true;
-			
-				if (Recipe) //~~ If recipe for invoce item is found ~~//
-				{
-					// I have an invoice for X*planks, and want to have it produced
-					for (int32 i = 0; i < InvoiceItem.Value; i++)
-					{
-					 
-					}
-					int32 MaxInvoiceProductionSupported = 0;
-					for (auto& Ingredient : Recipe->Ingredients)
-					{
-						if (Requirements.Contains(Ingredient.Id) && Requirements[Ingredient.Id] > InvoiceItem.Value)
-						{
-							int32 MaxItemProduction = FMath::FloorToInt(Requirements[Ingredient.Id] / InvoiceItem.Value);
-							if (MaxInvoiceProductionSupported > MaxItemProduction)
-							{
-								MaxInvoiceProductionSupported = MaxItemProduction;
-							}
-						}
-					}
-					//~~ MaxInvoiceProductionSupported should now be the max items supported by the allocated resources in requirements ~~//
-
-					//Production
-					//InvoiceItem.Key
-					//InvoiceItem.Value
-					//Recipe->Servings
-				}
-				else 
-				{
-					InvoiceFulfilled = false;
-				}
-			}
-			*/
-
-			//!! Should send to resource allocations instead
-
-			//~~ Send the remaining resource back with the production, if any ~~//
-			/*
-			for (auto& Resource : Allocations)
-			{
-				// Cannot use APOTLStructure functions!!!!
-				//To->AllocateResource(To, Resource.Key, Resource.Value);
-				FST_ResourceAllocation Allocation;
-				Allocation.From = To;
-				Allocation.To = To;
-				Allocation.ResourceKey = Resource.Key;
-				Allocation.Quantity = Resource.Value;
-				Allocation.Type = EAllocationType::FactoryProduction;
-				StructureResourceAllocations.Add(Allocation);
-				//if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Key;
-				//else									SendTo.Add(Resource.Key, Resource.Value);
-			}
-			*/
-			//Allocations.Empty();
-			//~~ Send production to SendTo's resource reference ~~//
-			/*
-			for (auto& Resource : Production)
-			{
-				FST_ResourceAllocation Allocation;
-				Allocation.From = To;
-				Allocation.To = To; 
-				Allocation.ResourceKey = Resource.Key;
-				Allocation.Quantity = Resource.Value;
-				Allocation.Type = EAllocationType::FactoryProduction;
-				StructureResourceAllocations.Add(Allocation);
-				//if (SendTo.Contains(Resource.Key))	SendTo[Resource.Key] += Resource.Value;
-				//else								SendTo.Add(Resource.Key, Resource.Value);
-			}
-			*/
 		}
 	}
 	// Constructor

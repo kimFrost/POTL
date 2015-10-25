@@ -26,17 +26,17 @@ USTRUCT(BlueprintType)
 struct FST_Ingredient
 {
 	GENERATED_USTRUCT_BODY()
-
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	FString Id;
+	FName Id;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	int32 Quantity;
-
 	FST_Ingredient()
-	{
-		Id = TEXT("");
-	}
+		: Id(FName(TEXT("")))
+		, Quantity(0)
+	{}
 };
+
 
 USTRUCT(BlueprintType)
 struct FST_ResourceRecipe : public FTableRowBase

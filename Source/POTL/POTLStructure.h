@@ -16,13 +16,7 @@
 
 
 //~~~~~ ENUMS ~~~~~
-UENUM(BlueprintType)
-enum class EResourceList : uint8
-{
-	Storage UMETA(DisplayName = "Storage"),
-	Requirements UMETA(DisplayName = "Requirements"),
-	Alterations UMETA(DisplayName = "Alterations")
-};
+
 
 
 UCLASS()
@@ -76,32 +70,25 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	TArray<FST_ResourceAllocation> AllocatedResources;
-	// Key, Allocated from, Allocated To, Allocation type
 
-	UPROPERTY(EditAnywhere, Category = "Resources")
-	TMap<FString, int32> Resources;
-	//TArray<FST_Resource> Resources;
-	//TMap<FName, FST_Resource> Resources;
+	//UPROPERTY(EditAnywhere, Category = "Resources")
+	//TMap<FString, int32> Resources;
 
-	UPROPERTY(EditAnywhere, Category = "Resources")
-	TMap<FString, int32> ResourceAlterations;
-	//TArray<FST_Resource> ResourceAlterations;
-	//TMap<FName, FST_Resource> ResourceAlterations;
+	//UPROPERTY(EditAnywhere, Category = "Resources")
+	//TMap<FString, int32> ResourceAlterations;
 	
-	UPROPERTY(EditAnywhere, Category = "Resources")
-	TMap<FString, int32> ResourceRequirements;
-	//TArray<FST_Resource> ResourceRequirements;
-	//TMap<FName, FST_Resource> ResourceRequirements;
+	//UPROPERTY(EditAnywhere, Category = "Resources")
+	//TMap<FString, int32> ResourceRequirements;
 
-
-	UPROPERTY(EditAnywhere, Category = "Resources")
-	TMap<FString, int32> ResourcesPromisedAway;
+	//UPROPERTY(EditAnywhere, Category = "Resources")
+	//TMap<FString, int32> ResourcesPromisedAway;
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	TMap<FString, int32> ResourceUpkeep;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TArray<FST_Factory> Factories;
+
 
 	/*********** FUNCTIONS **************/
 
@@ -137,7 +124,7 @@ public:
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
-	bool RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, TMap<FString, int32>& Allocations, int32 Steps);
+	bool RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Steps, EAllocationType Type);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
