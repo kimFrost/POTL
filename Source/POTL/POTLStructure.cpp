@@ -187,18 +187,7 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 		for (auto& Factory : Factories)
 		{
 			Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
-
 			bool Fulfilled = RequestResources(false, this, Factory.Requirements, 0, EAllocationType::RequestDirect);
-
-			//if (!Fulfilled)		EmitTo->RequestResources(true, this, Factory.Requirements, 0);
-
-			/*
-			RequestResources(false, this, Factory.Requirements, 0);
-			for (auto& Requirement : Factory.Requirements)
-			{
-				
-			}
-			*/
 		}
 	}
 }
@@ -236,7 +225,7 @@ void APOTLStructure::ResolveTree()
 {
 	ResolveUpkeep(true);
 	ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
-	ResolveFactories(true); 
+	//ResolveFactories(true);
 	//ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
 }
 
@@ -300,22 +289,28 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 	{
 		if (FreeResources.Contains(ResourceRequest.Key))
 		{
-			if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
+			if (FreeResources[ResourceRequest.Key] == 0) //~~ if resource pool is 0 ~~//
 			{
-				//AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], EAllocationType::RequestDirect);
+				FreeResources.Remove(ResourceRequest.Key);
+				RequestFulfilled = false;
+			}
+			else if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
+			{
 				AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], Type);
 				ResourceRequest.Value -= FreeResources[ResourceRequest.Key];
 				FreeResources[ResourceRequest.Key] = 0;
 				FreeResources.Remove(ResourceRequest.Key); //~~ Remove the empty resource ~~//
 				RequestFulfilled = false;
-
 			}
 			else if (ResourceRequest.Value <= FreeResources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
 			{
-				//AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::RequestDirect);
 				AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, Type);
 				FreeResources[ResourceRequest.Key] = FreeResources[ResourceRequest.Key] - ResourceRequest.Value;
 				ResourceRequest.Value = 0;
+				if (FreeResources[ResourceRequest.Key] == 0)
+				{
+					FreeResources.Remove(ResourceRequest.Key);
+				}
 			}
 		}
 	}
@@ -347,8 +342,8 @@ void APOTLStructure::BeginPlay()
 	if (GameInstance)
 	{
 		// Add test resources
-		FreeResources.Add(TEXT("Wood"), 50.f);
-		FreeResources.Add(TEXT("Stone"), 50.f);
+		FreeResources.Add(TEXT("Wood"), 20.f);
+		FreeResources.Add(TEXT("Stone"), 20.f);
 
 		// Add test factory for resource process
 		FST_Factory Factory;

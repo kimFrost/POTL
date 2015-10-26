@@ -454,14 +454,12 @@ struct FST_Factory
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	TMap<FString, int32> Requirements;
 
-	//UPROPERTY(EditAnywhere, Category = "Resource")
-	//TMap<FString, int32> Allocations;
-
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	//TMap<FName, int32> Invoice;
 	TMap<FString, int32> Invoice;
 
-	//~~ Calculate Requirements for total allocation ~~//
+
+	//~~ Calculate Requirements for total requirements ~~//
 	void const ProcessInvoice(UDataTable* RecipeTable)
 	{
 		Requirements.Empty();
@@ -526,8 +524,6 @@ struct FST_Factory
 				}
 			}
 
-			
-
 			//~~ Produce items ~~//
 			bool InvoiceFulfilled = true;
 			for (auto& Singleton : SingletonQue)
@@ -537,32 +533,35 @@ struct FST_Factory
 				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*Singleton.Key, ContextString);
 				if (Recipe) //~~ If recipe for invoce item is found ~~//
 				{
-
-					//Problem assigning string '((Ingredient=Wood,Quantity=5),(Ingredient=Stone,Quantity=3))' to property 'Ingredients' on row 'Something' : Unknown property in ST_Ingredient : Ingredient = Wood, Quantity = 5), (Ingredient = Stone, Quantity = 3)) Unknown property in ST_Ingredient : Ingredient = Stone, Quantity = 3))
-					//Problem assigning string '((Ingredient=Wood,Quantity=1))' to property 'Ingredients' on row 'Stick' : Unknown property in ST_Ingredient : Ingredient = Wood, Quantity = 1))
-					//Problem assigning string '((Ingredient=Wood,Quantity=2))' to property 'Ingredients' on row 'Plank' : Unknown property in ST_Ingredient : Ingredient = Wood, Quantity = 2))
-
 					bool ResourcesRequirementFulfilled = true;
 					for (auto& Ingredient : Recipe->Ingredients)
 					{
-						GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Ingredient.Id: " + Ingredient.Id.ToString());
-						if (!FreeResources.Contains(Ingredient.Id.ToString()) && FreeResources[Ingredient.Id.ToString()] < 1)
+						if (Ingredient.Id.ToString() != "")
 						{
+							if (!FreeResources.Contains(Ingredient.Id.ToString()) && 
+								FreeResources[Ingredient.Id.ToString()] < Ingredient.Quantity)
+							{
+								ResourcesRequirementFulfilled = false;
+							}
+						}
+						else {
 							ResourcesRequirementFulfilled = false;
 						}
 					}
-					/*
+					//~~ If there are enough resources for the single item production, then produce it and consume the resources ~~//
 					if (ResourcesRequirementFulfilled)
 					{
 						//~~ Remove resources ~~//
 						for (auto& Ingredient : Recipe->Ingredients)
 						{
-							FreeResources[Ingredient.Id] -= Ingredient.Quantity;
+							if (Ingredient.Id.ToString() != "" && FreeResources.Contains(Ingredient.Id.ToString()))
+							{
+								//FreeResources[Ingredient.Id.ToString()] -= Ingredient.Quantity;
+							}
 						}
 						//~~ Add to production ~~//
 						Production.Add(Singleton.Key, Recipe->Servings);
 					}
-					*/
 				}
 			}
 			GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Production.Num(): " + FString::FromInt(Production.Num()));
