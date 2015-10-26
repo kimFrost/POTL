@@ -225,8 +225,8 @@ void APOTLStructure::ResolveTree()
 {
 	ResolveUpkeep(true);
 	ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
-	//ResolveFactories(true);
-	//ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
+	ResolveFactories(true);
+	ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
 }
 
 

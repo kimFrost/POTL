@@ -68,7 +68,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	TMap<FString, int32> FreeResources;
 
-	UPROPERTY(EditAnywhere, Category = "Resources")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TArray<FST_ResourceAllocation> AllocatedResources;
 
 	//UPROPERTY(EditAnywhere, Category = "Resources")
@@ -101,7 +101,7 @@ public:
 	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-		void CalculateUpkeep(bool Broadcast);
+	void CalculateUpkeep(bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveTree();

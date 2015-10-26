@@ -383,19 +383,19 @@ struct FST_ResourceAllocation
 	//UPROPERTY(EditAnywhere, Category = "Resource")
 	//TMap<FString, int32> Allocation;
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	APOTLStructure* From;
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	APOTLStructure* To;
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	FString ResourceKey;
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Quantity;
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	EAllocationType Type;
 
 	FST_ResourceAllocation()
@@ -556,7 +556,9 @@ struct FST_Factory
 						{
 							if (Ingredient.Id.ToString() != "" && FreeResources.Contains(Ingredient.Id.ToString()))
 							{
-								//FreeResources[Ingredient.Id.ToString()] -= Ingredient.Quantity;
+								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Ingredient.Id.ToString(): " + Ingredient.Id.ToString());
+								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "FreeResources[Ingredient.Id.ToString()]: " + FString::FromInt(FreeResources[Ingredient.Id.ToString()]));
+								FreeResources[Ingredient.Id.ToString()] -= Ingredient.Quantity;
 							}
 						}
 						//~~ Add to production ~~//
