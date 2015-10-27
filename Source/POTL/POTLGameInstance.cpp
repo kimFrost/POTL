@@ -423,8 +423,15 @@ void UPOTLGameInstance::CalcHexesRot()
 /******************** SwitchTurn *************************/
 void UPOTLGameInstance::SwitchTurn()
 {
-	OnTurnSwitched.Broadcast(32.f); // Test broadcast <- Works
-	OnNewTurn.Broadcast(16.f);
+	OnTurnSwitched.Broadcast(32.f);
+	//GetWorld()->GetTimerManager().SetTimer(this, &UPOTLGameInstance::NewTurn, 5.0f, false);
+	//TimerManager->SetTimer(TurnTimerHandle, this, &UPOTLGameInstance::NewTurn, 1.0f, false);
+}
+
+/******************** NewTurn *************************/
+void UPOTLGameInstance::NewTurn()
+{
+	OnNewTurn.Broadcast(17.f);
 }
 
 /*****************************************************************************************************/

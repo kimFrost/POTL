@@ -141,6 +141,7 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 /******************** CalculateUpkeep *************************/
 void APOTLStructure::CalculateUpkeep(bool Broadcast)
 {
+	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "CalculateUpkeep()");
 	//~~ Resolve children ~~//
 	if (Broadcast)
 	{
@@ -156,6 +157,7 @@ void APOTLStructure::CalculateUpkeep(bool Broadcast)
 /******************** ResolveUpkeep *************************/
 void APOTLStructure::ResolveUpkeep(bool Broadcast)
 {
+	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveUpkeep()");
 	//~~ Resolve children ~~//
 	if (Broadcast)
 	{
@@ -173,6 +175,7 @@ void APOTLStructure::ResolveUpkeep(bool Broadcast)
 /******************** ProcessFactories *************************/
 void APOTLStructure::ProcessFactories(bool Broadcast)
 {
+	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ProcessFactories()");
 	//~~ Resolve children ~~//
 	if (Broadcast)
 	{
@@ -195,6 +198,7 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 /******************** ResolveFactories *************************/
 void APOTLStructure::ResolveFactories(bool Broadcast)
 {
+	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveFactories()");
 	//~~ Resolve children ~~//
 	if (Broadcast)
 	{
@@ -223,16 +227,37 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 /******************** ResolveTree *************************/
 void APOTLStructure::ResolveTree()
 {
-	ResolveUpkeep(true);
-	ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
-	ResolveFactories(true);
-	ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
+	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveTree()");
+	//ResolveUpkeep(true);
+	//ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
+	//ResolveFactories(true);
+	//ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
+
+	FTimerHandle UniqueHandle;
+	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveUpkeep, true);
+	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 5.0f, false);
+
+	UniqueHandle;
+	RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveAllocations, EAllocationType::RequestDirect, true);
+	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 10.0f, false);
+
+	UniqueHandle;
+	RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveFactories, true);
+	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 15.0f, false);
+
+	UniqueHandle;
+	RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveAllocations, EAllocationType::All, true);
+	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 20.0f, false);
 }
 
 
 /******************** ResolveAllocations *************************/
 void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 {
+	//FString TypeAsString;
+	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EAllocationType"), true);
+	//TypeAsString = EnumPtr->GetEnumName(Type);
+	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveAllocations()");
 	//~~ Resolve children ~~//
 	if (Broadcast)
 	{

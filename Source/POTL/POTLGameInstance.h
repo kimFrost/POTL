@@ -380,9 +380,6 @@ struct FST_ResourceAllocation
 {
 	GENERATED_USTRUCT_BODY()
 
-	//UPROPERTY(EditAnywhere, Category = "Resource")
-	//TMap<FString, int32> Allocation;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	APOTLStructure* From;
 
@@ -619,6 +616,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resources")
 	UDataTable* RecipeTable;
 
+	FTimerHandle TurnTimerHandle;
 
 	/*********** FUNCTIONS **************/
 
@@ -652,6 +650,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turn")
 	void SwitchTurn();
+
+	UFUNCTION(BlueprintCallable, Category = "Turn")
+	void NewTurn();
 
 	/** Util - Hex */
 

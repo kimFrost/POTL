@@ -61,7 +61,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<int32> BroadcastGridHexIndexes;
 
-	
 
 	/** Resources */
 
