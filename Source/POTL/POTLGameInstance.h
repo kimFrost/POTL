@@ -31,6 +31,7 @@ enum class EAllocationType : uint8
 	None UMETA(DisplayName = "None"),
 	RequestDirect UMETA(DisplayName = "RequestDirect"),
 	FactoryProduction UMETA(DisplayName = "FactoryProduction"),
+	FactoryBilling UMETA(DisplayName = "FactoryBilling"),
 	FactoryLeftover UMETA(DisplayName = "FactoryLeftover")
 };
 
@@ -465,7 +466,7 @@ struct FST_Factory
 			for (auto& InvoiceItem : Invoice)
 			{
 				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, InvoiceItem.Key);
-				static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
+				static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
 				//FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
 				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*InvoiceItem.Key, ContextString);
 				if (Recipe)
@@ -473,7 +474,7 @@ struct FST_Factory
 					for (auto& Ingredient : Recipe->Ingredients)
 					{
 						if (Requirements.Contains(Ingredient.Id.ToString()))	Requirements[Ingredient.Id.ToString()] += Ingredient.Quantity;
-						else										Requirements.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
+						else													Requirements.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
 					}
 				}
 			}
@@ -481,7 +482,7 @@ struct FST_Factory
 	}
 
 	//~~ Resolve factory ~~//
-	void const Resolve(APOTLStructure* Caller, TMap<FString, int32>& FreeResources, UDataTable* RecipeTable, TMap<FString, int32>& Production)
+	void const Resolve(APOTLStructure* Caller, TMap<FString, int32>& FreeResources, UDataTable* RecipeTable, TMap<FString, int32>& Production, TMap<FString, int32>& Billing)
 	{
 		if (RecipeTable)
 		{ 
@@ -525,7 +526,7 @@ struct FST_Factory
 			bool InvoiceFulfilled = true;
 			for (auto& Singleton : SingletonQue)
 			{
-				static const FString ContextString(TEXT("RowName")); //~~ Key value for each column of values ~~//
+				static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
 				//FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(Singleton.Key, ContextString);
 				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*Singleton.Key, ContextString);
 				if (Recipe) //~~ If recipe for invoce item is found ~~//
@@ -535,9 +536,18 @@ struct FST_Factory
 					{
 						if (Ingredient.Id.ToString() != "")
 						{
-							if (!FreeResources.Contains(Ingredient.Id.ToString()) && 
-								FreeResources[Ingredient.Id.ToString()] < Ingredient.Quantity)
+							if (FreeResources.Contains(Ingredient.Id.ToString()))
 							{
+								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Magenta, "Ingredient.Id.ToString(): " + Ingredient.Id.ToString());
+								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Magenta, "FreeResources[Ingredient.Id.ToString()]: " + FString::FromInt(FreeResources[Ingredient.Id.ToString()]));
+								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Magenta, "Ingredient.Quantity: " + FString::FromInt(Ingredient.Quantity));
+								if (FreeResources[Ingredient.Id.ToString()] < Ingredient.Quantity)
+								{
+									ResourcesRequirementFulfilled = false;
+									GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Magenta, "ResourcesRequirementFulfilled FALSE");
+								}
+							}
+							else {
 								ResourcesRequirementFulfilled = false;
 							}
 						}
@@ -551,12 +561,8 @@ struct FST_Factory
 						//~~ Remove resources ~~//
 						for (auto& Ingredient : Recipe->Ingredients)
 						{
-							if (Ingredient.Id.ToString() != "" && FreeResources.Contains(Ingredient.Id.ToString()))
-							{
-								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Ingredient.Id.ToString(): " + Ingredient.Id.ToString());
-								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "FreeResources[Ingredient.Id.ToString()]: " + FString::FromInt(FreeResources[Ingredient.Id.ToString()]));
-								FreeResources[Ingredient.Id.ToString()] -= Ingredient.Quantity;
-							}
+							if (Billing.Contains(Ingredient.Id.ToString()))		Billing[Ingredient.Id.ToString()] += Ingredient.Quantity;
+							else												Billing.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
 						}
 						//~~ Add to production ~~//
 						Production.Add(Singleton.Key, Recipe->Servings);

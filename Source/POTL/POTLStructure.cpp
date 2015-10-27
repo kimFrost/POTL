@@ -168,7 +168,7 @@ void APOTLStructure::ResolveUpkeep(bool Broadcast)
 	}
 	//~~ Resolve self / The function logic ~~//
 	//~~ Resolve upkeep ~~//
-	bool Fulfilled = RequestResources(true, this, ResourceUpkeep, 0, EAllocationType::RequestDirect); //~~ Do self have the required resources ~~//
+	bool Fulfilled = RequestResources(true, this, ResourceUpkeep, 0, EAllocationType::RequestDirect, false); //~~ Do self have the required resources ~~//
 }
 
 
@@ -190,7 +190,7 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 		for (auto& Factory : Factories)
 		{
 			Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
-			bool Fulfilled = RequestResources(false, this, Factory.Requirements, 0, EAllocationType::RequestDirect);
+			bool Fulfilled = RequestResources(false, this, Factory.Requirements, 0, EAllocationType::RequestDirect, false);
 		}
 	}
 }
@@ -214,7 +214,13 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 		for (auto& Factory : Factories)
 		{
 			TMap<FString, int32> FactoryProduction;
-			Factory.Resolve(this, FreeResources, GameInstance->RecipeTable, FactoryProduction); //~~ Resolve factory and get the results/production ~~//
+			TMap<FString, int32> FactoryBilling;
+			Factory.Resolve(this, FreeResources, GameInstance->RecipeTable, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
+			RequestResources(false, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
+			for (auto& Resource : FactoryBilling)
+			{
+				//AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryBilling);
+			}
 			for (auto& Resource : FactoryProduction)
 			{
 				AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction);
@@ -228,11 +234,12 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 void APOTLStructure::ResolveTree()
 {
 	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveTree()");
-	//ResolveUpkeep(true);
-	//ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
-	//ResolveFactories(true);
-	//ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
+	ResolveUpkeep(true);
+	ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
+	ResolveFactories(true);
+	ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
 
+	/*
 	FTimerHandle UniqueHandle;
 	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveUpkeep, true);
 	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 5.0f, false);
@@ -248,6 +255,7 @@ void APOTLStructure::ResolveTree()
 	UniqueHandle;
 	RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveAllocations, EAllocationType::All, true);
 	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 20.0f, false);
+	*/
 }
 
 
@@ -303,7 +311,7 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 
 
 /******************** RequestResources *************************/
-bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Steps, EAllocationType Type)
+bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Steps, EAllocationType Type, bool Consume)
 {
 	TMap<FString, int32> RequestedResources; //~~ FString Id, Int32 Quantity ~~//
 	bool RequestFulfilled = true;
@@ -321,7 +329,10 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 			}
 			else if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
 			{
-				AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], Type);
+				if (!Consume)
+				{
+					AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], Type);
+				}
 				ResourceRequest.Value -= FreeResources[ResourceRequest.Key];
 				FreeResources[ResourceRequest.Key] = 0;
 				FreeResources.Remove(ResourceRequest.Key); //~~ Remove the empty resource ~~//
@@ -329,7 +340,10 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 			}
 			else if (ResourceRequest.Value <= FreeResources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
 			{
-				AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, Type);
+				if (!Consume)
+				{
+					AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, Type);
+				}
 				FreeResources[ResourceRequest.Key] = FreeResources[ResourceRequest.Key] - ResourceRequest.Value;
 				ResourceRequest.Value = 0;
 				if (FreeResources[ResourceRequest.Key] == 0)
@@ -346,7 +360,7 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 	!RequestFulfilled &&
 	EmitTo != nullptr)
 	{
-		bool Fulfilled = EmitTo->RequestResources(Bubble, RequestFrom, Request, Steps, EAllocationType::RequestDirect);
+		bool Fulfilled = EmitTo->RequestResources(Bubble, RequestFrom, Request, Steps, EAllocationType::RequestDirect, Consume);
 	}
 	return RequestFulfilled; //~~ True / false ~~//
 }
@@ -367,8 +381,8 @@ void APOTLStructure::BeginPlay()
 	if (GameInstance)
 	{
 		// Add test resources
-		FreeResources.Add(TEXT("Wood"), 20.f);
-		FreeResources.Add(TEXT("Stone"), 20.f);
+		FreeResources.Add(TEXT("Wood"), 9.f);
+		FreeResources.Add(TEXT("Stone"), 15.f);
 
 		// Add test factory for resource process
 		FST_Factory Factory;
