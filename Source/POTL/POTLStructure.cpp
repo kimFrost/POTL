@@ -137,6 +137,21 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 	return List;
 }
 
+/******************** GetResourcesAsList *************************/
+void APOTLStructure::OptimizeAllocatedResources()
+{
+	TMap<FString, FST_ResourceAllocation> TempResourceHolder;
+	for (int32 i = 0; i < AllocatedResources.Num(); i++)
+	{
+		if (TempResourceHolder.Contains(AllocatedResources[i].ResourceKey))		TempResourceHolder[AllocatedResources[i].ResourceKey].Quantity += AllocatedResources[i].Quantity;
+		else																	TempResourceHolder.Add(AllocatedResources[i].ResourceKey, AllocatedResources[i]);
+	}
+	AllocatedResources.Empty();
+	for (auto& Resource : TempResourceHolder)
+	{
+		AllocatedResources.Add(Resource.Value);
+	}
+}
 
 /******************** CalculateUpkeep *************************/
 void APOTLStructure::CalculateUpkeep(bool Broadcast)
