@@ -363,14 +363,14 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 				ResourceRequest.Value = 0;
 				if (FreeResources[ResourceRequest.Key] == 0)
 				{
-					FreeResources.Remove(ResourceRequest.Key);
+					FreeResources.Remove(ResourceRequest.Key); 
 				}
 			}
 		}
 	}
 
 	//~~ if Bubble then then RequestResources on parent/emitTo. ~~//
-	//~~ and resource request haven't been met. ~~//s
+	//~~ and resource request haven't been met. ~~//
 	if (Bubble &&
 	!RequestFulfilled &&
 	EmitTo != nullptr)
