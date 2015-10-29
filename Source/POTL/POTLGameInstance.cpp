@@ -426,12 +426,35 @@ void UPOTLGameInstance::SwitchTurn()
 	OnTurnSwitched.Broadcast(32.f);
 	//GetWorld()->GetTimerManager().SetTimer(this, &UPOTLGameInstance::NewTurn, 5.0f, false);
 	//TimerManager->SetTimer(TurnTimerHandle, this, &UPOTLGameInstance::NewTurn, 1.0f, false);
+
+	NewTurn(0.2f);
 }
 
 /******************** NewTurn *************************/
-void UPOTLGameInstance::NewTurn()
+void UPOTLGameInstance::NewTurn(float WaitTime)
 {
-	OnNewTurn.Broadcast(17.f);
+	if (Landscape)
+	{
+		bool AllResolved = true;
+		for (int32 i = 0; i < Structures.Num(); i++)
+		{
+			APOTLStructure* Structure = Structures[i];
+			if (!Structure->IsResolvedThisTurn)
+			{
+				AllResolved = false;
+				break;
+			}
+		}
+		if (AllResolved)
+		{
+			OnNewTurn.Broadcast(17.f);
+		}
+		else {
+			FTimerHandle UniqueHandle;
+			FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &UPOTLGameInstance::NewTurn, WaitTime * 2); //~~ Doubles wait time for each loop ~~//
+			Landscape->GetWorldTimerManager().SetTimer(UniqueHandle, TimerDelegate, WaitTime, false);
+		}
+	}
 }
 
 /*****************************************************************************************************/

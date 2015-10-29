@@ -624,7 +624,17 @@ public:
 
 	FTimerHandle TurnTimerHandle;
 
+	//~~ Structure ~~//
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
+	TArray<APOTLStructure*> Structures;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
+	TArray<APOTLStructure*> RootStructures;
+
 	/*********** FUNCTIONS **************/
+
+	//~~ Structure ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	TArray<FST_Hex> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
@@ -635,7 +645,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexBuildable(FST_Hex& Hex);
 
-	/** Map - Creation */
+	//UFUNCTION(BlueprintCallable, Category = "Structure")
+	//void PlantStructure();
+
+	//~~ Map - Creation ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void TraceLandscape(ECollisionChannel CollisionChannel);
@@ -652,15 +665,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void CalcHexesRot();
 
-	/** Turn */
+	//~~ Turn ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Turn")
 	void SwitchTurn();
 
 	UFUNCTION(BlueprintCallable, Category = "Turn")
-	void NewTurn();
+	void NewTurn(float WaitTime);
 
-	/** Util - Hex */
+	//~~ Util - Hex ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	FST_Hex MouseToHex(ECollisionChannel CollisionChannel);
@@ -668,7 +681,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	FST_Hex LocationToHex(FVector Location);
 
-	/** Debug - Log */
+	//~~ Debug - Log ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void Log(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
