@@ -58,7 +58,7 @@ struct FItemInformation : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FItemInformation()
+	FItemInformation() 
 		: Id(FName(TEXT("")))
 		, ItemName(TEXT(""))
 		, ItemCost(0.f)
