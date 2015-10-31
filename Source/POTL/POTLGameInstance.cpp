@@ -20,15 +20,26 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	
 	//DataTable'/Game/Resources/TestData.TestData'
 	//DataTable'/Game/Resources/ResourceConversion.ResourceConversion'
+
+	//~~ Table data ~~//
 	RecipeTable = nullptr;
-	
+	DATA_Structures = nullptr;
+	//~~ Recipes ~~//
 	static ConstructorHelpers::FObjectFinder<UDataTable>RecipeTable_BP(TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'")); //~~ Get the Uassets file reference ~~//
 	if (RecipeTable_BP.Succeeded())
 	{
 		RecipeTable = RecipeTable_BP.Object;
 	}
+	//~~ Structures ~~//
+	static ConstructorHelpers::FObjectFinder<UDataTable>DATA_Structures_BP(TEXT("DataTable'/Game/Resources/DATA_Structures.DATA_Structures'")); //~~ Get the Uassets file reference ~~//
+	if (DATA_Structures_BP.Succeeded())
+	{
+		DATA_Structures = DATA_Structures_BP.Object;
+	}
 
-	/*
+
+
+	/* 
 	if (RecipeTable)
 	{
 		TArray<FName> RowNames = RecipeTable->GetRowNames();

@@ -670,6 +670,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resources")
 	UDataTable* RecipeTable;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
+	UDataTable* DATA_Structures;
+
 	FTimerHandle TurnTimerHandle;
 
 	//~~ Structure ~~//

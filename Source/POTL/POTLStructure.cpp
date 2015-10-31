@@ -16,7 +16,6 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};
 
-
 	//GameInstance = Cast<UPOTLGameInstance>(GetGameInstance()); //~~ <== Will crash. The game instance is not ready at this point ~~//
 
 
