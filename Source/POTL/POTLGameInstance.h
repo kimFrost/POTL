@@ -186,7 +186,7 @@ struct FST_ConstructLocation
 	FVector Cube;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
-	FName TreeId;
+	FString TreeId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	bool OnRidge;
@@ -201,7 +201,7 @@ struct FST_ConstructLocation
 	{
 		Location = { -1, -1, -1 };
 		Cube = { 0, 0, 0 };
-		TreeId = FName(TEXT(""));
+		TreeId = TEXT("");
 		OnRidge = false;
 	}
 };
@@ -305,7 +305,7 @@ struct FST_Structure : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	FName Id;
+	FString Id;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FString Title;
@@ -318,10 +318,10 @@ struct FST_Structure : public FTableRowBase
 	TSubclassOf<APOTLStructure> StructureClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<FName> AttachTo;
+	TArray<FString> AttachTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<FName> EmitTo;
+	TArray<FString> EmitTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BaseBroadcastRange;
@@ -340,7 +340,7 @@ struct FST_Structure : public FTableRowBase
 
 	FST_Structure()
 	{
-		Id = FName(TEXT(""));
+		Id = TEXT("");
 		Title = "";
 		Burnable = false;
 		BaseBroadcastRange = 0;
@@ -671,7 +671,7 @@ public:
 	UDataTable* RecipeTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
-	UDataTable* DATA_Structures;
+	UDataTable* StructureTable;
 
 	FTimerHandle TurnTimerHandle;
 
@@ -682,6 +682,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	TArray<APOTLStructure*> RootStructures;
+
+	//~~ Debug ~~//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Debug")
+	FString FindmeString;
 
 	/*********** FUNCTIONS **************/
 
@@ -696,8 +700,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexBuildable(FST_Hex& Hex);
 
-	//UFUNCTION(BlueprintCallable, Category = "Structure")
-	//void PlantStructure();
+	UFUNCTION(BlueprintCallable, Category = "Structure")
+	APOTLStructure* PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo);
+
+	UFUNCTION(BlueprintCallable, Category = "Structure")
+	void CreateStructureConnection(APOTLStructure* From, APOTLStructure* To);
 
 	//~~ Map - Creation ~~//
 

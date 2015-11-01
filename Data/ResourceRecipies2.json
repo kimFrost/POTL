@@ -1,0 +1,24 @@
+[
+	{
+		"Name": "Something",
+		"Ingredients": [
+			"(Id=Wood,Quantity=5)",
+			"(Id=Stone,Quantity=3)"
+		],
+		"Servings": 1
+	},
+	{
+		"Name": "Stick",
+		"Ingredients": [
+			"(Id=Wood,Quantity=1)"
+		],
+		"Servings": 16
+	},
+	{
+		"Name": "Plank",
+		"Ingredients": [
+			"(Id=Wood,Quantity=2)"
+		],
+		"Servings": 1
+	}
+]

@@ -16,26 +16,43 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	GridXCount = 200; // Temp. Needs to be calc in point creation.
 	GridYCount = 200; // Temp. Needs to be calc in point creation.
 
-
+	//FindmeString = "set in constructor";
 	
 	//DataTable'/Game/Resources/TestData.TestData'
 	//DataTable'/Game/Resources/ResourceConversion.ResourceConversion'
 
 	//~~ Table data ~~//
 	RecipeTable = nullptr;
-	DATA_Structures = nullptr;
+	StructureTable = nullptr;
+
 	//~~ Recipes ~~//
 	static ConstructorHelpers::FObjectFinder<UDataTable>RecipeTable_BP(TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'")); //~~ Get the Uassets file reference ~~//
 	if (RecipeTable_BP.Succeeded())
 	{
 		RecipeTable = RecipeTable_BP.Object;
+		FindmeString = "RecipeTable Succeeded : " + FString::FromInt(RecipeTable->GetRowNames().Num());
 	}
+	
 	//~~ Structures ~~//
-	static ConstructorHelpers::FObjectFinder<UDataTable>DATA_Structures_BP(TEXT("DataTable'/Game/Resources/DATA_Structures.DATA_Structures'")); //~~ Get the Uassets file reference ~~//
-	if (DATA_Structures_BP.Succeeded())
-	{
-		DATA_Structures = DATA_Structures_BP.Object;
+	//ConstructorHelpersInternal::FindOrLoadObject();
+	//template<typename T>
+	//T ConstructorHelpersInternal::FindOrLoadObject<UDataTable>(TEXT("DataTable'/Game/Resources/Structures.Structures'"));
+
+
+
+	static ConstructorHelpers::FObjectFinder<UDataTable>StructureTable_BP(TEXT("DataTable'/Game/Resources/Structures.Structures'")); //~~ Get the Uassets file reference ~~//
+	if (StructureTable_BP.Succeeded())
+	{ 
+		StructureTable = StructureTable_BP.Object;
+		int TempLength = StructureTable->GetRowNames().Num();
+		FindmeString = "StructureTable Succeeded : " + FString::FromInt(TempLength);
 	}
+	else {
+		FindmeString = "Failed";
+	}
+
+
+	
 
 
 
@@ -64,6 +81,8 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	TArray<int32> ConstructHexIndexes;
 	ConstructHexIndexes = GetConstructLocationIndexes(Structure, IncludeChildren); //~~ Get self hex indexes ~~//
 	//~~ Get children hex indexes ~~//
+
+	/*
 	if (IncludeChildren) {
 		//Log("Structure->BroadcastTo.Num(): " + FString::FromInt(Structure->BroadcastTo.Num()), 15.0f, FColor::Yellow, 5);
 		for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
@@ -75,6 +94,8 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			}
 		}
 	}
+	*/
+
 	//~~ Convert indexes into real hexes and send a array of copies of them ~~//
 	for (int32 h = 0; h < ConstructHexIndexes.Num(); h++)
 	{
@@ -90,19 +111,23 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 {
 	TArray<int32> ConstructHexIndexes;
 	TArray<int32> VisitedHexIndexes;
+	
 	struct Frontier
 	{
 		TArray<int32> HexIndexes;
 	};
 	TArray<Frontier> Frontiers;
 
-	VisitedHexIndexes.Add(Structure->HexIndex); //~~ Add Start Hex to VisitedHexes ~~//
+	Log("Structure->HexIndex: " + FString::FromInt(Structure->HexIndex), 15.0f, FColor::Yellow, 4);
 
+	//VisitedHexIndexes.Add(Structure->HexIndex); //~~ Add Start Hex to VisitedHexes ~~//
+
+	/*
 	Frontier frontier;
 	frontier.HexIndexes.Add(Structure->HexIndex);
 	Frontiers.Add(frontier);
 
-	FName TreeId = Structure->TreeId;
+	FString TreeId = Structure->TreeId;
 
 	if (IncludeChildren) {
 		for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
@@ -131,7 +156,6 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 			//~~ Make Construct Location ~~//
 			Hex.ConstructInfo.Cube = Hex.HexCubeCoords;
 			Hex.ConstructInfo.EmitTo.Add(Structure);  // Don't know if it should be a hex or structure reference to, for it to be the best solution.
-			//Hex.ConstructInfo.EmitTo.Add(Hex);
 
 			//~~ Store broadcasted resources? NO. Will result in a lot of hex updating. Could then result in bugs with imcomplete data. ~~//
 
@@ -163,7 +187,6 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 				}
 			}
 			//Hex.DebugMe = true;
-			//ConstructHexIndexes.Add(Hex.HexIndex);
 			if (ValidNeighborCount < 6) //~~ If ValidNeighborCount is less than 6 the hex is on the ridge of the city limit ~~//
 			{
 				Hex.ConstructInfo.OnRidge = true;
@@ -172,6 +195,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 		}
 	}
 	Structure->BroadcastGridHexIndexes = ConstructHexIndexes; //~~ Store indexes in structure. It cludes all hex broadcast grid index, including childrens hex indexes ~~//
+	*/
 	return ConstructHexIndexes; //~~ Return ~~//
 }
 
@@ -189,6 +213,104 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 	else {
 		return false;
 	}
+}
+
+
+/******************** IsHexBuildable *************************/
+APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo)
+{
+	Log("PlantStructure", 15.0f, FColor::Yellow, -1);
+	APOTLStructure* Structure = nullptr;
+
+	if (Landscape)
+	{
+		Log("Landscape", 15.0f, FColor::Yellow, -1);
+	}
+
+	if (StructureTable)
+	{
+		Log("StructureTable", 15.0f, FColor::Yellow, -1);
+	}
+
+	//Log("PlantStructure : " + FString::FromInt(StructureTable->GetRowNames().Num()), 15.0f, FColor::Yellow, -1);
+	 
+	if (Landscape && StructureTable)
+	{
+		static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
+		FST_Structure* StructureData = StructureTable->FindRow<FST_Structure>(*RowName, ContextString);
+		if (StructureData)
+		{
+			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
+			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+			if (Hexes.IsValidIndex(HexIndex))
+			{
+				FST_Hex& Hex = Hexes[HexIndex];
+				UWorld* World = Landscape->GetWorld();
+				if (World)
+				{
+					//~~ Set the spawn parameters ~~//
+					FActorSpawnParameters SpawnParams;
+					//SpawnParams.Owner = this;
+					//SpawnParams.Instigator = Instigator;
+					SpawnParams.bNoCollisionFail = true; //~~ Spawn event if collision ~~//
+
+					FVector SpawnLocation = Hex.Location;
+					FRotator SpawnRotation = Hex.Rotation;
+
+					// Spawn the pickup
+					//APOTLStructure* const
+					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
+					
+					Log("Spawn", 15.0f, FColor::Yellow, -1);
+
+					if (TreeId != "" && TreeId != "None")
+					{
+						Structure->TreeId = TreeId;
+					}
+					else
+					{
+						Structure->TreeId = Structure->GetName();
+					}
+
+					//~~ Tree id logic here ~~//
+
+					//~~ Set Structure on all hexes based on cube location and structure size ~~//
+					for (int32 I = 0; I > StructureData->CubeSizes.Num(); I++)
+					{
+						FVector LocalCubeCoord = StructureData->CubeSizes[I] + CubeCoord;
+						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
+						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+						if (Hexes.IsValidIndex(HexIndex))
+						{
+							FST_Hex& Hex = Hexes[HexIndex];
+							Hex.AttachedBuilding = Structure;
+						}
+					}
+					//~~ Store hexindex in structure ~~//
+					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
+					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+					if (Hexes.IsValidIndex(HexIndex))
+					{
+						Structure->HexIndex = HexIndex;
+					}
+					//~~ Create Broadcast/Emit Connection ~~//
+					if (EmitTo)
+					{
+						CreateStructureConnection(Structure, EmitTo);
+					}
+				}
+			}
+		}
+	}
+	return Structure;
+}
+
+/******************** IsHexBuildable *************************/
+void UPOTLGameInstance::CreateStructureConnection(APOTLStructure* From, APOTLStructure* To)
+{
+	From->EmitTo = To;
+	From->TreeId = To->TreeId;
+	To->BroadcastTo.Add(From);
 }
 
 

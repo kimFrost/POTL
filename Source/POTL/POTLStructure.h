@@ -44,10 +44,10 @@ public:
 	bool IsRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	FName TreeId;
+	FString TreeId;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	//FST_Hex Hex;
+	//FST_Hex& Hex; // Need to be put as a spawn paramater
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 HexIndex;
