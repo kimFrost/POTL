@@ -15,6 +15,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	IsRoot = true;
 	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};
+	StructureRowName = TEXT("");
 
 	//GameInstance = Cast<UPOTLGameInstance>(GetGameInstance()); //~~ <== Will crash. The game instance is not ready at this point ~~//
 
@@ -203,7 +204,8 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 	{
 		for (auto& Factory : Factories)
 		{
-			Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
+			//Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
+			Factory.ProcessInvoice(GameInstance->DATA_Recipes); //~~ Calculate requirements ~~//
 			bool Fulfilled = RequestResources(false, this, Factory.Requirements, 0, EAllocationType::RequestDirect, false);
 		}
 	}
@@ -229,7 +231,8 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 		{
 			TMap<FString, int32> FactoryProduction;
 			TMap<FString, int32> FactoryBilling;
-			Factory.Resolve(this, FreeResources, GameInstance->RecipeTable, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
+			//Factory.Resolve(this, FreeResources, GameInstance->RecipeTable, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
+			Factory.Resolve(this, FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
 			RequestResources(false, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
 			for (auto& Resource : FactoryBilling)
 			{

@@ -667,11 +667,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	AActor* Landscape;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resources")
-	UDataTable* RecipeTable;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resources")
+	//UDataTable* RecipeTable;
+
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
+	//UDataTable* StructureTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
-	UDataTable* StructureTable;
+	UDataTable* DATA_Recipes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
+	UDataTable* DATA_Structures;
 
 	FTimerHandle TurnTimerHandle;
 
@@ -688,6 +694,11 @@ public:
 	FString FindmeString;
 
 	/*********** FUNCTIONS **************/
+
+	//~~ Data ~~//
+
+	UFUNCTION(BlueprintCallable, Category = "Data")
+	void ReadTables();
 
 	//~~ Structure ~~//
 

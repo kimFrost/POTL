@@ -22,23 +22,27 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	//DataTable'/Game/Resources/ResourceConversion.ResourceConversion'
 
 	//~~ Table data ~~//
-	RecipeTable = nullptr;
-	StructureTable = nullptr;
+	//RecipeTable = nullptr;
+	//StructureTable = nullptr;
+	DATA_Recipes = nullptr;
+	DATA_Structures = nullptr;
 
 	//~~ Recipes ~~//
+	/*
 	static ConstructorHelpers::FObjectFinder<UDataTable>RecipeTable_BP(TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'")); //~~ Get the Uassets file reference ~~//
 	if (RecipeTable_BP.Succeeded())
 	{
 		RecipeTable = RecipeTable_BP.Object;
 		FindmeString = "RecipeTable Succeeded : " + FString::FromInt(RecipeTable->GetRowNames().Num());
 	}
+	*/
 	
 	//~~ Structures ~~//
 	//ConstructorHelpersInternal::FindOrLoadObject();
 	//template<typename T>
 	//T ConstructorHelpersInternal::FindOrLoadObject<UDataTable>(TEXT("DataTable'/Game/Resources/Structures.Structures'"));
 
-
+	/*
 	static ConstructorHelpers::FObjectFinder<UDataTable>StructureTable_BP(TEXT("DataTable'/Game/Resources/Structures.Structures'")); //~~ Get the Uassets file reference ~~//
 	if (StructureTable_BP.Succeeded())
 	{ 
@@ -49,8 +53,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	else {
 		FindmeString = "Failed";
 	}
-
-
+	*/
 
 	/* 
 	if (RecipeTable)
@@ -65,11 +68,27 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 
 		}
 	}
-	*/
-
-
-	
+	*/	
 }
+
+
+/******************** ReadTables *************************/
+void UPOTLGameInstance::ReadTables()
+{
+	//auto cls = StaticLoadObject(UObject::StaticClass(), nullptr, TEXT("/Game/Wood_Table_Blueprint")); 
+	//UObject* Asset = (UObject*)StaticLoadObject(UBlueprint::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/Structures'"));
+	UDataTable* StructureTable = (UDataTable*)StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/Structures.Structures'"));
+	if (StructureTable)
+	{
+		DATA_Structures = StructureTable;
+	}
+	UDataTable* RecipeTable = (UDataTable*)StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'"));
+	if (RecipeTable)
+	{
+		DATA_Recipes = RecipeTable;
+	}
+}
+
 
 /******************** GetConstructLocations *************************/
 TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
@@ -223,20 +242,19 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 	{
 		Log("Landscape", 15.0f, FColor::Yellow, -1);
 	}
-
-	if (StructureTable)
+	if (DATA_Structures)
 	{
-		Log("StructureTable", 15.0f, FColor::Yellow, -1);
+		Log("DATA_Structures", 15.0f, FColor::Yellow, -1);
 	}
 
 	//Log("PlantStructure : " + FString::FromInt(StructureTable->GetRowNames().Num()), 15.0f, FColor::Yellow, -1);
 	 
-	FString TestMe;
+	
 
-	if (Landscape && StructureTable)
+	if (Landscape && DATA_Structures)
 	{
 		static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
-		FST_Structure* StructureData = StructureTable->FindRow<FST_Structure>(*RowName, ContextString);
+		FST_Structure* StructureData = DATA_Structures->FindRow<FST_Structure>(*RowName, ContextString);
 		if (StructureData)
 		{
 			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
@@ -251,7 +269,8 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					FActorSpawnParameters SpawnParams;
 					//SpawnParams.Owner = this;
 					//SpawnParams.Instigator = Instigator;
-					SpawnParams.bNoCollisionFail = true; //~~ Spawn event if collision ~~//
+					//SpawnParams.bNoCollisionFail = true; //~~ Spawn event if collision ~~//
+					SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 					FVector SpawnLocation = Hex.Location;
 					FRotator SpawnRotation = Hex.Rotation;
@@ -274,9 +293,9 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					//~~ Tree id logic here ~~//
 
 					//~~ Set Structure on all hexes based on cube location and structure size ~~//
-					for (int32 I = 0; I > StructureData->CubeSizes.Num(); I++)
+					for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
 					{
-						FVector LocalCubeCoord = StructureData->CubeSizes[I] + CubeCoord;
+						FVector LocalCubeCoord = StructureData->CubeSizes[i] + CubeCoord;
 						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
 						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 						if (Hexes.IsValidIndex(HexIndex))
@@ -285,18 +304,24 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 							Hex.AttachedBuilding = Structure;
 						}
 					}
-					//~~ Store hexindex in structure ~~//
+					//~~ Store hex index in structure ~~//
 					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
 					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 					if (Hexes.IsValidIndex(HexIndex))
 					{
 						Structure->HexIndex = HexIndex;
 					}
+					//~~ Store structure raw data ~~//
+					Structure->StructureRowName = RowName;
+					Structure->StructureBaseData = *StructureData;
+					Structure->BroadcastRange = StructureData->BaseBroadcastRange;
 					//~~ Create Broadcast/Emit Connection ~~//
 					if (EmitTo)
 					{
 						CreateStructureConnection(Structure, EmitTo);
 					}
+
+					//FString TestMe;
 				}
 			}
 		}

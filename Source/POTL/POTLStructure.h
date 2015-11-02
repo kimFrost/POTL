@@ -56,6 +56,9 @@ public:
 	FST_Structure StructureBaseData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FString StructureRowName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BroadcastRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
