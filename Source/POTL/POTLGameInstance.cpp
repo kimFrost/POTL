@@ -93,15 +93,15 @@ void UPOTLGameInstance::ReadTables()
 /******************** GetConstructLocations *************************/
 TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
 {
-	//Log("GetConstructLocations", 15.0f, FColor::Yellow, 2);
 	TArray<FST_Hex> ConstructHexes;
 	if (Structure)
 	{
+		//Log("--> GetConstructLocations: " + Structure->GetName(), 15.0f, FColor::Yellow, -1);
 		TArray<int32> ConstructHexIndexes;
 		ConstructHexIndexes = GetConstructLocationIndexes(Structure, IncludeChildren); //~~ Get self hex indexes ~~//
 		//~~ Get children hex indexes ~~//
 		if (IncludeChildren) {
-			//Log("Structure->BroadcastTo.Num(): " + FString::FromInt(Structure->BroadcastTo.Num()), 15.0f, FColor::Yellow, 5);
+			//Log("Structure->BroadcastTo.Num(): " + FString::FromInt(Structure->BroadcastTo.Num()), 15.0f, FColor::Yellow, -1);
 			for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
 			{
 				TArray<int32> ChildrenConstructLocationIndexes = GetConstructLocationIndexes(Structure->BroadcastTo[i], IncludeChildren);
@@ -118,7 +118,7 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			ConstructHexes.Add(Hexes[ConstructHexIndexes[h]]);
 		}
 	}
-	Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, 4);
+	//Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
 	return ConstructHexes;
 }
 
@@ -129,16 +129,15 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 	TArray<int32> ConstructHexIndexes;
 	if (Structure) 
 	{
+		//Log("GetConstructLocationIndexes: " + Structure->GetName(), 15.0f, FColor::Yellow, -1);
 		struct Frontier
 		{
 			TArray<int32> HexIndexes;
 		};
 		TArray<Frontier> Frontiers;
 		TArray<int32> VisitedHexIndexes;
-		Log("Structure->HexIndex: " + FString::FromInt(Structure->HexIndex), 15.0f, FColor::Yellow, 4);
-
-		//VisitedHexIndexes.Add(Structure->HexIndex); //~~ Add Start Hex to VisitedHexes ~~//
-
+		//Log("Structure->HexIndex: " + FString::FromInt(Structure->HexIndex), 15.0f, FColor::Yellow, -1);
+		//VisitedHexIndexes.Add(Structure->HexIndex); //~~ Add Start Hex to VisitedHexes ~~// //~~ Not needed, i think~~//
 		Frontier frontier;
 		frontier.HexIndexes.Add(Structure->HexIndex);
 		Frontiers.Add(frontier);
@@ -155,7 +154,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 				}
 			}
 		}
-
+		//Log("structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, -1);
 		for (int32 k = 1; k <= Structure->BroadcastRange + 1; k++)
 		{
 			Frontier frontier;
@@ -235,22 +234,20 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 /******************** IsHexBuildable *************************/
 APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo)
 {
-	Log("PlantStructure", 15.0f, FColor::Yellow, -1);
+	//Log("PlantStructure", 15.0f, FColor::Yellow, -1);
 	APOTLStructure* Structure = nullptr;
 
 	if (Landscape)
 	{
-		Log("Landscape", 15.0f, FColor::Yellow, -1);
+		//Log("Landscape", 15.0f, FColor::Yellow, -1);
 	}
 	if (DATA_Structures)
 	{
-		Log("DATA_Structures", 15.0f, FColor::Yellow, -1);
+		//Log("DATA_Structures", 15.0f, FColor::Yellow, -1);
 	}
 
 	//Log("PlantStructure : " + FString::FromInt(StructureTable->GetRowNames().Num()), 15.0f, FColor::Yellow, -1);
 	 
-	
-
 	if (Landscape && DATA_Structures)
 	{
 		static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
@@ -305,7 +302,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 						}
 					}
 					//~~ Store hex index in structure ~~//
-					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
+					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord + StructureData->BroadcastRoot);
 					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 					if (Hexes.IsValidIndex(HexIndex))
 					{
