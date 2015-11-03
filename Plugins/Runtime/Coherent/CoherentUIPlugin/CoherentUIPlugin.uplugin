@@ -1,0 +1,23 @@
+{
+    "Category": "User Interface",
+    "FileVersion": 1,
+    "Modules": [
+        {
+            "Type": "Runtime",
+            "Name": "CoherentUIPlugin",
+            "LoadingPhase": "PreDefault"
+        },
+        {
+            "Type": "Editor",
+            "Name": "CoherentUIEditorPlugin",
+            "LoadingPhase": "Default"
+        }
+    ],
+    "Version": 2596,
+    "VersionName": "2.5.9.6",
+    "CreatedBy": "Coherent Labs, AD",
+    "EngineVersion": 1579795,
+    "FriendlyName": "Coherent UI",
+    "CreatedByURL": "http://coherent-labs.com",
+    "Description": "Coherent UI - HTML5-based User Interface middleware"
+}
