@@ -206,6 +206,7 @@ struct FST_ConstructLocation
 	}
 };
 
+
 USTRUCT(BlueprintType)
 struct FST_Hex
 {

@@ -111,7 +111,6 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 				}
 			}
 		}
-
 		//~~ Convert indexes into real hexes and send a array of copies of them ~~//
 		for (int32 h = 0; h < ConstructHexIndexes.Num(); h++)
 		{
@@ -234,20 +233,7 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 /******************** IsHexBuildable *************************/
 APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo)
 {
-	//Log("PlantStructure", 15.0f, FColor::Yellow, -1);
 	APOTLStructure* Structure = nullptr;
-
-	if (Landscape)
-	{
-		//Log("Landscape", 15.0f, FColor::Yellow, -1);
-	}
-	if (DATA_Structures)
-	{
-		//Log("DATA_Structures", 15.0f, FColor::Yellow, -1);
-	}
-
-	//Log("PlantStructure : " + FString::FromInt(StructureTable->GetRowNames().Num()), 15.0f, FColor::Yellow, -1);
-	 
 	if (Landscape && DATA_Structures)
 	{
 		static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
@@ -268,16 +254,13 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					//SpawnParams.Instigator = Instigator;
 					//SpawnParams.bNoCollisionFail = true; //~~ Spawn event if collision ~~//
 					SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
 					FVector SpawnLocation = Hex.Location;
 					FRotator SpawnRotation = Hex.Rotation;
-
 					// Spawn the pickup
 					//APOTLStructure* const
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
-					
-					Log("Spawn", 15.0f, FColor::Yellow, -1);
 
+					//~~ Tree id logic here ~~//
 					if (TreeId != "" && TreeId != "None")
 					{
 						Structure->TreeId = TreeId;
@@ -286,8 +269,6 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					{
 						Structure->TreeId = Structure->GetName();
 					}
-
-					//~~ Tree id logic here ~~//
 
 					//~~ Set Structure on all hexes based on cube location and structure size ~~//
 					for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
@@ -301,6 +282,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 							Hex.AttachedBuilding = Structure;
 						}
 					}
+
 					//~~ Store hex index in structure ~~//
 					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord + StructureData->BroadcastRoot);
 					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
@@ -308,23 +290,24 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					{
 						Structure->HexIndex = HexIndex;
 					}
+
 					//~~ Store structure raw data ~~//
 					Structure->StructureRowName = RowName;
 					Structure->StructureBaseData = *StructureData;
 					Structure->BroadcastRange = StructureData->BaseBroadcastRange;
+
 					//~~ Create Broadcast/Emit Connection ~~//
 					if (EmitTo)
 					{
 						CreateStructureConnection(Structure, EmitTo);
 					}
-
-					//FString TestMe;
 				}
 			}
 		}
 	}
 	return Structure;
 }
+
 
 /******************** IsHexBuildable *************************/
 void UPOTLGameInstance::CreateStructureConnection(APOTLStructure* From, APOTLStructure* To)
