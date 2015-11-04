@@ -93,7 +93,7 @@ void UPOTLGameInstance::ReadTables()
 /******************** GetConstructLocations *************************/
 TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
 {
-	TArray<FST_Hex> ConstructHexes;
+	TArray<FST_Hex> ConstructHexes; 
 	if (Structure)
 	{
 		//Log("--> GetConstructLocations: " + Structure->GetName(), 15.0f, FColor::Yellow, -1);
@@ -102,7 +102,7 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 		//~~ Get children hex indexes ~~//
 		if (IncludeChildren) {
 			//Log("Structure->BroadcastTo.Num(): " + FString::FromInt(Structure->BroadcastTo.Num()), 15.0f, FColor::Yellow, -1);
-			for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
+			for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++) 
 			{
 				TArray<int32> ChildrenConstructLocationIndexes = GetConstructLocationIndexes(Structure->BroadcastTo[i], IncludeChildren);
 				for (int32 ii = 0; ii < ChildrenConstructLocationIndexes.Num(); ii++)
