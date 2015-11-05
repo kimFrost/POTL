@@ -23,7 +23,7 @@ APOTLStructure* APOTLHUD::GetNearestStructure(FVector Location, TSubclassOf<APOT
 	TArray<AActor*> FoundStructures;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), StructureClass, FoundStructures);
 	for (auto Actor : FoundStructures)
-	{
+	{  
 		APOTLStructure* Structure = Cast<APOTLStructure>(Actor);
 		if (Structure)
 		{

@@ -1,0 +1,28 @@
+[
+	{
+		"Name": "Base",
+		"Id": "Base",
+		"Title": "Base",
+		"Mesh": "StaticMesh'/Game/Meshes/Blocks/SM_Base.SM_Base'",
+		"FitsOn": []
+	},
+	{
+		"Name": "Floor",
+		"Id": "Floor",
+		"Title": "Floor",
+		"Mesh": "StaticMesh'/Game/Meshes/Blocks/SM_Floor.SM_Floor'",
+		"FitsOn": [
+			"Base"
+		]
+	},
+	{
+		"Name": "Roof",
+		"Id": "Roof",
+		"Title": "Roof",
+		"Mesh": "StaticMesh'/Game/Meshes/Blocks/SM_Roof.SM_Roof'",
+		"FitsOn": [
+			"Base",
+			"Floor"
+		]
+	}
+]

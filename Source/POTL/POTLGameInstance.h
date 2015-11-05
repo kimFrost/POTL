@@ -352,6 +352,34 @@ struct FST_Structure : public FTableRowBase
 };
 
 
+
+
+USTRUCT(BlueprintType)
+struct FST_StructureBlock : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FString Id;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FString Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FString> FitsOn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	UStaticMesh* Mesh;
+
+	FST_StructureBlock()
+	{
+		Id = TEXT("");
+		Title = "";
+		Mesh = nullptr;
+	}
+};
+
+
 USTRUCT(BlueprintType)
 struct FST_Person
 {
