@@ -180,7 +180,6 @@ FST_Hex UPOTLUtilFunctionLibrary::LocationToHex(int32 GridXCount, float HexWidth
 */
 
 
-
 int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
 {
 	int32 index;

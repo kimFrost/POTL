@@ -41,10 +41,6 @@ public:
 	//UFUNCTION(BlueprintCallable, Category = "Util")
 	//static FST_Hex LocationToHex(int32 GridXCount, float HexWidth, float HexHeight, FVector Location, const TArray<FST_Hex>& Hexes);
 
-
-
-
-
 	/** AMIT */
 
 	UFUNCTION(BlueprintCallable, Category = "Util")

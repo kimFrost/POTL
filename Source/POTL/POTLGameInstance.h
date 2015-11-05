@@ -713,7 +713,7 @@ public:
 	bool IsHexBuildable(FST_Hex& Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	APOTLStructure* PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo);
+	APOTLStructure* PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void CreateStructureConnection(APOTLStructure* From, APOTLStructure* To);

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "GameFramework/HUD.h"
+#include "POTLGameInstance.h"
+#include "POTLStructure.h"
 #include "POTLHUD.generated.h"
 
 /**
@@ -12,8 +14,15 @@ UCLASS()
 class POTL_API APOTLHUD : public AHUD
 {
 	GENERATED_BODY()
+
+public:
+
+	// Sets default values for this actor's properties
+	APOTLHUD(const FObjectInitializer &ObjectInitializer);
 	
 	
-	
-	 
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	APOTLStructure* GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass);
+
+
 };

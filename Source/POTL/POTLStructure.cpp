@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "POTLGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "POTLStructure.h"
 
 
@@ -16,36 +17,9 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};
 	StructureRowName = TEXT("");
+	IsUnderConstruction = true;
 
 	//GameInstance = Cast<UPOTLGameInstance>(GetGameInstance()); //~~ <== Will crash. The game instance is not ready at this point ~~//
-
-
-	/*
-	GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
-	if (GameInstance)
-	{
-		// Add test resources
-		Resources.Add(FName(TEXT("Wood")), 50.f);
-		Resources.Add(FName(TEXT("Stone")), 50.f);
-
-		// Add test factory for resource process
-
-		FST_Factory Factory;
-		Factory.Requirements.Add(FName(TEXT("Wood")), 2.f);
-		Factories.Add(Factory);
-
-		//Id = FName(TEXT(""));
-		//Title = "";
-		//UnitMass = 1.f;
-		//Stackable = true;
-		//Burnable = true;
-		//StackSize = 64;
-		//Quantity = 0;
-
-		//HSSSS = nullptr;
-		//HSSSS = FST_Hex{};
-	}
-	*/
 }
 
 //AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);
@@ -166,7 +140,10 @@ void APOTLStructure::CalculateUpkeep(bool Broadcast)
 		}
 	}
 	//~~ Resolve self / The function logic ~~//
+	if (!IsUnderConstruction)
+	{
 
+	}
 }
 
 /******************** ResolveUpkeep *************************/
@@ -380,6 +357,42 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 		bool Fulfilled = EmitTo->RequestResources(Bubble, RequestFrom, Request, Steps, EAllocationType::RequestDirect, Consume);
 	}
 	return RequestFulfilled; //~~ True / false ~~//
+}
+
+
+/*****************************************************************************************************/
+/****************************************** CONSTRUCTION *********************************************/
+/*****************************************************************************************************/
+
+
+/******************** UpdateConstrunction *************************/
+void APOTLStructure::UpdateConstrunction_Implementation()
+{
+
+}
+
+/*****************************************************************************************************/
+/********************************************** MAP **************************************************/
+/*****************************************************************************************************/
+
+
+
+/******************** GetNearestStructure *************************/
+APOTLStructure* APOTLStructure::GetNearestStructure()
+{
+	APOTLStructure* NearestStructure = nullptr;
+	//TSubclassOf<AActor> ClassToFind;
+	//Array<AActor*> FoundActors;
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, FoundActors);
+
+	for (TActorIterator<APOTLStructure> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		//ClientMessage(ActorItr->GetName());
+		//ClientMessage(ActorItr->GetActorLocation().ToString());
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, ActorItr->GetName());
+	}
+
+	return NearestStructure;
 }
 
 

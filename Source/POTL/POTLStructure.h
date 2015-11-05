@@ -137,6 +137,18 @@ public:
 	bool RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Steps, EAllocationType Type, bool Consume);
 
 
+	/** Construction */
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Construction") // BlueprintNativeEvent
+	void UpdateConstrunction();
+
+
+	/** Map */
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	APOTLStructure* GetNearestStructure();
+
+
 	//Delegates
 	UFUNCTION()
 	void BindToDelegate(float Turn);

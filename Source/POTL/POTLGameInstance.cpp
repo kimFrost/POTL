@@ -231,7 +231,7 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 
 
 /******************** IsHexBuildable *************************/
-APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo)
+APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
 {
 	APOTLStructure* Structure = nullptr;
 	if (Landscape && DATA_Structures)
@@ -260,14 +260,15 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					//APOTLStructure* const
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
 
-					//~~ Tree id logic here ~~//
-					if (TreeId != "" && TreeId != "None")
+					//~~ Tree id & IsRoot logic here ~~//
+					if (TreeId != "" && TreeId != "None" && EmitTo)
 					{
 						Structure->TreeId = TreeId;
 					}
 					else
 					{
 						Structure->TreeId = Structure->GetName();
+						Structure->IsRoot = true;
 					}
 
 					//~~ Set Structure on all hexes based on cube location and structure size ~~//
@@ -300,6 +301,11 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					if (EmitTo)
 					{
 						CreateStructureConnection(Structure, EmitTo);
+					}
+					//~~ InstaBuild for debugging ~~//
+					if (InstaBuild)
+					{
+						Structure->IsUnderConstruction = false;
 					}
 				}
 			}
