@@ -7,7 +7,12 @@
 
 
 
-
+UENUM(BlueprintType)
+enum EBoolGateEnum
+{
+	Exits,
+	Null
+};
 
 
 
@@ -65,18 +70,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static int32 GetHexIndex(FVector2D OffsetCoord, int32 GridXCount);
 
-	//UFUNCTION(BlueprintCallable, Category = "Util")
-	//static bool PointIndexValid(const TArray<FST_Point>& Points, int32 Index);
-
-	//UFUNCTION(BlueprintCallable, Category = "Util")
-	//static void GetPoint(const TArray<FST_Point>& Points, const int32 Index, bool& Found, FST_Point& Point);
-
-	//UFUNCTION(BlueprintCallable, Category = "Util")
-	//static bool HexIndexValid(const TArray<FST_Hex>& Hexes, int32 Index);
-
-	//UFUNCTION(BlueprintCallable, Category = "Util")
-	//static void GetHex(const TArray<FST_Hex>& Hexes, const int32 Index, bool &Found, FST_Hex &Hex);
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Util", Meta = (ExpandEnumAsExecs = "Branches"))
+	static void ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEnum>& Branches);
 
 
 	/** Map - Pathing */

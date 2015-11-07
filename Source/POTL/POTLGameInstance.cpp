@@ -3,6 +3,7 @@
 #include "POTL.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLStructure.h"
+#include "Kismet/GameplayStatics.h"
 #include "POTLGameInstance.h"
 
 
@@ -15,6 +16,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	Landscape = nullptr;
 	GridXCount = 200; // Temp. Needs to be calc in point creation.
 	GridYCount = 200; // Temp. Needs to be calc in point creation.
+	HexGridReady = false;
 
 	//FindmeString = "set in constructor";
 	
@@ -26,6 +28,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	//StructureTable = nullptr;
 	DATA_Recipes = nullptr;
 	DATA_Structures = nullptr;
+
 
 	//~~ Recipes ~~//
 	/*
@@ -201,9 +204,9 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 					}
 				}
 				//Hex.DebugMe = true;
-				if (ValidNeighborCount < 6) //~~ If ValidNeighborCount is less than 6 the hex is on the ridge of the city limit ~~//
+				if (ValidNeighborCount < 6 ) //~~ If ValidNeighborCount is less than 6 the hex is on the ridge of the city limit ~~//
 				{
-					Hex.ConstructInfo.OnRidge = true;
+					Hex.ConstructInfo.OnRidge = true; //!!~~ NOT CORRECT ~~//
 				}
 				ConstructHexIndexes.AddUnique(Hex.HexIndex);
 			}
@@ -234,7 +237,7 @@ bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
 APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
 {
 	APOTLStructure* Structure = nullptr;
-	if (Landscape && DATA_Structures)
+	if (Landscape && DATA_Structures) 
 	{
 		static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
 		FST_Structure* StructureData = DATA_Structures->FindRow<FST_Structure>(*RowName, ContextString);
@@ -248,6 +251,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 				UWorld* World = Landscape->GetWorld();
 				if (World)
 				{
+
 					//~~ Set the spawn parameters ~~//
 					FActorSpawnParameters SpawnParams;
 					//SpawnParams.Owner = this;
@@ -261,14 +265,16 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 					//~~ Tree id & IsRoot logic here ~~//
-					if (TreeId != "" && TreeId != "None" && EmitTo)
+					if (EmitTo)
 					{
-						Structure->TreeId = TreeId;
+						Structure->TreeId = EmitTo->TreeId;
+						Structure->IsRoot = false;
 					}
 					else
 					{
 						Structure->TreeId = Structure->GetName();
 						Structure->IsRoot = true;
+						RootStructures.Add(Structure);
 					}
 
 					//~~ Set Structure on all hexes based on cube location and structure size ~~//
@@ -307,6 +313,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 					{
 						Structure->IsUnderConstruction = false;
 					}
+
 				}
 			}
 		}
@@ -597,6 +604,60 @@ void UPOTLGameInstance::NewTurn(float WaitTime)
 			Landscape->GetWorldTimerManager().SetTimer(UniqueHandle, TimerDelegate, WaitTime, false);
 		}
 	}
+}
+
+/*****************************************************************************************************/
+/************************************** Map - Structure **********************************************/
+/*****************************************************************************************************/
+
+/******************** GetNearestStructure *************************/
+APOTLStructure* UPOTLGameInstance::GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass)
+{
+	APOTLStructure* NearestStructure = nullptr;
+	float LastNearestDistance = 99999999999999.f;
+	TArray<AActor*> FoundStructures;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), StructureClass, FoundStructures);
+	for (auto Actor : FoundStructures)
+	{
+		APOTLStructure* Structure = Cast<APOTLStructure>(Actor);
+		if (Structure)
+		{
+			FVector StructureLocation = Structure->GetActorLocation();
+			FVector VectorDistance = StructureLocation - Location;
+			VectorDistance = VectorDistance.GetAbs();
+			FVector2D Vector2DDistance = FVector2D({ VectorDistance.X, VectorDistance.Y });
+			float Distance = Vector2DDistance.Size();
+			if (Distance < LastNearestDistance)
+			{
+				NearestStructure = Structure;
+				LastNearestDistance = Distance;
+			}
+		}
+	}
+	return NearestStructure;
+}
+
+
+
+/******************** GetNearestCity *************************/
+APOTLStructure* UPOTLGameInstance::GetNearestCity(FVector Location)
+{
+	APOTLStructure* RootStructure = nullptr;
+	float LastNearestDistance = 99999999999999.f;
+	for (auto Structure : RootStructures)
+	{
+		FVector StructureLocation = Structure->GetActorLocation();
+		FVector VectorDistance = StructureLocation - Location;
+		VectorDistance = VectorDistance.GetAbs();
+		FVector2D Vector2DDistance = FVector2D({ VectorDistance.X, VectorDistance.Y });
+		float Distance = Vector2DDistance.Size();
+		if (Distance < LastNearestDistance)
+		{
+			RootStructure = Structure;
+			LastNearestDistance = Distance;
+		}
+	}
+	return RootStructure;
 }
 
 /*****************************************************************************************************/

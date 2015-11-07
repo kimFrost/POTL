@@ -284,6 +284,18 @@ FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
 }
 
 
+void UPOTLUtilFunctionLibrary::ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEnum>& Branches)
+{
+	if (Actor)
+	{
+		Branches = EBoolGateEnum::Exits;
+	}
+	else
+	{
+		Branches = EBoolGateEnum::Null;
+	}
+}
+
 
 /** -- MAP - PATHING --------------------*/
 

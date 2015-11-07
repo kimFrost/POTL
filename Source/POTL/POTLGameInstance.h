@@ -692,6 +692,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	TArray<FST_Hex> Hexes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	bool HexGridReady;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
 	AActor* Landscape;
@@ -717,6 +720,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	TArray<APOTLStructure*> RootStructures;
+
 
 	//~~ Debug ~~//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Debug")
@@ -771,6 +775,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turn")
 	void NewTurn(float WaitTime);
 
+	//~~ Map - Structure ~~//
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	APOTLStructure* GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass);
+
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	APOTLStructure* GetNearestCity(FVector Location);
+
 	//~~ Util - Hex ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
@@ -778,6 +790,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	FST_Hex LocationToHex(FVector Location);
+
 
 	//~~ Debug - Log ~~//
 

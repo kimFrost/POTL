@@ -21,8 +21,9 @@ public:
 	APOTLHUD(const FObjectInitializer &ObjectInitializer);
 	
 	
-	UFUNCTION(BlueprintCallable, Category = "Map")
-	APOTLStructure* GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass);
+	//UFUNCTION(BlueprintCallable, Category = "Map")
+	//APOTLStructure* GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass);
+
 
 
 };
