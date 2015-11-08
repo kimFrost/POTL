@@ -29,12 +29,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void LogMsg(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
 
-	//UFUNCTION(BlueprintCallable, Category = "Hex")
-	//static FST_Hex CubeToHex(FVector CubeCoord, const TArray<FST_Hex>& Hexes, int32 GridXCount);
-
-	//UFUNCTION(BlueprintCallable, Category = "Hex")
-	//static TArray<FST_Hex> CubesToHexes(TArray<FVector> CubeCoords, const TArray<FST_Hex>& Hexes, int32 GridXCount);
-	
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static TArray<FVector> RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube);
 
@@ -43,9 +37,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static FVector LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location);
-
-	//UFUNCTION(BlueprintCallable, Category = "Util")
-	//static FST_Hex LocationToHex(int32 GridXCount, float HexWidth, float HexHeight, FVector Location, const TArray<FST_Hex>& Hexes);
 
 	/** AMIT */
 
@@ -71,9 +62,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static int32 GetHexIndex(FVector2D OffsetCoord, int32 GridXCount);
 
-	
 	UFUNCTION(BlueprintCallable, Category = "Util", Meta = (ExpandEnumAsExecs = "Branches"))
 	static void ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEnum>& Branches);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static TArray<int32> HexesToHexIndexes(const TArray<FST_Hex>& Hexes);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static TArray<FST_Hex> SubtractHexes(const TArray<FST_Hex>& Hexes, const TArray<FST_Hex>& Subtraction);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static TArray<FST_Hex> IntersectHexes(const TArray<FST_Hex>& Hexes, const TArray<FST_Hex>& Intersection);
 
 
 	/** Map - Pathing */
