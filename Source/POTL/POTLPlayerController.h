@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
+#include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
 #include "Kismet/GameplayStatics.h"

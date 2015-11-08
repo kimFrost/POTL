@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "POTLDataHolder.h"
 #include "POTLUtilFunctionLibrary.generated.h"
 
 

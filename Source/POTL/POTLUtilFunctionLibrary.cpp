@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "POTLDataHolder.h"
 #include <string>
 #include "POTLUtilFunctionLibrary.h"
 

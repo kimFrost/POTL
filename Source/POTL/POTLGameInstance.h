@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "POTLDataHolder.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLGameInstance.generated.h"
 

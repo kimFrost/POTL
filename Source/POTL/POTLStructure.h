@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.generated.h"
 
