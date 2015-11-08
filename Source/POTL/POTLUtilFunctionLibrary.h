@@ -30,6 +30,9 @@ public:
 	static void LogMsg(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
+	static FVector RotateCube(FVector CubeCoord, int32 Direction, FVector CenterCube);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
 	static TArray<FVector> RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")

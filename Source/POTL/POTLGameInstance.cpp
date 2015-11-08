@@ -212,19 +212,21 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 				ConstructHexIndexes.AddUnique(Hex.HexIndex);
 			}
 		}
+		ConstructHexIndexes.Remove(Structure->HexIndex); //~~ Remove self cubeCoord ~~//
 		Structure->BroadcastGridHexIndexes = ConstructHexIndexes; //~~ Store indexes in structure. It cludes all hex broadcast grid index, including childrens hex indexes ~~//
+		
 	}
 	return ConstructHexIndexes; //~~ Return ~~//
 }
 
 
 /******************** IsHexBuildable *************************/
-bool UPOTLGameInstance::IsHexBuildable(FST_Hex& Hex)
+bool UPOTLGameInstance::IsHexBuildable(const FST_Hex& Hex)
 {
 	//FRotator HexRotation = Hex.Rotation;
 	FVector HexRotation = FVector(Hex.Rotation.Pitch, Hex.Rotation.Yaw, Hex.Rotation.Roll);
 	float maxFlatDiviation = HexRotation.GetAbsMax();
-	if (Hex.AttachedBuilding == nullptr && maxFlatDiviation <= 15.f)
+	if (!Hex.AttachedBuilding && maxFlatDiviation <= 15.f)
 	{
 		return true;
 	}

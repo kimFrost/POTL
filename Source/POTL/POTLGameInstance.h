@@ -111,7 +111,7 @@ public:
 	TArray<int32> GetConstructLocationIndexes(APOTLStructure* Structure, bool IncludeChildren);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	bool IsHexBuildable(FST_Hex& Hex);
+	bool IsHexBuildable(const FST_Hex& Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	APOTLStructure* PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);

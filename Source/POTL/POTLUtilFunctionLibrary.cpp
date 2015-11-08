@@ -14,6 +14,46 @@ UPOTLUtilFunctionLibrary::UPOTLUtilFunctionLibrary(const FObjectInitializer& Obj
 
 }
 
+/******************** RotateCube *************************/
+FVector UPOTLUtilFunctionLibrary::RotateCube(FVector CubeCoord, int32 Direction, FVector CenterCube)
+{
+	Direction = Direction % 6;
+	FVector RotatedCube = CubeCoord;
+	FVector CubeLocal = CubeCoord - CenterCube;
+	switch (Direction)
+	{
+		case 0:
+		{
+			break;
+		}
+		case 1:
+		{
+			RotatedCube = FVector{ -CubeLocal.Z, -CubeLocal.X, -CubeLocal.Y } + CenterCube;
+			break;
+		}
+		case 2:
+		{
+			RotatedCube = FVector{ CubeLocal.Y, CubeLocal.Z, CubeLocal.X } + CenterCube;
+			break;
+		}
+		case 3:
+		{
+			RotatedCube = FVector{ -CubeLocal.X, -CubeLocal.Y, -CubeLocal.Z } + CenterCube;
+			break;
+		}
+		case 4:
+		{
+			RotatedCube = FVector{ CubeLocal.Z, CubeLocal.X, CubeLocal.Y } + CenterCube;
+			break;
+		}
+		case 5:
+		{
+			RotatedCube = FVector{ -CubeLocal.Y, -CubeLocal.Z, -CubeLocal.X } + CenterCube;
+			break;
+		}
+	}
+	return RotatedCube;
+}
 
 /******************** RotateCubes *************************/
 TArray<FVector> UPOTLUtilFunctionLibrary::RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube)
