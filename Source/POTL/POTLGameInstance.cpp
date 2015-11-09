@@ -173,6 +173,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 				}
 				//~~ Make Construct Location ~~//
 				Hex.ConstructInfo.Cube = Hex.HexCubeCoords;
+				Hex.ConstructInfo.EmitDistances.Add(k); //~~ Store smallest distance between broadcaster and structure. Have to use index of structure in EmitTo array, to find the right distance value ~~//
 				Hex.ConstructInfo.EmitTo.Add(Structure);  // Don't know if it should be a hex or structure reference to, for it to be the best solution.
 
 				//~~ Store broadcasted resources? NO. Will result in a lot of hex updating. Could then result in bugs with imcomplete data. ~~//
@@ -201,13 +202,16 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 								Frontiers[k].HexIndexes.Add(Index); //~~ Add Neighbor Hex to the next frontier ~~//
 								VisitedHexIndexes.Add(Index); //~~ Add index to visited indexes, so that neighbors don't overlap each other. ~~//
 							}
+							if (!IsHexTerrainBuildable(NeighborHex) || k == Structure->BroadcastRange)
+							{
+								Hex.ConstructInfo.OnRidge = true; //!!~~ NOT CORRECT ~~//
+							}
 						}
 					}
 				}
-				//Hex.DebugMe = true;
-				if (ValidNeighborCount < 6 ) //~~ If ValidNeighborCount is less than 6 the hex is on the ridge of the city limit ~~//
+				if (ValidNeighborCount < 6 ) //~~ If ValidNeighborCount is less than 6 the hex is on the ridge of map~~//
 				{
-					Hex.ConstructInfo.OnRidge = true; //!!~~ NOT CORRECT ~~//
+					Hex.ConstructInfo.OnMapEdge = true;
 				}
 				ConstructHexIndexes.AddUnique(Hex.HexIndex);
 			}
@@ -223,10 +227,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 /******************** IsHexBuildable *************************/
 bool UPOTLGameInstance::IsHexBuildable(const FST_Hex& Hex)
 {
-	//FRotator HexRotation = Hex.Rotation;
-	FVector HexRotation = FVector(Hex.Rotation.Pitch, Hex.Rotation.Yaw, Hex.Rotation.Roll);
-	float maxFlatDiviation = HexRotation.GetAbsMax();
-	if (!Hex.AttachedBuilding && maxFlatDiviation <= 15.f)
+	if (!Hex.AttachedBuilding && IsHexTerrainBuildable(Hex))
 	{
 		return true;
 	}
@@ -236,7 +237,17 @@ bool UPOTLGameInstance::IsHexBuildable(const FST_Hex& Hex)
 }
 
 
-/******************** IsHexBuildable *************************/
+/******************** IsHexTerrainBuildable *************************/
+bool UPOTLGameInstance::IsHexTerrainBuildable(const FST_Hex& Hex)
+{
+	//FRotator HexRotation = Hex.Rotation;
+	FVector HexRotation = FVector(Hex.Rotation.Pitch, Hex.Rotation.Yaw, Hex.Rotation.Roll);
+	float maxFlatDiviation = HexRotation.GetAbsMax();
+	return (maxFlatDiviation <= 15.f);
+}
+
+
+/******************** PlantStructure *************************/
 APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
 {
 	APOTLStructure* Structure = nullptr;

@@ -369,7 +369,14 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 /******************** UpdateConstrunction *************************/
 void APOTLStructure::UpdateConstrunction_Implementation()
 {
+	if (IsUnderConstruction)
+	{
 
+	}
+	else
+	{
+
+	}
 }
 
 /*****************************************************************************************************/
@@ -395,6 +402,7 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 
 	return NearestStructure;
 }
+
 
 
 void APOTLStructure::BindToDelegate(float Turn)

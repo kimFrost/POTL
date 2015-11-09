@@ -189,6 +189,12 @@ struct FST_ConstructLocation
 	bool OnRidge;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	bool OnMapEdge;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	TArray<int32> EmitDistances;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	TArray<APOTLStructure*> AttachTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
@@ -200,6 +206,7 @@ struct FST_ConstructLocation
 		Cube = { 0, 0, 0 };
 		TreeId = TEXT("");
 		OnRidge = false;
+		OnMapEdge = false;
 	}
 };
 
