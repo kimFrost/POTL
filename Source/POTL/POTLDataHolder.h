@@ -200,6 +200,9 @@ struct FST_ConstructLocation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	TArray<APOTLStructure*> EmitTo;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	bool Blocked;
+
 	FST_ConstructLocation()
 	{
 		Location = { -1, -1, -1 };
@@ -207,6 +210,7 @@ struct FST_ConstructLocation
 		TreeId = TEXT("");
 		OnRidge = false;
 		OnMapEdge = false;
+		Blocked = false;
 	}
 };
 

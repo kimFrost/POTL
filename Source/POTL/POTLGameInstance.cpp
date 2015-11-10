@@ -121,6 +121,43 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			ConstructHexes.Add(Hexes[ConstructHexIndexes[h]]);
 		}
 	}
+	//~~ Loop ConstructHexes and calced blocked construction state, based on number of adjacent structures ~~//
+	for (int32 m = 0; m < ConstructHexes.Num(); m++)
+	{
+		FST_Hex& ConstructHex = ConstructHexes[m];
+		FST_ConstructLocation& ConstructInfo = ConstructHex.ConstructInfo;
+		int32 NumOfAttachTo = ConstructInfo.AttachTo.Num();
+		if (NumOfAttachTo < 3)
+		{
+			ConstructInfo.Blocked = false;
+		}
+		else if (NumOfAttachTo > 3)
+		{
+			ConstructInfo.Blocked = true;
+		}
+		else 
+		{
+			bool AnyBlocked = false;
+			for (int32 mm = 0; mm < ConstructInfo.AttachTo.Num(); mm++)
+			{
+				APOTLStructure* Structure = ConstructInfo.AttachTo[mm];
+				if (Structure)
+				{
+					FST_Hex& AdjacentHex = Hexes[Structure->HexIndex];
+					if (AdjacentHex.ConstructInfo.AttachTo.Num() > 3)
+					{
+						AnyBlocked = true;
+						break;
+					}
+				}
+			}
+
+			//!!~~ Am i missing a !blocked check somewhere? ~~//
+
+			ConstructInfo.Blocked = AnyBlocked;
+		}
+	}
+
 	//Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
 	return ConstructHexes;
 }
