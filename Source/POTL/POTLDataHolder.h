@@ -321,6 +321,7 @@ struct FST_Structure : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool Burnable;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	//class APOTLStructure* StructureClass;
 	TSubclassOf<APOTLStructure> StructureClass;
@@ -346,6 +347,12 @@ struct FST_Structure : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 RotationDirection;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	bool BlockConstruction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	bool BlockPathing;
+
 	FST_Structure()
 	{
 		Id = TEXT("");
@@ -355,6 +362,8 @@ struct FST_Structure : public FTableRowBase
 		CubeRotationRoot = { 0, 0, 0 };
 		BroadcastRoot = { 0, 0, 0 };
 		RotationDirection = 0;
+		BlockConstruction = true;
+		BlockPathing = true;
 	}
 };
 
