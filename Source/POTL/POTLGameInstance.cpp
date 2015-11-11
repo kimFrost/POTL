@@ -127,37 +127,32 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 		FST_Hex& ConstructHex = ConstructHexes[m];
 		FST_ConstructLocation& ConstructInfo = ConstructHex.ConstructInfo;
 		int32 NumOfAttachTo = ConstructInfo.AttachTo.Num();
-		if (NumOfAttachTo < 3)
+		if (!ConstructInfo.Blocked) //~~ If not already blocked ~~//
 		{
-			ConstructInfo.Blocked = false;
-		}
-		else if (NumOfAttachTo > 3)
-		{
-			ConstructInfo.Blocked = true;
-		}
-		else 
-		{
-			bool AnyBlocked = false;
-			for (int32 mm = 0; mm < ConstructInfo.AttachTo.Num(); mm++)
+			if (NumOfAttachTo < 3)
 			{
-				APOTLStructure* Structure = ConstructInfo.AttachTo[mm];
-				if (Structure)
+				ConstructInfo.Blocked = false;
+			}
+			else if (NumOfAttachTo >= 3 && NumOfAttachTo <= 5)
+			{
+				for (int32 mm = 0; mm < ConstructHex.HexNeighborIndexes.Num(); mm++)
 				{
-					FST_Hex& AdjacentHex = Hexes[Structure->HexIndex];
-					if (AdjacentHex.ConstructInfo.AttachTo.Num() > 3)
+					int32 AdjacentHexIndex = ConstructHex.HexNeighborIndexes[mm];
+					FST_Hex& AdjacentHex = Hexes[AdjacentHexIndex];
+					if (AdjacentHex.IsStructureRoot && AdjacentHex.ConstructInfo.AttachTo.Num() >= 5) //~~ If adjacent hex that is a structure Root, is next to 5 or 6 structures, then the current hex, is the only way out ~~//
 					{
-						AnyBlocked = true;
-						break;
+						ConstructInfo.Blocked = true;
+					}
+					else {
+						ConstructInfo.Blocked = false;
 					}
 				}
 			}
-
-			//!!~~ Am i missing a !blocked check somewhere? ~~//
-
-			ConstructInfo.Blocked = AnyBlocked;
+			else {
+				ConstructInfo.Blocked = true;
+			}
 		}
 	}
-
 	//Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
 	return ConstructHexes;
 }
@@ -302,7 +297,6 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 				UWorld* World = Landscape->GetWorld();
 				if (World)
 				{
-
 					//~~ Set the spawn parameters ~~//
 					FActorSpawnParameters SpawnParams;
 					//SpawnParams.Owner = this;
@@ -339,6 +333,15 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 							FST_Hex& Hex = Hexes[HexIndex];
 							Hex.AttachedBuilding = Structure;
 						}
+					}
+					//~~ Set Structure broadcast root on hex ~~//
+					FVector RootCubeCoord = StructureData->BroadcastRoot + CubeCoord;
+					FVector2D RootOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RootCubeCoord);
+					int32 RootHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(RootOffsetCoords, GridXCount);
+					if (Hexes.IsValidIndex(HexIndex))
+					{
+						FST_Hex& Hex = Hexes[HexIndex];
+						Hex.IsStructureRoot = true;
 					}
 
 					//~~ Store hex index in structure ~~//

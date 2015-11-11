@@ -267,6 +267,9 @@ struct FST_Hex
 	int32 HexIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	bool IsStructureRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	TArray<int32> HexNeighborIndexes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
@@ -303,6 +306,7 @@ struct FST_Hex
 		HexCubeCoords = {-1, -1, -1};
 		HexOffsetCoords = {-1, -1};
 		HexIndex = -1;
+		IsStructureRoot = false;
 		HexNeighborIndexes.Init(-1, 6);
 		HighlightDecal = nullptr;
 		DebugMe = false;
