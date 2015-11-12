@@ -198,6 +198,9 @@ struct FST_ConstructLocation
 	TArray<APOTLStructure*> AttachTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	TArray<APOTLStructure*> AdjacentStructures;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	TArray<APOTLStructure*> EmitTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")

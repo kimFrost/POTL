@@ -126,20 +126,22 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 	{
 		FST_Hex& ConstructHex = ConstructHexes[m];
 		FST_ConstructLocation& ConstructInfo = ConstructHex.ConstructInfo;
-		int32 NumOfAttachTo = ConstructInfo.AttachTo.Num();
+		int32 NumOfAttachTo = ConstructInfo.AdjacentStructures.Num();
 		if (!ConstructInfo.Blocked) //~~ If not already blocked ~~//
 		{
 			if (NumOfAttachTo < 3)
 			{
 				ConstructInfo.Blocked = false;
+				ConstructHex.DebugMe = false;
 			}
 			else if (NumOfAttachTo >= 3 && NumOfAttachTo <= 5)
 			{
+				ConstructHex.DebugMe = true;
 				for (int32 mm = 0; mm < ConstructHex.HexNeighborIndexes.Num(); mm++)
 				{
 					int32 AdjacentHexIndex = ConstructHex.HexNeighborIndexes[mm];
 					FST_Hex& AdjacentHex = Hexes[AdjacentHexIndex];
-					if (AdjacentHex.IsStructureRoot && AdjacentHex.ConstructInfo.AttachTo.Num() >= 5) //~~ If adjacent hex that is a structure Root, is next to 5 or 6 structures, then the current hex, is the only way out ~~//
+					if (AdjacentHex.IsStructureRoot && AdjacentHex.ConstructInfo.AdjacentStructures.Num() >= 5) //~~ If adjacent hex that is a structure Root, is next to 5 or 6 structures, then the current hex, is the only way out ~~//
 					{
 						ConstructInfo.Blocked = true;
 					}
@@ -150,10 +152,11 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			}
 			else {
 				ConstructInfo.Blocked = true;
+				ConstructHex.DebugMe = true;
 			}
 		}
 	}
-	//Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
+	Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
 	return ConstructHexes;
 }
 
@@ -225,6 +228,10 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 						&& NeighborHex.AttachedBuilding->TreeId == TreeId) //~~  Only structures in same Tree ~~//
 						{
 							Hex.ConstructInfo.AttachTo.Add(NeighborHex.AttachedBuilding);
+						}
+						if (NeighborHex.AttachedBuilding != nullptr) //~~ Only if pointer to structure isn't null ~~//
+						{
+							Hex.ConstructInfo.AdjacentStructures.Add(NeighborHex.AttachedBuilding);
 						}
 						if (!VisitedHexIndexes.Contains(Index))
 						{
