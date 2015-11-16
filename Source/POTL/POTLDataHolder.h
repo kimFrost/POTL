@@ -201,6 +201,9 @@ struct FST_ConstructLocation
 	TArray<APOTLStructure*> AdjacentStructures;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
+	TArray<APOTLStructure*> AdjacentRootStructures;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
 	TArray<APOTLStructure*> EmitTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Construction")
@@ -270,9 +273,6 @@ struct FST_Hex
 	int32 HexIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
-	bool IsStructureRoot;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	TArray<int32> HexNeighborIndexes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
@@ -309,7 +309,6 @@ struct FST_Hex
 		HexCubeCoords = {-1, -1, -1};
 		HexOffsetCoords = {-1, -1};
 		HexIndex = -1;
-		IsStructureRoot = false;
 		HexNeighborIndexes.Init(-1, 6);
 		HighlightDecal = nullptr;
 		DebugMe = false;
@@ -331,7 +330,6 @@ struct FST_Structure : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool Burnable;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	//class APOTLStructure* StructureClass;
@@ -468,6 +466,9 @@ struct FST_Resource : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Quantity;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 MaxAge;
+
 	FST_Resource()
 	{
 		Id = TEXT("");
@@ -477,6 +478,23 @@ struct FST_Resource : public FTableRowBase
 		Burnable = true;
 		StackSize = 64;
 		Quantity = 0;
+		MaxAge = -1;
+	}
+};
+
+
+/*** FST_Consumable ***/
+USTRUCT(BlueprintType)
+struct FST_Consumable : public FST_Resource
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Something;
+
+	FST_Consumable()
+	{
+		Something = TEXT("");
 	}
 };
 

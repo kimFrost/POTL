@@ -132,27 +132,27 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			if (NumOfAttachTo < 3)
 			{
 				ConstructInfo.Blocked = false;
-				ConstructHex.DebugMe = false;
 			}
 			else if (NumOfAttachTo >= 3 && NumOfAttachTo <= 5)
 			{
-				ConstructHex.DebugMe = true;
 				for (int32 mm = 0; mm < ConstructHex.HexNeighborIndexes.Num(); mm++)
 				{
 					int32 AdjacentHexIndex = ConstructHex.HexNeighborIndexes[mm];
-					FST_Hex& AdjacentHex = Hexes[AdjacentHexIndex];
-					if (AdjacentHex.IsStructureRoot && AdjacentHex.ConstructInfo.AdjacentStructures.Num() >= 5) //~~ If adjacent hex that is a structure Root, is next to 5 or 6 structures, then the current hex, is the only way out ~~//
+					if (Hexes.IsValidIndex(AdjacentHexIndex))
 					{
-						ConstructInfo.Blocked = true;
-					}
-					else {
-						ConstructInfo.Blocked = false;
+						FST_Hex& AdjacentHex = Hexes[AdjacentHexIndex];
+						if (AdjacentHex.AttachedBuilding && AdjacentHex.AttachedBuilding->BroadcastHexIndex == AdjacentHexIndex) //~~ If adjacent hex has a structure & the hexindex is the same as the structure broadcast hexindex ~~//
+						{
+							if (AdjacentHex.ConstructInfo.AdjacentStructures.Num() >= 5) //~~ is next to 5 or 6 structures ~~// //~~ then the current hex, is the only way out ~~//
+							{
+								ConstructInfo.Blocked = true;
+							}
+						}
 					}
 				}
 			}
 			else {
 				ConstructInfo.Blocked = true;
-				ConstructHex.DebugMe = true;
 			}
 		}
 	}
@@ -232,6 +232,10 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 						if (NeighborHex.AttachedBuilding != nullptr) //~~ Only if pointer to structure isn't null ~~//
 						{
 							Hex.ConstructInfo.AdjacentStructures.Add(NeighborHex.AttachedBuilding);
+							if (NeighborHex.HexIndex == NeighborHex.AttachedBuilding->HexIndex) //~~ If hex index is the same as the structure root hexindex ~~// //!! This might not be right
+							{
+								Hex.ConstructInfo.AdjacentRootStructures.Add(NeighborHex.AttachedBuilding);
+							}
 						}
 						if (!VisitedHexIndexes.Contains(Index))
 						{
@@ -341,14 +345,14 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 							Hex.AttachedBuilding = Structure;
 						}
 					}
-					//~~ Set Structure broadcast root on hex ~~//
+					//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
 					FVector RootCubeCoord = StructureData->BroadcastRoot + CubeCoord;
 					FVector2D RootOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RootCubeCoord);
 					int32 RootHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(RootOffsetCoords, GridXCount);
-					if (Hexes.IsValidIndex(HexIndex))
+					if (Hexes.IsValidIndex(RootHexIndex))
 					{
-						FST_Hex& Hex = Hexes[HexIndex];
-						Hex.IsStructureRoot = true;
+						FST_Hex& Hex = Hexes[RootHexIndex];
+						Structure->BroadcastHexIndex = RootHexIndex;
 					}
 
 					//~~ Store hex index in structure ~~//

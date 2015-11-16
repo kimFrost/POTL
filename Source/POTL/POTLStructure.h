@@ -63,6 +63,9 @@ public:
 	int32 BroadcastRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	int32 BroadcastHexIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<int32> BroadcastGridHexIndexes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
