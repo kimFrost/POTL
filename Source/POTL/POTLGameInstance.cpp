@@ -387,7 +387,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 }
 
 
-/******************** IsHexBuildable *************************/
+/******************** CreateStructureConnection *************************/
 void UPOTLGameInstance::CreateStructureConnection(APOTLStructure* From, APOTLStructure* To)
 {
 	From->EmitTo = To;
@@ -395,6 +395,14 @@ void UPOTLGameInstance::CreateStructureConnection(APOTLStructure* From, APOTLStr
 	To->BroadcastTo.Add(From);
 }
 
+
+/******************** RemoveStructureConnection *************************/
+void UPOTLGameInstance::RemoveStructureConnection(APOTLStructure* From, APOTLStructure* To)
+{
+	From->EmitTo = nullptr;
+	From->TreeId = From->GetName();
+	To->BroadcastTo.Remove(From);
+}
 
 /*****************************************************************************************************/
 /**************************************** MAP - CREATION *********************************************/

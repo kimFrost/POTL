@@ -122,6 +122,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void CreateStructureConnection(APOTLStructure* From, APOTLStructure* To);
 
+	UFUNCTION(BlueprintCallable, Category = "Structure")
+	void RemoveStructureConnection(APOTLStructure* From, APOTLStructure* To);
+
+
 	//~~ Map - Creation ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
