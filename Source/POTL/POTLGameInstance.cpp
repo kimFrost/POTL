@@ -290,6 +290,19 @@ bool UPOTLGameInstance::IsHexTerrainBuildable(const FST_Hex& Hex)
 }
 
 
+/******************** PlantPlaceholderStructure *************************/
+APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
+{
+	APOTLStructure* Structure = nullptr;
+	Structure = PlantStructure(CubeCoord, RowName, TreeId, EmitTo, InstaBuild);
+	if (Structure)
+	{
+		PlaceholderStructures.Add(Structure);
+	}
+	return Structure;
+}
+
+
 /******************** PlantStructure *************************/
 APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
 {
@@ -384,6 +397,21 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 		}
 	}
 	return Structure;
+}
+
+
+/******************** RemoveStructure *************************/
+void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
+{
+	RemoveStructureConnection(Structure, Structure->EmitTo);
+	for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
+	{
+		RemoveStructureConnection(Structure->BroadcastTo[i], Structure);
+	}
+	//~~ Remove self from hexes ~~//
+	// Sizes cubecoords logic here
+	//~~ DESTROY ~~//
+	Structure->Destroy();
 }
 
 

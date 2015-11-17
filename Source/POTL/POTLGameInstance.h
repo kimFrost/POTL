@@ -90,6 +90,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	TArray<APOTLStructure*> RootStructures;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
+	TArray<APOTLStructure*> PlaceholderStructures;
 
 	//~~ Debug ~~//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Debug")
@@ -117,7 +119,13 @@ public:
 	bool IsHexTerrainBuildable(const FST_Hex& Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
+	APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
+	
+	UFUNCTION(BlueprintCallable, Category = "Structure")
 	APOTLStructure* PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
+
+	UFUNCTION(BlueprintCallable, Category = "Structure")
+	void RemoveStructure(APOTLStructure* Structure);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void CreateStructureConnection(APOTLStructure* From, APOTLStructure* To);
