@@ -41,4 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	EToolType ActiveToolType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
+	bool BuildingAllowed;
+
 };

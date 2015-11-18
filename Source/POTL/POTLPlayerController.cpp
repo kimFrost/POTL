@@ -18,4 +18,5 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 {
 	GameInstance = nullptr;
 	ActiveToolType = EToolType::Select;
+	BuildingAllowed = false;
 }

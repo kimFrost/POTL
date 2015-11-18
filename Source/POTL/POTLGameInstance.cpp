@@ -156,7 +156,7 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 			}
 		}
 	}
-	Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
+	//Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
 	return ConstructHexes;
 }
 
@@ -177,7 +177,8 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 		//Log("Structure->HexIndex: " + FString::FromInt(Structure->HexIndex), 15.0f, FColor::Yellow, -1);
 		//VisitedHexIndexes.Add(Structure->HexIndex); //~~ Add Start Hex to VisitedHexes ~~// //~~ Not needed, i think~~//
 		Frontier frontier;
-		frontier.HexIndexes.Add(Structure->HexIndex);
+		//frontier.HexIndexes.Add(Structure->HexIndex);
+		frontier.HexIndexes.Add(Structure->BroadcastHexIndex);
 		Frontiers.Add(frontier);
 
 		FString TreeId = Structure->TreeId;
@@ -232,7 +233,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 						if (NeighborHex.AttachedBuilding != nullptr) //~~ Only if pointer to structure isn't null ~~//
 						{
 							Hex.ConstructInfo.AdjacentStructures.Add(NeighborHex.AttachedBuilding);
-							if (NeighborHex.HexIndex == NeighborHex.AttachedBuilding->HexIndex) //~~ If hex index is the same as the structure root hexindex ~~// //!! This might not be right
+							if (NeighborHex.HexIndex == NeighborHex.AttachedBuilding->BroadcastHexIndex) //~~ If hex index is the same as the structure root hexindex ~~// //!! This might not be right
 							{
 								Hex.ConstructInfo.AdjacentRootStructures.Add(NeighborHex.AttachedBuilding);
 							}
@@ -259,7 +260,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 				ConstructHexIndexes.AddUnique(Hex.HexIndex);
 			}
 		}
-		ConstructHexIndexes.Remove(Structure->HexIndex); //~~ Remove self cubeCoord ~~//
+		ConstructHexIndexes.Remove(Structure->BroadcastHexIndex); //~~ Remove self cubeCoord ~~//
 		Structure->BroadcastGridHexIndexes = ConstructHexIndexes; //~~ Store indexes in structure. It cludes all hex broadcast grid index, including childrens hex indexes ~~//
 		
 	}
@@ -297,6 +298,7 @@ APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, 
 	Structure = PlantStructure(CubeCoord, RotationDirection, RowName, TreeId, EmitTo, InstaBuild);
 	if (Structure)
 	{
+		Structure->IsPlaceholder = true;
 		PlaceholderStructures.Add(Structure);
 	}
 	return Structure;
@@ -431,7 +433,10 @@ void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 			if (Hexes.IsValidIndex(HexIndex))
 			{
 				FST_Hex& Hex = Hexes[HexIndex];
-				Hex.AttachedBuilding = nullptr; //~~ Remove pointer set on hex ~~//
+				if (Hex.AttachedBuilding == Structure)
+				{
+					Hex.AttachedBuilding = nullptr; //~~ Remove pointer set on hex ~~//
+				}
 			}
 		}
 		//~~ DESTROY ~~//
@@ -443,18 +448,26 @@ void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 /******************** CreateStructureConnection *************************/
 void UPOTLGameInstance::CreateStructureConnection(APOTLStructure* From, APOTLStructure* To)
 {
-	From->EmitTo = To;
-	From->TreeId = To->TreeId;
-	To->BroadcastTo.Add(From);
+	if (From && To)
+	{
+		From->EmitTo = To;
+		From->TreeId = To->TreeId;
+		To->BroadcastTo.Add(From);
+	}
 }
 
 
 /******************** RemoveStructureConnection *************************/
 void UPOTLGameInstance::RemoveStructureConnection(APOTLStructure* From, APOTLStructure* To)
 {
-	From->EmitTo = nullptr;
-	From->TreeId = From->GetName();
-	To->BroadcastTo.Remove(From);
+	if (From) {
+		From->EmitTo = nullptr;
+		From->TreeId = From->GetName();
+	}
+	if (From && To)
+	{
+		To->BroadcastTo.Remove(From);
+	}
 }
 
 /*****************************************************************************************************/
