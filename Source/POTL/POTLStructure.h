@@ -54,6 +54,12 @@ public:
 	int32 HexIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FVector CubeCoord;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FVector CubeCoords;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FST_Structure StructureBaseData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")

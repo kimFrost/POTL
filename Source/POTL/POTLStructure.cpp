@@ -14,6 +14,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	PrimaryActorTick.bCanEverTick = true;
 	TreeId = TEXT("");
 	HexIndex = -1;
+	CubeCoord = { -1, -1, -1 };
 	IsRoot = true;
 	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};

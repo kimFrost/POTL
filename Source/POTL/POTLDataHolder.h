@@ -348,9 +348,6 @@ struct FST_Structure : public FTableRowBase
 	TArray<FVector> CubeSizes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	FVector CubeRotationRoot;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FVector BroadcastRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -368,7 +365,6 @@ struct FST_Structure : public FTableRowBase
 		Title = "";
 		Burnable = false;
 		BaseBroadcastRange = 0;
-		CubeRotationRoot = { 0, 0, 0 };
 		BroadcastRoot = { 0, 0, 0 };
 		RotationDirection = 0;
 		BlockConstruction = true;

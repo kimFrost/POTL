@@ -291,10 +291,10 @@ bool UPOTLGameInstance::IsHexTerrainBuildable(const FST_Hex& Hex)
 
 
 /******************** PlantPlaceholderStructure *************************/
-APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
+APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
 {
 	APOTLStructure* Structure = nullptr;
-	Structure = PlantStructure(CubeCoord, RowName, TreeId, EmitTo, InstaBuild);
+	Structure = PlantStructure(CubeCoord, RotationDirection, RowName, TreeId, EmitTo, InstaBuild);
 	if (Structure)
 	{
 		PlaceholderStructures.Add(Structure);
@@ -304,10 +304,10 @@ APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, 
 
 
 /******************** PlantStructure *************************/
-APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
+APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
 {
 	APOTLStructure* Structure = nullptr;
-	if (Landscape && DATA_Structures) 
+	if (Landscape && DATA_Structures)
 	{
 		static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
 		FST_Structure* StructureData = DATA_Structures->FindRow<FST_Structure>(*RowName, ContextString);
@@ -346,10 +346,33 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 						RootStructures.Add(Structure);
 					}
 
+					//~~ Store cubecoord in structure ~~//
+					Structure->CubeCoord = CubeCoord;
+
+					//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
+					FVector BroadcastCubeCoord = StructureData->BroadcastRoot + CubeCoord;
+					BroadcastCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(BroadcastCubeCoord, RotationDirection, CubeCoord);
+					FVector2D BroadcastOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(BroadcastCubeCoord);
+					int32 BroadcastHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(BroadcastOffsetCoords, GridXCount);
+					if (Hexes.IsValidIndex(BroadcastHexIndex))
+					{
+						FST_Hex& Hex = Hexes[BroadcastHexIndex];
+						Structure->BroadcastHexIndex = BroadcastHexIndex;
+					}
+
+					//~~ Store hex index in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
+					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
+					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+					if (Hexes.IsValidIndex(HexIndex))
+					{
+						Structure->HexIndex = HexIndex;
+					}
+
 					//~~ Set Structure on all hexes based on cube location and structure size ~~//
 					for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
 					{
 						FVector LocalCubeCoord = StructureData->CubeSizes[i] + CubeCoord;
+						LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, RotationDirection, CubeCoord);
 						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
 						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 						if (Hexes.IsValidIndex(HexIndex))
@@ -358,28 +381,12 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 							Hex.AttachedBuilding = Structure;
 						}
 					}
-					//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
-					FVector RootCubeCoord = StructureData->BroadcastRoot + CubeCoord;
-					FVector2D RootOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RootCubeCoord);
-					int32 RootHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(RootOffsetCoords, GridXCount);
-					if (Hexes.IsValidIndex(RootHexIndex))
-					{
-						FST_Hex& Hex = Hexes[RootHexIndex];
-						Structure->BroadcastHexIndex = RootHexIndex;
-					}
-
-					//~~ Store hex index in structure ~~//
-					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord + StructureData->BroadcastRoot);
-					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
-					if (Hexes.IsValidIndex(HexIndex))
-					{
-						Structure->HexIndex = HexIndex;
-					}
 
 					//~~ Store structure raw data ~~//
 					Structure->StructureRowName = RowName;
 					Structure->StructureBaseData = *StructureData;
-					Structure->BroadcastRange = StructureData->BaseBroadcastRange;
+					Structure->BroadcastRange = StructureData->BaseBroadcastRange; //!! Use a read/load function instead
+					Structure->StructureBaseData.RotationDirection = RotationDirection;
 
 					//~~ Create Broadcast/Emit Connection ~~//
 					if (EmitTo)
@@ -403,15 +410,33 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, FString Row
 /******************** RemoveStructure *************************/
 void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 {
-	RemoveStructureConnection(Structure, Structure->EmitTo);
-	for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
+	if (Structure)
 	{
-		RemoveStructureConnection(Structure->BroadcastTo[i], Structure);
+		RemoveStructureConnection(Structure, Structure->EmitTo);
+		for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
+		{
+			RemoveStructureConnection(Structure->BroadcastTo[i], Structure);
+		}
+		//~~ Remove self from hexes ~~//
+		// Sizes cubecoords logic here
+		FST_Structure& StructureBaseData = Structure->StructureBaseData;
+		int RotationDirection = StructureBaseData.RotationDirection;
+
+		for (int32 i = 0; i < StructureBaseData.CubeSizes.Num(); i++)
+		{
+			FVector LocalCubeCoord = StructureBaseData.CubeSizes[i] + Structure->CubeCoord; 
+			LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, RotationDirection, Structure->CubeCoord);
+			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
+			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+			if (Hexes.IsValidIndex(HexIndex))
+			{
+				FST_Hex& Hex = Hexes[HexIndex];
+				Hex.AttachedBuilding = nullptr; //~~ Remove pointer set on hex ~~//
+			}
+		}
+		//~~ DESTROY ~~//
+		Structure->Destroy();
 	}
-	//~~ Remove self from hexes ~~//
-	// Sizes cubecoords logic here
-	//~~ DESTROY ~~//
-	Structure->Destroy();
 }
 
 
@@ -440,7 +465,6 @@ void UPOTLGameInstance::RemoveStructureConnection(APOTLStructure* From, APOTLStr
 void UPOTLGameInstance::TraceLandscape(ECollisionChannel CollisionChannel)
 {
 	//UGameplayStatics::
-
 	if (Landscape)
 	{
 		FVector ActorLocation = Landscape->GetActorLocation();
