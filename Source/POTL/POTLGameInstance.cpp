@@ -115,53 +115,55 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 				}
 			}
 		}
-		//~~ Convert indexes into real hexes and send a array of copies of them ~~//
-		for (int32 h = 0; h < ConstructHexIndexes.Num(); h++)
+		//~~ Loop ConstructHexes and calced blocked construction state, based on number of adjacent structures ~~//
+		for (int32 m = 0; m < ConstructHexIndexes.Num(); m++)
 		{
-			ConstructHexes.Add(Hexes[ConstructHexIndexes[h]]);
-		}
-	}
-	//~~ Loop ConstructHexes and calced blocked construction state, based on number of adjacent structures ~~//
-	for (int32 m = 0; m < ConstructHexes.Num(); m++)
-	{
-		FST_Hex& ConstructHex = ConstructHexes[m];
-		FST_ConstructLocation& ConstructInfo = ConstructHex.ConstructInfo;
-		int32 NumOfAttachTo = ConstructInfo.AdjacentStructures.Num();
-		if (!ConstructInfo.Blocked) //~~ If not already blocked ~~//
-		{
-			if (NumOfAttachTo < 3)
+			int32 Index = ConstructHexIndexes[m];
+			FST_Hex& ConstructHex = Hexes[Index];
+			FST_ConstructLocation& ConstructInfo = ConstructHex.ConstructInfo;
+			int32 NumOfAttachTo = ConstructInfo.AdjacentStructures.Num();
+			if (!ConstructInfo.Blocked) //~~ If not already blocked ~~//
 			{
-				ConstructInfo.Blocked = false;
-			}
-			else if (NumOfAttachTo >= 3 && NumOfAttachTo <= 5)
-			{
-				for (int32 mm = 0; mm < ConstructHex.HexNeighborIndexes.Num(); mm++)
+				if (NumOfAttachTo < 3)
 				{
-					int32 AdjacentHexIndex = ConstructHex.HexNeighborIndexes[mm];
-					if (Hexes.IsValidIndex(AdjacentHexIndex))
+					ConstructInfo.Blocked = false;
+				}
+				else if (NumOfAttachTo >= 3 && NumOfAttachTo <= 5)
+				{
+					for (int32 mm = 0; mm < ConstructHex.HexNeighborIndexes.Num(); mm++)
 					{
-						FST_Hex& AdjacentHex = Hexes[AdjacentHexIndex];
-						if (AdjacentHex.AttachedBuilding && AdjacentHex.AttachedBuilding->BroadcastHexIndex == AdjacentHexIndex) //~~ If adjacent hex has a structure & the hexindex is the same as the structure broadcast hexindex ~~//
+						int32 AdjacentHexIndex = ConstructHex.HexNeighborIndexes[mm];
+						if (Hexes.IsValidIndex(AdjacentHexIndex))
 						{
-							if (AdjacentHex.ConstructInfo.AdjacentStructures.Num() >= 5) //~~ is next to 5 or 6 structures ~~// //~~ then the current hex, is the only way out ~~//
+							FST_Hex& AdjacentHex = Hexes[AdjacentHexIndex];
+							if (AdjacentHex.AttachedBuilding && AdjacentHex.AttachedBuilding->BroadcastHexIndex == AdjacentHexIndex) //~~ If adjacent hex has a structure & the hexindex is the same as the structure broadcast hexindex ~~//
 							{
-								ConstructInfo.Blocked = true;
+								if (AdjacentHex.ConstructInfo.AdjacentStructures.Num() >= 5) //~~ is next to 5 or 6 structures ~~// //~~ then the current hex, is the only way out ~~//
+								{
+									ConstructInfo.Blocked = true;
+								}
 							}
 						}
 					}
 				}
+				else {
+					ConstructInfo.Blocked = true;
+				}
 			}
-			else {
-				ConstructInfo.Blocked = true;
+			//~~ Update structure inrange of emitTo broadcast range ~~//
+			if (ConstructHex.AttachedBuilding)
+			{
+				ConstructHex.AttachedBuilding->InRangeOfEmitTo = true;
+				if (ConstructHex.HexIndex == ConstructHex.AttachedBuilding->BroadcastHexIndex) //~~ If ConstructHex hex index is the same as the attached structure's broadcast hex index ~~//
+				{
+					//ConstructHex.AttachedBuilding->InRangeOfEmitTo = ConstructHex.ConstructInfo.EmitTo.Contains(ConstructHex.AttachedBuilding->EmitTo); //~~ If hex constructinfo emitTo array has the hex structure emitTo, then in range ~~//
+				}
 			}
 		}
-		//~~ Update structure inrange of emitTo broadcast range ~~//
-		if (ConstructHex.AttachedBuilding) 
+		//~~ Convert indexes into real hexes and send a array of copies of them ~~//
+		for (int32 h = 0; h < ConstructHexIndexes.Num(); h++)
 		{
-			if (ConstructHex.HexIndex == ConstructHex.AttachedBuilding->BroadcastHexIndex) //~~ If ConstructHex hex index is the same as the attached structure's broadcast hex index ~~//
-			{
-				ConstructHex.AttachedBuilding->InRangeOfEmitTo = ConstructHex.ConstructInfo.EmitTo.Contains(ConstructHex.AttachedBuilding->EmitTo); //~~ If hex constructinfo emitTo array has the hex structure emitTo, then in range ~~//
-			}
+			ConstructHexes.Add(Hexes[ConstructHexIndexes[h]]);
 		}
 	}
 	//Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
