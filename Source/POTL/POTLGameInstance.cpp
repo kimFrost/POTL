@@ -155,6 +155,14 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 				ConstructInfo.Blocked = true;
 			}
 		}
+		//~~ Update structure inrange of emitTo broadcast range ~~//
+		if (ConstructHex.AttachedBuilding) 
+		{
+			if (ConstructHex.HexIndex == ConstructHex.AttachedBuilding->BroadcastHexIndex) //~~ If ConstructHex hex index is the same as the attached structure's broadcast hex index ~~//
+			{
+				ConstructHex.AttachedBuilding->InRangeOfEmitTo = ConstructHex.ConstructInfo.EmitTo.Contains(ConstructHex.AttachedBuilding->EmitTo); //~~ If hex constructinfo emitTo array has the hex structure emitTo, then in range ~~//
+			}
+		}
 	}
 	//Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
 	return ConstructHexes;
@@ -203,14 +211,16 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 			{
 				FST_Hex& Hex = Hexes[frontier.HexIndexes[m]];
 				//~~ Reset construct info if the storred tre id ain't the same. ~~//
-				if (Hex.ConstructInfo.TreeId != TreeId)
+				if (Hex.ConstructInfo.TreeId != TreeId) //!! This might not be correct
 				{
 					Hex.ConstructInfo = FST_ConstructLocation{};
 				}
 				//~~ Make Construct Location ~~//
 				Hex.ConstructInfo.Cube = Hex.HexCubeCoords;
 				Hex.ConstructInfo.EmitDistances.Add(k); //~~ Store smallest distance between broadcaster and structure. Have to use index of structure in EmitTo array, to find the right distance value ~~//
-				Hex.ConstructInfo.EmitTo.Add(Structure);  // Don't know if it should be a hex or structure reference to, for it to be the best solution.
+				Hex.ConstructInfo.EmitTo.Add(Structure);  //~~ Update info for telling if structures are in range of emitTo broadcast's range ~~//
+
+				//NeighborHex.AttachedBuilding->InRangeOfEmitTo
 
 				//~~ Store broadcasted resources? NO. Will result in a lot of hex updating. Could then result in bugs with imcomplete data. ~~//
 
@@ -236,6 +246,7 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 							if (NeighborHex.HexIndex == NeighborHex.AttachedBuilding->BroadcastHexIndex) //~~ If hex index is the same as the structure root hexindex ~~// //!! This might not be right
 							{
 								Hex.ConstructInfo.AdjacentRootStructures.Add(NeighborHex.AttachedBuilding);
+								
 							}
 						}
 						if (!VisitedHexIndexes.Contains(Index))

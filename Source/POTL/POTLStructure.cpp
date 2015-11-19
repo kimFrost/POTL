@@ -21,6 +21,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	StructureRowName = TEXT("");
 	IsPlaceholder = false;
 	IsUnderConstruction = true;
+	InRangeOfEmitTo = false;
 
 	//GameInstance = Cast<UPOTLGameInstance>(GetGameInstance()); //~~ <== Will crash. The game instance is not ready at this point ~~//
 }

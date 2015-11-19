@@ -74,9 +74,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<int32> BroadcastGridHexIndexes;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool IsResolvedThisTurn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	bool InRangeOfEmitTo;
 
 	/** Construction */
 
