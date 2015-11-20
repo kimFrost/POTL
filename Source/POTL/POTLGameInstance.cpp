@@ -150,14 +150,6 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 					ConstructInfo.Blocked = true;
 				}
 			}
-			//~~ Update structure inrange of emitTo broadcast range ~~//
-			if (ConstructHex.AttachedBuilding) //!! This will not work. A ConstructHex will never have a attached building, it would block the construction and pathing
-			{
-				if (ConstructHex.HexIndex == ConstructHex.AttachedBuilding->BroadcastHexIndex) //~~ If ConstructHex hex index is the same as the attached structure's broadcast hex index ~~//
-				{
-					//ConstructHex.AttachedBuilding->InRangeOfEmitTo = ConstructHex.ConstructInfo.EmitTo.Contains(ConstructHex.AttachedBuilding->EmitTo); //~~ If hex constructinfo emitTo array has the hex structure emitTo, then in range ~~//
-				}
-			}
 		}
 		//~~ Convert indexes into real hexes and send a array of copies of them ~~//
 		for (int32 h = 0; h < ConstructHexIndexes.Num(); h++)
@@ -176,6 +168,12 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 	TArray<int32> ConstructHexIndexes;
 	if (Structure) 
 	{
+		//~~ Reset all broadcastTo children for InRange check
+		for (APOTLStructure* ChildStructure : Structure->BroadcastTo) 
+		{
+			ChildStructure->InRangeOfEmitTo = false;
+		}
+
 		//Log("GetConstructLocationIndexes: " + Structure->GetName(), 15.0f, FColor::Yellow, -1);
 		struct Frontier
 		{
@@ -249,7 +247,13 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 							}
 							if (k != (Structure->BroadcastRange + 1)) //~~ If not the last broadcast range step ~~//
 							{
-								//NeighborHex.AttachedBuilding->InRangeOfEmitTo
+								if (NeighborHex.HexIndex == NeighborHex.AttachedBuilding->BroadcastHexIndex)
+								{
+									if (NeighborHex.AttachedBuilding->EmitTo == Structure) //~~ If hex attached structure's parent structure is this current broadcast structure ~~//
+									{
+										NeighborHex.AttachedBuilding->InRangeOfEmitTo = true; //~~ Set child structure to be in range of this structure's broadcast range  ~~//
+									}
+								}
 							}
 						}
 						if (!VisitedHexIndexes.Contains(Index))
