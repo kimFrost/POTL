@@ -28,6 +28,7 @@ enum class EAllocationType : uint8
 {
 	All UMETA(DisplayName = "All"),
 	None UMETA(DisplayName = "None"),
+	Sequence UMETA(DisplayName = "Sequence"),
 	RequestDirect UMETA(DisplayName = "RequestDirect"),
 	FactoryProduction UMETA(DisplayName = "FactoryProduction"),
 	FactoryBilling UMETA(DisplayName = "FactoryBilling"),
@@ -119,6 +120,8 @@ public:
 	TArray<FST_Ingredient> Ingredients;
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	int32 Servings;
+	UPROPERTY(EditAnywhere, Category = "Resources")
+	int32 Sequence;
 };
 
 
