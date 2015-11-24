@@ -22,6 +22,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	IsPlaceholder = false;
 	IsUnderConstruction = true;
 	InRangeOfEmitTo = false;
+	Root = this;
 
 	//GameInstance = Cast<UPOTLGameInstance>(GetGameInstance()); //~~ <== Will crash. The game instance is not ready at this point ~~//
 }
@@ -109,6 +110,16 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 			List.Add(Resource);
 		}
 		break;
+	case EResourceList::Allocations:
+		for (auto& AllocatedResource : AllocatedResources)
+		{
+			FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+			FST_Resource Resource;
+			Resource.Id = Allocation.ResourceKey;
+			Resource.Quantity = Allocation.Quantity;
+			List.Add(Resource);
+		}
+		break;
 	default:
 		break;
 	}
@@ -118,6 +129,8 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 /******************** GetResourcesAsList *************************/
 void APOTLStructure::OptimizeAllocatedResources()
 {
+	//!! Not needed anymore. Switched from tarray to tmap
+	/*
 	TMap<FString, FST_ResourceAllocation> TempResourceHolder;
 	for (int32 i = 0; i < AllocatedResources.Num(); i++)
 	{
@@ -129,6 +142,7 @@ void APOTLStructure::OptimizeAllocatedResources()
 	{
 		AllocatedResources.Add(Resource.Value);
 	}
+	*/
 }
 
 /******************** CalculateUpkeep *************************/
@@ -217,11 +231,11 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 			RequestResources(false, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
 			for (auto& Resource : FactoryBilling)
 			{
-				//AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryBilling);
+				//AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryBilling, false);
 			}
 			for (auto& Resource : FactoryProduction)
 			{
-				AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction);
+				AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false);
 			}
 		}
 	}
@@ -260,6 +274,7 @@ void APOTLStructure::ResolveTree()
 /******************** ResolveAllocations *************************/
 void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 {
+	int32 i;
 	//FString TypeAsString;
 	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EAllocationType"), true);
 	//TypeAsString = EnumPtr->GetEnumName(Type);
@@ -273,21 +288,36 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 		}
 	}
 	//~~ Resolve self / The function logic ~~//
-	//for (int32 i = 0; i < AllocatedResources.Num(); i++)
-	for (int32 i = AllocatedResources.Num() - 1; i >= 0; i--)
+	for (auto& AllocatedResource : AllocatedResources)
 	{
-		FST_ResourceAllocation& Allocation = AllocatedResources[i];
+		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
 		if (Type == EAllocationType::All)
 		{
 			Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
-			AllocatedResources.RemoveAt(i);
+			AllocatedResources.Remove(AllocatedResource.Key);
 		}
 		else
 		{
 			if (Allocation.Type == Type)
 			{
 				Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
-				AllocatedResources.RemoveAt(i);
+				AllocatedResources.Remove(AllocatedResource.Key);
+			}
+		}
+	}
+	//~~ Check for sequence and handle it ~~// //!! Will I even need this for resolve. 
+	for (i = 0; i < 8; i++) //~~ 8 is just a random static guess. Should be higher properly ~~//
+	{
+		for (auto& AllocatedResource : AllocatedResources)
+		{
+			if (Type == EAllocationType::Sequence)
+			{
+				FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+				if (Allocation.Sequence == i) //~~ Resolve allocation with sequence, if same as static loop integer ~~//
+				{
+					Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
+					AllocatedResources.Remove(AllocatedResource.Key);
+				}
 			}
 		}
 	}
@@ -295,16 +325,34 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 
 
 /******************** ResolveTree *************************/
-int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type)
+int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop)
 {
-	FST_ResourceAllocation Allocation;
-	Allocation.From = From;
-	Allocation.To = this;
-	Allocation.ResourceKey = ResourceKey;
-	Allocation.Type = Type;
-	Allocation.Quantity = Quantity;
-	int32 Index = AllocatedResources.Add(Allocation);
-	return Index;
+	//~~ Generate random key ~~//
+	int32 KeyIndex = FMath::RandRange(0, 10000000);
+	if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
+	{
+		KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, true);
+	}
+	if (!KeyLoop)
+	{
+		FST_ResourceAllocation Allocation;
+		Allocation.From = From;
+		//Allocation.To = this;
+		if (this->IsRoot)
+		{
+			Allocation.To = this; //~~ Always send to root for now ~~//
+		}
+		else
+		{
+			Allocation.To = this->Root;
+		}
+		Allocation.ResourceKey = ResourceKey;
+		Allocation.Type = Type;
+		Allocation.Quantity = Quantity;
+		AllocatedResources.Add(KeyIndex, Allocation);
+	}
+	//int32 KeyIndex = AllocatedResources.Add(Allocation);
+	return KeyIndex;
 }
 
 
@@ -329,7 +377,7 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 			{
 				if (!Consume)
 				{
-					AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], Type);
+					AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], Type, false);
 				}
 				ResourceRequest.Value -= FreeResources[ResourceRequest.Key];
 				FreeResources[ResourceRequest.Key] = 0;
@@ -340,7 +388,7 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 			{
 				if (!Consume)
 				{
-					AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, Type);
+					AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, Type, false);
 				}
 				FreeResources[ResourceRequest.Key] = FreeResources[ResourceRequest.Key] - ResourceRequest.Value;
 				ResourceRequest.Value = 0;

@@ -119,7 +119,7 @@ public:
 	bool IsHexTerrainBuildable(const FST_Hex& Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-		APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
+	APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
 	
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	APOTLStructure* PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);

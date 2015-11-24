@@ -3,3 +3,4 @@ Something,"((Id=Wood,Quantity=5),(Id=Stone,Quantity=3))",1,1
 Stick,"((Id=Wood,Quantity=1))",16,2
 Plank,"((Id=Wood,Quantity=2))",1,1
 Flour,"((Id=Wheat,Quantity=4))",1,1
+Bread,"((Id=Flour,Quantity=2))",1,2

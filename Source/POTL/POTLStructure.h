@@ -45,6 +45,9 @@ public:
 	bool IsRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	APOTLStructure* Root;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FString TreeId;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -93,8 +96,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	TMap<FString, int32> FreeResources;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	TArray<FST_ResourceAllocation> AllocatedResources;
+	UPROPERTY(EditAnywhere, Category = "Resources")
+	//TArray<FST_ResourceAllocation> AllocatedResources;
+	TMap<int32, FST_ResourceAllocation> AllocatedResources;
 
 	//UPROPERTY(EditAnywhere, Category = "Resources")
 	//TMap<FString, int32> Resources;
@@ -138,7 +142,7 @@ public:
 	void ResolveAllocations(EAllocationType Type, bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	int32 AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type);
+	int32 AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveUpkeep(bool Broadcast);

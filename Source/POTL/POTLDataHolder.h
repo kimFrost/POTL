@@ -39,7 +39,8 @@ UENUM(BlueprintType)
 enum class EResourceList : uint8
 {
 	Free UMETA(DisplayName = "Free"),
-	Upkeep UMETA(DisplayName = "Upkeep")
+	Upkeep UMETA(DisplayName = "Upkeep"),
+	Allocations UMETA(DisplayName = "Allocations")
 };
 
 
@@ -519,6 +520,9 @@ struct FST_ResourceAllocation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	EAllocationType Type;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 Sequence;
+
 	FST_ResourceAllocation()
 	{
 		From = nullptr;
@@ -526,6 +530,7 @@ struct FST_ResourceAllocation
 		ResourceKey = "";
 		Quantity = 0;
 		Type = EAllocationType::None;
+		Sequence = 0;
 	}
 };
 

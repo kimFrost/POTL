@@ -358,11 +358,13 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 					{
 						Structure->TreeId = EmitTo->TreeId;
 						Structure->IsRoot = false;
+						Structure->Root = EmitTo;
 					}
 					else
 					{
 						Structure->TreeId = Structure->GetName();
 						Structure->IsRoot = true;
+						Structure->Root = Structure; //~~ Self reference ~~//
 						RootStructures.Add(Structure);
 					}
 
