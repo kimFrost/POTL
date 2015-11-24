@@ -289,13 +289,19 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 /******************** IsHexBuildable *************************/
 bool UPOTLGameInstance::IsHexBuildable(const FST_Hex& Hex)
 {
-	if (!Hex.AttachedBuilding && IsHexTerrainBuildable(Hex))
+	bool Buildable = true;
+	if (!IsHexTerrainBuildable(Hex))
 	{
-		return true;
+		Buildable = false;
 	}
-	else {
-		return false;
+	else if (Hex.AttachedBuilding)
+	{
+		if (!Hex.AttachedBuilding->IsPlaceholder)
+		{
+			Buildable = false;
+		}
 	}
+	return Buildable;
 }
 
 
