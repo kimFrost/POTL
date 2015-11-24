@@ -1,0 +1,43 @@
+[
+	{
+		"Name": "Something",
+		"Ingredients": [
+			"(Id=\"Wood\",Quantity=5)",
+			"(Id=\"Stone\",Quantity=3)"
+		],
+		"Servings": 1,
+		"Sequence": 1
+	},
+	{
+		"Name": "Stick",
+		"Ingredients": [
+			"(Id=\"Wood\",Quantity=1)"
+		],
+		"Servings": 16,
+		"Sequence": 2
+	},
+	{
+		"Name": "Plank",
+		"Ingredients": [
+			"(Id=\"Wood\",Quantity=2)"
+		],
+		"Servings": 1,
+		"Sequence": 1
+	},
+	{
+		"Name": "Flour",
+		"Ingredients": [
+			"(Id=\"Wheat\",Quantity=4)"
+		],
+		"Servings": 1,
+		"Sequence": 1
+	},
+	{
+		"Name": "Bread",
+		"Ingredients": [
+			"(Id=\"Flour\",Quantity=2)"
+		],
+		"Servings": 1,
+		"Sequence": 2
+	}
+]

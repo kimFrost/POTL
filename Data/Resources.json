@@ -1,0 +1,24 @@
+[
+	{
+		"Name": "Wood",
+		"Id": "",
+		"Title": "Wood",
+		"UnitMass": 10,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1
+	},
+	{
+		"Name": "Stone",
+		"Id": "",
+		"Title": "Stone",
+		"UnitMass": 50,
+		"Stackable": true,
+		"Burnable": false,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1
+	}
+]
