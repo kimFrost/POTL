@@ -118,6 +118,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TArray<FST_Factory> Factories;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	FST_Factory ProductionFactory;
 
 	/*********** FUNCTIONS **************/
 

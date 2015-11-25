@@ -420,8 +420,9 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 FST_Factory APOTLStructure::CreateFactory()
 {
 	FST_Factory Factory;
-	Factory.Invoice.Add(TEXT("Plank"), 1);
+	//Factory.Invoice.Add(TEXT("Plank"), 1);
 	Factories.Add(Factory);
+	ProductionFactory = Factory;
 	return Factory;
 }
 
@@ -484,10 +485,10 @@ void APOTLStructure::BeginPlay()
 		FreeResources.Add(TEXT("Stone"), 15.f);
 
 		// Add test factory for resource process
-		FST_Factory Factory;
+		//FST_Factory Factory;
 		//Factory.Invoice.Add(FName(TEXT("Plank"), 1));
-		Factory.Invoice.Add(TEXT("Plank"), 1);
-		Factories.Add(Factory);
+		//Factory.Invoice.Add(TEXT("Plank"), 1);
+		//Factories.Add(Factory);
 
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, Factory.Invoice[FName(TEXT("Plank")]);
 	}
