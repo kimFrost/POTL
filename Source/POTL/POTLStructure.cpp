@@ -416,6 +416,15 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 /****************************************** CONSTRUCTION *********************************************/
 /*****************************************************************************************************/
 
+/******************** CreateFactory *************************/
+FST_Factory APOTLStructure::CreateFactory()
+{
+	FST_Factory Factory;
+	Factory.Invoice.Add(TEXT("Plank"), 1);
+	Factories.Add(Factory);
+	return Factory;
+}
+
 
 /******************** UpdateConstrunction *************************/
 void APOTLStructure::UpdateConstrunction_Implementation()

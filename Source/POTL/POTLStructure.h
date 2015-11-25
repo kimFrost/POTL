@@ -161,9 +161,12 @@ public:
 
 	/** Construction */
 
+	UFUNCTION(BlueprintCallable, Category = "Construction")
+	FST_Factory CreateFactory();
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Construction") // BlueprintNativeEvent
 	void UpdateConstrunction();
-
+	
 
 	/** Map */
 

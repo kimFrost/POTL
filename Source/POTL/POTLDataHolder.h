@@ -586,9 +586,7 @@ struct FST_Factory
 	TMap<FString, int32> Requirements;
 
 	UPROPERTY(EditAnywhere, Category = "Resource")
-	//TMap<FName, int32> Invoice;
 	TMap<FString, int32> Invoice;
-
 
 	//~~ Calculate Requirements for total requirements ~~//
 	void const ProcessInvoice(UDataTable* RecipeTable)
