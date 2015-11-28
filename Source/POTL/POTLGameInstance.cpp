@@ -259,11 +259,18 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 						if (!VisitedHexIndexes.Contains(Index))
 						{
 							//~~ Search for attachments/adjacent buildings and store them in hexes ~~//
+							if (!IsHexBlocked(NeighborHex))
+							{
+								Frontiers[k].HexIndexes.Add(Index); //~~ Add Neighbor Hex to the next frontier ~~//
+								VisitedHexIndexes.Add(Index); //~~ Add index to visited indexes, so that neighbors don't overlap each other. ~~//
+							}
+							/*
 							if (IsHexBuildable(NeighborHex))
 							{
 								Frontiers[k].HexIndexes.Add(Index); //~~ Add Neighbor Hex to the next frontier ~~//
 								VisitedHexIndexes.Add(Index); //~~ Add index to visited indexes, so that neighbors don't overlap each other. ~~//
 							}
+							*/
 							if (!IsHexTerrainBuildable(NeighborHex) || k == Structure->BroadcastRange)
 							{
 								Hex.ConstructInfo.OnRidge = true; //!!~~ NOT CORRECT ~~//
@@ -280,9 +287,28 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 		}
 		ConstructHexIndexes.Remove(Structure->BroadcastHexIndex); //~~ Remove self cubeCoord ~~//
 		Structure->BroadcastGridHexIndexes = ConstructHexIndexes; //~~ Store indexes in structure. It cludes all hex broadcast grid index, including childrens hex indexes ~~//
-		
 	}
 	return ConstructHexIndexes; //~~ Return ~~//
+}
+
+
+
+/******************** IsHexBlocked *************************/
+bool UPOTLGameInstance::IsHexBlocked(const FST_Hex& Hex)
+{
+	bool Blocked = false;
+	if (!IsHexTerrainBuildable(Hex))
+	{
+		Blocked = true;
+	}
+	else if (Hex.AttachedBuilding)
+	{
+		if (Hex.AttachedBuilding->BlockPathing)
+		{
+			Blocked = true;
+		}
+	}
+	return Blocked;
 }
 
 

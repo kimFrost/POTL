@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
+#include "FactoryComponent.h"
 #include "POTLStructure.generated.h"
 
 
@@ -50,9 +51,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FString TreeId;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	//FST_Hex& Hex; // Need to be put as a spawn paramater
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 HexIndex;
 
@@ -89,6 +87,9 @@ public:
 	bool IsPlaceholder;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	bool BlockPathing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool IsUnderConstruction;
 
 	/** Resources */
@@ -120,6 +121,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	FST_Factory ProductionFactory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	TArray<class UFactoryComponent*> Factories2;
+
+
+
 
 	/*********** FUNCTIONS **************/
 

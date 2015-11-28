@@ -1,12 +1,9 @@
 [
 	{
-		"Name": "Something",
-		"Ingredients": [
-			"(Id=\"Wood\",Quantity=5)",
-			"(Id=\"Stone\",Quantity=3)"
-		],
+		"Name": "Wheat",
+		"Ingredients": [],
 		"Servings": 1,
-		"Sequence": 1
+		"Sequence": 0
 	},
 	{
 		"Name": "Stick",

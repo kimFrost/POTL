@@ -113,6 +113,9 @@ public:
 	TArray<int32> GetConstructLocationIndexes(APOTLStructure* Structure, bool IncludeChildren);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
+	bool IsHexBlocked(const FST_Hex& Hex);
+
+	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexBuildable(const FST_Hex& Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")

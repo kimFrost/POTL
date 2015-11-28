@@ -3,6 +3,7 @@
 #include "POTL.h"
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
+#include "FactoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLStructure.h"
 
@@ -20,6 +21,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	StructureBaseData = FST_Structure{};
 	StructureRowName = TEXT("");
 	IsPlaceholder = false;
+	BlockPathing = true;
 	IsUnderConstruction = true;
 	InRangeOfEmitTo = false;
 	Root = this;
@@ -197,11 +199,21 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 	//~~ Resolve self / The function logic ~~//
 	if (GameInstance)
 	{
+		/*
 		for (auto& Factory : Factories)
 		{
 			//Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
 			Factory.ProcessInvoice(GameInstance->DATA_Recipes); //~~ Calculate requirements ~~//
 			bool Fulfilled = RequestResources(false, this, Factory.Requirements, 0, EAllocationType::RequestDirect, false);
+		}
+		*/
+		for (UFactoryComponent* Factory : Factories2)
+		{
+			if (Factory)
+			{
+				Factory->ProcessInvoice(GameInstance->DATA_Recipes);
+				bool Fulfilled = RequestResources(false, this, Factory->Requirements, 0, EAllocationType::RequestDirect, false);
+			}
 		}
 	}
 }
@@ -222,6 +234,7 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 	//~~ Resolve factories ~~//
 	if (GameInstance)
 	{
+		/*
 		for (auto& Factory : Factories)
 		{
 			TMap<FString, int32> FactoryProduction;
@@ -236,6 +249,21 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 			for (auto& Resource : FactoryProduction)
 			{
 				AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false);
+			}
+		}
+		*/
+		for (UFactoryComponent* Factory : Factories2)
+		{
+			if (Factory)
+			{
+				TMap<FString, int32> FactoryProduction;
+				TMap<FString, int32> FactoryBilling;
+				Factory->Resolve(this, FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
+				RequestResources(false, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
+				for (auto& Resource : FactoryProduction)
+				{
+					AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false);
+				}
 			}
 		}
 	}
