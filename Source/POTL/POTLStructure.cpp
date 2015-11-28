@@ -273,11 +273,14 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 /******************** ResolveTree *************************/
 void APOTLStructure::ResolveTree()
 {
-	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveTree()");
-	ResolveUpkeep(true);
-	ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
-	ResolveFactories(true);
-	ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
+	if (!IsPlaceholder)
+	{
+		GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveTree()");
+		ResolveUpkeep(true);
+		ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
+		ResolveFactories(true);
+		ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
+	}
 
 	/*
 	FTimerHandle UniqueHandle;
@@ -509,8 +512,8 @@ void APOTLStructure::BeginPlay()
 	if (GameInstance)
 	{
 		// Add test resources
-		FreeResources.Add(TEXT("Wood"), 9.f);
-		FreeResources.Add(TEXT("Stone"), 15.f);
+		//FreeResources.Add(TEXT("Wood"), 9.f);
+		//FreeResources.Add(TEXT("Stone"), 15.f);
 
 		// Add test factory for resource process
 		//FST_Factory Factory;
