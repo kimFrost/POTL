@@ -187,32 +187,27 @@ void APOTLStructure::ResolveUpkeep(bool Broadcast)
 /******************** ProcessFactories *************************/
 void APOTLStructure::ProcessFactories(bool Broadcast)
 {
-	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ProcessFactories()");
-	//~~ Resolve children ~~//
-	if (Broadcast)
+	if (!IsPlaceholder)
 	{
-		for (int32 i = 0; i < BroadcastTo.Num(); i++)
+		GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ProcessFactories()");
+		//~~ Resolve children ~~//
+		if (Broadcast)
 		{
-			BroadcastTo[i]->ProcessFactories(Broadcast);
-		}
-	}
-	//~~ Resolve self / The function logic ~~//
-	if (GameInstance)
-	{
-		/*
-		for (auto& Factory : Factories)
-		{
-			//Factory.ProcessInvoice(GameInstance->RecipeTable); //~~ Calculate requirements ~~//
-			Factory.ProcessInvoice(GameInstance->DATA_Recipes); //~~ Calculate requirements ~~//
-			bool Fulfilled = RequestResources(false, this, Factory.Requirements, 0, EAllocationType::RequestDirect, false);
-		}
-		*/
-		for (UFactoryComponent* Factory : Factories2)
-		{
-			if (Factory)
+			for (int32 i = 0; i < BroadcastTo.Num(); i++)
 			{
-				Factory->ProcessInvoice(GameInstance->DATA_Recipes);
-				bool Fulfilled = RequestResources(false, this, Factory->Requirements, 0, EAllocationType::RequestDirect, false);
+				BroadcastTo[i]->ProcessFactories(Broadcast);
+			}
+		}
+		//~~ Resolve self / The function logic ~~//
+		if (GameInstance)
+		{
+			for (UFactoryComponent* Factory : Factories)
+			{
+				if (Factory)
+				{
+					Factory->ProcessInvoice(GameInstance->DATA_Recipes);
+					bool Fulfilled = RequestResources(true, this, Factory->Requirements, 0, EAllocationType::RequestDirect, false);
+				}
 			}
 		}
 	}
@@ -234,32 +229,15 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 	//~~ Resolve factories ~~//
 	if (GameInstance)
 	{
-		/*
-		for (auto& Factory : Factories)
-		{
-			TMap<FString, int32> FactoryProduction;
-			TMap<FString, int32> FactoryBilling;
-			//Factory.Resolve(this, FreeResources, GameInstance->RecipeTable, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
-			Factory.Resolve(this, FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
-			RequestResources(false, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
-			for (auto& Resource : FactoryBilling)
-			{
-				//AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryBilling, false);
-			}
-			for (auto& Resource : FactoryProduction)
-			{
-				AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false);
-			}
-		}
-		*/
-		for (UFactoryComponent* Factory : Factories2)
+		for (UFactoryComponent* Factory : Factories)
 		{
 			if (Factory)
 			{
 				TMap<FString, int32> FactoryProduction;
 				TMap<FString, int32> FactoryBilling;
 				Factory->Resolve(this, FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
-				RequestResources(false, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
+				//Factory->Resolve(this, Root->FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
+				RequestResources(true, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
 				for (auto& Resource : FactoryProduction)
 				{
 					AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false);
@@ -395,6 +373,13 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 	Steps++; //~~ Increase steps, resulting in more resource loss from many reroutes ~~//
 	//~~ Should the emitTo structor require manpower to transport resources?? ~~//
 	//~~ Handle request and Try to meet the resource request with own storage. If not then request parent of current ~~//
+
+	//~~ Check allocated with a lower sequence number resources first ~~//
+	for (auto& ResourceRequest : Request)
+	{
+
+	}
+	//~~ Then check FreeResources ~~//
 	for (auto& ResourceRequest : Request)
 	{
 		if (FreeResources.Contains(ResourceRequest.Key))
@@ -446,16 +431,6 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 /*****************************************************************************************************/
 /****************************************** CONSTRUCTION *********************************************/
 /*****************************************************************************************************/
-
-/******************** CreateFactory *************************/
-FST_Factory APOTLStructure::CreateFactory()
-{
-	FST_Factory Factory;
-	//Factory.Invoice.Add(TEXT("Plank"), 1);
-	Factories.Add(Factory);
-	ProductionFactory = Factory;
-	return Factory;
-}
 
 
 /******************** UpdateConstrunction *************************/

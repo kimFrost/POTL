@@ -117,13 +117,10 @@ public:
 	TMap<FString, int32> ResourceUpkeep;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	TArray<FST_Factory> Factories;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	FST_Factory ProductionFactory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	TArray<class UFactoryComponent*> Factories2;
+	TArray<class UFactoryComponent*> Factories;
 
 
 
@@ -169,9 +166,6 @@ public:
 
 
 	/** Construction */
-
-	UFUNCTION(BlueprintCallable, Category = "Construction")
-	FST_Factory CreateFactory();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Construction") // BlueprintNativeEvent
 	void UpdateConstrunction();
