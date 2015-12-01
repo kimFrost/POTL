@@ -206,7 +206,8 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 				if (Factory)
 				{
 					int32 Sequence = Factory->ProcessInvoice(GameInstance->DATA_Recipes);
-					RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
+					//RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
+					this->Root->RequestResources(this, Factory->Requirements, Sequence, 0, EAllocationType::RequestDirect, false, true);
 				}
 			}
 		}
@@ -253,6 +254,7 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 {
 	if (!IsPlaceholder)
 	{
+		ResourceRequests.Empty();
 		CalculateUpkeep(true);
 		ProcessFactories(true);
 		ProcessResourceRequests();
@@ -309,6 +311,10 @@ void APOTLStructure::ProcessResourceRequests()
 			}
 		}
 	}
+
+	FString FIndea = "asdasd";
+	FIndea = "222asd";
+
 	// What about a request gets resources from multiple sources 
 }
 
@@ -318,11 +324,10 @@ void APOTLStructure::ResolveTree() //~~ Should only for be called on root struct
 {
 	if (!IsPlaceholder)
 	{
-		//GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveTree()");
-		ResolveUpkeep(true);
-		ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
-		ResolveFactories(true);
-		ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
+		//ResolveUpkeep(true);
+		//ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
+		//ResolveFactories(true);
+		//ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
 	}
 
 	/*
@@ -448,7 +453,7 @@ void APOTLStructure::RequestResources(APOTLStructure* RequestFrom, TMap<FString,
 	bool RequestFulfilled = true;
 	Steps++; //~~ Increase steps, resulting in more resource loss from many reroutes ~~//
 	//~~ Should the emitTo structor require manpower to transport resources?? ~~//
-	//~~ Handle request and Try to meet the resource request with own storage. If not then request parent of current ~~//
+	//~~ Handle request and Try to meet the resource request with own storage. If not then request parent of current ~~//½
 
 	//~~ Check allocated with a lower sequence number resources first ~~//
 
