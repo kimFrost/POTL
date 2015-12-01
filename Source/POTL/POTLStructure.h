@@ -114,6 +114,9 @@ public:
 	//TMap<FString, int32> ResourcesPromisedAway;
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
+	TArray<FST_ResourceRequest> ResourceRequests;
+
+	UPROPERTY(EditAnywhere, Category = "Resources")
 	TMap<FString, int32> ResourceUpkeep;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
@@ -148,7 +151,7 @@ public:
 	void ResolveAllocations(EAllocationType Type, bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	int32 AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop);
+	int32 AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop, int32 Key);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveUpkeep(bool Broadcast);

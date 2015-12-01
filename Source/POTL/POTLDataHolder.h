@@ -452,6 +452,9 @@ struct FST_Resource : public FTableRowBase
 	FString Title;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	TArray<FString> Tags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	float UnitMass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
@@ -495,6 +498,22 @@ struct FST_Consumable : public FST_Resource
 	FST_Consumable()
 	{
 		Something = TEXT("");
+	}
+};
+
+
+/*** FST_ResourceRequest ***/
+USTRUCT(BlueprintType)
+struct FST_ResourceRequest
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 Sequence;
+
+	FST_ResourceRequest()
+	{
+		Sequence = 0;
 	}
 };
 
@@ -573,7 +592,6 @@ struct FST_TMap
 		Value = 0.f;
 	}
 };
-
 
 
 /*** FST_Factory ***/

@@ -1,8 +1,21 @@
 [
 	{
+		"Name": "WP",
+		"Id": "",
+		"Title": "Work force",
+		"Tags": [],
+		"UnitMass": 0,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": -1,
+		"Quantity": 0,
+		"MaxAge": 1
+	},
+	{
 		"Name": "Wood",
 		"Id": "",
 		"Title": "Wood",
+		"Tags": [],
 		"UnitMass": 10,
 		"Stackable": true,
 		"Burnable": true,
@@ -13,6 +26,7 @@
 	{
 		"Name": "Stone",
 		"Id": "",
+		"Tags": [],
 		"Title": "Stone",
 		"UnitMass": 50,
 		"Stackable": true,
@@ -20,5 +34,17 @@
 		"StackSize": 64,
 		"Quantity": 0,
 		"MaxAge": -1
+	},
+	{
+		"Name": "Bread",
+		"Id": "",
+		"Tags": ["Food"],
+		"Title": "Stone",
+		"UnitMass": 3,
+		"Stackable": true,
+		"Burnable": false,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": 1
 	}
 ]

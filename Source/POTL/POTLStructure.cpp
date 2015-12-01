@@ -240,7 +240,7 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 				RequestResources(true, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
 				for (auto& Resource : FactoryProduction)
 				{
-					AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false);
+					AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false, -1);
 				}
 			}
 		}
@@ -251,7 +251,7 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 /******************** ResolveTree *************************/
 void APOTLStructure::ResolveTree()
 {
-	if (!IsPlaceholder)
+	if (!IsPlaceholder && IsRoot)
 	{
 		GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveTree()");
 		ResolveUpkeep(true);
@@ -264,18 +264,6 @@ void APOTLStructure::ResolveTree()
 	FTimerHandle UniqueHandle;
 	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveUpkeep, true);
 	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 5.0f, false);
-
-	UniqueHandle;
-	RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveAllocations, EAllocationType::RequestDirect, true);
-	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 10.0f, false);
-
-	UniqueHandle;
-	RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveFactories, true);
-	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 15.0f, false);
-
-	UniqueHandle;
-	RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveAllocations, EAllocationType::All, true);
-	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 20.0f, false);
 	*/
 }
 
@@ -334,34 +322,46 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 
 
 /******************** ResolveTree *************************/
-int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop)
+int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop, int32 Key)
 {
-	//~~ Generate random key ~~//
-	int32 KeyIndex = FMath::RandRange(0, 10000000);
-	if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
+	if (Key >= 0)
 	{
-		KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, true);
+		//~~ Generate random key ~~//
+		int32 KeyIndex = FMath::RandRange(0, 1000000);
+		if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
+		{
+			KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, true, Key);
+		}
+		if (!KeyLoop)
+		{
+			FST_ResourceAllocation Allocation;
+			Allocation.From = From;
+			//Allocation.To = this;
+			if (this->IsRoot)
+			{
+				Allocation.To = this; //~~ Always send to root for now ~~//
+			}
+			else
+			{
+				Allocation.To = this->Root;
+			}
+			Allocation.ResourceKey = ResourceKey;
+			Allocation.Type = Type;
+			Allocation.Quantity = Quantity;
+			AllocatedResources.Add(KeyIndex, Allocation);
+		}
+		//int32 KeyIndex = AllocatedResources.Add(Allocation);
+		return KeyIndex;
 	}
-	if (!KeyLoop)
+	else
 	{
-		FST_ResourceAllocation Allocation;
-		Allocation.From = From;
-		//Allocation.To = this;
-		if (this->IsRoot)
+		if (AllocatedResources.Contains(Key))
 		{
-			Allocation.To = this; //~~ Always send to root for now ~~//
+			FST_ResourceAllocation& Allocation = AllocatedResources[Key];
+
 		}
-		else
-		{
-			Allocation.To = this->Root;
-		}
-		Allocation.ResourceKey = ResourceKey;
-		Allocation.Type = Type;
-		Allocation.Quantity = Quantity;
-		AllocatedResources.Add(KeyIndex, Allocation);
+		return Key;
 	}
-	//int32 KeyIndex = AllocatedResources.Add(Allocation);
-	return KeyIndex;
 }
 
 
@@ -393,7 +393,7 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 			{
 				if (!Consume)
 				{
-					AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], Type, false);
+					AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], Type, false, -1);
 				}
 				ResourceRequest.Value -= FreeResources[ResourceRequest.Key];
 				FreeResources[ResourceRequest.Key] = 0;
@@ -404,7 +404,7 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 			{
 				if (!Consume)
 				{
-					AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, Type, false);
+					AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, Type, false, -1);
 				}
 				FreeResources[ResourceRequest.Key] = FreeResources[ResourceRequest.Key] - ResourceRequest.Value;
 				ResourceRequest.Value = 0;
