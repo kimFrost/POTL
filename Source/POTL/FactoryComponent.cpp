@@ -18,11 +18,12 @@ UFactoryComponent::UFactoryComponent()
 }
 
 
-void UFactoryComponent::ProcessInvoice(UDataTable* RecipeTable)
+int32 UFactoryComponent::ProcessInvoice(UDataTable* RecipeTable)
 {
 	Requirements.Empty();
 	Invoice.Empty();
 	Invoice.Add(Recipe, Quantity);
+	int32 MinSequence = 0;
 	if (RecipeTable)
 	{
 		for (auto& InvoiceItem : Invoice)
@@ -38,10 +39,15 @@ void UFactoryComponent::ProcessInvoice(UDataTable* RecipeTable)
 					if (Requirements.Contains(Ingredient.Id.ToString()))	Requirements[Ingredient.Id.ToString()] += Ingredient.Quantity;
 					else													Requirements.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
 				}
+				if (Recipe->Sequence > MinSequence) {
+					MinSequence = Recipe->Sequence;
+				}
 			}
 		}
 	}
+	return MinSequence;
 }
+
 
 
 void UFactoryComponent::Resolve(APOTLStructure* Caller, TMap<FString, int32>& FreeResources, UDataTable* RecipeTable, TMap<FString, int32>& Production, TMap<FString, int32>& Billing)

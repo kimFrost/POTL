@@ -180,7 +180,7 @@ void APOTLStructure::ResolveUpkeep(bool Broadcast)
 	}
 	//~~ Resolve self / The function logic ~~//
 	//~~ Resolve upkeep ~~//
-	bool Fulfilled = RequestResources(true, this, ResourceUpkeep, 0, EAllocationType::RequestDirect, false); //~~ Do self have the required resources ~~//
+	//RequestResources(this, ResourceUpkeep, 0, 0, EAllocationType::RequestDirect, false, true); //~~ Do self have the required resources ~~//
 }
 
 
@@ -205,8 +205,8 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 			{
 				if (Factory)
 				{
-					Factory->ProcessInvoice(GameInstance->DATA_Recipes);
-					bool Fulfilled = RequestResources(true, this, Factory->Requirements, 0, EAllocationType::RequestDirect, false);
+					int32 Sequence = Factory->ProcessInvoice(GameInstance->DATA_Recipes);
+					RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
 				}
 			}
 		}
@@ -237,7 +237,7 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 				TMap<FString, int32> FactoryBilling;
 				Factory->Resolve(this, FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
 				//Factory->Resolve(this, Root->FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
-				RequestResources(true, this, FactoryBilling, 0, EAllocationType::FactoryBilling, true); //~~ RequestResources doens't know how to handle negative values ~~//
+				RequestResources(this, FactoryBilling, 0, 100, EAllocationType::FactoryBilling, true, true); //~~ RequestResources doens't know how to handle negative values ~~//
 				for (auto& Resource : FactoryProduction)
 				{
 					AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false, -1);
@@ -248,12 +248,77 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 }
 
 
-/******************** ResolveTree *************************/
-void APOTLStructure::ResolveTree()
+/******************** MakeTreeAllocations *************************/
+void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on root structures
 {
-	if (!IsPlaceholder && IsRoot)
+	if (!IsPlaceholder)
 	{
-		GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveTree()");
+		CalculateUpkeep(true);
+		ProcessFactories(true);
+		ProcessResourceRequests();
+	}
+}
+
+
+/******************** ProcessResourceRequests *************************/
+void APOTLStructure::ProcessResourceRequests()
+{
+	int32 i;
+	int32 HighestSequence = -1;
+	TMap<int32, TArray<FST_ResourceRequest>> SortedResourceRequests;
+	//~~ Get highest sequence from all of the requests ~~//
+	for (i = 0; i < ResourceRequests.Num(); i++)
+	{
+		FST_ResourceRequest& ResourceRequest = ResourceRequests[i];
+		if (ResourceRequest.Sequence > HighestSequence)
+		{
+			HighestSequence = ResourceRequest.Sequence;
+		}
+	}
+	//~~ Init SortedResourceRequests ~~//
+	for (i = 0; i <= HighestSequence; i++)
+	{
+		TArray<FST_ResourceRequest> List;
+		SortedResourceRequests.Add(i, List);
+	}
+	//~~ Add resource request to sorted tmap ~~//
+	for (i = 0; i < ResourceRequests.Num(); i++)
+	{
+		FST_ResourceRequest& ResourceRequest = ResourceRequests[i];
+		int32 Sequence = ResourceRequest.Sequence;
+		if (SortedResourceRequests.Contains(Sequence))
+		{
+			SortedResourceRequests[Sequence].Add(ResourceRequest);
+		}
+	}
+	//~~ Allocate and process the requests ~~//
+	for (i = 0; i <= HighestSequence; i++) //~~ Handle the request from sequence zero and up ~~//
+	{
+		TArray<FST_ResourceRequest>& RequestList = SortedResourceRequests[i];
+		for (int32 ii = 0; ii < RequestList.Num(); ii++)
+		{
+			//~~ If sequene is over zero, then check previous request for their production ~~//
+			if (i > 0) 
+			{
+
+				//if (ResourceRequest.RequestMet)
+			}
+			else
+			{
+
+			}
+		}
+	}
+	// What about a request gets resources from multiple sources 
+}
+
+
+/******************** ResolveTree *************************/
+void APOTLStructure::ResolveTree() //~~ Should only for be called on root structures
+{
+	if (!IsPlaceholder)
+	{
+		//GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveTree()");
 		ResolveUpkeep(true);
 		ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
 		ResolveFactories(true);
@@ -366,8 +431,19 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 
 
 /******************** RequestResources *************************/
-bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Steps, EAllocationType Type, bool Consume)
+void APOTLStructure::RequestResources(APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Sequence, int32 Steps, EAllocationType Type, bool Consume, bool Bubble)
 {
+	FST_ResourceRequest ResourceRequest;
+	ResourceRequest.From = RequestFrom;
+	ResourceRequest.Request = Request;
+	ResourceRequest.Sequence = Sequence;
+	ResourceRequest.Steps = Steps;
+	ResourceRequest.Type = Type;
+	ResourceRequest.Consume = Consume;
+	ResourceRequest.Bubble = Bubble;
+	ResourceRequests.Add(ResourceRequest);
+
+	/*
 	TMap<FString, int32> RequestedResources; //~~ FString Id, Int32 Quantity ~~//
 	bool RequestFulfilled = true;
 	Steps++; //~~ Increase steps, resulting in more resource loss from many reroutes ~~//
@@ -375,10 +451,7 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 	//~~ Handle request and Try to meet the resource request with own storage. If not then request parent of current ~~//
 
 	//~~ Check allocated with a lower sequence number resources first ~~//
-	for (auto& ResourceRequest : Request)
-	{
 
-	}
 	//~~ Then check FreeResources ~~//
 	for (auto& ResourceRequest : Request)
 	{
@@ -422,9 +495,9 @@ bool APOTLStructure::RequestResources(bool Bubble, APOTLStructure* RequestFrom, 
 	!RequestFulfilled &&
 	EmitTo != nullptr)
 	{
-		bool Fulfilled = EmitTo->RequestResources(Bubble, RequestFrom, Request, Steps, EAllocationType::RequestDirect, Consume);
+		EmitTo->RequestResources(Bubble, RequestFrom, Request, Steps, EAllocationType::RequestDirect, Consume);
 	}
-	return RequestFulfilled; //~~ True / false ~~//
+	*/
 }
 
 

@@ -145,6 +145,12 @@ public:
 	void CalculateUpkeep(bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void MakeTreeAllocations();
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void ProcessResourceRequests();
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveTree();
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
@@ -165,7 +171,7 @@ public:
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
-	bool RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Steps, EAllocationType Type, bool Consume);
+	void RequestResources(APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Sequence, int32 Steps, EAllocationType Type, bool Consume, bool Bubble);
 
 
 	/** Construction */

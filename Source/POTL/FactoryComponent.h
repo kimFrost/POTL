@@ -30,9 +30,10 @@ public:
 	TMap<FString, int32> Invoice;
 
 
+
 	//~~ Calculate Requirements for total requirements ~~//
 	//UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ProcessInvoice(UDataTable* RecipeTable);
+	int32 ProcessInvoice(UDataTable* RecipeTable);
 
 	//~~ Resolve factory ~~//
 	//UFUNCTION(BlueprintCallable, Category = "Resources")

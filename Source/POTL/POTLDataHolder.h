@@ -509,11 +509,38 @@ struct FST_ResourceRequest
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	APOTLStructure* From;
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	TMap<FString, int32> Request;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Sequence;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 Steps;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	EAllocationType Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	bool Consume;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	bool Bubble;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	bool RequestMet;
 
 	FST_ResourceRequest()
 	{
+		From = nullptr;
 		Sequence = 0;
+		Steps = 0;
+		Type = EAllocationType::None;
+		Consume = false;
+		Bubble = true;
+		RequestMet = false;
 	}
 };
 
