@@ -262,88 +262,6 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 }
 
 
-/******************** ProcessResourceRequests *************************/
-void APOTLStructure::ProcessResourceRequests()
-{
-	int32 i;
-	int32 HighestSequence = -1;
-	TMap<int32, TArray<FST_ResourceRequest>> SortedResourceRequests;
-	//~~ Get highest sequence from all of the requests ~~//
-	for (i = 0; i < ResourceRequests.Num(); i++)
-	{
-		FST_ResourceRequest& ResourceRequest = ResourceRequests[i];
-		if (ResourceRequest.Sequence > HighestSequence)
-		{
-			HighestSequence = ResourceRequest.Sequence;
-		}
-	}
-	//~~ Init SortedResourceRequests ~~//
-	for (i = 0; i <= HighestSequence; i++)
-	{
-		TArray<FST_ResourceRequest> List;
-		SortedResourceRequests.Add(i, List);
-	}
-	//~~ Add resource request to sorted tmap ~~//
-	for (i = 0; i < ResourceRequests.Num(); i++)
-	{
-		FST_ResourceRequest& ResourceRequest = ResourceRequests[i];
-		int32 Sequence = ResourceRequest.Sequence;
-		if (SortedResourceRequests.Contains(Sequence))
-		{
-			SortedResourceRequests[Sequence].Add(ResourceRequest);
-		}
-	}
-	//~~ Allocate and process the requests ~~//
-	for (i = 0; i <= HighestSequence; i++) //~~ Handle the request from sequence zero and up ~~//
-	{
-		TArray<FST_ResourceRequest>& RequestList = SortedResourceRequests[i];
-		for (int32 ii = 0; ii < RequestList.Num(); ii++)
-		{
-			FST_ResourceRequest& ResourceRequest = RequestList[ii];
-			//~~ If sequene is over zero, then check previous request for their production ~~//
-			if (i > 0) 
-			{
-				FST_ResourceRequest ResourceRequestCopy = ResourceRequest;
-				//if (ResourceRequest.Payoff && ResourceRequest.RequestMet)
-			}
-			else
-			{
-				if (HasResourcesAvailable(ResourceRequest.Request)) //~~ If self has the resources required ~~//
-				{
-					for (auto& ResourceRequest : ResourceRequest.Request)
-					{
-						AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::FactoryBilling, false, -1);
-					}
-				}
-			}
-		}
-	}
-
-
-	// What about a request gets resources from multiple sources 
-}
-
-
-
-/******************** HasResourcesAvailable *************************/
-bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request)
-{
-	bool RequestMet = true;
-	for (auto& ResourceRequest : Request)
-	{
-		if (FreeResources.Contains(ResourceRequest.Key))
-		{
-			if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
-			{
-				RequestMet = false;
-				break;
-			}
-		}
-	}
-	return RequestMet;
-}
-
-
 /******************** ResolveTree *************************/
 void APOTLStructure::ResolveTree() //~~ Should only for be called on root structures
 {
@@ -417,6 +335,98 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 	}
 	*/
 }
+
+
+
+/******************** ProcessResourceRequests *************************/
+void APOTLStructure::ProcessResourceRequests()
+{
+	int32 i;
+	int32 HighestSequence = -1;
+	TMap<int32, TArray<FST_ResourceRequest>> SortedResourceRequests;
+	//~~ Get highest sequence from all of the requests ~~//
+	for (i = 0; i < ResourceRequests.Num(); i++)
+	{
+		FST_ResourceRequest& ResourceRequest = ResourceRequests[i];
+		if (ResourceRequest.Sequence > HighestSequence)
+		{
+			HighestSequence = ResourceRequest.Sequence;
+		}
+	}
+	//~~ Init SortedResourceRequests ~~//
+	for (i = 0; i <= HighestSequence; i++)
+	{
+		TArray<FST_ResourceRequest> List;
+		SortedResourceRequests.Add(i, List);
+	}
+	//~~ Add resource request to sorted tmap ~~//
+	for (i = 0; i < ResourceRequests.Num(); i++)
+	{
+		FST_ResourceRequest& ResourceRequest = ResourceRequests[i];
+		int32 Sequence = ResourceRequest.Sequence;
+		if (SortedResourceRequests.Contains(Sequence))
+		{
+			SortedResourceRequests[Sequence].Add(ResourceRequest);
+		}
+	}
+	//~~ Allocate and process the requests ~~//
+	for (i = 0; i <= HighestSequence; i++) //~~ Handle the request from sequence zero and up ~~//
+	{
+		TArray<FST_ResourceRequest>& RequestList = SortedResourceRequests[i];
+		for (int32 ii = 0; ii < RequestList.Num(); ii++)
+		{
+			FST_ResourceRequest& ResourceRequest = RequestList[ii];
+			//~~ If sequene is over zero, then check previous request for their production ~~//
+			if (i > 0)
+			{
+				FST_ResourceRequest ResourceRequestCopy = ResourceRequest;
+				//if (ResourceRequest.Payoff && ResourceRequest.RequestMet)
+
+				//~~ First take from storage ~~//
+
+				//~~ Then take from production. It will result in the 'old' resources gets used first ~~//
+
+			}
+			else
+			{
+				//~~ Take from storage/FreeResources
+				if (HasResourcesAvailable(ResourceRequest.Request)) //~~ If self has the resources required ~~//
+				{
+					TArray<int32> AllocationIndexes;
+					for (auto& ResourceRequest : ResourceRequest.Request)
+					{
+						int32 AllocationIndex = AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::FactoryBilling, false, -1);
+						AllocationIndexes.Add(AllocationIndex);
+					}
+				}
+			}
+		}
+	}
+
+	// What about a request gets resources from multiple sources 
+
+}
+
+
+
+/******************** HasResourcesAvailable *************************/
+bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request)
+{
+	bool RequestMet = true;
+	for (auto& ResourceRequest : Request)
+	{
+		if (FreeResources.Contains(ResourceRequest.Key))
+		{
+			if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
+			{
+				RequestMet = false;
+				break;
+			}
+		}
+	}
+	return RequestMet;
+}
+
 
 
 /******************** ResolveTree *************************/
