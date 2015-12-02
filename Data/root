@@ -22,3 +22,45 @@
 3 Reg WP + Flour (Take from [< 3])
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+//Resource Request
+APOTLStructure* From;
+TMap<FString, int32> Request;
+int32 Sequence;
+int32 Steps;
+EAllocationType Type;
+bool Consume;
+bool Bubble;
+bool RequestMet;
+
+
+//Resource Allocation
+APOTLStructure* From;
+APOTLStructure* To;
+FString ResourceKey;
+int32 Quantity;
+EAllocationType Type;
+int32 Sequence;
+
+
+//Resource
+FString Id;
+FString Title;
+TArray<FString> Tags;
+float UnitMass;
+bool Stackable;
+bool Burnable;
+int32 StackSize;
+int32 Quantity;
+int32 MaxAge;

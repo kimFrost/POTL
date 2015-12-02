@@ -99,7 +99,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	//TArray<FST_ResourceAllocation> AllocatedResources;
-	TMap<int32, FST_ResourceAllocation> AllocatedResources;
+	//TMap<int32, FST_ResourceAllocation> AllocatedResources;
+	TMap<int32, TArray<FST_ResourceAllocation>> AllocatedResources;
 
 	//UPROPERTY(EditAnywhere, Category = "Resources")
 	//TMap<FString, int32> Resources;
@@ -151,6 +152,9 @@ public:
 	void ProcessResourceRequests();
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
+	bool HasResourcesAvailable(TMap<FString, int32>& Request);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveTree();
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
@@ -158,6 +162,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	int32 AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop, int32 Key);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	int32 AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Key);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveUpkeep(bool Broadcast);
@@ -171,7 +178,7 @@ public:
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
-	void RequestResources(APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Sequence, int32 Steps, EAllocationType Type, bool Consume, bool Bubble);
+	void RequestResources(APOTLStructure* RequestFrom, UFactoryComponent* Factory, TMap<FString, int32>& Request, TMap<FString, int32>& Payoff, int32 Sequence, int32 Steps, EAllocationType Type, bool Consume, bool Bubble);
 
 
 	/** Construction */

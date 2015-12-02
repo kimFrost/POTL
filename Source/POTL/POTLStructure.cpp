@@ -115,11 +115,16 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 	case EResourceList::Allocations:
 		for (auto& AllocatedResource : AllocatedResources)
 		{
-			FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-			FST_Resource Resource;
-			Resource.Id = Allocation.ResourceKey;
-			Resource.Quantity = Allocation.Quantity;
-			List.Add(Resource);
+			//FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+			TArray<FST_ResourceAllocation>& AllocationList = AllocatedResource.Value;
+			for (int32 i = 0; i < AllocationList.Num(); i++)
+			{
+				FST_ResourceAllocation& Allocation = AllocationList[i];
+				FST_Resource Resource;
+				Resource.Id = Allocation.ResourceKey;
+				Resource.Quantity = Allocation.Quantity;
+				List.Add(Resource);
+			}
 		}
 		break;
 	default:
@@ -207,7 +212,7 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 				{
 					int32 Sequence = Factory->ProcessInvoice(GameInstance->DATA_Recipes);
 					//RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
-					this->Root->RequestResources(this, Factory->Requirements, Sequence, 0, EAllocationType::RequestDirect, false, true);
+					this->Root->RequestResources(this, Factory, Factory->Requirements, Factory->Invoice, Sequence, 0, EAllocationType::RequestDirect, false, true);
 				}
 			}
 		}
@@ -238,7 +243,7 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 				TMap<FString, int32> FactoryBilling;
 				Factory->Resolve(this, FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
 				//Factory->Resolve(this, Root->FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
-				RequestResources(this, FactoryBilling, 0, 100, EAllocationType::FactoryBilling, true, true); //~~ RequestResources doens't know how to handle negative values ~~//
+				RequestResources(this, Factory, FactoryBilling, Factory->Invoice, 0, 100, EAllocationType::FactoryBilling, true, true); //~~ RequestResources doens't know how to handle negative values ~~//
 				for (auto& Resource : FactoryProduction)
 				{
 					AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false, -1);
@@ -299,23 +304,48 @@ void APOTLStructure::ProcessResourceRequests()
 		TArray<FST_ResourceRequest>& RequestList = SortedResourceRequests[i];
 		for (int32 ii = 0; ii < RequestList.Num(); ii++)
 		{
+			FST_ResourceRequest& ResourceRequest = RequestList[ii];
 			//~~ If sequene is over zero, then check previous request for their production ~~//
 			if (i > 0) 
 			{
-
-				//if (ResourceRequest.RequestMet)
+				FST_ResourceRequest ResourceRequestCopy = ResourceRequest;
+				//if (ResourceRequest.Payoff && ResourceRequest.RequestMet)
 			}
 			else
 			{
-
+				if (HasResourcesAvailable(ResourceRequest.Request)) //~~ If self has the resources required ~~//
+				{
+					for (auto& ResourceRequest : ResourceRequest.Request)
+					{
+						AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::FactoryBilling, false, -1);
+					}
+				}
 			}
 		}
 	}
 
-	FString FIndea = "asdasd";
-	FIndea = "222asd";
 
 	// What about a request gets resources from multiple sources 
+}
+
+
+
+/******************** HasResourcesAvailable *************************/
+bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request)
+{
+	bool RequestMet = true;
+	for (auto& ResourceRequest : Request)
+	{
+		if (FreeResources.Contains(ResourceRequest.Key))
+		{
+			if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
+			{
+				RequestMet = false;
+				break;
+			}
+		}
+	}
+	return RequestMet;
 }
 
 
@@ -355,6 +385,7 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 		}
 	}
 	//~~ Resolve self / The function logic ~~//
+	/*
 	for (auto& AllocatedResource : AllocatedResources)
 	{
 		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
@@ -372,7 +403,9 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 			}
 		}
 	}
+	*/
 	//~~ Check for sequence and handle it ~~// //!! Will I even need this for resolve. 
+	/*
 	for (i = 0; i < 8; i++) //~~ 8 is just a random static guess. Should be higher properly ~~//
 	{
 		for (auto& AllocatedResource : AllocatedResources)
@@ -388,6 +421,7 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 			}
 		}
 	}
+	*/
 }
 
 
@@ -396,12 +430,29 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 {
 	if (Key >= 0)
 	{
+		if (!KeyLoop)
+		{
+			if (AllocatedResources.Contains(Key))
+			{
+				TArray<FST_ResourceAllocation>& AllocationList = AllocatedResources[Key];
+
+				// Move allocation here from below ?
+
+			}
+		}
+		return Key;
+	}
+	else
+	{
 		//~~ Generate random key ~~//
 		int32 KeyIndex = FMath::RandRange(0, 1000000);
 		if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
 		{
 			KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, true, Key);
 		}
+		//~~ Call itself to allocate the resource with the right keyindex ~~//
+		AllocateResource(From, ResourceKey, Quantity, Type, false, KeyIndex);
+
 		if (!KeyLoop)
 		{
 			FST_ResourceAllocation Allocation;
@@ -418,29 +469,43 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 			Allocation.ResourceKey = ResourceKey;
 			Allocation.Type = Type;
 			Allocation.Quantity = Quantity;
-			AllocatedResources.Add(KeyIndex, Allocation);
+			//AllocatedResources.Add(KeyIndex, Allocation);
+			AllocatedResources[KeyIndex].Add(Allocation);
 		}
 		//int32 KeyIndex = AllocatedResources.Add(Allocation);
 		return KeyIndex;
 	}
-	else
-	{
-		if (AllocatedResources.Contains(Key))
-		{
-			FST_ResourceAllocation& Allocation = AllocatedResources[Key];
+}
 
+/******************** ResolveTree *************************/
+int32 APOTLStructure::AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Key)
+{
+	int32 Count = 0;
+	int32 KeyIndex;
+	for (auto& Resource : Resources)
+	{
+		if (Count > 0)
+		{
+			AllocateResource(From, Resource.Key, Resource.Value, Type, KeyIndex);
 		}
-		return Key;
+		else
+		{
+			KeyIndex = AllocateResource(From, Resource.Key, Resource.Value, Type, Key);
+		}
+		Count++;
 	}
+	return KeyIndex;
 }
 
 
 /******************** RequestResources *************************/
-void APOTLStructure::RequestResources(APOTLStructure* RequestFrom, TMap<FString, int32>& Request, int32 Sequence, int32 Steps, EAllocationType Type, bool Consume, bool Bubble)
+void APOTLStructure::RequestResources(APOTLStructure* RequestFrom, UFactoryComponent* Factory, TMap<FString, int32>& Request, TMap<FString, int32>& Payoff, int32 Sequence, int32 Steps, EAllocationType Type, bool Consume, bool Bubble)
 {
 	FST_ResourceRequest ResourceRequest;
 	ResourceRequest.From = RequestFrom;
+	ResourceRequest.Factory = Factory;
 	ResourceRequest.Request = Request;
+	ResourceRequest.Payoff = Payoff;
 	ResourceRequest.Sequence = Sequence;
 	ResourceRequest.Steps = Steps;
 	ResourceRequest.Type = Type;

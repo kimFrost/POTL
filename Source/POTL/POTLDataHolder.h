@@ -8,6 +8,7 @@
 
 //~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
+class UFactoryComponent;
 
 
 
@@ -511,8 +512,14 @@ struct FST_ResourceRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	APOTLStructure* From;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	UFactoryComponent* Factory;
+
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	TMap<FString, int32> Request;
+
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	TMap<FString, int32> Payoff;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Sequence;
@@ -535,6 +542,7 @@ struct FST_ResourceRequest
 	FST_ResourceRequest()
 	{
 		From = nullptr;
+		Factory = nullptr;
 		Sequence = 0;
 		Steps = 0;
 		Type = EAllocationType::None;
