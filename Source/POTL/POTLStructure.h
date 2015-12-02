@@ -100,8 +100,6 @@ public:
 	TMap<FString, int32> FreeResources;
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
-	//TArray<FST_ResourceAllocation> AllocatedResources;
-	//TMap<int32, FST_ResourceAllocation> AllocatedResources;
 	TMap<int32, FST_ResourceAllocation> AllocatedResources;
 
 
@@ -143,7 +141,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ProcessResourceRequests();
 
-	UFUNCTION(Category = "Resources")
+	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	bool HasResourcesAvailable(TMap<FString, int32>& Request);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
@@ -156,7 +154,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	int32 AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop, int32 Key);
 
-	UFUNCTION(Category = "Resources")
+	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	TArray<int32> AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Key);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")

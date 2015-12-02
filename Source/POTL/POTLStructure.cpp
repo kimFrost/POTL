@@ -366,7 +366,6 @@ void APOTLStructure::ResolveTree() //~~ Should only for be called on root struct
 /******************** ResolveAllocations *************************/
 void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 {
-	int32 i;
 	//FString TypeAsString;
 	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EAllocationType"), true);
 	//TypeAsString = EnumPtr->GetEnumName(Type);
