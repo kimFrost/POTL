@@ -679,7 +679,7 @@ struct FST_Factory
 
 			//~~ Calculate total singleton length of production ~~//
 			int32 SingletonLength = 0;
-			for (i = 0; i < ValueList.Num(); i++)
+			for (i = 0; i < ValueList.Num(); i++) 
 			{
 				SingletonLength += ValueList[i];
 			}

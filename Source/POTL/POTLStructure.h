@@ -81,6 +81,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool InRangeOfEmitTo;
 
+
 	/** Construction */
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -92,6 +93,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool IsUnderConstruction;
 
+
 	/** Resources */
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
@@ -100,19 +102,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	//TArray<FST_ResourceAllocation> AllocatedResources;
 	//TMap<int32, FST_ResourceAllocation> AllocatedResources;
-	TMap<int32, TArray<FST_ResourceAllocation>> AllocatedResources;
+	TMap<int32, FST_ResourceAllocation> AllocatedResources;
 
-	//UPROPERTY(EditAnywhere, Category = "Resources")
-	//TMap<FString, int32> Resources;
 
-	//UPROPERTY(EditAnywhere, Category = "Resources")
-	//TMap<FString, int32> ResourceAlterations;
-	
-	//UPROPERTY(EditAnywhere, Category = "Resources")
-	//TMap<FString, int32> ResourceRequirements;
-
-	//UPROPERTY(EditAnywhere, Category = "Resources")
-	//TMap<FString, int32> ResourcesPromisedAway;
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
 	TArray<FST_ResourceRequest> ResourceRequests;
@@ -151,7 +143,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ProcessResourceRequests();
 
-	UFUNCTION(BlueprintCallable, Category = "Resources")
+	UFUNCTION(Category = "Resources")
 	bool HasResourcesAvailable(TMap<FString, int32>& Request);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
@@ -160,11 +152,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveAllocations(EAllocationType Type, bool Broadcast);
 
+
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	int32 AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop, int32 Key);
 
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	int32 AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Key);
+	UFUNCTION(Category = "Resources")
+	TArray<int32> AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Key);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveUpkeep(bool Broadcast);

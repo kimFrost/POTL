@@ -115,16 +115,11 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 	case EResourceList::Allocations:
 		for (auto& AllocatedResource : AllocatedResources)
 		{
-			//FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-			TArray<FST_ResourceAllocation>& AllocationList = AllocatedResource.Value;
-			for (int32 i = 0; i < AllocationList.Num(); i++)
-			{
-				FST_ResourceAllocation& Allocation = AllocationList[i];
-				FST_Resource Resource;
-				Resource.Id = Allocation.ResourceKey;
-				Resource.Quantity = Allocation.Quantity;
-				List.Add(Resource);
-			}
+			FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+			FST_Resource Resource;
+			Resource.Id = Allocation.ResourceKey;
+			Resource.Quantity = Allocation.Quantity;
+			List.Add(Resource);
 		}
 		break;
 	default:
@@ -432,29 +427,6 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 	{
 		if (!KeyLoop)
 		{
-			if (AllocatedResources.Contains(Key))
-			{
-				TArray<FST_ResourceAllocation>& AllocationList = AllocatedResources[Key];
-
-				// Move allocation here from below ?
-
-			}
-		}
-		return Key;
-	}
-	else
-	{
-		//~~ Generate random key ~~//
-		int32 KeyIndex = FMath::RandRange(0, 1000000);
-		if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
-		{
-			KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, true, Key);
-		}
-		//~~ Call itself to allocate the resource with the right keyindex ~~//
-		AllocateResource(From, ResourceKey, Quantity, Type, false, KeyIndex);
-
-		if (!KeyLoop)
-		{
 			FST_ResourceAllocation Allocation;
 			Allocation.From = From;
 			//Allocation.To = this;
@@ -469,32 +441,42 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 			Allocation.ResourceKey = ResourceKey;
 			Allocation.Type = Type;
 			Allocation.Quantity = Quantity;
-			//AllocatedResources.Add(KeyIndex, Allocation);
-			AllocatedResources[KeyIndex].Add(Allocation);
+			if (AllocatedResources.Contains(Key))
+			{
+				//~~ Overwrite existing allocation ~~//
+				AllocatedResources[Key] = Allocation;
+			}
+			else 
+			{
+				AllocatedResources.Add(Key, Allocation);
+			}
 		}
-		//int32 KeyIndex = AllocatedResources.Add(Allocation);
+		return Key;
+	}
+	else
+	{
+		//~~ Generate random key ~~//
+		int32 KeyIndex = FMath::RandRange(0, 1000000);
+		if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
+		{
+			KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, true, Key);
+		}
+		//~~ Call itself to allocate the resource with the right keyindex ~~//
+		AllocateResource(From, ResourceKey, Quantity, Type, false, KeyIndex);
 		return KeyIndex;
 	}
 }
 
 /******************** ResolveTree *************************/
-int32 APOTLStructure::AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Key)
+TArray<int32> APOTLStructure::AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Key)
 {
-	int32 Count = 0;
-	int32 KeyIndex;
+	TArray<int32> KeyIndexes;
 	for (auto& Resource : Resources)
 	{
-		if (Count > 0)
-		{
-			AllocateResource(From, Resource.Key, Resource.Value, Type, KeyIndex);
-		}
-		else
-		{
-			KeyIndex = AllocateResource(From, Resource.Key, Resource.Value, Type, Key);
-		}
-		Count++;
+		int32 KeyIndex = AllocateResource(From, Resource.Key, Resource.Value, Type, false, -1);
+		KeyIndexes.Add(KeyIndex);
 	}
-	return KeyIndex;
+	return KeyIndexes;
 }
 
 
