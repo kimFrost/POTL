@@ -376,15 +376,28 @@ void APOTLStructure::ProcessResourceRequests()
 		for (int32 ii = 0; ii < RequestList.Num(); ii++)
 		{
 			FST_ResourceRequest& ResourceRequest = RequestList[ii];
-			//~~ If sequene is over zero, then check previous request for their production ~~//
-			if (i > 0)
+			if (i > 0) //~~ If sequene is over zero, then check previous request for their production ~~//
 			{
 				FST_ResourceRequest ResourceRequestCopy = ResourceRequest;
-				//if (ResourceRequest.Payoff && ResourceRequest.RequestMet)
-
 				//~~ First take from storage ~~//
-
+				if (HasResourcesAvailable(ResourceRequest.Request)) //~~ If self has the resources required ~~//
+				{
+					TArray<int32> AllocationIndexes;
+					for (auto& ResourceRequest : ResourceRequest.Request)
+					{
+						int32 AllocationIndex = AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::FactoryBilling, false, -1);
+						AllocationIndexes.Add(AllocationIndex);
+					}
+				}
 				//~~ Then take from production. It will result in the 'old' resources gets used first ~~//
+				for (int32 iii = 0; iii < ii; iii++) //~~ Only item with lower sequence number ~~//
+				{
+					FST_ResourceRequest& PrevResourceRequest = RequestList[iii];
+					
+
+				}
+
+				//if (ResourceRequest.Payoff && ResourceRequest.RequestMet)
 
 			}
 			else
