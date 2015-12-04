@@ -241,7 +241,7 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 				RequestResources(this, Factory, FactoryBilling, Factory->Invoice, 0, 100, EAllocationType::FactoryBilling, true, true); //~~ RequestResources doens't know how to handle negative values ~~//
 				for (auto& Resource : FactoryProduction)
 				{
-					AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, false, -1);
+					//AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ?recipe SEquenCE missing?, false, -1);
 				}
 			}
 		}
@@ -376,43 +376,42 @@ void APOTLStructure::ProcessResourceRequests()
 		for (int32 ii = 0; ii < RequestList.Num(); ii++)
 		{
 			FST_ResourceRequest& ResourceRequest = RequestList[ii];
-			if (i > 0) //~~ If sequene is over zero, then check previous request for their production ~~//
+			FST_ResourceRequest ResourceRequestCopy = ResourceRequest;
+
+			// Temp allocate and check total avaiable. total of free and production
+
+			//~~ First take from storage ~~//
+			if (HasResourcesAvailable(ResourceRequest.Request, true, ii)) //~~ If self has the resources required ~~//
 			{
-				FST_ResourceRequest ResourceRequestCopy = ResourceRequest;
-				//~~ First take from storage ~~//
-				if (HasResourcesAvailable(ResourceRequest.Request)) //~~ If self has the resources required ~~//
+				TArray<int32> AllocationIndexes;
+				for (auto& Resource : ResourceRequest.Request)
 				{
-					TArray<int32> AllocationIndexes;
-					for (auto& ResourceRequest : ResourceRequest.Request)
-					{
-						int32 AllocationIndex = AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::FactoryBilling, false, -1);
-						AllocationIndexes.Add(AllocationIndex);
-					}
+					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryBilling, ii, false, -1);
+					AllocationIndexes.Add(AllocationIndex);
 				}
-				//~~ Then take from production. It will result in the 'old' resources gets used first ~~//
+				for (auto& Resource : ResourceRequest.Payoff)
+				{
+
+				}
+				ResourceRequest.RequestMet = true;
+			}
+			//~~ Then take from production. It will result in the 'old' resources gets used first ~~//
+			/*
+			if (i > 0)
+			{
 				for (int32 iii = 0; iii < ii; iii++) //~~ Only item with lower sequence number ~~//
 				{
 					FST_ResourceRequest& PrevResourceRequest = RequestList[iii];
-					
-
-				}
-
-				//if (ResourceRequest.Payoff && ResourceRequest.RequestMet)
-
-			}
-			else
-			{
-				//~~ Take from storage/FreeResources
-				if (HasResourcesAvailable(ResourceRequest.Request)) //~~ If self has the resources required ~~//
-				{
-					TArray<int32> AllocationIndexes;
-					for (auto& ResourceRequest : ResourceRequest.Request)
+					if (PrevResourceRequest.RequestMet)
 					{
-						int32 AllocationIndex = AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, EAllocationType::FactoryBilling, false, -1);
-						AllocationIndexes.Add(AllocationIndex);
+						if (PrevResourceRequest.Payoff.Num() > 0)
+						{
+
+						}
 					}
 				}
 			}
+			*/
 		}
 	}
 
@@ -423,17 +422,43 @@ void APOTLStructure::ProcessResourceRequests()
 
 
 /******************** HasResourcesAvailable *************************/
-bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request)
+bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool IncludeAllocations, int32 Sequence)
 {
 	bool RequestMet = true;
 	for (auto& ResourceRequest : Request)
 	{
 		if (FreeResources.Contains(ResourceRequest.Key))
 		{
-			if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
+			int32 Remaining = ResourceRequest.Value;
+			if (Remaining > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
 			{
 				RequestMet = false;
-				break;
+				Remaining = Remaining - FreeResources[ResourceRequest.Key]; //~~ Update total remaining of resource, for this resource in request to be met ~~//
+			}
+			//~~ If the current requested resource isn't available in storage, then check allocations  ~~//
+			if (IncludeAllocations && !RequestMet) 
+			{
+				for (auto& AllocatedResource : AllocatedResources)
+				{
+					FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+					if (Allocation.Sequence < Sequence) //~~ If allocation has a lower sequence than the check ~~//
+					{
+						if (Allocation.ResourceKey == ResourceRequest.Key) //~~ If resource is the same ~~//
+						{
+							if (Remaining > Allocation.Quantity)
+							{
+								//! How to make comparison from multiple allocations ?
+								//! Combined list of all of resource type, with combined total for check?
+							}
+							else
+							{
+								Remaining = 0;
+								RequestMet = true; //~~ Specific resource request is now met, move on to next in loop ~~//
+								break; //~~ Break allocation loop and return to resource request loop ~~//
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -443,7 +468,7 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request)
 
 
 /******************** ResolveTree *************************/
-int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, bool KeyLoop, int32 Key)
+int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool KeyLoop, int32 Key)
 {
 	if (Key >= 0)
 	{
@@ -463,6 +488,7 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 			Allocation.ResourceKey = ResourceKey;
 			Allocation.Type = Type;
 			Allocation.Quantity = Quantity;
+			Allocation.Sequence = Sequence;
 			if (AllocatedResources.Contains(Key))
 			{
 				//~~ Overwrite existing allocation ~~//
@@ -481,21 +507,21 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 		int32 KeyIndex = FMath::RandRange(0, 1000000);
 		if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
 		{
-			KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, true, Key);
+			KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, Sequence, true, Key);
 		}
 		//~~ Call itself to allocate the resource with the right keyindex ~~//
-		AllocateResource(From, ResourceKey, Quantity, Type, false, KeyIndex);
+		AllocateResource(From, ResourceKey, Quantity, Type, Sequence, false, KeyIndex);
 		return KeyIndex;
 	}
 }
 
 /******************** ResolveTree *************************/
-TArray<int32> APOTLStructure::AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Key)
+TArray<int32> APOTLStructure::AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Sequence, int32 Key)
 {
 	TArray<int32> KeyIndexes;
 	for (auto& Resource : Resources)
 	{
-		int32 KeyIndex = AllocateResource(From, Resource.Key, Resource.Value, Type, false, -1);
+		int32 KeyIndex = AllocateResource(From, Resource.Key, Resource.Value, Type, Sequence, false, -1);
 		KeyIndexes.Add(KeyIndex);
 	}
 	return KeyIndexes;

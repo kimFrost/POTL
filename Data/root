@@ -14,12 +14,20 @@
 
 
 
-0 Reg Food
-0 Reg Food
-0 Reg Food
-1 Reg WP (Take from [< 1])
-2 Reg WP + Wheat (Take from [< 2])
-3 Reg WP + Flour (Take from [< 3])
+
+Storage:
+Wheat x 3
+
+Factories:
+0 Reg Food 				-> WP
+0 Reg Food 				-> WP
+0 Reg Food 				-> WP
+1 Reg WP 				-> Wheat x 1
+2 Reg WP + Wheat x 4 	-> Flour x 4
+3 Reg WP + Flour x 4 	-> Bread x 2
+
+
+
 
 
 
