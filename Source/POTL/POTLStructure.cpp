@@ -376,22 +376,25 @@ void APOTLStructure::ProcessResourceRequests()
 		for (int32 ii = 0; ii < RequestList.Num(); ii++)
 		{
 			FST_ResourceRequest& ResourceRequest = RequestList[ii];
-			FST_ResourceRequest ResourceRequestCopy = ResourceRequest;
-
-			// Temp allocate and check total avaiable. total of free and production
-
 			//~~ First take from storage ~~//
 			if (HasResourcesAvailable(ResourceRequest.Request, true, ii)) //~~ If self has the resources required ~~//
 			{
 				TArray<int32> AllocationIndexes;
 				for (auto& Resource : ResourceRequest.Request)
 				{
-					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryBilling, ii, false, -1);
+					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
 					AllocationIndexes.Add(AllocationIndex);
+
+					for (auto& AllocatedResource : AllocatedResources)
+					{
+						FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+
+					}
 				}
 				for (auto& Resource : ResourceRequest.Payoff)
 				{
-
+					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ?
+					AllocationIndexes.Add(AllocationIndex);
 				}
 				ResourceRequest.RequestMet = true;
 			}
@@ -425,6 +428,38 @@ void APOTLStructure::ProcessResourceRequests()
 bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool IncludeAllocations, int32 Sequence)
 {
 	bool RequestMet = true;
+	TMap<FString, int32> ResourceAvailable = FreeResources; //~~ Copy resources ~~//
+	//~~ Append all allocated resources  with lower sequence to available resources ~~//
+	if (IncludeAllocations) 
+	{
+		for (auto& AllocatedResource : AllocatedResources)
+		{
+			FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+			if (Allocation.Sequence < Sequence && Allocation.Type == EAllocationType::FactoryProduction) //~~ If allocation has a lower sequence than the check ~~//
+			{
+				if (ResourceAvailable.Contains(Allocation.ResourceKey))		ResourceAvailable[Allocation.ResourceKey] = ResourceAvailable[Allocation.ResourceKey] + Allocation.Quantity;
+				else														ResourceAvailable.Add(Allocation.ResourceKey, Allocation.Quantity);
+			}
+		}
+	}
+	for (auto& ResourceRequest : Request)
+	{
+		if (ResourceAvailable.Contains(ResourceRequest.Key))
+		{
+			int32 Remaining = ResourceRequest.Value;
+			if (Remaining > ResourceAvailable[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
+			{
+				RequestMet = false;
+				break;
+			}
+		}
+		else
+		{
+			RequestMet = false;
+			break;
+		}
+	}
+	/*
 	for (auto& ResourceRequest : Request)
 	{
 		if (FreeResources.Contains(ResourceRequest.Key))
@@ -462,6 +497,7 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 			}
 		}
 	}
+	*/
 	return RequestMet;
 }
 
