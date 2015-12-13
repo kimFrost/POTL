@@ -353,7 +353,7 @@ void APOTLStructure::ProcessResourceRequests()
 			HighestSequence = ResourceRequest.Sequence;
 		}
 	}
-	//~~ Init SortedResourceRequests ~~//
+	//~~ Init SortedResourceRequests. Make empty arrays ~~//
 	for (i = 0; i <= HighestSequence; i++)
 	{
 		TArray<FST_ResourceRequest> List;
@@ -368,58 +368,61 @@ void APOTLStructure::ProcessResourceRequests()
 		{
 			SortedResourceRequests[Sequence].Add(ResourceRequest);
 		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(71, 15.0f, FColor::Red, "ERROR: SortedResourceRequests could not recivce request with a sequence not found ");
+		}
 	}
 	//~~ Allocate and process the requests ~~//
 	for (i = 0; i <= HighestSequence; i++) //~~ Handle the request from sequence zero and up ~~//
 	{
 		TArray<FST_ResourceRequest>& RequestList = SortedResourceRequests[i];
-		for (int32 ii = 0; ii < RequestList.Num(); ii++)
+		for (int32 ii = 0; ii < RequestList.Num(); ii++) // Loop through sequence row list. Ex 0[{R}, {R}, {R}]
 		{
 			FST_ResourceRequest& ResourceRequest = RequestList[ii];
-			//~~ First take from storage ~~//
 			if (HasResourcesAvailable(ResourceRequest.Request, true, ii)) //~~ If self has the resources required ~~//
 			{
 				TArray<int32> AllocationIndexes;
-				for (auto& Resource : ResourceRequest.Request)
+				//~~ Requirements ~~//
+				for (auto& Resource : ResourceRequest.Request) //~~ Loop each resource in request ~~//
 				{
-					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
-					AllocationIndexes.Add(AllocationIndex);
-
-					for (auto& AllocatedResource : AllocatedResources)
+					//! This is not correct. I think. Should only allocate based on resource available. 
+					//! Some of it might have to be allocated from another allocation.
+					//! AllocateResource with group id for grouping multiple allocations?
+					if (FreeResources.Contains(Resource.Key))
 					{
-						FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+						int32 AvailableQuantity = FreeResources[Resource.Key] - (Resource.Value + FreeResources[Resource.Key]); //! NOT CORRECT.
+						int32 AllocationIndex = AllocateResource(this, Resource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
+						AllocationIndexes.Add(AllocationIndex);
+						Resource.Value = Resource.Value - AvailableQuantity;
+					}
+					if (Resource.Value > 0) //~~ If freeresources couldn't meet the requiement of the resource quantity ~~//
+					{
+						for (auto& AllocatedResource : AllocatedResources)
+						{
+							FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+							if (Allocation.Type != EAllocationType::FactoryBilling)
+							{
 
+							}
+						}
 					}
 				}
-				for (auto& Resource : ResourceRequest.Payoff)
+				//~~ Payoff ~~//
+				for (auto& Resource : ResourceRequest.Payoff) //~~ Loop each resource in payoff ~~//
 				{
-					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ?
+					//~~ Allocate production/payoff to self ~~//
+					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not.
 					AllocationIndexes.Add(AllocationIndex);
 				}
 				ResourceRequest.RequestMet = true;
 			}
-			//~~ Then take from production. It will result in the 'old' resources gets used first ~~//
-			/*
-			if (i > 0)
-			{
-				for (int32 iii = 0; iii < ii; iii++) //~~ Only item with lower sequence number ~~//
-				{
-					FST_ResourceRequest& PrevResourceRequest = RequestList[iii];
-					if (PrevResourceRequest.RequestMet)
-					{
-						if (PrevResourceRequest.Payoff.Num() > 0)
-						{
+			else
+			{ 
 
-						}
-					}
-				}
 			}
-			*/
 		}
 	}
-
-	// What about a request gets resources from multiple sources 
-
 }
 
 
