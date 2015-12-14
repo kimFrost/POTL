@@ -126,7 +126,7 @@ public:
 	APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
 	
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	APOTLStructure* PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
+	APOTLStructure* PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild, bool IsPlaceholder);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void RemoveStructure(APOTLStructure* Structure);

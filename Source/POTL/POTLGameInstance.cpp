@@ -345,7 +345,7 @@ bool UPOTLGameInstance::IsHexTerrainBuildable(const FST_Hex& Hex)
 APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
 {
 	APOTLStructure* Structure = nullptr;
-	Structure = PlantStructure(CubeCoord, RotationDirection, RowName, TreeId, EmitTo, InstaBuild);
+	Structure = PlantStructure(CubeCoord, RotationDirection, RowName, TreeId, EmitTo, InstaBuild, true);
 	if (Structure)
 	{
 		Structure->IsPlaceholder = true;
@@ -356,7 +356,7 @@ APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, 
 
 
 /******************** PlantStructure *************************/
-APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
+APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild, bool IsPlaceholder)
 {
 	APOTLStructure* Structure = nullptr;
 	if (Landscape && DATA_Structures)
@@ -441,7 +441,11 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 					Structure->StructureBaseData = *StructureData;
 					Structure->BroadcastRange = StructureData->BaseBroadcastRange; //!! Use a read/load function instead
 					Structure->StructureBaseData.RotationDirection = RotationDirection;
+					Structure->IsPlaceholder = IsPlaceholder;
+					if (Structure->IsPlaceholder)
+					{
 
+					}
 					//~~ Create Broadcast/Emit Connection ~~//
 					if (EmitTo)
 					{
