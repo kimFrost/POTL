@@ -457,6 +457,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 			}
 		}
 	}
+	OnStructurePlanted.Broadcast(Structure);
 	return Structure;
 }
 

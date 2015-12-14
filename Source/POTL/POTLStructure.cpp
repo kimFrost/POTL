@@ -207,6 +207,7 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 				{
 					int32 Sequence = Factory->ProcessInvoice(GameInstance->DATA_Recipes);
 					//RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
+					// Store all requests in root
 					this->Root->RequestResources(this, Factory, Factory->Requirements, Factory->Invoice, Sequence, 0, EAllocationType::RequestDirect, false, true);
 				}
 			}
@@ -249,6 +250,7 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 }
 
 
+
 /******************** MakeTreeAllocations *************************/
 void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on root structures
 {
@@ -262,6 +264,7 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 }
 
 
+
 /******************** ResolveTree *************************/
 void APOTLStructure::ResolveTree() //~~ Should only for be called on root structures
 {
@@ -270,7 +273,7 @@ void APOTLStructure::ResolveTree() //~~ Should only for be called on root struct
 		//ResolveUpkeep(true);
 		//ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
 		//ResolveFactories(true);
-		//ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
+		ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
 	}
 
 	/*
@@ -279,6 +282,7 @@ void APOTLStructure::ResolveTree() //~~ Should only for be called on root struct
 	GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 5.0f, false);
 	*/
 }
+
 
 
 /******************** ResolveAllocations *************************/
@@ -297,7 +301,6 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 		}
 	}
 	//~~ Resolve self / The function logic ~~//
-	/*
 	for (auto& AllocatedResource : AllocatedResources)
 	{
 		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
@@ -315,25 +318,6 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 			}
 		}
 	}
-	*/
-	//~~ Check for sequence and handle it ~~// //!! Will I even need this for resolve. 
-	/*
-	for (i = 0; i < 8; i++) //~~ 8 is just a random static guess. Should be higher properly ~~//
-	{
-		for (auto& AllocatedResource : AllocatedResources)
-		{
-			if (Type == EAllocationType::Sequence)
-			{
-				FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-				if (Allocation.Sequence == i) //~~ Resolve allocation with sequence, if same as static loop integer ~~//
-				{
-					Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
-					AllocatedResources.Remove(AllocatedResource.Key);
-				}
-			}
-		}
-	}
-	*/
 }
 
 
@@ -370,7 +354,7 @@ void APOTLStructure::ProcessResourceRequests()
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(71, 15.0f, FColor::Red, "ERROR: SortedResourceRequests could not recivce request with a sequence not found ");
+			GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Red, "ERROR: SortedResourceRequests could not recivce request with a sequence not found ");
 		}
 	}
 	//~~ Allocate and process the requests ~~//
@@ -384,26 +368,43 @@ void APOTLStructure::ProcessResourceRequests()
 			{
 				TArray<int32> AllocationIndexes;
 				//~~ Requirements ~~//
-				for (auto& Resource : ResourceRequest.Request) //~~ Loop each resource in request ~~//
+				for (auto& ReqResource : ResourceRequest.Request) //~~ Loop each resource in request ~~//
 				{
-					//! This is not correct. I think. Should only allocate based on resource available. 
-					//! Some of it might have to be allocated from another allocation.
 					//! AllocateResource with group id for grouping multiple allocations?
-					if (FreeResources.Contains(Resource.Key))
+					if (FreeResources.Contains(ReqResource.Key))
 					{
-						int32 AvailableQuantity = FreeResources[Resource.Key] - (Resource.Value + FreeResources[Resource.Key]); //! NOT CORRECT.
-						int32 AllocationIndex = AllocateResource(this, Resource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
+						int32 AvailableQuantity = FreeResources[ReqResource.Key];
+						if (AvailableQuantity > ReqResource.Value)
+						{
+							AvailableQuantity = ReqResource.Value;
+						}
+						int32 AllocationIndex = AllocateResource(this, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
 						AllocationIndexes.Add(AllocationIndex);
-						Resource.Value = Resource.Value - AvailableQuantity;
+						ReqResource.Value = ReqResource.Value - AvailableQuantity;
 					}
-					if (Resource.Value > 0) //~~ If freeresources couldn't meet the requiement of the resource quantity ~~//
+					if (ReqResource.Value > 0) //~~ If freeresources couldn't meet the requiement of the resource quantity ~~//
 					{
 						for (auto& AllocatedResource : AllocatedResources)
 						{
 							FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-							if (Allocation.Type != EAllocationType::FactoryBilling)
+							if (Allocation.Sequence < ResourceRequest.Sequence && Allocation.Type == EAllocationType::FactoryProduction && Allocation.Quantity > 0)
 							{
-
+								int32 AvailableQuantity = Allocation.Quantity;
+								if (AvailableQuantity > ReqResource.Value)
+								{
+									AvailableQuantity = ReqResource.Value;
+								}
+								//! What to do here? How do I move allocations, so that it is clear to the player?
+								//! (BEGIN)
+								int32 AllocationIndex = AllocateResource(this, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
+								AllocationIndexes.Add(AllocationIndex);
+								Allocation.Quantity = Allocation.Quantity - AvailableQuantity; //! This will not give a clear picture of what is happening. How to I Reallocate an allocation, or split it into two, so it is clear to the user?
+								//! (END)
+								ReqResource.Value = ReqResource.Value - AvailableQuantity;
+							}
+							if (ReqResource.Value == 0)
+							{
+								break;
 							}
 						}
 					}
@@ -412,7 +413,7 @@ void APOTLStructure::ProcessResourceRequests()
 				for (auto& Resource : ResourceRequest.Payoff) //~~ Loop each resource in payoff ~~//
 				{
 					//~~ Allocate production/payoff to self ~~//
-					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not.
+					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
 					AllocationIndexes.Add(AllocationIndex);
 				}
 				ResourceRequest.RequestMet = true;
@@ -438,7 +439,7 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 		for (auto& AllocatedResource : AllocatedResources)
 		{
 			FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-			if (Allocation.Sequence < Sequence && Allocation.Type == EAllocationType::FactoryProduction) //~~ If allocation has a lower sequence than the check ~~//
+			if (Allocation.Sequence < Sequence && Allocation.Type == EAllocationType::FactoryProduction && Allocation.Quantity > 0) //~~ If allocation has a lower sequence than the check ~~//
 			{
 				if (ResourceAvailable.Contains(Allocation.ResourceKey))		ResourceAvailable[Allocation.ResourceKey] = ResourceAvailable[Allocation.ResourceKey] + Allocation.Quantity;
 				else														ResourceAvailable.Add(Allocation.ResourceKey, Allocation.Quantity);
@@ -462,45 +463,6 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 			break;
 		}
 	}
-	/*
-	for (auto& ResourceRequest : Request)
-	{
-		if (FreeResources.Contains(ResourceRequest.Key))
-		{
-			int32 Remaining = ResourceRequest.Value;
-			if (Remaining > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
-			{
-				RequestMet = false;
-				Remaining = Remaining - FreeResources[ResourceRequest.Key]; //~~ Update total remaining of resource, for this resource in request to be met ~~//
-			}
-			//~~ If the current requested resource isn't available in storage, then check allocations  ~~//
-			if (IncludeAllocations && !RequestMet) 
-			{
-				for (auto& AllocatedResource : AllocatedResources)
-				{
-					FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-					if (Allocation.Sequence < Sequence) //~~ If allocation has a lower sequence than the check ~~//
-					{
-						if (Allocation.ResourceKey == ResourceRequest.Key) //~~ If resource is the same ~~//
-						{
-							if (Remaining > Allocation.Quantity)
-							{
-								//! How to make comparison from multiple allocations ?
-								//! Combined list of all of resource type, with combined total for check?
-							}
-							else
-							{
-								Remaining = 0;
-								RequestMet = true; //~~ Specific resource request is now met, move on to next in loop ~~//
-								break; //~~ Break allocation loop and return to resource request loop ~~//
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	*/
 	return RequestMet;
 }
 
