@@ -128,6 +128,19 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 	return List;
 }
 
+
+/******************** GetAllocationsAsList *************************/
+TArray<FST_ResourceAllocation> APOTLStructure::GetAllocationsAsList()
+{
+	TArray<FST_ResourceAllocation> List;
+	for (auto& AllocatedResource : AllocatedResources)
+	{
+		List.Add(AllocatedResource.Value);
+	}
+	return List;
+}
+
+
 /******************** GetResourcesAsList *************************/
 void APOTLStructure::OptimizeAllocatedResources()
 {
@@ -146,6 +159,7 @@ void APOTLStructure::OptimizeAllocatedResources()
 	}
 	*/
 }
+
 
 /******************** CalculateUpkeep *************************/
 void APOTLStructure::CalculateUpkeep(bool Broadcast)
@@ -166,6 +180,7 @@ void APOTLStructure::CalculateUpkeep(bool Broadcast)
 	}
 }
 
+
 /******************** ResolveUpkeep *************************/
 void APOTLStructure::ResolveUpkeep(bool Broadcast)
 {
@@ -182,6 +197,7 @@ void APOTLStructure::ResolveUpkeep(bool Broadcast)
 	//~~ Resolve upkeep ~~//
 	//RequestResources(this, ResourceUpkeep, 0, 0, EAllocationType::RequestDirect, false, true); //~~ Do self have the required resources ~~//
 }
+
 
 
 /******************** ProcessFactories *************************/
@@ -214,6 +230,8 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 		}
 	}
 }
+
+
 
 /******************** ResolveFactories *************************/
 void APOTLStructure::ResolveFactories(bool Broadcast)

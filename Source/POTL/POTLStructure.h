@@ -130,6 +130,9 @@ public:
 	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
+	TArray<FST_ResourceAllocation> GetAllocationsAsList();
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void OptimizeAllocatedResources();
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
