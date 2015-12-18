@@ -396,7 +396,8 @@ void APOTLStructure::ProcessResourceRequests()
 						{
 							AvailableQuantity = ReqResource.Value;
 						}
-						int32 AllocationIndex = AllocateResource(this, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
+						//int32 AllocationIndex = AllocateResource(this, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
+						int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
 						AllocationIndexes.Add(AllocationIndex);
 						ReqResource.Value = ReqResource.Value - AvailableQuantity;
 					}
@@ -414,7 +415,7 @@ void APOTLStructure::ProcessResourceRequests()
 								}
 								//! What to do here? How do I move allocations, so that it is clear to the player?
 								//! (BEGIN)
-								int32 AllocationIndex = AllocateResource(this, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
+								int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
 								AllocationIndexes.Add(AllocationIndex);
 								Allocation.Quantity = Allocation.Quantity - AvailableQuantity; //! This will not give a clear picture of what is happening. How to I Reallocate an allocation, or split it into two, so it is clear to the user?
 								//! (END)
