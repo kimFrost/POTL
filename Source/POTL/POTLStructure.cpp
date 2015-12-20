@@ -344,7 +344,8 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 		{
 			if (Allocation.Type == EAllocationType::FactoryBilling)
 			{
-
+				Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity * -1, EResourceList::Free); //!! Might not be all safe to do it with just a negative value.
+				AllocatedResources.Remove(AllocatedResource.Key);
 			}
 			else
 			{
