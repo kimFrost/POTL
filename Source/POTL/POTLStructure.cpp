@@ -278,6 +278,24 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 		CalculateUpkeep(true);
 		ProcessFactories(true);
 		ProcessResourceRequests();
+
+		//~~ Make a flow map of resources based on allocations stored in this structure ~~//
+		//TMap<APOTLStructure*, TArray<FST_ResourceAllocation>> ResourceFlowMap;
+		ResourceFlowMap.Empty();
+		for (auto& AllocatedResource : AllocatedResources)
+		{
+			FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+			if (ResourceFlowMap.Contains(Allocation.From))
+			{
+				ResourceFlowMap[Allocation.From].Add(Allocation);
+			}
+			else
+			{
+				TArray<FST_ResourceAllocation> List;
+				List.Add(Allocation);
+				ResourceFlowMap.Add(Allocation.From, List);
+			}
+		}
 	}
 }
 
@@ -290,7 +308,7 @@ void APOTLStructure::ResolveTree() //~~ Should only for be called on root struct
 	{
 		//ResolveUpkeep(true);
 		//ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
-		//ResolveFactories(true);
+		//ResolveFactories(true); // is done by ResolveAllocations now!
 		ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
 	}
 
@@ -322,14 +340,13 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 	for (auto& AllocatedResource : AllocatedResources)
 	{
 		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-		if (Type == EAllocationType::All)
+		if (Type == EAllocationType::All || Allocation.Type == Type)
 		{
-			Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
-			AllocatedResources.Remove(AllocatedResource.Key);
-		}
-		else
-		{
-			if (Allocation.Type == Type)
+			if (Allocation.Type == EAllocationType::FactoryBilling)
+			{
+
+			}
+			else
 			{
 				Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
 				AllocatedResources.Remove(AllocatedResource.Key);
@@ -401,7 +418,7 @@ void APOTLStructure::ProcessResourceRequests()
 						AllocationIndexes.Add(AllocationIndex);
 						ReqResource.Value = ReqResource.Value - AvailableQuantity;
 					}
-					if (ReqResource.Value > 0) //~~ If freeresources couldn't meet the requiement of the resource quantity ~~//
+					if (ReqResource.Value > 0) //~~ If freeresources couldn't meet the requiement of the resource quantity, then make reallocations ~~//
 					{
 						for (auto& AllocatedResource : AllocatedResources)
 						{
@@ -432,7 +449,8 @@ void APOTLStructure::ProcessResourceRequests()
 				for (auto& Resource : ResourceRequest.Payoff) //~~ Loop each resource in payoff ~~//
 				{
 					//~~ Allocate production/payoff to self ~~//
-					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					//int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					int32 AllocationIndex = AllocateResource(ResourceRequest.From, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
 					AllocationIndexes.Add(AllocationIndex);
 				}
 				ResourceRequest.RequestMet = true;
@@ -618,6 +636,18 @@ void APOTLStructure::RequestResources(APOTLStructure* RequestFrom, UFactoryCompo
 		EmitTo->RequestResources(Bubble, RequestFrom, Request, Steps, EAllocationType::RequestDirect, Consume);
 	}
 	*/
+}
+
+
+/******************** GetStructureResourceFlow *************************/
+TArray<FST_ResourceAllocation> APOTLStructure::GetStructureResourceFlow(APOTLStructure* Structure)
+{
+	TArray<FST_ResourceAllocation> ReturnList;
+	if (ResourceFlowMap.Contains(Structure))
+	{
+		ReturnList = ResourceFlowMap[Structure];
+	}
+	return ReturnList;
 }
 
 
