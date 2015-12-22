@@ -452,7 +452,8 @@ void APOTLStructure::ProcessResourceRequests()
 				{
 					//~~ Allocate production/payoff to self ~~//
 					//int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
-					int32 AllocationIndex = AllocateResource(ResourceRequest.From, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					//int32 AllocationIndex = AllocateResource(ResourceRequest.From->Root, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
 					AllocationIndexes.Add(AllocationIndex);
 				}
 				ResourceRequest.RequestMet = true;
@@ -508,40 +509,48 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 
 
 /******************** ResolveTree *************************/
-int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool KeyLoop, int32 Key)
+int32 APOTLStructure::AllocateResource(APOTLStructure* To, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool KeyLoop, int32 Key)
 {
 	if (Key >= 0)
 	{
 		if (!KeyLoop)
 		{
 			FST_ResourceAllocation Allocation;
-			Allocation.From = From;
-			//Allocation.To = this;
+			Allocation.To = To;
 			if (this->IsRoot)
 			{
-				Allocation.To = this; //~~ Always send to root for now ~~//
+				Allocation.From = this; //~~ Always send to root for now ~~//
 			}
 			else
 			{
-				Allocation.To = this->Root;
+				Allocation.From = this->Root;
 			}
 			Allocation.ResourceKey = ResourceKey;
 			Allocation.Type = Type;
 			Allocation.Quantity = Quantity;
 			Allocation.Sequence = Sequence;
-			//~~ Remove resources from FreeResources on this ~~//
-			if (FreeResources.Contains(ResourceKey) && FreeResources[ResourceKey] >= Quantity)
+
+			if (Allocation.Type == EAllocationType::FactoryProduction)
 			{
-				FreeResources[ResourceKey] = FreeResources[ResourceKey] - Quantity;
-				if (FreeResources[ResourceKey] == 0)
-				{
-					FreeResources.Remove(ResourceKey);
-				}
+
 			}
 			else
 			{
-				return Key; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
+				//~~ Remove resources from FreeResources on this ~~//
+				if (FreeResources.Contains(ResourceKey) && FreeResources[ResourceKey] >= Quantity)
+				{
+					FreeResources[ResourceKey] = FreeResources[ResourceKey] - Quantity;
+					if (FreeResources[ResourceKey] == 0)
+					{
+						FreeResources.Remove(ResourceKey);
+					}
+				}
+				else
+				{
+					return Key; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
+				}
 			}
+			
 			//~~ Add the allocation ~~//
 			if (AllocatedResources.Contains(Key))
 			{
@@ -561,21 +570,21 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 		int32 KeyIndex = FMath::RandRange(0, 1000000);
 		if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
 		{
-			KeyIndex = AllocateResource(From, ResourceKey, Quantity, Type, Sequence, true, Key);
+			KeyIndex = AllocateResource(To, ResourceKey, Quantity, Type, Sequence, true, Key);
 		}
 		//~~ Call itself to allocate the resource with the right keyindex ~~//
-		AllocateResource(From, ResourceKey, Quantity, Type, Sequence, false, KeyIndex);
+		AllocateResource(To, ResourceKey, Quantity, Type, Sequence, false, KeyIndex);
 		return KeyIndex;
 	}
 }
 
 /******************** ResolveTree *************************/
-TArray<int32> APOTLStructure::AllocateResources(APOTLStructure* From, TMap<FString, int32>& Resources, EAllocationType Type, int32 Sequence, int32 Key)
+TArray<int32> APOTLStructure::AllocateResources(APOTLStructure* To, TMap<FString, int32>& Resources, EAllocationType Type, int32 Sequence, int32 Key)
 {
 	TArray<int32> KeyIndexes;
 	for (auto& Resource : Resources)
 	{
-		int32 KeyIndex = AllocateResource(From, Resource.Key, Resource.Value, Type, Sequence, false, -1);
+		int32 KeyIndex = AllocateResource(To, Resource.Key, Resource.Value, Type, Sequence, false, -1);
 		KeyIndexes.Add(KeyIndex);
 	}
 	return KeyIndexes;
