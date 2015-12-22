@@ -344,8 +344,9 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 		{
 			if (Allocation.Type == EAllocationType::FactoryBilling)
 			{
-				Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity * -1, EResourceList::Free); //!! Might not be all safe to do it with just a negative value.
-				AllocatedResources.Remove(AllocatedResource.Key);
+				//~~ The resources are allready removed from freesources, so the allocation just needs to be removed ~~//
+				//Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity * -1, EResourceList::Free); //!! Might not be all safe to do it with just a negative value.
+				//AllocatedResources.Remove(AllocatedResource.Key);
 			}
 			else
 			{
@@ -528,6 +529,20 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* From, FString ResourceKey
 			Allocation.Type = Type;
 			Allocation.Quantity = Quantity;
 			Allocation.Sequence = Sequence;
+			//~~ Remove resources from FreeResources on this ~~//
+			if (FreeResources.Contains(ResourceKey) && FreeResources[ResourceKey] >= Quantity)
+			{
+				FreeResources[ResourceKey] = FreeResources[ResourceKey] - Quantity;
+				if (FreeResources[ResourceKey] == 0)
+				{
+					FreeResources.Remove(ResourceKey);
+				}
+			}
+			else
+			{
+				return Key; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
+			}
+			//~~ Add the allocation ~~//
 			if (AllocatedResources.Contains(Key))
 			{
 				//~~ Overwrite existing allocation ~~//
