@@ -15,35 +15,50 @@ RequestResources(APOTLStructure* RequestFrom, UFactoryComponent* Factory, TMap<F
 
 
 
-AllocateResource(APOTLStructure* From, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool KeyLoop, int32 Key)
+AllocateResource(APOTLStructure* To, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool KeyLoop, int32 Key)
 	FST_ResourceAllocation Allocation;
-	Allocation.From = From;
-	//Allocation.To = this;
+	Allocation.To = To;
 	if (this->IsRoot)
 	{
-		Allocation.To = this; //~~ Always send to root for now ~~//
+		Allocation.From = this; //~~ Always send from root for now ~~//
 	}
 	else
 	{
-		Allocation.To = this->Root;
+		Allocation.From = this->Root;
 	}
 	Allocation.ResourceKey = ResourceKey;
 	Allocation.Type = Type;
 	Allocation.Quantity = Quantity;
 	Allocation.Sequence = Sequence;
-	//~~ Remove resources from FreeResources on this ~~//
-	if (FreeResources.Contains(ResourceKey) && FreeResources[ResourceKey] >= Quantity)
+
+	if (Allocation.Type == EAllocationType::FactoryProduction)
 	{
-		FreeResources[ResourceKey] = FreeResources[ResourceKey] - Quantity;
-		if (FreeResources[ResourceKey] == 0)
+		if (FreeResources.Contains(ResourceKey))
 		{
-			FreeResources.Remove(ResourceKey);
+
+		}
+		else
+		{
+			FreeResources.Add(ResourceKey, Quantity)
 		}
 	}
 	else
 	{
-		return Key; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
+		//~~ Remove resources from FreeResources on this ~~//
+		if (FreeResources.Contains(ResourceKey) && FreeResources[ResourceKey] >= Quantity)
+		{
+			FreeResources[ResourceKey] = FreeResources[ResourceKey] - Quantity;
+			if (FreeResources[ResourceKey] == 0)
+			{
+				FreeResources.Remove(ResourceKey);
+			}
+		}
+		else
+		{
+			return Key; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
+		}
 	}
+
 	//~~ Add the allocation ~~//
 	if (AllocatedResources.Contains(Key))
 	{

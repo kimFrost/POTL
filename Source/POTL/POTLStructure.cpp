@@ -285,15 +285,29 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 		for (auto& AllocatedResource : AllocatedResources)
 		{
 			FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-			if (ResourceFlowMap.Contains(Allocation.From))
+			APOTLStructure* OtherThanSelf;
+			//UGameplayStatics::Equ
+			if (Allocation.From != this)
 			{
-				ResourceFlowMap[Allocation.From].Add(Allocation);
+				OtherThanSelf = Allocation.From;
 			}
 			else
 			{
-				TArray<FST_ResourceAllocation> List;
-				List.Add(Allocation);
-				ResourceFlowMap.Add(Allocation.From, List);
+				OtherThanSelf = Allocation.To;
+			}
+			FString FIndme = "adasdasd";
+			if (OtherThanSelf)
+			{
+				if (ResourceFlowMap.Contains(OtherThanSelf))
+				{
+					ResourceFlowMap[OtherThanSelf].Add(Allocation);
+				}
+				else
+				{
+					TArray<FST_ResourceAllocation> List;
+					List.Add(Allocation);
+					ResourceFlowMap.Add(OtherThanSelf, List);
+				}
 			}
 		}
 	}
@@ -346,7 +360,7 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 			{
 				//~~ The resources are allready removed from freesources, so the allocation just needs to be removed ~~//
 				//Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity * -1, EResourceList::Free); //!! Might not be all safe to do it with just a negative value.
-				//AllocatedResources.Remove(AllocatedResource.Key);
+				AllocatedResources.Remove(AllocatedResource.Key);
 			}
 			else
 			{
@@ -355,6 +369,11 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 			}
 		}
 	}
+	if (AllocatedResources.Num() > 0)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Red, "ERROR: AllocatedResources where not empty, when it was emptied");
+	}
+	AllocatedResources.Empty();
 }
 
 
@@ -415,7 +434,6 @@ void APOTLStructure::ProcessResourceRequests()
 						{
 							AvailableQuantity = ReqResource.Value;
 						}
-						//int32 AllocationIndex = AllocateResource(this, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
 						int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
 						AllocationIndexes.Add(AllocationIndex);
 						ReqResource.Value = ReqResource.Value - AvailableQuantity;
@@ -434,6 +452,16 @@ void APOTLStructure::ProcessResourceRequests()
 								}
 								//! What to do here? How do I move allocations, so that it is clear to the player?
 								//! (BEGIN)
+								if (AvailableQuantity < Allocation.Quantity) //~~ If request if less than allocation quantity, then sp+lit allocation ~~//
+								{
+									Allocation.Quantity = Allocation.Quantity - AvailableQuantity;
+
+								}
+								else
+								{
+
+								}
+
 								int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, -1); // Consume?
 								AllocationIndexes.Add(AllocationIndex);
 								Allocation.Quantity = Allocation.Quantity - AvailableQuantity; //! This will not give a clear picture of what is happening. How to I Reallocate an allocation, or split it into two, so it is clear to the user?
@@ -453,7 +481,11 @@ void APOTLStructure::ProcessResourceRequests()
 					//~~ Allocate production/payoff to self ~~//
 					//int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
 					//int32 AllocationIndex = AllocateResource(ResourceRequest.From->Root, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
-					int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					//int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					
+					//~~ Add resource payoff to the keeper of the factory, and then allocate it to root afterwards ~~//
+					ResourceRequest.From->AddResource(Resource.Key, Resource.Value, EResourceList::Free);
+					int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
 					AllocationIndexes.Add(AllocationIndex);
 				}
 				ResourceRequest.RequestMet = true;
@@ -517,49 +549,45 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* To, FString ResourceKey, 
 		{
 			FST_ResourceAllocation Allocation;
 			Allocation.To = To;
+			Allocation.From = this;
+			/*
 			if (this->IsRoot)
 			{
-				Allocation.From = this; //~~ Always send to root for now ~~//
+				Allocation.From = this; //~~ Always send from root for now ~~//
 			}
 			else
 			{
 				Allocation.From = this->Root;
 			}
+			*/
 			Allocation.ResourceKey = ResourceKey;
 			Allocation.Type = Type;
 			Allocation.Quantity = Quantity;
 			Allocation.Sequence = Sequence;
 
-			if (Allocation.Type == EAllocationType::FactoryProduction)
+			//~~ Remove resources from FreeResources on this, not the caller ~~//
+			if (FreeResources.Contains(ResourceKey) && FreeResources[ResourceKey] >= Quantity)
 			{
-
+				FreeResources[ResourceKey] = FreeResources[ResourceKey] - Quantity;
+				if (FreeResources[ResourceKey] == 0)
+				{
+					FreeResources.Remove(ResourceKey);
+				}
 			}
 			else
 			{
-				//~~ Remove resources from FreeResources on this ~~//
-				if (FreeResources.Contains(ResourceKey) && FreeResources[ResourceKey] >= Quantity)
-				{
-					FreeResources[ResourceKey] = FreeResources[ResourceKey] - Quantity;
-					if (FreeResources[ResourceKey] == 0)
-					{
-						FreeResources.Remove(ResourceKey);
-					}
-				}
-				else
-				{
-					return Key; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
-				}
+				return Key; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
 			}
-			
-			//~~ Add the allocation ~~//
-			if (AllocatedResources.Contains(Key))
+
+			//~~ Add the allocation to root for keeping ~~//
+			if (this->Root->AllocatedResources.Contains(Key))
 			{
 				//~~ Overwrite existing allocation ~~//
-				AllocatedResources[Key] = Allocation;
+				this->Root->AllocatedResources[Key] = Allocation;
 			}
 			else 
 			{
-				AllocatedResources.Add(Key, Allocation);
+				this->Root->AllocatedResources.Add(Key, Allocation);
 			}
 		}
 		return Key;
