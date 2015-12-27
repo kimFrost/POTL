@@ -365,6 +365,7 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 			else
 			{
 				Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
+				//this->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
 				AllocatedResources.Remove(AllocatedResource.Key);
 			}
 		}
@@ -476,6 +477,7 @@ void APOTLStructure::ProcessResourceRequests()
 								else if (AvailableQuantity >= Allocation.Quantity) //~~ If request is more or equal to allocation quantity, then just change allocation to target ~~//
 								{
 									Allocation.To = ResourceRequest.From;
+									Allocation.Type = EAllocationType::FactoryBilling; //! Maybe it needs to be a unique type, like FactoryProductionReallocation or something.
 									ReqResource.Value = ReqResource.Value - AvailableQuantity;
 								}
 								
