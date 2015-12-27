@@ -420,7 +420,7 @@ void APOTLStructure::ProcessResourceRequests()
 		for (int32 ii = 0; ii < RequestList.Num(); ii++) // Loop through sequence row list. Ex 0[{R}, {R}, {R}]
 		{
 			FST_ResourceRequest& ResourceRequest = RequestList[ii];
-			if (HasResourcesAvailable(ResourceRequest.Request, true, ii)) //~~ If self has the resources required ~~//
+			if (HasResourcesAvailable(ResourceRequest.Request, true, i)) //~~ If self has the resources required. (i) is the sequence, not (ii), it is just a list index for the nested array. ~~//
 			{
 				TArray<int32> AllocationIndexes;
 				//~~ Requirements ~~//
@@ -440,11 +440,12 @@ void APOTLStructure::ProcessResourceRequests()
 					}
 					if (ReqResource.Value > 0) //~~ If freeresources couldn't meet the requiement of the resource quantity, then make reallocations ~~//
 					{
+						
 						for (auto& AllocatedResource : AllocatedResources)
 						{
 							FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-							if (Allocation.Sequence < ResourceRequest.Sequence && Allocation.Type == EAllocationType::FactoryProduction && Allocation.Quantity > 0)
-							{
+							if (Allocation.Sequence < ResourceRequest.Sequence && Allocation.To == this && Allocation.Type == EAllocationType::FactoryProduction && Allocation.Quantity > 0)
+							{	
 								int32 AvailableQuantity = Allocation.Quantity;
 								if (AvailableQuantity > ReqResource.Value)
 								{
@@ -526,7 +527,7 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 		for (auto& AllocatedResource : AllocatedResources)
 		{
 			FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-			if (Allocation.Sequence < Sequence && Allocation.Type == EAllocationType::FactoryProduction && Allocation.Quantity > 0) //~~ If allocation has a lower sequence than the check ~~//
+			if (Allocation.Sequence < Sequence && Allocation.Type == EAllocationType::FactoryProduction && Allocation.To == this && Allocation.Quantity > 0) //~~ If allocation has a lower sequence than the check and is allocated to this structure ~~//
 			{
 				if (ResourceAvailable.Contains(Allocation.ResourceKey))		ResourceAvailable[Allocation.ResourceKey] = ResourceAvailable[Allocation.ResourceKey] + Allocation.Quantity;
 				else														ResourceAvailable.Add(Allocation.ResourceKey, Allocation.Quantity);
