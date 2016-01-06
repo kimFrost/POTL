@@ -5,6 +5,8 @@
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLStructure.h"
 #include "Kismet/GameplayStatics.h"
+//#include "Runtime/Foliage/Public/FoliageInstancedStaticMeshComponent.h"
+//#include "Components/InstancedStaticMeshComponent.h"
 #include "POTLGameInstance.h"
 
 
@@ -759,6 +761,87 @@ void UPOTLGameInstance::CalcHexesRot()
 		Hex.Rotation = Rotation;
 	}
 }
+
+
+/******************** AnalyseLandscape *************************/
+void UPOTLGameInstance::AnalyseLandscape(ECollisionChannel LandscapeCollisionChannel, ECollisionChannel FoliageCollisionChannel)
+{
+	//UGameplayStatics::
+	if (Landscape)
+	{
+		FVector ActorLocation = Landscape->GetActorLocation();
+		// Get player controller at index 0
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+		if (PlayerController)
+		{
+			//~~ Sphere trace for foliage analyse ~~//
+			for (int32 i = 0; i < Hexes.Num(); i++)
+			{
+				FST_Hex& Hex = Hexes[i];
+				FVector LineTraceFrom = Hex.Location + FVector{ 0, 0, 1000 };
+				FVector LineTraceTo = Hex.Location + FVector{ 0, 0, -1000 };
+
+				//const FCollisionResponseParams & ResponseParam
+
+				FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+				RV_TraceParams.bTraceComplex = true;
+				RV_TraceParams.bTraceAsyncScene = true;
+				RV_TraceParams.bReturnPhysicalMaterial = false;
+
+				//TArray<FHitResult> OutHits;
+				TArray<FOverlapResult> OutHits;
+
+				PlayerController->GetWorld()->OverlapMultiByChannel(OutHits, Hex.Location, FQuat::Identity, FoliageCollisionChannel, FCollisionShape::MakeSphere(666), RV_TraceParams);
+				for (int32 ii = 0; ii < OutHits.Num(); ii++)
+				{
+					FOverlapResult& OutHit = OutHits[ii];
+					if (OutHit.bBlockingHit)
+					{
+						UPrimitiveComponent* Component = OutHit.GetComponent();
+						//UFoliageType_InstancedStaticMesh
+						//UFoliageInstancedStaticMeshComponent* MeshKeeper = Cast<UFoliageInstancedStaticMeshComponent>(Component);
+						/*
+						if (MeshKeeper)
+						{
+
+						}
+						*/
+					}
+				}
+
+				//OverlapMultiByChannel(Overlaps, TestLocation, FQuat::Identity, BlockingChannel, FCollisionShape::MakeCapsule(FMath::Max(Capsule->GetScaledCapsuleRadius() - Epsilon, 0.1f), FMath::Max(Capsule->GetScaledCapsuleHalfHeight() - Epsilon, 0.1f)), Params);
+				//TArray hitList;
+				//PlayerController->GetWorld()->SweepMulti(hitList, startLocation, startLocation + radius, FQuat(1.0f, 1.0f, 1.0f, 1.0f), ECollisionChannel::ECC_Pawn, collShape, queryParam);
+			}
+
+			//~~ Line trace for material and river analyse ~~//
+			for (int32 i = 0; i < Hexes.Num(); i++)
+			{
+				FST_Hex& Hex = Hexes[i];
+				FVector LineTraceFrom = Hex.Location + FVector{ 0, 0, 1000 };
+				FVector LineTraceTo = Hex.Location + FVector{ 0, 0, -1000 };
+
+				FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+				RV_TraceParams.bTraceComplex = true;
+				RV_TraceParams.bTraceAsyncScene = true;
+				RV_TraceParams.bReturnPhysicalMaterial = true;
+
+				//Re-initialize hit info
+				FHitResult RV_Hit(ForceInit);
+
+				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, LandscapeCollisionChannel, RV_TraceParams);
+
+				//PlayerController->GetWorld()->SweepMultiByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+				//if (RV_Hit.GetActor() != NULL)
+				if (RV_Hit.bBlockingHit)
+				{
+					//RV_Hit.Location;
+				}
+			}
+		}
+	}
+}
+
 
 /*****************************************************************************************************/
 /****************************************** Turn *****************************************************/

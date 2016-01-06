@@ -155,6 +155,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void CalcHexesRot();
 
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	void AnalyseLandscape(ECollisionChannel LandscapeCollisionChannel, ECollisionChannel FoliageCollisionChannel);
+
 	//~~ Turn ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Turn")
