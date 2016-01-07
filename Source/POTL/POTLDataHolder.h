@@ -226,6 +226,22 @@ struct FST_ConstructLocation
 };
 
 
+/*** FST_HexResources ***/
+USTRUCT(BlueprintType)
+struct FST_HexResourceInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	bool HasTrees;
+
+	FST_HexResourceInfo()
+	{
+		HasTrees = false;
+	}
+};
+
+
 /*** FST_Hex ***/
 USTRUCT(BlueprintType)
 struct FST_Hex
@@ -281,6 +297,9 @@ struct FST_Hex
 	TArray<int32> HexNeighborIndexes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FST_HexResourceInfo Resources;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	FST_ConstructLocation ConstructInfo;
 
@@ -301,12 +320,6 @@ struct FST_Hex
 	{
 		Location = { -1, -1, -1 };
 		Rotation = { -1, -1, -1 };
-		//Point0 = nullptr;
-		//Point1 = nullptr;
-		//Point2 = nullptr;
-		//Point3 = nullptr;
-		//Point4 = nullptr;
-		//Point5 = nullptr;
 		Remove = false;
 		AttachedBuilding = nullptr;
 		AttachedActor = nullptr;

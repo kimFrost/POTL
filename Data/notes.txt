@@ -1,0 +1,6 @@
+Hex
+- Resources
+- Modifiers
+
+Structure
+- Gather radius
