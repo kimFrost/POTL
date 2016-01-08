@@ -235,9 +235,29 @@ struct FST_HexResourceInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	bool HasTrees;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	bool HasRiver;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	bool HasLake;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	bool HasShore;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	int32 ForestDepth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	int32 LakeDepth;
+
 	FST_HexResourceInfo()
 	{
 		HasTrees = false;
+		HasRiver = false;
+		HasLake = false;
+		HasShore = false;
+		ForestDepth = -1;
+		LakeDepth = -1;
 	}
 };
 

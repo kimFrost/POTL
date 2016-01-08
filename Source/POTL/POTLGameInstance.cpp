@@ -783,10 +783,14 @@ void UPOTLGameInstance::AnalyseLandscape(ECollisionChannel LandscapeCollisionCha
 
 				//const FCollisionResponseParams & ResponseParam
 
+				//const FName TraceTag("TraceAnalyseResources");
+				//PlayerController->GetWorld()->DebugDrawTraceTag = TraceTag;
+
 				FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
 				RV_TraceParams.bTraceComplex = true;
 				RV_TraceParams.bTraceAsyncScene = true;
 				RV_TraceParams.bReturnPhysicalMaterial = false;
+				//RV_TraceParams.TraceTag = TraceTag;
 
 				//TArray<FHitResult> OutHits;
 				TArray<FOverlapResult> OutHits;
