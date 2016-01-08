@@ -907,7 +907,8 @@ APOTLStructure* UPOTLGameInstance::GetNearestStructure(FVector Location, TSubcla
 			FVector StructureLocation = Structure->GetActorLocation();
 			FVector VectorDistance = StructureLocation - Location;
 			VectorDistance = VectorDistance.GetAbs();
-			FVector2D Vector2DDistance = FVector2D({ VectorDistance.X, VectorDistance.Y });
+			//FVector2D Vector2DDistance = FVector2D({ VectorDistance.X, VectorDistance.Y });
+			FVector2D Vector2DDistance = FVector2D::FVector2D(VectorDistance.X, VectorDistance.Y);
 			float Distance = Vector2DDistance.Size();
 			if (Distance < LastNearestDistance)
 			{
@@ -931,7 +932,8 @@ APOTLStructure* UPOTLGameInstance::GetNearestCity(FVector Location)
 		FVector StructureLocation = Structure->GetActorLocation();
 		FVector VectorDistance = StructureLocation - Location;
 		VectorDistance = VectorDistance.GetAbs();
-		FVector2D Vector2DDistance = FVector2D({ VectorDistance.X, VectorDistance.Y });
+		//FVector2D Vector2DDistance = FVector2D({ VectorDistance.X, VectorDistance.Y });
+		FVector2D Vector2DDistance = FVector2D::FVector2D(VectorDistance.X, VectorDistance.Y);
 		float Distance = Vector2DDistance.Size();
 		if (Distance < LastNearestDistance)
 		{
