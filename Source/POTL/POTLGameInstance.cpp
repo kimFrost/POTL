@@ -536,6 +536,7 @@ void UPOTLGameInstance::RemoveStructureConnection(APOTLStructure* From, APOTLStr
 /******************** TraceLandscape *************************/
 void UPOTLGameInstance::TraceLandscape(ECollisionChannel CollisionChannel)
 {
+	FString Tadasdadas = "adasd";
 	//UGameplayStatics::
 	if (Landscape)
 	{
@@ -802,6 +803,14 @@ void UPOTLGameInstance::AnalyseLandscape(ECollisionChannel LandscapeCollisionCha
 					if (OutHit.bBlockingHit)
 					{
 						UPrimitiveComponent* Component = OutHit.GetComponent();
+						FString ComponentClassName = "";
+
+						UInstancedStaticMeshComponent* MeshKeeper = Cast<UInstancedStaticMeshComponent>(Component);
+						if (MeshKeeper)
+						{
+							FString adasds = "jjasdasd";
+						}
+						
 						//UFoliageType_InstancedStaticMesh
 						//UFoliageInstancedStaticMeshComponent* MeshKeeper = Cast<UFoliageInstancedStaticMeshComponent>(Component);
 						/*
@@ -840,6 +849,61 @@ void UPOTLGameInstance::AnalyseLandscape(ECollisionChannel LandscapeCollisionCha
 				if (RV_Hit.bBlockingHit)
 				{
 					//RV_Hit.Location;
+				}
+			}
+		}
+	}
+}
+
+
+/******************** CalcHexResourceDensity *************************/
+void UPOTLGameInstance::CalcHexResourceDensity()
+{
+	int32 MaxForestDepth = 5;
+	int32 MaxLakeDepth = 3;
+	int32 DepthIndex = 0;
+	// Forest Depth
+	/*
+	for (DepthIndex = 0; DepthIndex <= MaxForestDepth; DepthIndex++)
+	{
+		for (int32 i = 0; i < Hexes.Num(); i++)
+		{
+			FST_Hex& Hex = Hexes[i];
+			if (Hex.Resources.HasTrees)
+			{
+
+			}
+		}
+	}
+	*/
+	// Lake Depth
+	for (DepthIndex = 0; DepthIndex <= MaxLakeDepth; DepthIndex++)
+	{
+		for (int32 i = 0; i < Hexes.Num(); i++)
+		{
+			FST_Hex& Hex = Hexes[i];
+			if (Hex.Resources.HasLake)
+			{
+				bool Surrounded = true;
+				for (int32 ii = 0; ii < Hex.HexNeighborIndexes.Num(); ii++)
+				{
+					int32 HexNeighborIndex = Hex.HexNeighborIndexes[ii];
+					if (Hexes.IsValidIndex(HexNeighborIndex))
+					{
+						FST_Hex& NeighborHex = Hexes[HexNeighborIndex];
+						if (!NeighborHex.Resources.HasLake || NeighborHex.Resources.LakeDepth == DepthIndex)
+						{
+							Surrounded = false;
+						}
+					}
+					else
+					{
+						Surrounded = false;
+					}
+				}
+				if (Surrounded)
+				{
+					Hex.Resources.LakeDepth++;
 				}
 			}
 		}
@@ -1002,6 +1066,7 @@ FST_Hex UPOTLGameInstance::LocationToHex(FVector Location)
 	}
 	return Hex;
 }
+
 
 /*****************************************************************************************************/
 /**************************************** DEBUG - LOG ************************************************/

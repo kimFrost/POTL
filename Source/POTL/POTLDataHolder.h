@@ -256,8 +256,8 @@ struct FST_HexResourceInfo
 		HasRiver = false;
 		HasLake = false;
 		HasShore = false;
-		ForestDepth = -1;
-		LakeDepth = -1;
+		ForestDepth = 0;
+		LakeDepth = 0;
 	}
 };
 

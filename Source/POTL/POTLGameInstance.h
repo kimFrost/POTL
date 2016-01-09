@@ -158,6 +158,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void AnalyseLandscape(ECollisionChannel LandscapeCollisionChannel, ECollisionChannel FoliageCollisionChannel);
 
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	void CalcHexResourceDensity();
+
 	//~~ Turn ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Turn")
