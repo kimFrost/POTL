@@ -861,23 +861,41 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 {
 	int32 MaxForestDepth = 5;
 	int32 MaxLakeDepth = 3;
-	int32 DepthIndex = 0;
+	int32 DepthIndex;
 	// Forest Depth
-	/*
-	for (DepthIndex = 0; DepthIndex <= MaxForestDepth; DepthIndex++)
+	for (DepthIndex = 0; DepthIndex < MaxForestDepth; DepthIndex++)
 	{
 		for (int32 i = 0; i < Hexes.Num(); i++)
 		{
 			FST_Hex& Hex = Hexes[i];
 			if (Hex.Resources.HasTrees)
 			{
-
+				bool Surrounded = true;
+				for (int32 ii = 0; ii < Hex.HexNeighborIndexes.Num(); ii++)
+				{
+					int32 HexNeighborIndex = Hex.HexNeighborIndexes[ii];
+					if (Hexes.IsValidIndex(HexNeighborIndex))
+					{
+						FST_Hex& NeighborHex = Hexes[HexNeighborIndex];
+						if (!NeighborHex.Resources.HasTrees || NeighborHex.Resources.ForestDepth < DepthIndex)
+						{
+							Surrounded = false;
+						}
+					}
+					else
+					{
+						Surrounded = false;
+					}
+				}
+				if (Surrounded)
+				{
+					Hex.Resources.ForestDepth++;
+				}
 			}
 		}
 	}
-	*/
 	// Lake Depth
-	for (DepthIndex = 0; DepthIndex <= MaxLakeDepth; DepthIndex++)
+	for (DepthIndex = 0; DepthIndex < MaxLakeDepth; DepthIndex++)
 	{
 		for (int32 i = 0; i < Hexes.Num(); i++)
 		{
@@ -891,7 +909,7 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 					if (Hexes.IsValidIndex(HexNeighborIndex))
 					{
 						FST_Hex& NeighborHex = Hexes[HexNeighborIndex];
-						if (!NeighborHex.Resources.HasLake || NeighborHex.Resources.LakeDepth == DepthIndex)
+						if (!NeighborHex.Resources.HasLake || NeighborHex.Resources.LakeDepth < DepthIndex)
 						{
 							Surrounded = false;
 						}
