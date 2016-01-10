@@ -250,6 +250,10 @@ struct FST_HexResourceInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	int32 LakeDepth;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	TEnumAsByte<EPhysicalSurface> SurfaceType;
+	//EPhysicalSurface SurfaceType;
+
 	FST_HexResourceInfo()
 	{
 		HasTrees = false;
@@ -258,6 +262,7 @@ struct FST_HexResourceInfo
 		HasShore = false;
 		ForestDepth = 0;
 		LakeDepth = 0;
+		SurfaceType = EPhysicalSurface::SurfaceType_Default;
 	}
 };
 
