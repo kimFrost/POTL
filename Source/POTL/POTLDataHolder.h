@@ -233,6 +233,9 @@ struct FST_HexResourceInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	APOTLStructure* ProvideTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	bool HasTrees;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
@@ -256,6 +259,7 @@ struct FST_HexResourceInfo
 
 	FST_HexResourceInfo()
 	{
+		ProvideTo = nullptr;
 		HasTrees = false;
 		HasRiver = false;
 		HasLake = false;
@@ -386,6 +390,9 @@ struct FST_Structure : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BaseBroadcastRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	int32 GatherRange;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FVector> CubeSizes;
@@ -408,6 +415,7 @@ struct FST_Structure : public FTableRowBase
 		Title = "";
 		Burnable = false;
 		BaseBroadcastRange = 0;
+		GatherRange = 0;
 		BroadcastRoot = { 0, 0, 0 };
 		RotationDirection = 0;
 		BlockConstruction = true;
