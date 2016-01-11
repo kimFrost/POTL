@@ -392,9 +392,6 @@ struct FST_Structure : public FTableRowBase
 	int32 BaseBroadcastRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	int32 GatherRange;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FVector> CubeSizes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -415,7 +412,6 @@ struct FST_Structure : public FTableRowBase
 		Title = "";
 		Burnable = false;
 		BaseBroadcastRange = 0;
-		GatherRange = 0;
 		BroadcastRoot = { 0, 0, 0 };
 		RotationDirection = 0;
 		BlockConstruction = true;
