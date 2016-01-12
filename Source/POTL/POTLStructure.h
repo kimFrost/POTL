@@ -117,7 +117,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TArray<class UFactoryComponent*> Factories;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	TArray<class UGatherComponent*> Gatherers;
 
 	/*********** FUNCTIONS **************/
 

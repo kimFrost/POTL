@@ -24,7 +24,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStructurePlanted, APOTLStructure*, 
 
 
 
- 
 
 
 
