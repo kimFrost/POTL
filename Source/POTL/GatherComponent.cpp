@@ -3,6 +3,7 @@
 #include "POTL.h"
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "GatherComponent.h"
 
 
@@ -28,12 +29,21 @@ UGatherComponent::UGatherComponent()
 int32 UGatherComponent::CalcAvaiableResources(UDataTable* RecipeTable)
 {
 	int32 QuantityAvaible = 0;
-	//GatherRecipe
-
-	for (int32 i = 0; i < GatherFromIndexes.Num(); i++)
+	if (GameInstance)
 	{
+		for (int32 i = 0; i < GatherFromIndexes.Num(); i++)
+		{
+			if (GameInstance->Hexes.IsValidIndex(GatherFromIndexes[i]))
+			{
+				FST_Hex& Hex = GameInstance->Hexes[GatherFromIndexes[i]];
 
+			}
+		}
 	}
+	
+	//GatherRecipe
+	
+	
 
 	//GatherFromIndexes
 
@@ -77,7 +87,12 @@ void UGatherComponent::Resolve(APOTLStructure* Caller)
 void UGatherComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	// ...
+	//UGameplayStatics::GetPlayerController()->GetGameInstance()
+	GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+	if (GameInstance)
+	{
+
+	}
 }
 
 

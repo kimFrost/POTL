@@ -17,6 +17,9 @@ public:
 	// Sets default values for this component's properties
 	UGatherComponent();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	UPOTLGameInstance* GameInstance;
+
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	FString GatherRecipe;
 
