@@ -32,6 +32,14 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	DATA_Recipes = nullptr;
 	DATA_Structures = nullptr;
 
+	
+	CreatePerson("King", "Everwood", "The King", 26, EPersonGender::Male);
+	CreatePerson("Lady", "Everwood", "", 22, EPersonGender::Female);
+	CreatePerson("Evan", "Everwood", "", 12, EPersonGender::Male);
+	CreatePerson("Dales", "Everwood", "", 14, EPersonGender::Male);
+
+
+	//FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender
 
 	//~~ Recipes ~~//
 	/*
@@ -1025,6 +1033,25 @@ APOTLStructure* UPOTLGameInstance::GetNearestCity(FVector Location)
 	}
 	return RootStructure;
 }
+
+/*****************************************************************************************************/
+/******************************************* PEOPÆE **************************************************/
+/*****************************************************************************************************/
+
+
+/******************** CreatePerson *************************/
+int32 UPOTLGameInstance::CreatePerson(FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender)
+{
+	FST_Person Person;
+	Person.FirstName = FirstName;
+	Person.FamilyName = FamilyName;
+	Person.NickName = NickName;
+	Person.Age = Age;
+	Person.Gender = Gender;
+
+	return PeopleInMap.Add(Person);;
+}
+
 
 /*****************************************************************************************************/
 /**************************************** UTIL - Hex *************************************************/

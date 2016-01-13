@@ -84,6 +84,7 @@ public:
 
 	//~~ People ~~//
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "People")
 	TArray<FST_Person> PeopleInMap;
 
 	//~~ Structure ~~//
@@ -179,6 +180,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	APOTLStructure* GetNearestCity(FVector Location);
+
+	//~~ People ~~//
+
+	UFUNCTION(BlueprintCallable, Category = "People")
+	int32 CreatePerson(FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender);
+
 
 	//~~ Util - Hex ~~//
 

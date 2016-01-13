@@ -496,7 +496,13 @@ struct FST_Person
 	int32 Age;
 
 	UPROPERTY(EditAnywhere, Category = "Person")
-	TMap<FName, int32> Modifiers; // Starvation, Hunger, Sick, Poisoned, Thristy, Cold, Lonely, Insane, Power hungry, etc.
+	TMap<FName, int32> Modifiers; // Starvation, Hunger, Sick, Poisoned, Thristy, Cold, Lonely, Educated, Power hungry, etc.
+
+	UPROPERTY(EditAnywhere, Category = "Person")
+	TMap<FName, int32> Traits; // Intelligent, Insane
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	EPersonGender Gender; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	EPersonTypesEnum Type; // Boy, Girl, Man, Women, Old man, Old women
