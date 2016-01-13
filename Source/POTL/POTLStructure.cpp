@@ -4,6 +4,7 @@
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "FactoryComponent.h"
+#include "GatherComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLStructure.h"
 
@@ -23,6 +24,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	IsPlaceholder = false;
 	BlockPathing = true;
 	IsUnderConstruction = true;
+	NumOfLivingSpaces = 0;
 	InRangeOfEmitTo = false;
 	Root = this;
 
@@ -232,7 +234,6 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 }
 
 
-
 /******************** ResolveFactories *************************/
 void APOTLStructure::ResolveFactories(bool Broadcast)
 {
@@ -268,6 +269,30 @@ void APOTLStructure::ResolveFactories(bool Broadcast)
 }
 
 
+/******************** ProcessGatherers *************************/
+void APOTLStructure::ProcessGatherers(bool Broadcast)
+{
+	if (!IsPlaceholder)
+	{
+		if (Broadcast)
+		{
+			for (int32 i = 0; i < BroadcastTo.Num(); i++)
+			{
+				BroadcastTo[i]->ProcessGatherers(Broadcast);
+			}
+		}
+		if (GameInstance)
+		{
+			for (UGatherComponent* Gatherer : Gatherers)
+			{
+				if (Gatherer)
+				{
+
+				}
+			}
+		}
+	}
+}
 
 /******************** MakeTreeAllocations *************************/
 void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on root structures
@@ -276,6 +301,7 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 	{
 		ResourceRequests.Empty();
 		CalculateUpkeep(true);
+		ProcessGatherers(true);
 		ProcessFactories(true);
 		ProcessResourceRequests();
 
@@ -651,62 +677,6 @@ void APOTLStructure::RequestResources(APOTLStructure* RequestFrom, UFactoryCompo
 	ResourceRequest.Consume = Consume;
 	ResourceRequest.Bubble = Bubble;
 	ResourceRequests.Add(ResourceRequest);
-
-	/*
-	TMap<FString, int32> RequestedResources; //~~ FString Id, Int32 Quantity ~~//
-	bool RequestFulfilled = true;
-	Steps++; //~~ Increase steps, resulting in more resource loss from many reroutes ~~//
-	//~~ Should the emitTo structor require manpower to transport resources?? ~~//
-	//~~ Handle request and Try to meet the resource request with own storage. If not then request parent of current ~~//½
-
-	//~~ Check allocated with a lower sequence number resources first ~~//
-
-	//~~ Then check FreeResources ~~//
-	for (auto& ResourceRequest : Request)
-	{
-		if (FreeResources.Contains(ResourceRequest.Key))
-		{
-			if (FreeResources[ResourceRequest.Key] == 0) //~~ if resource pool is 0 ~~//
-			{
-				FreeResources.Remove(ResourceRequest.Key);
-				RequestFulfilled = false;
-			}
-			else if (ResourceRequest.Value > FreeResources[ResourceRequest.Key]) //~~ If request is larger than the resource pool ~~//
-			{
-				if (!Consume)
-				{
-					AllocateResource(this, ResourceRequest.Key, FreeResources[ResourceRequest.Key], Type, false, -1);
-				}
-				ResourceRequest.Value -= FreeResources[ResourceRequest.Key];
-				FreeResources[ResourceRequest.Key] = 0;
-				FreeResources.Remove(ResourceRequest.Key); //~~ Remove the empty resource ~~//
-				RequestFulfilled = false;
-			}
-			else if (ResourceRequest.Value <= FreeResources[ResourceRequest.Key]) //~~ If request is less or equal to the resource pool ~~//
-			{
-				if (!Consume)
-				{
-					AllocateResource(this, ResourceRequest.Key, ResourceRequest.Value, Type, false, -1);
-				}
-				FreeResources[ResourceRequest.Key] = FreeResources[ResourceRequest.Key] - ResourceRequest.Value;
-				ResourceRequest.Value = 0;
-				if (FreeResources[ResourceRequest.Key] == 0)
-				{
-					FreeResources.Remove(ResourceRequest.Key); 
-				}
-			}
-		}
-	}
-
-	//~~ if Bubble then then RequestResources on parent/emitTo. ~~//
-	//~~ and resource request haven't been met. ~~//
-	if (Bubble &&
-	!RequestFulfilled &&
-	EmitTo != nullptr)
-	{
-		EmitTo->RequestResources(Bubble, RequestFrom, Request, Steps, EAllocationType::RequestDirect, Consume);
-	}
-	*/
 }
 
 

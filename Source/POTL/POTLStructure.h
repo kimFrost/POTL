@@ -94,6 +94,15 @@ public:
 	bool IsUnderConstruction;
 
 
+	/** People */
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "People")
+	int32 NumOfLivingSpaces;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "People")
+	TArray<int32> PeopleIndexes;
+
+
 	/** Resources */
 
 	UPROPERTY(EditAnywhere, Category = "Resources")
@@ -168,6 +177,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveFactories(bool Broadcast);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void ProcessGatherers(bool Broadcast);
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);

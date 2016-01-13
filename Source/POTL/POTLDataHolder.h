@@ -11,8 +11,14 @@ class APOTLStructure;
 class UFactoryComponent;
 
 
-
 //~~~~~ ENUMS ~~~~~//
+UENUM(BlueprintType)
+enum class EPersonGender : uint8
+{
+	Male UMETA(DisplayName = "Male"),
+	Female UMETA(DisplayName = "Female")
+};
+
 UENUM(BlueprintType)
 enum class EPersonTypesEnum : uint8
 {
@@ -33,7 +39,8 @@ enum class EAllocationType : uint8
 	RequestDirect UMETA(DisplayName = "RequestDirect"),
 	FactoryProduction UMETA(DisplayName = "FactoryProduction"),
 	FactoryBilling UMETA(DisplayName = "FactoryBilling"),
-	FactoryLeftover UMETA(DisplayName = "FactoryLeftover")
+	FactoryLeftover UMETA(DisplayName = "FactoryLeftover"),
+	Gathered UMETA(DisplayName = "Gathered")
 };
 
 UENUM(BlueprintType)
@@ -447,6 +454,26 @@ struct FST_StructureBlock : public FTableRowBase
 };
 
 
+/*** FST_Skill ***/
+USTRUCT(BlueprintType)
+struct FST_Skill
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	float XP;
+
+	FST_Skill()
+	{
+		Title = TEXT("");
+		XP = 0.f;
+	}
+};
+
+
 /*** FST_Person ***/
 USTRUCT(BlueprintType)
 struct FST_Person
@@ -454,10 +481,13 @@ struct FST_Person
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
-	FString Title;
+	FString FirstName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
-	FName FamilyName;
+	FString FamilyName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	FString NickName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	TArray<FName> Groups;
@@ -466,18 +496,26 @@ struct FST_Person
 	int32 Age;
 
 	UPROPERTY(EditAnywhere, Category = "Person")
-	TMap<FName, int32> Modifiers; // Starvation, Hunger, Cold, Lonely, Insane, Power hungry, etc.
+	TMap<FName, int32> Modifiers; // Starvation, Hunger, Sick, Poisoned, Thristy, Cold, Lonely, Insane, Power hungry, etc.
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	EPersonTypesEnum Type; // Boy, Girl, Man, Women, Old man, Old women
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	APOTLStructure* LivingAt;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	APOTLStructure* AssignedTo;
 
 	FST_Person()
 	{
-		Title = "";
-		FamilyName = FName(TEXT(""));
+		FirstName = "";
+		FamilyName = "";
+		NickName = "";
 		Age = 0;
 		Type = EPersonTypesEnum::Man;
+		LivingAt = nullptr;
+		AssignedTo = nullptr;
 	}
 };
 
@@ -619,6 +657,9 @@ struct FST_ResourceAllocation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Sequence;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 PersonIndex;
+
 	FST_ResourceAllocation()
 	{
 		From = nullptr;
@@ -627,26 +668,7 @@ struct FST_ResourceAllocation
 		Quantity = 0;
 		Type = EAllocationType::None;
 		Sequence = 0;
-	}
-};
-
-
-/*** FST_Skill ***/
-USTRUCT(BlueprintType)
-struct FST_Skill
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
-	FString Title;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
-	float XP;
-
-	FST_Skill()
-	{
-		Title = TEXT("");
-		XP = 0.f;
+		PersonIndex = -1;
 	}
 };
 

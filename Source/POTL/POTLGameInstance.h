@@ -82,6 +82,10 @@ public:
 
 	FTimerHandle TurnTimerHandle;
 
+	//~~ People ~~//
+
+	TArray<FST_Person> PeopleInMap;
+
 	//~~ Structure ~~//
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
