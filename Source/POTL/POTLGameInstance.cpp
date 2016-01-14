@@ -33,10 +33,10 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	DATA_Structures = nullptr;
 
 	
-	CreatePerson("King", "Everwood", "The King", 26, EPersonGender::Male);
-	CreatePerson("Lady", "Everwood", "", 22, EPersonGender::Female);
-	CreatePerson("Evan", "Everwood", "", 12, EPersonGender::Male);
-	CreatePerson("Dales", "Everwood", "", 14, EPersonGender::Male);
+	CreatePerson("King", "Everwood", "The King", 26, EPersonGender::Male, nullptr);
+	CreatePerson("Lady", "Everwood", "", 22, EPersonGender::Female, nullptr);
+	CreatePerson("Evan", "Everwood", "", 12, EPersonGender::Male, nullptr);
+	CreatePerson("Dales", "Everwood", "", 14, EPersonGender::Male, nullptr);
 
 
 	//FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender
@@ -1040,16 +1040,41 @@ APOTLStructure* UPOTLGameInstance::GetNearestCity(FVector Location)
 
 
 /******************** CreatePerson *************************/
-int32 UPOTLGameInstance::CreatePerson(FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender)
+int32 UPOTLGameInstance::CreatePerson(FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender, APOTLStructure* Home)
 {
+	int32 Index = 0;
 	FST_Person Person;
 	Person.FirstName = FirstName;
 	Person.FamilyName = FamilyName;
 	Person.NickName = NickName;
 	Person.Age = Age;
 	Person.Gender = Gender;
+	Person.Home = Home;
 
-	return PeopleInMap.Add(Person);;
+	do 
+	{
+		Index = FMath::RandRange(0, 50000);
+	} while (PeopleInMap.Contains(Index));
+
+	//PeopleInMap.FindOrAdd
+	PeopleInMap.Add(Index, Person);
+	PeopleInMap[Index].OwnIndex = Index;
+	return Index;
+}
+
+
+/******************** SwitchHome *************************/
+void UPOTLGameInstance::SwitchHome(UPARAM(ref) FST_Person& Person, APOTLStructure* NewHome)
+{
+	if (Person.Home)
+	{
+		if (Person.Home->PeopleIndexes.Contains(Person.OwnIndex))
+		{
+			Person.Home->PeopleIndexes.Remove(Person.OwnIndex);
+		}
+	}
+	Person.Home = NewHome;
+	NewHome->PeopleIndexes.Add(Person.OwnIndex);
 }
 
 

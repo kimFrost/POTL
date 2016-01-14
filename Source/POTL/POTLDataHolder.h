@@ -20,6 +20,12 @@ enum class EPersonGender : uint8
 };
 
 UENUM(BlueprintType)
+enum class EPersonTags : uint8
+{
+	Male UMETA(DisplayName = "Royal")
+};
+
+UENUM(BlueprintType)
 enum class EPersonTypesEnum : uint8
 {
 	Boy UMETA(DisplayName = "Boy"),
@@ -28,6 +34,16 @@ enum class EPersonTypesEnum : uint8
 	Women UMETA(DisplayName = "Women"),
 	OldMan UMETA(DisplayName = "OldMan"),
 	OldWomen UMETA(DisplayName = "OldWomen")
+};
+
+UENUM(BlueprintType)
+enum class EPersonBaseTaskList : uint8
+{
+	Auto UMETA(DisplayName = "Auto"),
+	Build UMETA(DisplayName = "Build"),
+	GatherFood UMETA(DisplayName = "Gather Food"),
+	GatherWood UMETA(DisplayName = "Gather Wood"),
+	GatherStone UMETA(DisplayName = "Gather Stone")
 };
 
 UENUM(BlueprintType)
@@ -51,15 +67,7 @@ enum class EResourceList : uint8
 	Allocations UMETA(DisplayName = "Allocations")
 };
 
-UENUM(BlueprintType)
-enum class EBaseTaskList : uint8
-{
-	Auto UMETA(DisplayName = "Auto"),
-	Build UMETA(DisplayName = "Build"),
-	GatherFood UMETA(DisplayName = "Gather Food"),
-	GatherWood UMETA(DisplayName = "Gather Wood"),
-	GatherStone UMETA(DisplayName = "Gather Stone")
-};
+
 
 
  
@@ -499,16 +507,19 @@ struct FST_Person
 	FString NickName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
-	TArray<FName> Groups;
+	TArray<FString> Groups;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	TArray<EPersonTags> Tags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	int32 Age;
 
 	UPROPERTY(EditAnywhere, Category = "Person")
-	TMap<FName, int32> Modifiers; // Starvation, Hunger, Sick, Poisoned, Thristy, Cold, Lonely, Educated, Homeless, Power hungry, etc.
+	TMap<FString, int32> Modifiers; // Starvation, Hunger, Sick, Poisoned, Thristy, Cold, Lonely, Educated, Homeless, Power hungry, etc.
 
 	UPROPERTY(EditAnywhere, Category = "Person")
-	TMap<FName, int32> Traits; // Intelligent, Insane
+	TMap<FString, int32> Traits; // Intelligent, Insane, Magic gifted, 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	EPersonGender Gender; 
@@ -517,10 +528,13 @@ struct FST_Person
 	EPersonTypesEnum Type; // Boy, Girl, Man, Women, Old man, Old women
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
-	APOTLStructure* LivingAt;
+	APOTLStructure* Home;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	APOTLStructure* AssignedTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
+	int32 OwnIndex;
 
 	FST_Person()
 	{
@@ -529,8 +543,9 @@ struct FST_Person
 		NickName = "";
 		Age = 0;
 		Type = EPersonTypesEnum::Man;
-		LivingAt = nullptr;
+		Home = nullptr;
 		AssignedTo = nullptr;
+		OwnIndex = -1;
 	}
 };
 

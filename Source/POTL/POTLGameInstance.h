@@ -84,8 +84,8 @@ public:
 
 	//~~ People ~~//
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "People")
-	TArray<FST_Person> PeopleInMap;
+	UPROPERTY(EditDefaultsOnly, Category = "People")
+	TMap<int32, FST_Person> PeopleInMap;
 
 	//~~ Structure ~~//
 
@@ -184,7 +184,10 @@ public:
 	//~~ People ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "People")
-	int32 CreatePerson(FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender);
+	int32 CreatePerson(FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender, APOTLStructure* Home);
+
+	UFUNCTION(BlueprintCallable, Category = "People")
+	void SwitchHome(UPARAM(ref) FST_Person& Person, APOTLStructure* NewHome);
 
 
 	//~~ Util - Hex ~~//
