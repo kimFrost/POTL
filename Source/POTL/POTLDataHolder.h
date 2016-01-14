@@ -527,11 +527,21 @@ struct FST_Person
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	EPersonTypesEnum Type; // Boy, Girl, Man, Women, Old man, Old women
 
+	// Origin ? // Country / region ?
+
+	// Father 
+
+	// Mother
+
+	// Children
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	APOTLStructure* Home;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	APOTLStructure* AssignedTo;
+
+	EPersonBaseTaskList AssignedTask;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Person")
 	int32 OwnIndex;
@@ -546,6 +556,7 @@ struct FST_Person
 		Home = nullptr;
 		AssignedTo = nullptr;
 		OwnIndex = -1;
+		AssignedTask = EPersonBaseTaskList::Auto;
 	}
 };
 

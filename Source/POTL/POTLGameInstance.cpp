@@ -33,10 +33,10 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	DATA_Structures = nullptr;
 
 	
-	CreatePerson("King", "Everwood", "The King", 26, EPersonGender::Male, nullptr);
-	CreatePerson("Lady", "Everwood", "", 22, EPersonGender::Female, nullptr);
-	CreatePerson("Evan", "Everwood", "", 12, EPersonGender::Male, nullptr);
-	CreatePerson("Dales", "Everwood", "", 14, EPersonGender::Male, nullptr);
+	//CreatePerson("King", "Everwood", "The King", 26, EPersonGender::Male, nullptr);
+	//CreatePerson("Lady", "Everwood", "", 22, EPersonGender::Female, nullptr);
+	//CreatePerson("Evan", "Everwood", "", 12, EPersonGender::Male, nullptr);
+	//CreatePerson("Dales", "Everwood", "", 14, EPersonGender::Male, nullptr);
 
 
 	//FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender
@@ -1055,10 +1055,13 @@ int32 UPOTLGameInstance::CreatePerson(FString FirstName, FString FamilyName, FSt
 	{
 		Index = FMath::RandRange(0, 50000);
 	} while (PeopleInMap.Contains(Index));
+	Person.OwnIndex = Index;
 
-	//PeopleInMap.FindOrAdd
+	if (Home)
+	{
+		Home->PeopleIndexes.Add(Index);
+	}
 	PeopleInMap.Add(Index, Person);
-	PeopleInMap[Index].OwnIndex = Index;
 	return Index;
 }
 
@@ -1076,6 +1079,35 @@ void UPOTLGameInstance::SwitchHome(UPARAM(ref) FST_Person& Person, APOTLStructur
 	Person.Home = NewHome;
 	NewHome->PeopleIndexes.Add(Person.OwnIndex);
 }
+
+
+/******************** GetPerson *************************/
+FST_Person UPOTLGameInstance::GetPerson(int32 Index)
+{
+	FST_Person Person;
+	if (PeopleInMap.Contains(Index))
+	{
+		Person = PeopleInMap[Index];
+	}
+	return Person;
+}
+
+
+/******************** GetPerson *************************/
+TArray<FST_Person> UPOTLGameInstance::GetPeople(const TArray<int32>& Indexes)
+{
+	TArray<FST_Person> People;
+	for (int32 i = 0; i < Indexes.Num(); i++)
+	{
+		int32 Index = Indexes[i];
+		if (PeopleInMap.Contains(Index))
+		{
+			People.Add(PeopleInMap[Index]);
+		}
+	}
+	return People;
+}
+
 
 
 /*****************************************************************************************************/

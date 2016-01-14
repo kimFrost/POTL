@@ -189,6 +189,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "People")
 	void SwitchHome(UPARAM(ref) FST_Person& Person, APOTLStructure* NewHome);
 
+	UFUNCTION(BlueprintCallable, Category = "People")
+	FST_Person GetPerson(int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "People")
+	TArray<FST_Person> GetPeople(const TArray<int32>& Indexes);
+
 
 	//~~ Util - Hex ~~//
 
