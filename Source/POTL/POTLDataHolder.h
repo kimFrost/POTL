@@ -51,6 +51,15 @@ enum class EResourceList : uint8
 	Allocations UMETA(DisplayName = "Allocations")
 };
 
+UENUM(BlueprintType)
+enum class EBaseTaskList : uint8
+{
+	Auto UMETA(DisplayName = "Auto"),
+	Build UMETA(DisplayName = "Build"),
+	GatherFood UMETA(DisplayName = "Gather Food"),
+	GatherWood UMETA(DisplayName = "Gather Wood"),
+	GatherStone UMETA(DisplayName = "Gather Stone")
+};
 
 
  
@@ -496,7 +505,7 @@ struct FST_Person
 	int32 Age;
 
 	UPROPERTY(EditAnywhere, Category = "Person")
-	TMap<FName, int32> Modifiers; // Starvation, Hunger, Sick, Poisoned, Thristy, Cold, Lonely, Educated, Power hungry, etc.
+	TMap<FName, int32> Modifiers; // Starvation, Hunger, Sick, Poisoned, Thristy, Cold, Lonely, Educated, Homeless, Power hungry, etc.
 
 	UPROPERTY(EditAnywhere, Category = "Person")
 	TMap<FName, int32> Traits; // Intelligent, Insane
