@@ -181,6 +181,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	APOTLStructure* GetNearestCity(FVector Location);
 
+
 	//~~ People ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "People")
@@ -194,6 +195,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "People")
 	TArray<FST_Person> GetPeople(const TArray<int32>& Indexes);
+
+	UFUNCTION(BlueprintCallable, Category = "People")
+	void SetPersonData(APOTLStructure* AssignedTo, EPersonBaseTaskList AssignedTask, int32 OwnIndex);
 
 
 	//~~ Util - Hex ~~//

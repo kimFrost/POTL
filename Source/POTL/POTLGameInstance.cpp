@@ -1093,7 +1093,7 @@ FST_Person UPOTLGameInstance::GetPerson(int32 Index)
 }
 
 
-/******************** GetPerson *************************/
+/******************** GetPeople *************************/
 TArray<FST_Person> UPOTLGameInstance::GetPeople(const TArray<int32>& Indexes)
 {
 	TArray<FST_Person> People;
@@ -1108,6 +1108,30 @@ TArray<FST_Person> UPOTLGameInstance::GetPeople(const TArray<int32>& Indexes)
 	return People;
 }
 
+
+/******************** SetPersonData *************************/
+void  UPOTLGameInstance::SetPersonData(APOTLStructure* AssignedTo, EPersonBaseTaskList AssignedTask, int32 OwnIndex)
+{
+	if (PeopleInMap.Contains(OwnIndex))
+	{
+		FST_Person& Person = PeopleInMap[OwnIndex];
+		Person.AssignedTo = AssignedTo;
+		Person.AssignedTask = AssignedTask;
+	}
+	/*
+	TArray<FString> Groups;
+	TArray<EPersonTags> Tags;
+	int32 Age;
+	TMap<FString, int32> Modifiers;
+	TMap<FString, int32> Traits;
+	EPersonGender Gender;
+	EPersonTypesEnum Type;
+	APOTLStructure* Home;
+	APOTLStructure* AssignedTo;
+	EPersonBaseTaskList AssignedTask;
+	int32 OwnIndex;
+	*/
+}
 
 
 /*****************************************************************************************************/
