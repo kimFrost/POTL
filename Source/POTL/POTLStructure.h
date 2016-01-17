@@ -129,6 +129,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TArray<class UGatherComponent*> Gatherers;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	int32 WorkForceAvaiable;
+
 	/*********** FUNCTIONS **************/
 
 	/** Resources */
