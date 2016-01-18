@@ -701,6 +701,9 @@ struct FST_ResourceAllocation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 PersonIndex;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	bool Locked;
+
 	FST_ResourceAllocation()
 	{
 		From = nullptr;
@@ -710,6 +713,7 @@ struct FST_ResourceAllocation
 		Type = EAllocationType::None;
 		Sequence = 0;
 		PersonIndex = -1;
+		Locked = false;
 	}
 };
 

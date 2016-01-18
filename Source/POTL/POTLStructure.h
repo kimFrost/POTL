@@ -132,6 +132,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	int32 WorkForceAvaiable;
 
+
 	/*********** FUNCTIONS **************/
 
 	/** Resources */

@@ -467,7 +467,6 @@ void APOTLStructure::ProcessResourceRequests()
 					}
 					if (ReqResource.Value > 0) //~~ If freeresources couldn't meet the requiement of the resource quantity, then make reallocations ~~//
 					{
-						
 						for (auto& AllocatedResource : AllocatedResources)
 						{
 							FST_ResourceAllocation& Allocation = AllocatedResource.Value;
@@ -490,11 +489,15 @@ void APOTLStructure::ProcessResourceRequests()
 								if (AvailableQuantity < Allocation.Quantity) //~~ If request if less than allocation quantity, then split allocation ~~//
 								{
 									Allocation.Quantity = Allocation.Quantity - ReqResource.Value; //~~ Subtract resource request quantity from the allocation, and then let it be ~~//
+									
 									//Split logic //~~ Make new allocation with ~~//
 									int RemainingQuantity = ReqResource.Value;
 
 									int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, ii, false, false, -1);
 									AllocationIndexes.Add(AllocationIndex);
+
+									//Allocation.Locked = true;
+
 									ReqResource.Value = 0;
 
 									//int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, false, -1); // Consume?
@@ -504,6 +507,7 @@ void APOTLStructure::ProcessResourceRequests()
 								{
 									Allocation.To = ResourceRequest.From;
 									Allocation.Type = EAllocationType::FactoryBilling; //! Maybe it needs to be a unique type, like FactoryProductionReallocation or something.
+									Allocation.Locked = true;
 									ReqResource.Value = ReqResource.Value - AvailableQuantity;
 								}
 								
