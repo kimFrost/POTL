@@ -707,6 +707,9 @@ struct FST_ResourceAllocation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	bool Locked;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 LockedMin;
+
 	FST_ResourceAllocation()
 	{
 		From = nullptr;
@@ -717,6 +720,7 @@ struct FST_ResourceAllocation
 		Sequence = 0;
 		PersonIndex = -1;
 		Locked = false;
+		LockedMin = 0;
 	}
 };
 
