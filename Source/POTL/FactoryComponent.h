@@ -17,10 +17,10 @@ public:
 	// Sets default values for this component's properties
 	UFactoryComponent();
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	FString Recipe;
 
-	UPROPERTY(EditAnywhere, Category = "Resource")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Quantity;
 
 	UPROPERTY(EditAnywhere, Category = "Resource")
@@ -29,7 +29,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	TMap<FString, int32> Invoice;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 AllocationIndex;
 
 	//~~ Calculate Requirements for total requirements ~~//
 	//UFUNCTION(BlueprintCallable, Category = "Resources")

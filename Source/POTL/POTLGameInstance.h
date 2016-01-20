@@ -20,6 +20,7 @@ class APOTLStructure;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnSwitched, float, Turn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewTurn, float, Turn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStructurePlanted, APOTLStructure*, Structure);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCityUpdated, APOTLStructure*, CityRootStructure);
 //DECLARE_EVENT(FTurnSwitched);
 
 
@@ -225,5 +226,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Structure")
 	FStructurePlanted OnStructurePlanted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Structure")
+	FCityUpdated OnCityUpdated;
 
 };

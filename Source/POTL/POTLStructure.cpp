@@ -131,13 +131,38 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 }
 
 
+
+
+/******************** GetAllocationTotal *************************/
+int32 APOTLStructure::GetAllocationTotal(FString Type)
+{
+	int32 Total = 0;
+	for (auto& AllocatedResource : AllocatedResources)
+	{
+		if (Type.Len() == 0 || AllocatedResource.Value.ResourceKey == Type)
+		{
+			if (AllocatedResource.Value.Type == EAllocationType::FactoryBilling) {
+				Total = Total - AllocatedResource.Value.Quantity;
+			}
+			else {
+				Total = Total + AllocatedResource.Value.Quantity;
+			}
+		}
+	}
+	return Total;
+}
+
+
 /******************** GetAllocationsAsList *************************/
-TArray<FST_ResourceAllocation> APOTLStructure::GetAllocationsAsList()
+TArray<FST_ResourceAllocation> APOTLStructure::GetAllocationsAsList(FString Type)
 {
 	TArray<FST_ResourceAllocation> List;
 	for (auto& AllocatedResource : AllocatedResources)
 	{
-		List.Add(AllocatedResource.Value);
+		if (Type.Len() == 0 || AllocatedResource.Value.ResourceKey == Type)
+		{
+			List.Add(AllocatedResource.Value);
+		}
 	}
 	return List;
 }
@@ -184,6 +209,26 @@ void APOTLStructure::CalculateUpkeep(bool Broadcast)
 
 
 /******************** ResolveUpkeep *************************/
+void APOTLStructure::ReverseAllocations(bool Broadcast)
+{
+	//~~ Resolve children ~~//
+	if (Broadcast)
+	{
+		for (int32 i = 0; i < BroadcastTo.Num(); i++)
+		{
+			BroadcastTo[i]->ResolveUpkeep(Broadcast);
+		}
+	}
+	//~~ Resolve self / The function logic ~~//
+
+
+	AllocatedResources.Empty();
+
+
+}
+
+
+/******************** ResolveUpkeep *************************/
 void APOTLStructure::ResolveUpkeep(bool Broadcast)
 {
 	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveUpkeep()");
@@ -221,7 +266,7 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 		{
 			for (UFactoryComponent* Factory : Factories)
 			{
-				if (Factory)
+				if (Factory && Factory->Quantity > 0)
 				{
 					int32 Sequence = Factory->ProcessInvoice(GameInstance->DATA_Recipes);
 					//RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
@@ -300,6 +345,12 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 	if (!IsPlaceholder)
 	{
 		ResourceRequests.Empty();
+
+		// Temp (BEGIN)
+		ReverseAllocations(true);
+		// How to empty/reverse stored allocations?
+		// Temp (END)
+
 		CalculateUpkeep(true);
 		ProcessGatherers(true);
 		ProcessFactories(true);
@@ -337,6 +388,8 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 			}
 		}
 	}
+	//~~ Broadcast city updated through Game Instance ~~//
+	GameInstance->OnCityUpdated.Broadcast(this);
 }
 
 
@@ -509,6 +562,8 @@ void APOTLStructure::ProcessResourceRequests()
 									Allocation.Type = EAllocationType::FactoryBilling; //! Maybe it needs to be a unique type, like FactoryProductionReallocation or something.
 									Allocation.Locked = true;
 									ReqResource.Value = ReqResource.Value - AvailableQuantity;
+
+
 								}
 								
 								//Allocation.Quantity = Allocation.Quantity - AvailableQuantity; //! This will not give a clear picture of what is happening. How to I Reallocate an allocation, or split it into two, so it is clear to the user?
@@ -534,6 +589,12 @@ void APOTLStructure::ProcessResourceRequests()
 					//~~ Add resource payoff to the keeper of the factory, and then allocate it to root afterwards ~~//
 					ResourceRequest.From->AddResource(Resource.Key, Resource.Value, EResourceList::Free); //~~ Add Resources and then consume them with AllocateResource(true) ~~//
 					int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, true, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					
+					if (ResourceRequest.Factory)
+					{
+						ResourceRequest.Factory->AllocationIndex = AllocationIndex;
+					}
+					
 					AllocationIndexes.Add(AllocationIndex);
 				}
 				ResourceRequest.RequestMet = true;

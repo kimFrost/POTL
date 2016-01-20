@@ -15,6 +15,8 @@ UFactoryComponent::UFactoryComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	Recipe = TEXT("");
+	AllocationIndex = -1;
+	Quantity = 0;
 }
 
 

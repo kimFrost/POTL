@@ -660,6 +660,9 @@ struct FST_ResourceRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	bool RequestMet;
 
+	// Allocation ref index
+
+
 	FST_ResourceRequest()
 	{
 		From = nullptr;
@@ -714,6 +717,30 @@ struct FST_ResourceAllocation
 		Sequence = 0;
 		PersonIndex = -1;
 		Locked = false;
+	}
+};
+
+
+/*** FST_ResourceAllocation ***/
+USTRUCT(BlueprintType)
+struct FST_ResourceAlteration
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Id;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 Storage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 Alteration;
+
+	FST_ResourceAlteration()
+	{
+		Id = "";
+		Storage = 0;
+		Alteration = 0;
 	}
 };
 

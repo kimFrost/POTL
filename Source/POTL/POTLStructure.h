@@ -144,7 +144,10 @@ public:
 	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	TArray<FST_ResourceAllocation> GetAllocationsAsList();
+	int32 GetAllocationTotal(FString Type);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	TArray<FST_ResourceAllocation> GetAllocationsAsList(FString Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void OptimizeAllocatedResources();
@@ -172,6 +175,9 @@ public:
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	TArray<int32> AllocateResources(APOTLStructure* To, TMap<FString, int32>& Resources, EAllocationType Type, int32 Sequence, bool Consume, int32 Key);
+
+	UFUNCTION(Category = "Resources")
+	void ReverseAllocations(bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveUpkeep(bool Broadcast);
