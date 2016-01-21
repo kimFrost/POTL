@@ -1,0 +1,54 @@
+
+
+BP_Structure
+  - FacoryComponent
+    - Recipe = Wheat
+    - Quantity = 4
+
+BP_Structure
+  - FacoryComponent
+    - Recipe = Flour
+    - Quantity = 1
+
+
+
+
+FST_ResourceRequest
+  From = nullptr;
+		
+  Factory = nullptr;
+		
+  Sequence = 0;
+		
+  Steps = 0;
+		
+  Type = EAllocationType::None;
+		
+  Consume = false;
+		
+  Bubble = true;
+		
+  RequestMet = false;
+
+
+
+
+
+FST_ResourceAllocation
+  From = nullptr;
+		
+  To = nullptr;
+		
+  ResourceKey = "";
+		
+  Quantity = 0;
+		
+  Type = EAllocationType::None;
+		
+  Sequence = 0;
+		
+  PersonIndex = -1;
+		
+  Locked = false;
+		
+  LockedMin = 0;
