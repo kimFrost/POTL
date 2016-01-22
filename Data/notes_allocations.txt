@@ -1,54 +1,51 @@
 
 
-BP_Structure
+BP_Farm
   - FacoryComponent
     - Recipe = Wheat
-    - Quantity = 4
+    - Quantity = 1
 
-BP_Structure
+BP_Windmill
   - FacoryComponent
     - Recipe = Flour
     - Quantity = 1
 
 
 
-
+	
 FST_ResourceRequest
-  From = nullptr;
-		
-  Factory = nullptr;
-		
-  Sequence = 0;
-		
-  Steps = 0;
-		
-  Type = EAllocationType::None;
-		
-  Consume = false;
-		
-  Bubble = true;
-		
-  RequestMet = false;
-
+	From = BP_Farm
+	Factory = BP_Farm->FacoryComponent
+	Sequence = 0
+	Type = EAllocationType::RequestDirect
+	RequestMet = true/false
+	
+FST_ResourceRequest
+	From = BP_Windmill
+	Factory = BP_Windmill->FacoryComponent
+	Sequence = 1
+	Type = EAllocationType::RequestDirect
+	RequestMet = true/false
+	
+	
+	
+FST_ResourceAllocation
+	Type = EAllocationType::FactoryProduction
+	
+FST_ResourceAllocation
+	Type = EAllocationType::FactoryBilling
+  
 
 
 
 
 FST_ResourceAllocation
   From = nullptr;
-		
-  To = nullptr;
-		
-  ResourceKey = "";
-		
-  Quantity = 0;
-		
-  Type = EAllocationType::None;
-		
-  Sequence = 0;
-		
-  PersonIndex = -1;
-		
-  Locked = false;
-		
+  To = nullptr;	
+  ResourceKey = "";	
+  Quantity = 0;	
+  Type = EAllocationType::None;	
+  Sequence = 0;	
+  PersonIndex = -1;	
+  Locked = false;	
   LockedMin = 0;
