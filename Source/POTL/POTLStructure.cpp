@@ -530,29 +530,15 @@ void APOTLStructure::ProcessResourceRequests()
 								{
 									AvailableQuantity = ReqResource.Value;
 								}
-								//! What to do here? How do I move allocations, so that it is clear to the player?
-								
-								// The resources allocation have already been remove from a storage.
-								// So the allocation should just change its To target ?
-								// No need to use AllocateResource() again, it will consume more resources on allocation request!
-
-								// And on split, make a new allocation with AllocateResource(false) with the leftover quantity?
-
-								//! (BEGIN)
 								if (AvailableQuantity < Allocation.Quantity) //~~ If request if less than allocation quantity, then split allocation ~~//
 								{
 									Allocation.Quantity = Allocation.Quantity - ReqResource.Value; //~~ Subtract resource request quantity from the allocation, and then let it be ~~//
-									
 									//Split logic //~~ Make new allocation with ~~//
 									int RemainingQuantity = ReqResource.Value;
-
 									int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, ii, false, false, -1);
 									AllocationIndexes.Add(AllocationIndex);
-
 									//Allocation.Locked = true;
-
 									ReqResource.Value = 0;
-
 									//int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, false, -1); // Consume?
 									//AllocationIndexes.Add(AllocationIndex);
 								}
@@ -562,14 +548,8 @@ void APOTLStructure::ProcessResourceRequests()
 									Allocation.Type = EAllocationType::FactoryBilling; //! Maybe it needs to be a unique type, like FactoryProductionReallocation or something.
 									Allocation.Locked = true;
 									ReqResource.Value = ReqResource.Value - AvailableQuantity;
-
-
 								}
-								
 								//Allocation.Quantity = Allocation.Quantity - AvailableQuantity; //! This will not give a clear picture of what is happening. How to I Reallocate an allocation, or split it into two, so it is clear to the user?
-								//! (END)
-
-								
 							}
 							if (ReqResource.Value == 0)
 							{
@@ -581,20 +561,13 @@ void APOTLStructure::ProcessResourceRequests()
 				//~~ Payoff ~~//
 				for (auto& Resource : ResourceRequest.Payoff) //~~ Loop each resource in payoff ~~//
 				{
-					//~~ Allocate production/payoff to self ~~//
-					//int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
-					//int32 AllocationIndex = AllocateResource(ResourceRequest.From->Root, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
-					//int32 AllocationIndex = AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
-					
 					//~~ Add resource payoff to the keeper of the factory, and then allocate it to root afterwards ~~//
 					ResourceRequest.From->AddResource(Resource.Key, Resource.Value, EResourceList::Free); //~~ Add Resources and then consume them with AllocateResource(true) ~~//
 					int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, true, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
-					
 					if (ResourceRequest.Factory)
 					{
 						ResourceRequest.Factory->AllocationIndex = AllocationIndex;
 					}
-					
 					AllocationIndexes.Add(AllocationIndex);
 				}
 				ResourceRequest.RequestMet = true;

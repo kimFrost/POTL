@@ -30,14 +30,38 @@ FST_ResourceRequest
 	
 	
 FST_ResourceAllocation
+	From = BP_Farm;
+	To = Root
+	ResourceKey = Wheat
+	Quantity = 1
 	Type = EAllocationType::FactoryProduction
+	Sequence = 0
+FST_ResourceAllocation
+	From = BP_Farm;
+	To = BP_Windmill
+	ResourceKey = Wheat
+	Quantity = 1
+	Type = EAllocationType::FactoryBilling
+	Sequence = 0	
 	
 FST_ResourceAllocation
-	Type = EAllocationType::FactoryBilling
+	From = BP_Farm;
+	To = Root
+	ResourceKey = Flour
+	Quantity = 1
+	Type = EAllocationType::FactoryProduction
+	Sequence = 1
+	
+	
+	
   
-
-
-
+  
+  
+  
+  
+  
+  
+  
 
 FST_ResourceAllocation
   From = nullptr;
