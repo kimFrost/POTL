@@ -1,14 +1,14 @@
 
 
 BP_Farm
-  - FacoryComponent
-    - Recipe = Wheat
-    - Quantity = 1
+	FacoryComponent
+	- Recipe = Wheat
+	- Quantity = 1
 
 BP_Windmill
-  - FacoryComponent
-    - Recipe = Flour
-    - Quantity = 1
+	FacoryComponent
+	- Recipe = Flour
+	- Quantity = 1
 
 
 
@@ -29,14 +29,14 @@ FST_ResourceRequest
 	
 	
 	
-FST_ResourceAllocation
+FST_ResourceAllocation [0]
 	From = BP_Farm;
 	To = Root
 	ResourceKey = Wheat
 	Quantity = 1
 	Type = EAllocationType::FactoryProduction
 	Sequence = 0
-FST_ResourceAllocation
+FST_ResourceAllocation [0]
 	From = BP_Farm;
 	To = BP_Windmill
 	ResourceKey = Wheat
@@ -44,24 +44,28 @@ FST_ResourceAllocation
 	Type = EAllocationType::FactoryBilling
 	Sequence = 0	
 	
-FST_ResourceAllocation
+FST_ResourceAllocation [1]
 	From = BP_Farm;
 	To = Root
 	ResourceKey = Flour
 	Quantity = 1
 	Type = EAllocationType::FactoryProduction
 	Sequence = 1
-	
-	
-	
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 FST_ResourceAllocation
   From = nullptr;
