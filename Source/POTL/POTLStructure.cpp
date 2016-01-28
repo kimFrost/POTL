@@ -220,11 +220,15 @@ void APOTLStructure::ReverseAllocations(bool Broadcast)
 		}
 	}
 	//~~ Resolve self / The function logic ~~//
-
-
+	for (auto& AllocatedResource : AllocatedResources)
+	{
+		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+		if (Allocation.Type == EAllocationType::FactoryBilling && Allocation.From == this)
+		{
+			AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free); // Re-add resource that was allocated from this/root
+		}
+	}
 	AllocatedResources.Empty();
-
-
 }
 
 
