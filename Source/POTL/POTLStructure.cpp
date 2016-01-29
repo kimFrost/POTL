@@ -131,8 +131,6 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 }
 
 
-
-
 /******************** GetAllocationTotal *************************/
 int32 APOTLStructure::GetAllocationTotal(FString Type)
 {
@@ -153,9 +151,29 @@ int32 APOTLStructure::GetAllocationTotal(FString Type)
 }
 
 
+/******************** GetResourceAlteration *************************/
+TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
+{
+	TArray<FST_ResourceAlteration> List;
+	for (auto& FreeResource : FreeResources)
+	{
+		int32 AllocationAmount = GetAllocationTotal(FreeResource.Key);
+		FST_ResourceAlteration ResourceAlteration;
+		ResourceAlteration.Id = FreeResource.Key;
+		ResourceAlteration.Storage = FreeResource.Value;
+		ResourceAlteration.Alteration = AllocationAmount;
+		List.Add(ResourceAlteration);
+	}
+	return List;
+}
+
+
 /******************** GetAllocationsAsList *************************/
 TArray<FST_ResourceAllocation> APOTLStructure::GetAllocationsAsList(FString Type)
 {
+
+
+
 	TArray<FST_ResourceAllocation> List;
 	for (auto& AllocatedResource : AllocatedResources)
 	{

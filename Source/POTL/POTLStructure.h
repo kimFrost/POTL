@@ -147,6 +147,9 @@ public:
 	int32 GetAllocationTotal(FString Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
+	TArray<FST_ResourceAlteration> GetResourceAlteration();
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
 	TArray<FST_ResourceAllocation> GetAllocationsAsList(FString Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")

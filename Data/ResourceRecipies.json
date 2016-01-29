@@ -24,7 +24,7 @@
 	{
 		"Name": "Flour",
 		"Ingredients": [
-			"(Id=\"Wheat\",Quantity=1)"
+			"(Id=\"Wheat\",Quantity=4)"
 		],
 		"Servings": 1,
 		"Sequence": 1
