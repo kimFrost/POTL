@@ -155,14 +155,56 @@ int32 APOTLStructure::GetAllocationTotal(FString Type)
 TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 {
 	TArray<FST_ResourceAlteration> List;
+	TMap<FString, FST_ResourceAlteration> TMapList; //~~ Make complete list of resource from FreeResources and allocations ~~//
 	for (auto& FreeResource : FreeResources)
 	{
-		int32 AllocationAmount = GetAllocationTotal(FreeResource.Key);
 		FST_ResourceAlteration ResourceAlteration;
 		ResourceAlteration.Id = FreeResource.Key;
 		ResourceAlteration.Storage = FreeResource.Value;
-		ResourceAlteration.Alteration = AllocationAmount;
-		List.Add(ResourceAlteration);
+		ResourceAlteration.Alteration = GetAllocationTotal(FreeResource.Key);
+		TMapList.Add(FreeResource.Key, ResourceAlteration);
+	}
+	for (auto& AllocatedResource : AllocatedResources)
+	{
+		if ((AllocatedResource.Value.From == this || AllocatedResource.Value.To == this))
+		{
+			if (TMapList.Contains(AllocatedResource.Value.ResourceKey))
+			{
+
+			}
+			else
+			{
+				FST_ResourceAlteration ResourceAlteration;
+				ResourceAlteration.Id = AllocatedResource.Value.ResourceKey;
+			}
+		}
+	}
+
+
+
+
+	for (auto& AllocatedResource : AllocatedResources)
+	{
+		if ((AllocatedResource.Value.From == this || AllocatedResource.Value.To == this))
+		{
+			if (TMapList.Contains(AllocatedResource.Value.ResourceKey))
+			{
+				if (AllocatedResource.Value.Type == EAllocationType::FactoryBilling)
+				{
+					TMapList[AllocatedResource.Value.ResourceKey].Storage = TMapList[AllocatedResource.Value.ResourceKey].Storage + TMapList[AllocatedResource.Value.ResourceKey].Alteration;
+				}
+			}
+			else {
+				FST_ResourceAlteration ResourceAlteration;
+				ResourceAlteration.Id = AllocatedResource.Value.ResourceKey;
+				ResourceAlteration.Alteration = GetAllocationTotal(AllocatedResource.Value.ResourceKey);
+				TMapList.Add(AllocatedResource.Value.ResourceKey, ResourceAlteration);
+			}
+		}
+	}
+	for (auto& TMapItem : TMapList)
+	{
+		List.Add(TMapItem.Value);
 	}
 	return List;
 }
