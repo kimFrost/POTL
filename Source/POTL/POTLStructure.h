@@ -153,9 +153,6 @@ public:
 	TArray<FST_ResourceAllocation> GetAllocationsAsList(FString Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void OptimizeAllocatedResources();
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void CalculateUpkeep(bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
@@ -187,9 +184,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ProcessFactories(bool Broadcast);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ResolveFactories(bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ProcessGatherers(bool Broadcast);

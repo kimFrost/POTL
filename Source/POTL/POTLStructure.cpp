@@ -90,6 +90,7 @@ bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
 }
 
 
+
 /******************** GetResourcesAsList *************************/
 TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 {
@@ -131,6 +132,7 @@ TArray<FST_Resource> APOTLStructure::GetResourcesAsList(EResourceList Type)
 }
 
 
+
 /******************** GetAllocationTotal *************************/
 int32 APOTLStructure::GetAllocationTotal(FString Type)
 {
@@ -151,6 +153,7 @@ int32 APOTLStructure::GetAllocationTotal(FString Type)
 }
 
 
+
 /******************** GetResourceAlteration *************************/
 TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 {
@@ -161,61 +164,60 @@ TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 		FST_ResourceAlteration ResourceAlteration;
 		ResourceAlteration.Id = FreeResource.Key;
 		ResourceAlteration.Storage = FreeResource.Value;
-		ResourceAlteration.Alteration = GetAllocationTotal(FreeResource.Key);
+		//ResourceAlteration.Alteration = GetAllocationTotal(FreeResource.Key);
 		TMapList.Add(FreeResource.Key, ResourceAlteration);
 	}
 	for (auto& AllocatedResource : AllocatedResources)
 	{
-		if ((AllocatedResource.Value.From == this || AllocatedResource.Value.To == this))
+		if (AllocatedResource.Value.From == this || AllocatedResource.Value.To == this)
 		{
-			if (TMapList.Contains(AllocatedResource.Value.ResourceKey))
-			{
-
-			}
-			else
+			if (!TMapList.Contains(AllocatedResource.Value.ResourceKey))
 			{
 				FST_ResourceAlteration ResourceAlteration;
 				ResourceAlteration.Id = AllocatedResource.Value.ResourceKey;
-			}
-		}
-	}
-
-
-
-
-	for (auto& AllocatedResource : AllocatedResources)
-	{
-		if ((AllocatedResource.Value.From == this || AllocatedResource.Value.To == this))
-		{
-			if (TMapList.Contains(AllocatedResource.Value.ResourceKey))
-			{
-				if (AllocatedResource.Value.Type == EAllocationType::FactoryBilling)
-				{
-					TMapList[AllocatedResource.Value.ResourceKey].Storage = TMapList[AllocatedResource.Value.ResourceKey].Storage + TMapList[AllocatedResource.Value.ResourceKey].Alteration;
-				}
-			}
-			else {
-				FST_ResourceAlteration ResourceAlteration;
-				ResourceAlteration.Id = AllocatedResource.Value.ResourceKey;
-				ResourceAlteration.Alteration = GetAllocationTotal(AllocatedResource.Value.ResourceKey);
 				TMapList.Add(AllocatedResource.Value.ResourceKey, ResourceAlteration);
 			}
 		}
+		if (AllocatedResource.Value.From == this) // Outgoing resources from root
+		{
+			//if (AllocatedResource.Value.Type == EAllocationType::FactoryBilling) {}
+			TMapList[AllocatedResource.Value.ResourceKey].Alteration -= AllocatedResource.Value.Quantity;
+			TMapList[AllocatedResource.Value.ResourceKey].Storage += AllocatedResource.Value.Quantity;
+		}
+		if (AllocatedResource.Value.To == this) // Incomming resources to root
+		{ 
+			TMapList[AllocatedResource.Value.ResourceKey].Alteration += AllocatedResource.Value.Quantity;
+		}
 	}
+	/*
+	if (TMapList.Contains(AllocatedResource.Value.ResourceKey))
+	{
+		if (AllocatedResource.Value.Type == EAllocationType::FactoryBilling)
+		{
+			TMapList[AllocatedResource.Value.ResourceKey].Storage = TMapList[AllocatedResource.Value.ResourceKey].Storage + TMapList[AllocatedResource.Value.ResourceKey].Alteration;
+		}
+	}
+	else
+	{
+		FST_ResourceAlteration ResourceAlteration;
+		ResourceAlteration.Id = AllocatedResource.Value.ResourceKey;
+		ResourceAlteration.Alteration = GetAllocationTotal(AllocatedResource.Value.ResourceKey);
+		TMapList.Add(AllocatedResource.Value.ResourceKey, ResourceAlteration);
+	}
+	*/
 	for (auto& TMapItem : TMapList)
 	{
 		List.Add(TMapItem.Value);
 	}
+	//List.Sort();
 	return List;
 }
+
 
 
 /******************** GetAllocationsAsList *************************/
 TArray<FST_ResourceAllocation> APOTLStructure::GetAllocationsAsList(FString Type)
 {
-
-
-
 	TArray<FST_ResourceAllocation> List;
 	for (auto& AllocatedResource : AllocatedResources)
 	{
@@ -227,25 +229,6 @@ TArray<FST_ResourceAllocation> APOTLStructure::GetAllocationsAsList(FString Type
 	return List;
 }
 
-
-/******************** GetResourcesAsList *************************/
-void APOTLStructure::OptimizeAllocatedResources()
-{
-	//!! Not needed anymore. Switched from tarray to tmap
-	/*
-	TMap<FString, FST_ResourceAllocation> TempResourceHolder;
-	for (int32 i = 0; i < AllocatedResources.Num(); i++)
-	{
-		if (TempResourceHolder.Contains(AllocatedResources[i].ResourceKey))		TempResourceHolder[AllocatedResources[i].ResourceKey].Quantity += AllocatedResources[i].Quantity;
-		else																	TempResourceHolder.Add(AllocatedResources[i].ResourceKey, AllocatedResources[i]);
-	}
-	AllocatedResources.Empty();
-	for (auto& Resource : TempResourceHolder)
-	{
-		AllocatedResources.Add(Resource.Value);
-	}
-	*/
-}
 
 
 /******************** CalculateUpkeep *************************/
@@ -266,6 +249,7 @@ void APOTLStructure::CalculateUpkeep(bool Broadcast)
 
 	}
 }
+
 
 
 /******************** ResolveUpkeep *************************/
@@ -290,6 +274,7 @@ void APOTLStructure::ReverseAllocations(bool Broadcast)
 	}
 	AllocatedResources.Empty();
 }
+
 
 
 /******************** ResolveUpkeep *************************/
@@ -330,52 +315,22 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 		{
 			for (UFactoryComponent* Factory : Factories)
 			{
-				if (Factory && Factory->Quantity > 0)
+				if (Factory)
 				{
-					int32 Sequence = Factory->ProcessInvoice(GameInstance->DATA_Recipes);
-					//RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
-					// Store all requests in root
-					this->Root->RequestResources(this, Factory, Factory->Requirements, Factory->Invoice, Sequence, 0, EAllocationType::RequestDirect, false, true);
+					if (Factory->Quantity > 0)
+					{
+						int32 Sequence = Factory->ProcessInvoice(GameInstance->DATA_Recipes);
+						//RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
+						// Store all requests in root
+						//this->Root->RequestResources(this, Factory, Factory->Requirements, Factory->Invoice, Sequence, 0, EAllocationType::RequestDirect, false, true);
+						this->Root->RequestResources(this, Factory, Factory->Requirements, Factory->Invoice, Sequence, 0, EAllocationType::FactoryBilling, false, true);
+					}
 				}
 			}
 		}
 	}
 }
 
-
-/******************** ResolveFactories *************************/
-void APOTLStructure::ResolveFactories(bool Broadcast)
-{
-	GEngine->AddOnScreenDebugMessage(100, 15.0f, FColor::Magenta, "ResolveFactories()");
-	//~~ Resolve children ~~//
-	if (Broadcast)
-	{
-		for (int32 i = 0; i < BroadcastTo.Num(); i++)
-		{
-			BroadcastTo[i]->ResolveFactories(Broadcast);
-		}
-	}
-	//~~ Resolve self / The function logic ~~//
-	//~~ Resolve factories ~~//
-	if (GameInstance)
-	{
-		for (UFactoryComponent* Factory : Factories)
-		{
-			if (Factory)
-			{
-				TMap<FString, int32> FactoryProduction;
-				TMap<FString, int32> FactoryBilling;
-				Factory->Resolve(this, FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
-				//Factory->Resolve(this, Root->FreeResources, GameInstance->DATA_Recipes, FactoryProduction, FactoryBilling); //~~ Resolve factory and get the results/production ~~//
-				RequestResources(this, Factory, FactoryBilling, Factory->Invoice, 0, 100, EAllocationType::FactoryBilling, true, true); //~~ RequestResources doens't know how to handle negative values ~~//
-				for (auto& Resource : FactoryProduction)
-				{
-					//AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ?recipe SEquenCE missing?, false, -1);
-				}
-			}
-		}
-	}
-}
 
 
 /******************** ProcessGatherers *************************/
@@ -402,6 +357,8 @@ void APOTLStructure::ProcessGatherers(bool Broadcast)
 		}
 	}
 }
+
+
 
 /******************** MakeTreeAllocations *************************/
 void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on root structures
@@ -465,7 +422,6 @@ void APOTLStructure::ResolveTree() //~~ Should only for be called on root struct
 	{
 		//ResolveUpkeep(true);
 		//ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
-		//ResolveFactories(true); // is done by ResolveAllocations now!
 		ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
 	}
 
@@ -570,7 +526,7 @@ void APOTLStructure::ProcessResourceRequests()
 				//~~ Requirements ~~//
 				for (auto& ReqResource : ResourceRequest.Request) //~~ Loop each resource in request ~~//
 				{
-					//! AllocateResource with group id for grouping multiple allocations?
+					//? AllocateResource with group id for grouping multiple allocations?
 					if (FreeResources.Contains(ReqResource.Key))
 					{
 						int32 AvailableQuantity = FreeResources[ReqResource.Key];
