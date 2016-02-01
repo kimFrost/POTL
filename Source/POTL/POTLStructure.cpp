@@ -696,7 +696,7 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* To, FString ResourceKey, 
 	else
 	{
 		//~~ Generate random key ~~//
-		int32 KeyIndex = FMath::RandRange(0, 1000000);
+		int32 KeyIndex = FMath::RandRange(0, 100000000);
 		if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
 		{
 			KeyIndex = AllocateResource(To, ResourceKey, Quantity, Type, Sequence, Consume, true, Key);
