@@ -393,7 +393,6 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 			{
 				OtherThanSelf = Allocation.To;
 			}
-			FString FIndme = "adasdasd";
 			if (OtherThanSelf)
 			{
 				if (ResourceFlowMap.Contains(OtherThanSelf))
