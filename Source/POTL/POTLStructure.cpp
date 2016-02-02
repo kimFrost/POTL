@@ -533,7 +533,7 @@ void APOTLStructure::ProcessResourceRequests()
 						{
 							AvailableQuantity = ReqResource.Value;
 						}
-						int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, true, false, -1); // Consume?
+						int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, true, -1);
 						AllocationIndexes.Add(AllocationIndex);
 						ReqResource.Value = ReqResource.Value - AvailableQuantity;
 					}
@@ -554,21 +554,16 @@ void APOTLStructure::ProcessResourceRequests()
 									Allocation.Quantity = Allocation.Quantity - ReqResource.Value; //~~ Subtract resource request quantity from the allocation, and then let it be ~~//
 									//Split logic //~~ Make new allocation with ~~//
 									int RemainingQuantity = ReqResource.Value;
-									int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, ii, false, false, -1);
+									int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, ii, false, -1);
 									AllocationIndexes.Add(AllocationIndex);
-									//Allocation.Locked = true;
 									ReqResource.Value = 0;
-									//int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, false, false, -1); // Consume?
-									//AllocationIndexes.Add(AllocationIndex);
 								}
 								else if (AvailableQuantity >= Allocation.Quantity) //~~ If request is more or equal to allocation quantity, then just change allocation to target ~~//
 								{
 									Allocation.To = ResourceRequest.From;
 									Allocation.Type = EAllocationType::FactoryBilling; //! Maybe it needs to be a unique type, like FactoryProductionReallocation or something.
-									Allocation.Locked = true;
 									ReqResource.Value = ReqResource.Value - AvailableQuantity;
 								}
-								//Allocation.Quantity = Allocation.Quantity - AvailableQuantity; //! This will not give a clear picture of what is happening. How to I Reallocate an allocation, or split it into two, so it is clear to the user?
 							}
 							if (ReqResource.Value == 0)
 							{
@@ -582,7 +577,7 @@ void APOTLStructure::ProcessResourceRequests()
 				{
 					//~~ Add resource payoff to the keeper of the factory, and then allocate it to root afterwards ~~//
 					ResourceRequest.From->AddResource(Resource.Key, Resource.Value, EResourceList::Free); //~~ Add Resources and then consume them with AllocateResource(true) ~~//
-					int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, true, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
 					if (ResourceRequest.Factory)
 					{
 						ResourceRequest.Factory->AllocationIndex = AllocationIndex;
@@ -641,32 +636,35 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 
 
 
-/******************** ResolveTree *************************/
-int32 APOTLStructure::AllocateResource(APOTLStructure* To, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool Consume, bool KeyLoop, int32 Key)
+/******************** GetFreeKey *************************/
+int32 APOTLStructure::MakeAllocationKey()
+{
+	int32 Key;
+	Key = FMath::RandRange(0, 100000000);
+	if (AllocatedResources.Contains(Key)) //~~ If key is already taken, then get new ~~//
+	{
+		Key = MakeAllocationKey();
+	}
+	return Key;
+}
+
+
+
+/******************** AllocateResource *************************/
+int32 APOTLStructure::AllocateResource(APOTLStructure* To, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool Consume, int32 Key)
 {
 	if (Key >= 0)
 	{
-		if (!KeyLoop)
+		FST_ResourceAllocation Allocation;
+		Allocation.To = To;
+		Allocation.From = this;
+		Allocation.ResourceKey = ResourceKey;
+		Allocation.Type = Type;
+		Allocation.Quantity = Quantity;
+		Allocation.Sequence = Sequence;
+		//~~ Remove resources from FreeResources on this, not the caller ~~//
+		if (Consume)
 		{
-			FST_ResourceAllocation Allocation;
-			Allocation.To = To;
-			Allocation.From = this;
-			/*
-			if (this->IsRoot)
-			{
-				Allocation.From = this; //~~ Always send from root for now AllocateResource
-			}
-			else
-			{
-				Allocation.From = this->Root;
-			}
-			*/
-			Allocation.ResourceKey = ResourceKey;
-			Allocation.Type = Type;
-			Allocation.Quantity = Quantity;
-			Allocation.Sequence = Sequence;
-
-			//~~ Remove resources from FreeResources on this, not the caller ~~//
 			if (FreeResources.Contains(ResourceKey) && FreeResources[ResourceKey] >= Quantity)
 			{
 				FreeResources[ResourceKey] = FreeResources[ResourceKey] - Quantity;
@@ -677,35 +675,30 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* To, FString ResourceKey, 
 			}
 			else
 			{
-				return Key; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
-			}
-
-			//~~ Add the allocation to root for keeping ~~//
-			if (this->Root->AllocatedResources.Contains(Key))
-			{
-				//~~ Overwrite existing allocation ~~//
-				this->Root->AllocatedResources[Key] = Allocation;
-			}
-			else 
-			{
-				this->Root->AllocatedResources.Add(Key, Allocation);
+				return -1; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
 			}
 		}
-		return Key;
+		//~~ Add the allocation to root for keeping ~~//
+		if (this->Root->AllocatedResources.Contains(Key))
+		{
+			//~~ Overwrite existing allocation ~~//
+			this->Root->AllocatedResources[Key] = Allocation;
+		}
+		else
+		{
+			this->Root->AllocatedResources.Add(Key, Allocation);
+		}
 	}
 	else
 	{
-		//~~ Generate random key ~~//
-		int32 KeyIndex = FMath::RandRange(0, 100000000);
-		if (AllocatedResources.Contains(KeyIndex)) //~~ If key is already taken, then get new ~~//
-		{
-			KeyIndex = AllocateResource(To, ResourceKey, Quantity, Type, Sequence, Consume, true, Key);
-		}
 		//~~ Call itself to allocate the resource with the right keyindex ~~//
-		AllocateResource(To, ResourceKey, Quantity, Type, Sequence, Consume, false, KeyIndex);
-		return KeyIndex;
+		Key = MakeAllocationKey();
+		AllocateResource(To, ResourceKey, Quantity, Type, Sequence, Consume, Key);
 	}
+	return Key;
 }
+
+
 
 /******************** ResolveTree *************************/
 TArray<int32> APOTLStructure::AllocateResources(APOTLStructure* To, TMap<FString, int32>& Resources, EAllocationType Type, int32 Sequence, bool Consume, int32 Key)
@@ -713,7 +706,7 @@ TArray<int32> APOTLStructure::AllocateResources(APOTLStructure* To, TMap<FString
 	TArray<int32> KeyIndexes;
 	for (auto& Resource : Resources)
 	{
-		int32 KeyIndex = AllocateResource(To, Resource.Key, Resource.Value, Type, Sequence, Consume, false, -1);
+		int32 KeyIndex = AllocateResource(To, Resource.Key, Resource.Value, Type, Sequence, Consume, -1);
 		KeyIndexes.Add(KeyIndex);
 	}
 	return KeyIndexes;

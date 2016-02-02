@@ -171,7 +171,10 @@ public:
 	void ResolveAllocations(EAllocationType Type, bool Broadcast);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	int32 AllocateResource(APOTLStructure* To, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool Consume, bool KeyLoop, int32 Key);
+	int32 MakeAllocationKey();
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	int32 AllocateResource(APOTLStructure* To, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool Consume, int32 Key);
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	TArray<int32> AllocateResources(APOTLStructure* To, TMap<FString, int32>& Resources, EAllocationType Type, int32 Sequence, bool Consume, int32 Key);
