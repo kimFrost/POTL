@@ -256,13 +256,15 @@ void APOTLStructure::CalculateUpkeep(bool Broadcast)
 void APOTLStructure::ReverseAllocations(bool Broadcast)
 {
 	//~~ Resolve children ~~//
+	/*
 	if (Broadcast)
 	{
 		for (int32 i = 0; i < BroadcastTo.Num(); i++)
 		{
-			BroadcastTo[i]->ResolveUpkeep(Broadcast);
+			BroadcastTo[i]->ReverseAllocations(Broadcast);
 		}
 	}
+	*/
 	//~~ Resolve self / The function logic ~~//
 	for (auto& AllocatedResource : AllocatedResources)
 	{
@@ -576,7 +578,7 @@ void APOTLStructure::ProcessResourceRequests()
 				for (auto& Resource : ResourceRequest.Payoff) //~~ Loop each resource in payoff ~~//
 				{
 					//~~ Add resource payoff to the keeper of the factory, and then allocate it to root afterwards ~~//
-					ResourceRequest.From->AddResource(Resource.Key, Resource.Value, EResourceList::Free); //~~ Add Resources and then consume them with AllocateResource(true) ~~//
+					//ResourceRequest.From->AddResource(Resource.Key, Resource.Value, EResourceList::Free); //~~ Add Resources and then consume them with AllocateResource(true) ~~// //!~~ No need for adding them, and then consuming them anymore. AllocateResource can not be called with consume: false ~~//
 					int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
 					if (ResourceRequest.Factory)
 					{
