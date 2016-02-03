@@ -728,6 +728,14 @@ void APOTLStructure::RequestResources(APOTLStructure* RequestFrom, UFactoryCompo
 	ResourceRequest.Type = Type;
 	ResourceRequest.Consume = Consume;
 	ResourceRequest.Bubble = Bubble;
+	for (auto& Item : Request)
+	{
+		ResourceRequest.TestRequestQuantity += Item.Value;
+	}
+	for (auto& Item : Payoff)
+	{
+		ResourceRequest.TestPayoffQuantity += Item.Value;
+	}
 	ResourceRequests.Add(ResourceRequest);
 }
 

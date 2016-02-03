@@ -38,8 +38,8 @@ int32 UFactoryComponent::ProcessInvoice(UDataTable* RecipeTable)
 			{
 				for (auto& Ingredient : Recipe->Ingredients)
 				{
-					if (Requirements.Contains(Ingredient.Id.ToString()))	Requirements[Ingredient.Id.ToString()] += Ingredient.Quantity;
-					else													Requirements.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
+					if (Requirements.Contains(Ingredient.Id.ToString()))	Requirements[Ingredient.Id.ToString()] += Ingredient.Quantity * InvoiceItem.Value;
+					else													Requirements.Add(Ingredient.Id.ToString(), Ingredient.Quantity * InvoiceItem.Value);
 				}
 				if (Recipe->Sequence > MinSequence) {
 					MinSequence = Recipe->Sequence;

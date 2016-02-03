@@ -114,7 +114,7 @@ public:
 	//UPROPERTY(EditAnywhere, Category = "Resources") //~~ UPROPERTY doesn't support nested containers ~~//
 	TMap<APOTLStructure*, TArray<FST_ResourceAllocation>> ResourceFlowMap;
 
-	UPROPERTY(EditAnywhere, Category = "Resources")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TArray<FST_ResourceRequest> ResourceRequests;
 
 	UPROPERTY(EditAnywhere, Category = "Resources")

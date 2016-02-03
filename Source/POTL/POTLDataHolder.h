@@ -643,6 +643,12 @@ struct FST_ResourceRequest
 	TMap<FString, int32> Payoff;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 TestRequestQuantity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 TestPayoffQuantity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Sequence;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
@@ -673,6 +679,8 @@ struct FST_ResourceRequest
 		Consume = false;
 		Bubble = true;
 		RequestMet = false;
+		TestRequestQuantity = 0;
+		TestPayoffQuantity = 0;
 	}
 };
 
