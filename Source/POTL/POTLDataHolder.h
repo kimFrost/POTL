@@ -387,6 +387,28 @@ struct FST_Hex
 };
 
 
+/*** FST_Factory ***/
+USTRUCT(BlueprintType)
+struct FST_Factory
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Recipe;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 MaxQuantity;
+
+	// Constructor
+	FST_Factory()
+	{
+		Recipe = "";
+		MaxQuantity = -1;
+	}
+};
+
+
+
 /*** FST_Structure ***/
 USTRUCT(BlueprintType)
 struct FST_Structure : public FTableRowBase
@@ -411,6 +433,12 @@ struct FST_Structure : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FString> EmitTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FString> Providers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FST_Factory> Factories;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BaseBroadcastRange;
@@ -594,6 +622,9 @@ struct FST_Resource : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 MaxAge;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 SortSequence;
+
 	FST_Resource()
 	{
 		Id = TEXT("");
@@ -604,6 +635,7 @@ struct FST_Resource : public FTableRowBase
 		StackSize = 64;
 		Quantity = 0;
 		MaxAge = -1;
+		SortSequence = 9999;
 	}
 };
 
@@ -775,143 +807,6 @@ struct FST_TMap
 		Value = 0.f;
 	}
 };
-
-
-/*** FST_Factory ***/
-USTRUCT(BlueprintType)
-struct FST_Factory
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Resource")
-	TMap<FString, int32> Requirements;
-
-	UPROPERTY(EditAnywhere, Category = "Resource")
-	TMap<FString, int32> Invoice;
-
-	//~~ Calculate Requirements for total requirements ~~//
-	void const ProcessInvoice(UDataTable* RecipeTable)
-	{
-		Requirements.Empty();
-		if (RecipeTable)
-		{
-			for (auto& InvoiceItem : Invoice)
-			{
-				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, InvoiceItem.Key);
-				static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
-				//FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
-				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*InvoiceItem.Key, ContextString);
-				if (Recipe)
-				{
-					for (auto& Ingredient : Recipe->Ingredients)
-					{
-						if (Requirements.Contains(Ingredient.Id.ToString()))	Requirements[Ingredient.Id.ToString()] += Ingredient.Quantity;
-						else													Requirements.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
-					}
-				}
-			}
-		}
-	}
-
-	//~~ Resolve factory ~~//
-	void const Resolve(APOTLStructure* Caller, TMap<FString, int32>& FreeResources, UDataTable* RecipeTable, TMap<FString, int32>& Production, TMap<FString, int32>& Billing)
-	{
-		if (RecipeTable)
-		{ 
-			//~~ The production ~~//
-			int32 i = 0;
-			//TArray<FName> IdList;
-			//Invoice.GenerateKeyArray(IdList);
-			TArray<int32> ValueList;
-			Invoice.GenerateValueArray(ValueList);
-
-			//~~ Calculate total singleton length of production ~~//
-			int32 SingletonLength = 0;
-			for (i = 0; i < ValueList.Num(); i++) 
-			{
-				SingletonLength += ValueList[i];
-			}
-
-			TMap<FString, int32> InvoiceCopy = Invoice;
-			TMultiMap<FString, int32> SingletonQue;
-			//~~ Loop through SingletonLength and pull values from the invoice ~~//
-			for (i = 0; i < SingletonLength; i++)
-			{
-				if (SingletonQue.Num() < SingletonLength)
-				{
-					for (auto& InvoiceItem : InvoiceCopy)
-					{
-						if (InvoiceItem.Value > 0)
-						{
-							SingletonQue.Add(InvoiceItem.Key, 1);
-							InvoiceItem.Value -= 1;
-						}
-					}
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			//~~ Produce items ~~//
-			bool InvoiceFulfilled = true;
-			for (auto& Singleton : SingletonQue)
-			{
-				static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
-				//FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(Singleton.Key, ContextString);
-				FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*Singleton.Key, ContextString);
-				if (Recipe) //~~ If recipe for invoce item is found ~~//
-				{
-					bool ResourcesRequirementFulfilled = true;
-					for (auto& Ingredient : Recipe->Ingredients)
-					{
-						if (Ingredient.Id.ToString() != "")
-						{
-							if (FreeResources.Contains(Ingredient.Id.ToString()))
-							{
-								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Magenta, "Ingredient.Id.ToString(): " + Ingredient.Id.ToString());
-								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Magenta, "FreeResources[Ingredient.Id.ToString()]: " + FString::FromInt(FreeResources[Ingredient.Id.ToString()]));
-								GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Magenta, "Ingredient.Quantity: " + FString::FromInt(Ingredient.Quantity));
-								if (FreeResources[Ingredient.Id.ToString()] < Ingredient.Quantity)
-								{
-									ResourcesRequirementFulfilled = false;
-									GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Magenta, "ResourcesRequirementFulfilled FALSE");
-								}
-							}
-							else {
-								ResourcesRequirementFulfilled = false;
-							}
-						}
-						else {
-							ResourcesRequirementFulfilled = false;
-						}
-					}
-					//~~ If there are enough resources for the single item production, then produce it and consume the resources ~~//
-					if (ResourcesRequirementFulfilled)
-					{
-						//~~ Remove resources ~~//
-						for (auto& Ingredient : Recipe->Ingredients)
-						{
-							if (Billing.Contains(Ingredient.Id.ToString()))		Billing[Ingredient.Id.ToString()] += Ingredient.Quantity;
-							else												Billing.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
-						}
-						//~~ Add to production ~~//
-						Production.Add(Singleton.Key, Recipe->Servings);
-					}
-				}
-			}
-			GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Production.Num(): " + FString::FromInt(Production.Num()));
-		}
-	}
-	// Constructor
-	FST_Factory()
-	{
-		
-	}
-};
-
-
 
 
 

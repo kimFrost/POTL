@@ -121,9 +121,6 @@ public:
 	TMap<FString, int32> ResourceUpkeep;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	FST_Factory ProductionFactory;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TArray<class UFactoryComponent*> Factories;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
@@ -198,7 +195,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	TArray<FST_ResourceAllocation> GetStructureResourceFlow(APOTLStructure* Structure);
-
 
 	/** Construction */
 

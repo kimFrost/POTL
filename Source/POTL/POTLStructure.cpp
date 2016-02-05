@@ -209,6 +209,23 @@ TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 	{
 		List.Add(TMapItem.Value);
 	}
+	//~~ Sort the list by sort sequence ~~//
+	/*
+	List.Sort([](const FString& One, const FString& Two) {
+		return One > Two;
+	});
+	List.Sort([](const FString& A, const FString& B) {
+		return A.Len() < B.Len();
+	});
+	*/
+
+	//GameInstance->DATA_Recipes
+
+	List.Sort([](const FST_ResourceAlteration& A, const FST_ResourceAlteration& B) {
+		return A.Id.Len() < B.Id.Len();
+		//return A.Id.Len() < B.Id.Len();
+	});
+
 	//List.Sort();
 	return List;
 }
