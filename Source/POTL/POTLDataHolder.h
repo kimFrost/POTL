@@ -800,11 +800,15 @@ struct FST_ResourceAlteration
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Alteration;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 Decay;
+
 	FST_ResourceAlteration()
 	{
 		Id = "";
 		Storage = 0;
 		Alteration = 0;
+		Decay = 0;
 	}
 };
 

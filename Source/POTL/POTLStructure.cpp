@@ -169,7 +169,8 @@ TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 	}
 	for (auto& AllocatedResource : AllocatedResources)
 	{
-		if (AllocatedResource.Value.From == this || AllocatedResource.Value.To == this)
+		//!! I have to check for allocation type, cause of decay !!//
+		if (AllocatedResource.Value.From == this || AllocatedResource.Value.To == this) //~~~ If either outgoing or incomming, then create an alteration struct  ~~//
 		{
 			if (!TMapList.Contains(AllocatedResource.Value.ResourceKey))
 			{
@@ -178,13 +179,20 @@ TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 				TMapList.Add(AllocatedResource.Value.ResourceKey, ResourceAlteration);
 			}
 		}
-		if (AllocatedResource.Value.From == this) // Outgoing resources from root
+		if (AllocatedResource.Value.From == this) //~~ Outgoing resources from root ~~//
 		{
-			//if (AllocatedResource.Value.Type == EAllocationType::FactoryBilling) {}
-			TMapList[AllocatedResource.Value.ResourceKey].Alteration -= AllocatedResource.Value.Quantity;
-			TMapList[AllocatedResource.Value.ResourceKey].Storage += AllocatedResource.Value.Quantity;
+			if (AllocatedResource.Value.Type == EAllocationType::Decay)
+			{
+				TMapList[AllocatedResource.Value.ResourceKey].Decay -= AllocatedResource.Value.Quantity;
+				TMapList[AllocatedResource.Value.ResourceKey].Storage += AllocatedResource.Value.Quantity;
+			}
+			else if (AllocatedResource.Value.Type == EAllocationType::FactoryBilling)
+			{
+				TMapList[AllocatedResource.Value.ResourceKey].Alteration -= AllocatedResource.Value.Quantity;
+				TMapList[AllocatedResource.Value.ResourceKey].Storage += AllocatedResource.Value.Quantity;
+			}
 		}
-		if (AllocatedResource.Value.To == this) // Incomming resources to root
+		if (AllocatedResource.Value.To == this) //~~ Incomming resources to root ~~//
 		{ 
 			TMapList[AllocatedResource.Value.ResourceKey].Alteration += AllocatedResource.Value.Quantity;
 		}
@@ -391,7 +399,9 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 		// How to empty/reverse stored allocations?
 		// Temp (END)
 
-		//? Decay
+
+
+		//?? Decay
 
 		// Wheat 4(+5)
 
@@ -407,10 +417,19 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 		// Flour	+2,  0,  0
 
 
+		//? Production always adds to index zero, and billing always takes from last indexes. Consume from back through the array;
+
+		//? Decay check will be mad after resource request are calculated. It is the only way that I know the amount of consumtion.
+
+		// 
+
 		CalculateUpkeep(true);
 		ProcessGatherers(true);
 		ProcessFactories(true);
 		ProcessResourceRequests();
+		//MakeDecayAllocations();
+		//CalculateDecay();
+		//ProcessDecay()
 
 		//~~ Make a flow map of resources based on allocations stored in this structure ~~//
 		//TMap<APOTLStructure*, TArray<FST_ResourceAllocation>> ResourceFlowMap;
