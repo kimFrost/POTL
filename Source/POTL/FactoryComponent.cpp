@@ -17,6 +17,7 @@ UFactoryComponent::UFactoryComponent()
 	Recipe = TEXT("");
 	AllocationIndex = -1;
 	Quantity = 0;
+	MaxQuantity = -1;
 }
 
 

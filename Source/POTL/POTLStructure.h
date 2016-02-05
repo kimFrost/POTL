@@ -196,11 +196,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	TArray<FST_ResourceAllocation> GetStructureResourceFlow(APOTLStructure* Structure);
 
+
 	/** Construction */
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Construction") // BlueprintNativeEvent
 	void UpdateConstrunction();
 	
+	UFUNCTION(BlueprintCallable, Category = "Construction")
+	void ProcessBaseData();
+
 
 	/** Map */
 

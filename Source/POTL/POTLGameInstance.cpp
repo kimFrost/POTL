@@ -394,79 +394,82 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 					// Spawn the pickup
 					//APOTLStructure* const
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
-
-					//~~ Tree id & IsRoot logic here ~~//
-					if (EmitTo)
+					if (Structure)
 					{
-						Structure->TreeId = EmitTo->TreeId;
-						Structure->IsRoot = false;
-						Structure->Root = EmitTo;
-					}
-					else
-					{
-						Structure->TreeId = Structure->GetName();
-						Structure->IsRoot = true;
-						Structure->Root = Structure; //~~ Self reference ~~//
-						RootStructures.Add(Structure);
-					}
+						//~~ Tree id & IsRoot logic here ~~//
+						if (EmitTo)
+						{
+							Structure->TreeId = EmitTo->TreeId;
+							Structure->IsRoot = false;
+							Structure->Root = EmitTo;
+						}
+						else
+						{
+							Structure->TreeId = Structure->GetName();
+							Structure->IsRoot = true;
+							Structure->Root = Structure; //~~ Self reference ~~//
+							RootStructures.Add(Structure);
+						}
 
-					//~~ Store cubecoord in structure ~~//
-					Structure->CubeCoord = CubeCoord;
+						//~~ Store cubecoord in structure ~~//
+						Structure->CubeCoord = CubeCoord;
 
-					//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
-					FVector BroadcastCubeCoord = StructureData->BroadcastRoot + CubeCoord;
-					BroadcastCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(BroadcastCubeCoord, RotationDirection, CubeCoord);
-					FVector2D BroadcastOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(BroadcastCubeCoord);
-					int32 BroadcastHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(BroadcastOffsetCoords, GridXCount);
-					if (Hexes.IsValidIndex(BroadcastHexIndex))
-					{
-						FST_Hex& Hex = Hexes[BroadcastHexIndex];
-						Structure->BroadcastHexIndex = BroadcastHexIndex;
-					}
+						//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
+						FVector BroadcastCubeCoord = StructureData->BroadcastRoot + CubeCoord;
+						BroadcastCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(BroadcastCubeCoord, RotationDirection, CubeCoord);
+						FVector2D BroadcastOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(BroadcastCubeCoord);
+						int32 BroadcastHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(BroadcastOffsetCoords, GridXCount);
+						if (Hexes.IsValidIndex(BroadcastHexIndex))
+						{
+							FST_Hex& Hex = Hexes[BroadcastHexIndex];
+							Structure->BroadcastHexIndex = BroadcastHexIndex;
+						}
 
-					//~~ Store hex index in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
-					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
-					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
-					if (Hexes.IsValidIndex(HexIndex))
-					{
-						Structure->HexIndex = HexIndex;
-					}
-
-					//~~ Set Structure on all hexes based on cube location and structure size ~~//
-					for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
-					{
-						FVector LocalCubeCoord = StructureData->CubeSizes[i] + CubeCoord;
-						LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, RotationDirection, CubeCoord);
-						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
+						//~~ Store hex index in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
+						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
 						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 						if (Hexes.IsValidIndex(HexIndex))
 						{
-							FST_Hex& Hex = Hexes[HexIndex];
-							Hex.AttachedBuilding = Structure;
+							Structure->HexIndex = HexIndex;
 						}
-					}
 
-					//~~ Store structure raw data ~~//
-					Structure->StructureRowName = RowName;
-					Structure->StructureBaseData = *StructureData;
-					Structure->BroadcastRange = StructureData->BaseBroadcastRange; //!! Use a read/load function instead
-					Structure->StructureBaseData.RotationDirection = RotationDirection;
-					Structure->IsPlaceholder = IsPlaceholder;
-					if (Structure->IsPlaceholder)
-					{
+						//~~ Set Structure on all hexes based on cube location and structure size ~~//
+						for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
+						{
+							FVector LocalCubeCoord = StructureData->CubeSizes[i] + CubeCoord;
+							LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, RotationDirection, CubeCoord);
+							FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
+							int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+							if (Hexes.IsValidIndex(HexIndex))
+							{
+								FST_Hex& Hex = Hexes[HexIndex];
+								Hex.AttachedBuilding = Structure;
+							}
+						}
 
-					}
-					//~~ Create Broadcast/Emit Connection ~~//
-					if (EmitTo)
-					{
-						CreateStructureConnection(Structure, EmitTo);
-					}
-					//~~ InstaBuild for debugging ~~//
-					if (InstaBuild)
-					{
-						Structure->IsUnderConstruction = false;
-					}
+						//~~ Store structure raw data ~~//
+						Structure->StructureRowName = RowName;
+						Structure->StructureBaseData = *StructureData;
+						Structure->BroadcastRange = StructureData->BaseBroadcastRange; //!! Use a read/load function instead
+						Structure->StructureBaseData.RotationDirection = RotationDirection;
+						Structure->IsPlaceholder = IsPlaceholder;
+						if (Structure->IsPlaceholder)
+						{
 
+						}
+						//~~ Create Broadcast/Emit Connection ~~//
+						if (EmitTo)
+						{
+							CreateStructureConnection(Structure, EmitTo);
+						}
+						//~~ InstaBuild for debugging ~~//
+						if (InstaBuild)
+						{
+							Structure->IsUnderConstruction = false;
+						}
+						//~~ Process Structure Data internally ~~//
+						Structure->ProcessBaseData();
+					}
 				}
 			}
 		}

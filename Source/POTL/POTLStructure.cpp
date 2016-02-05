@@ -787,6 +787,23 @@ void APOTLStructure::UpdateConstrunction_Implementation()
 	}
 }
 
+
+/******************** ProcessBaseData *************************/
+void APOTLStructure::ProcessBaseData()
+{
+	//StructureBaseData
+	for (auto& Factory : StructureBaseData.Factories)
+	{
+		//FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+		UFactoryComponent* FactoryComponent = NewObject<UFactoryComponent>(this);
+		FactoryComponent->RegisterComponent();
+		FactoryComponent->Recipe = Factory.Recipe;
+		FactoryComponent->MaxQuantity = Factory.MaxQuantity;
+		Factories.Add(FactoryComponent);
+	}
+}
+
+
 /*****************************************************************************************************/
 /********************************************** MAP **************************************************/
 /*****************************************************************************************************/

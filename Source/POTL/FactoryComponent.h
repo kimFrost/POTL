@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 Quantity;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int32 MaxQuantity;
+
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	TMap<FString, int32> Requirements;
 

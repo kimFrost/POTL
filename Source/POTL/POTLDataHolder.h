@@ -389,7 +389,7 @@ struct FST_Hex
 
 /*** FST_Factory ***/
 USTRUCT(BlueprintType)
-struct FST_Factory
+struct FST_Factory : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -407,6 +407,22 @@ struct FST_Factory
 	}
 };
 
+
+/*** FST_Factory ***/
+USTRUCT(BlueprintType)
+struct FST_Gatherer : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Type;
+
+	// Constructor
+	FST_Gatherer()
+	{
+		Type = "";
+	}
+};
 
 
 /*** FST_Structure ***/
@@ -439,6 +455,9 @@ struct FST_Structure : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FST_Factory> Factories;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FST_Gatherer> Gatherers;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BaseBroadcastRange;
