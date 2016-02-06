@@ -391,6 +391,22 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 		// How to empty/reverse stored allocations?
 		// Temp (END)
 
+		//? Decay
+
+		// Wheat 4(+5)
+
+		//			[0],[1],[2]
+		// Wheat	+5,  4,  0
+
+
+		// Wheat 4(+1) (+5-4)
+		// Flour 0(+2)
+
+		//			[0],[1],[2]
+		// Wheat	+1,  4-4=0,  0
+		// Flour	+2,  0,  0
+
+
 		CalculateUpkeep(true);
 		ProcessGatherers(true);
 		ProcessFactories(true);

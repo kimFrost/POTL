@@ -56,7 +56,8 @@ enum class EAllocationType : uint8
 	FactoryProduction UMETA(DisplayName = "FactoryProduction"),
 	FactoryBilling UMETA(DisplayName = "FactoryBilling"),
 	FactoryLeftover UMETA(DisplayName = "FactoryLeftover"),
-	Gathered UMETA(DisplayName = "Gathered")
+	Gathered UMETA(DisplayName = "Gathered"),
+	Decay UMETA(DisplayName = "Decay")
 };
 
 UENUM(BlueprintType)

@@ -3,7 +3,7 @@
 		"Name": "WP",
 		"Id": "",
 		"Title": "Work force",
-		"Tags": [],
+		"Tags": ["MainLine"],
 		"UnitMass": 0,
 		"Stackable": true,
 		"Burnable": true,
