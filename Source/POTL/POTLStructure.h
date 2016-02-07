@@ -129,6 +129,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	int32 WorkForceAvaiable;
 
+	TMap<FString, TArray<int32>> DecayQueue;
+
+	TMap<FString, TArray<int32>> DecayQueueBackup;
 
 	/*********** FUNCTIONS **************/
 
@@ -160,6 +163,9 @@ public:
 
 	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
 	bool HasResourcesAvailable(TMap<FString, int32>& Request, bool IncludeAllocations, int32 Sequence);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void ProcessDecay();
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void ResolveTree();

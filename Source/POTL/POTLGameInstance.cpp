@@ -31,6 +31,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	//StructureTable = nullptr;
 	DATA_Recipes = nullptr;
 	DATA_Structures = nullptr;
+	DATA_Resources = nullptr;
 
 	
 	//CreatePerson("King", "Everwood", "The King", 26, EPersonGender::Male, nullptr);
@@ -91,15 +92,23 @@ void UPOTLGameInstance::ReadTables()
 {
 	//auto cls = StaticLoadObject(UObject::StaticClass(), nullptr, TEXT("/Game/Wood_Table_Blueprint")); 
 	//UObject* Asset = (UObject*)StaticLoadObject(UBlueprint::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/Structures'"));
+	//~~ Structures ~~//
 	UDataTable* StructureTable = (UDataTable*)StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/Structures.Structures'"));
 	if (StructureTable)
 	{
 		DATA_Structures = StructureTable;
 	}
+	//~~ Recipes ~~//
 	UDataTable* RecipeTable = (UDataTable*)StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'"));
 	if (RecipeTable)
 	{
 		DATA_Recipes = RecipeTable;
+	}
+	//~~ Resources ~~//
+	UDataTable* ResourceTable = (UDataTable*)StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/Resources.Resources'"));
+	if (ResourceTable)
+	{
+		DATA_Resources = ResourceTable;
 	}
 }
 

@@ -81,6 +81,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	UDataTable* DATA_Structures;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
+	UDataTable* DATA_Resources;
+
 	FTimerHandle TurnTimerHandle;
 
 	//~~ People ~~//

@@ -294,9 +294,12 @@ void APOTLStructure::ReverseAllocations(bool Broadcast)
 	for (auto& AllocatedResource : AllocatedResources)
 	{
 		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-		if (Allocation.Type == EAllocationType::FactoryBilling && Allocation.From == this)
+		if (Allocation.From == this)
 		{
-			AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free); // Re-add resource that was allocated from this/root
+			if (Allocation.Type == EAllocationType::FactoryBilling || Allocation.Type == EAllocationType::Decay)
+			{
+				AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free); // Re-add resource that was allocated from this/root
+			}
 		}
 	}
 	AllocatedResources.Empty();
@@ -400,36 +403,13 @@ void APOTLStructure::MakeTreeAllocations() //~~ Should only for be called on roo
 		// Temp (END)
 
 
-
-		//?? Decay
-
-		// Wheat 4(+5)
-
-		//			[0],[1],[2]
-		// Wheat	+5,  4,  0
-
-
-		// Wheat 4(+1) (+5-4)
-		// Flour 0(+2)
-
-		//			[0],[1],[2]
-		// Wheat	+1,  4-4=0,  0
-		// Flour	+2,  0,  0
-
-
-		//? Production always adds to index zero, and billing always takes from last indexes. Consume from back through the array;
-
-		//? Decay check will be mad after resource request are calculated. It is the only way that I know the amount of consumtion.
-
-		// 
-
 		CalculateUpkeep(true);
 		ProcessGatherers(true);
 		ProcessFactories(true);
 		ProcessResourceRequests();
 		//MakeDecayAllocations();
 		//CalculateDecay();
-		//ProcessDecay()
+		ProcessDecay();
 
 		//~~ Make a flow map of resources based on allocations stored in this structure ~~//
 		//TMap<APOTLStructure*, TArray<FST_ResourceAllocation>> ResourceFlowMap;
@@ -508,16 +488,14 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
 		if (Type == EAllocationType::All || Allocation.Type == Type)
 		{
-			if (Allocation.Type == EAllocationType::FactoryBilling)
+			if (Allocation.Type == EAllocationType::FactoryBilling || Allocation.Type == EAllocationType::Decay)
 			{
 				//~~ The resources are allready removed from freesources, so the allocation just needs to be removed ~~//
-				//Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity * -1, EResourceList::Free); //!! Might not be all safe to do it with just a negative value.
 				AllocatedResources.Remove(AllocatedResource.Key);
 			}
 			else
 			{
 				Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
-				//this->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
 				AllocatedResources.Remove(AllocatedResource.Key);
 			}
 		}
@@ -649,7 +627,6 @@ void APOTLStructure::ProcessResourceRequests()
 }
 
 
-
 /******************** HasResourcesAvailable *************************/
 bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool IncludeAllocations, int32 Sequence)
 {
@@ -688,6 +665,86 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 	return RequestMet;
 }
 
+
+/******************** ProcessDecay *************************/
+void APOTLStructure::ProcessDecay()
+{
+	// Wheat 4(+5)
+
+	//			[0],[1],[2]
+	// Wheat	+5,  4,  0
+
+
+	// Wheat 4(+1) (+5-4)
+	// Flour 0(+2)
+
+	//			[0],[1],[2]
+	// Wheat	+1,  4-4=0,  0
+	// Flour	+2,  0,  0
+
+
+	//? Production always adds to index zero, and billing always takes from last indexes. Consume from back through the array;
+
+	//? Decay check will be mad after resource request are calculated. It is the only way that I know the amount of consumtion.
+
+	//? Then make resource allocations based on MaxAge check
+
+	//?? Reverse decay ??//
+	//!! allocation have allready been reverse, but what about the queue? !!//
+	//!! Backup/copy at start of each turn? !!//
+
+
+	//DecayQueue
+	// ID#1 [4,0,2,0,2]
+	// ID#2 [2]
+	// ID#3 [0,2]
+
+
+	//~~ Overwrite decay queue with a copy of the backup ~~//
+	DecayQueue = DecayQueueBackup;
+	//~~ Move freeResources up the decay queue ~~//
+	for (auto& Decay : DecayQueue)
+	{
+		FString ResourceKey = Decay.Key;
+		TArray<int32>& Queue = Decay.Value;
+		//Queue.Add(Queue.Num(), TArray<int>())
+		for (int32 i = Queue.Num(); i >= 0; i--)
+		{
+
+		}
+	}
+	//~~ Add production to decay queue ~~//
+	for (auto& AllocatedResource : AllocatedResources)
+	{
+		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
+		if (DecayQueue.Contains(Allocation.ResourceKey))
+		{
+
+		}
+		else {
+
+		}
+	}
+	//~~ Make decay allocations based on maxage and decay queue ~~//
+	for (auto& Decay : DecayQueue)
+	{
+		FString ResourceKey = Decay.Key;
+		TArray<int32>& Queue = Decay.Value;
+		static const FString ContextString(TEXT("GENERAL"));
+		FST_Resource* ResourceData = GameInstance->DATA_Resources->FindRow<FST_Resource>(*ResourceKey, ContextString);
+		if (ResourceData && ResourceData->MaxAge != -1)
+		{
+			for (int32 i = Queue.Num(); i >= 0; i--)
+			{
+				if (i > ResourceData->MaxAge)
+				{
+					int32 AllocationIndex = AllocateResource(this, ResourceKey, Queue[i], EAllocationType::Decay, -1, true, -1);
+					Queue.RemoveAt(i);
+				}
+			}
+		}
+	}
+}
 
 
 /******************** GetFreeKey *************************/
