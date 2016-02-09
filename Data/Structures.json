@@ -39,7 +39,9 @@
             "Townhall"
         ],
 		"Providers": [], 
-		"Factories": [],
+		"Factories": [
+			"(Recipe=\"WP\",MaxQuantity=4)"
+		],
 		"Gatherers": [],
         "BaseBroadcastRange": 1,
         "CubeSizes": [

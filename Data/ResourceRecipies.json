@@ -1,13 +1,16 @@
 [
 	{
 		"Name": "Wheat",
-		"Ingredients": [],
+		"Ingredients": [
+			"(Id=\"WP\",Quantity=1)"
+		],
 		"Servings": 1,
 		"Sequence": 0
 	},
 	{
 		"Name": "Stick",
 		"Ingredients": [
+			"(Id=\"WP\",Quantity=1)",
 			"(Id=\"Wood\",Quantity=1)"
 		],
 		"Servings": 16,
@@ -16,6 +19,7 @@
 	{
 		"Name": "Plank",
 		"Ingredients": [
+			"(Id=\"WP\",Quantity=1)",
 			"(Id=\"Wood\",Quantity=2)"
 		],
 		"Servings": 1,
@@ -24,6 +28,7 @@
 	{
 		"Name": "Flour",
 		"Ingredients": [
+			"(Id=\"WP\",Quantity=1)",
 			"(Id=\"Wheat\",Quantity=4)"
 		],
 		"Servings": 1,
@@ -32,6 +37,7 @@
 	{
 		"Name": "Bread",
 		"Ingredients": [
+			"(Id=\"WP\",Quantity=1)",
 			"(Id=\"Flour\",Quantity=2)"
 		],
 		"Servings": 1,

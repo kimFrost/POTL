@@ -749,6 +749,11 @@ void APOTLStructure::ProcessDecay()
 			}
 		}
 	}
+
+
+	// WP 3 - Production x 2
+	// Wheat 1 - Production x 1
+
 }
 
 
