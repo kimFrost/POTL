@@ -453,11 +453,9 @@ void APOTLStructure::ResolveTree() //~~ Should only for be called on root struct
 {
 	if (!IsPlaceholder)
 	{
-		//ResolveUpkeep(true);
-		//ResolveAllocations(EAllocationType::RequestDirect, true); //~~ Resolve allocations type direct ~~//
+		DecayQueueBackup = DecayQueue; // Update DecayQueueBackup with current data
 		ResolveAllocations(EAllocationType::All, true); //~~ Resolve all other allocations ~~//
 	}
-
 	/*
 	FTimerHandle UniqueHandle;
 	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APOTLStructure::ResolveUpkeep, true);
@@ -670,18 +668,14 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 void APOTLStructure::ProcessDecay()
 {
 	// Wheat 4(+5)
-
 	//			[0],[1],[2]
 	// Wheat	+5,  4,  0
 
-
 	// Wheat 4(+1) (+5-4)
 	// Flour 0(+2)
-
 	//			[0],[1],[2]
 	// Wheat	+1,  4-4=0,  0
 	// Flour	+2,  0,  0
-
 
 	//? Production always adds to index zero, and billing always takes from last indexes. Consume from back through the array;
 
@@ -705,24 +699,35 @@ void APOTLStructure::ProcessDecay()
 	//~~ Move freeResources up the decay queue ~~//
 	for (auto& Decay : DecayQueue)
 	{
-		FString ResourceKey = Decay.Key;
+		//FString ResourceKey = Decay.Key;
 		TArray<int32>& Queue = Decay.Value;
-		//Queue.Add(Queue.Num(), TArray<int>())
-		for (int32 i = Queue.Num(); i >= 0; i--)
+		Queue.Insert(0, 0);
+		/*
+		for (int32 i = Queue.Num() - 1; i >= 0; i--)
 		{
 
 		}
+		*/
 	}
 	//~~ Add production to decay queue ~~//
 	for (auto& AllocatedResource : AllocatedResources)
 	{
 		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-		if (DecayQueue.Contains(Allocation.ResourceKey))
+		if (Allocation.Type == EAllocationType::FactoryProduction)
 		{
-
-		}
-		else {
-
+			if (DecayQueue.Contains(Allocation.ResourceKey))
+			{
+				TArray<int32>& Queue = DecayQueue[Allocation.ResourceKey];
+				if (Queue.IsValidIndex(0))
+				{
+					Queue[0] += Allocation.Quantity;
+				}
+			}
+			else {
+				TArray<int32> Queue;
+				Queue.Add(Allocation.Quantity);
+				DecayQueue.Add(AllocatedResource.Value.ResourceKey, Queue);
+			}
 		}
 	}
 	//~~ Make decay allocations based on maxage and decay queue ~~//
@@ -734,11 +739,11 @@ void APOTLStructure::ProcessDecay()
 		FST_Resource* ResourceData = GameInstance->DATA_Resources->FindRow<FST_Resource>(*ResourceKey, ContextString);
 		if (ResourceData && ResourceData->MaxAge != -1)
 		{
-			for (int32 i = Queue.Num(); i >= 0; i--)
+			for (int32 i = Queue.Num() - 1; i >= 0; i--)
 			{
-				if (i > ResourceData->MaxAge)
+				if (i >= ResourceData->MaxAge)
 				{
-					int32 AllocationIndex = AllocateResource(this, ResourceKey, Queue[i], EAllocationType::Decay, -1, true, -1);
+					int32 AllocationIndex = AllocateResource(nullptr, ResourceKey, Queue[i], EAllocationType::Decay, -1, true, -1);
 					Queue.RemoveAt(i);
 				}
 			}

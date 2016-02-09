@@ -38,7 +38,6 @@
 		"MaxAge": -1,
 		"SortSequence": 2
 	},
-	,
 	{
 		"Name": "Wheat",
 		"Id": "",
@@ -62,9 +61,9 @@
 		"Burnable": true,
 		"StackSize": 64,
 		"Quantity": 0,
-		"MaxAge": 1,
+		"MaxAge": 5,
 		"SortSequence": 4
-	}
+	},
 	{
 		"Name": "Bread",
 		"Id": "",
