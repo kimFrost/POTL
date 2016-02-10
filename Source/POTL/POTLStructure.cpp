@@ -722,6 +722,10 @@ void APOTLStructure::ProcessDecay()
 				{
 					Queue[0] += Allocation.Quantity;
 				}
+				else
+				{
+					Queue.Add(Allocation.Quantity);
+				}
 			}
 			else {
 				TArray<int32> Queue;

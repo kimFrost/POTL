@@ -9,7 +9,7 @@
 		"Burnable": true,
 		"StackSize": -1,
 		"Quantity": 0,
-		"MaxAge": 1,
+		"MaxAge": 0,
 		"SortSequence": 0
 	},
 	{
