@@ -715,22 +715,32 @@ void APOTLStructure::ProcessDecay()
 		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
 		if (Allocation.Type == EAllocationType::FactoryProduction)
 		{
-			if (DecayQueue.Contains(Allocation.ResourceKey))
+			static const FString ContextString(TEXT("GENERAL"));
+			FST_Resource* ResourceData = GameInstance->DATA_Resources->FindRow<FST_Resource>(*Allocation.ResourceKey, ContextString);
+			if (ResourceData->MaxAge == 0)
 			{
-				TArray<int32>& Queue = DecayQueue[Allocation.ResourceKey];
-				if (Queue.IsValidIndex(0))
-				{
-					Queue[0] += Allocation.Quantity;
-				}
-				else
-				{
-					Queue.Add(Allocation.Quantity);
-				}
+				//int32 AllocationIndex = AllocateResource(nullptr, Allocation.ResourceKey, Allocation.Quantity, EAllocationType::Decay, -1, false, -1);
+				Allocation.Type = EAllocationType::Decay; //!! Almost right. But missing the decay information for displaying to the user (+1,-1). 
 			}
-			else {
-				TArray<int32> Queue;
-				Queue.Add(Allocation.Quantity);
-				DecayQueue.Add(AllocatedResource.Value.ResourceKey, Queue);
+			else 
+			{
+				if (DecayQueue.Contains(Allocation.ResourceKey))
+				{
+					TArray<int32>& Queue = DecayQueue[Allocation.ResourceKey];
+					if (Queue.IsValidIndex(0))
+					{
+						Queue[0] += Allocation.Quantity;
+					}
+					else
+					{
+						Queue.Add(Allocation.Quantity);
+					}
+				}
+				else {
+					TArray<int32> Queue;
+					Queue.Add(Allocation.Quantity);
+					DecayQueue.Add(AllocatedResource.Value.ResourceKey, Queue);
+				}
 			}
 		}
 	}
