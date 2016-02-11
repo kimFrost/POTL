@@ -194,7 +194,15 @@ TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 		}
 		if (AllocatedResource.Value.To == this) //~~ Incomming resources to root ~~//
 		{ 
-			TMapList[AllocatedResource.Value.ResourceKey].Alteration += AllocatedResource.Value.Quantity;
+			if (AllocatedResource.Value.Type == EAllocationType::ProductionDecay)
+			{
+				TMapList[AllocatedResource.Value.ResourceKey].Alteration += AllocatedResource.Value.Quantity;
+				TMapList[AllocatedResource.Value.ResourceKey].Decay -= AllocatedResource.Value.Quantity;
+			}
+			else
+			{
+				TMapList[AllocatedResource.Value.ResourceKey].Alteration += AllocatedResource.Value.Quantity;
+			}
 		}
 	}
 	/*
@@ -300,6 +308,12 @@ void APOTLStructure::ReverseAllocations(bool Broadcast)
 			{
 				AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free); // Re-add resource that was allocated from this/root
 			}
+			/*
+			else if (Allocation.Type == EAllocationType::ProductionDecay)
+			{
+
+			}
+			*/
 		}
 	}
 	AllocatedResources.Empty();
@@ -353,7 +367,10 @@ void APOTLStructure::ProcessFactories(bool Broadcast)
 						//RequestResources(this, Factory->Requirements, 0, Sequence, EAllocationType::RequestDirect, false, true);
 						// Store all requests in root
 						//this->Root->RequestResources(this, Factory, Factory->Requirements, Factory->Invoice, Sequence, 0, EAllocationType::RequestDirect, false, true);
-						this->Root->RequestResources(this, Factory, Factory->Requirements, Factory->Invoice, Sequence, 0, EAllocationType::FactoryBilling, false, true);
+						if (Sequence != -1)
+						{
+							this->Root->RequestResources(this, Factory, Factory->Requirements, Factory->Invoice, Sequence, 0, EAllocationType::FactoryBilling, false, true);
+						}
 					}
 				}
 			}
@@ -486,7 +503,9 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 		FST_ResourceAllocation& Allocation = AllocatedResource.Value;
 		if (Type == EAllocationType::All || Allocation.Type == Type)
 		{
-			if (Allocation.Type == EAllocationType::FactoryBilling || Allocation.Type == EAllocationType::Decay)
+			if (Allocation.Type == EAllocationType::FactoryBilling || 
+				Allocation.Type == EAllocationType::Decay || 
+				Allocation.Type == EAllocationType::ProductionDecay)
 			{
 				//~~ The resources are allready removed from freesources, so the allocation just needs to be removed ~~//
 				AllocatedResources.Remove(AllocatedResource.Key);
@@ -720,27 +739,25 @@ void APOTLStructure::ProcessDecay()
 			if (ResourceData->MaxAge == 0)
 			{
 				//int32 AllocationIndex = AllocateResource(nullptr, Allocation.ResourceKey, Allocation.Quantity, EAllocationType::Decay, -1, false, -1);
-				Allocation.Type = EAllocationType::Decay; //!! Almost right. But missing the decay information for displaying to the user (+1,-1). 
+				//Allocation.Type = EAllocationType::Decay; //!! Almost right. But missing the decay information for displaying to the user (+1,-1). 
+				Allocation.Type = EAllocationType::ProductionDecay; 
 			}
-			else 
+			if (DecayQueue.Contains(Allocation.ResourceKey))
 			{
-				if (DecayQueue.Contains(Allocation.ResourceKey))
+				TArray<int32>& Queue = DecayQueue[Allocation.ResourceKey];
+				if (Queue.IsValidIndex(0))
 				{
-					TArray<int32>& Queue = DecayQueue[Allocation.ResourceKey];
-					if (Queue.IsValidIndex(0))
-					{
-						Queue[0] += Allocation.Quantity;
-					}
-					else
-					{
-						Queue.Add(Allocation.Quantity);
-					}
+					Queue[0] += Allocation.Quantity;
 				}
-				else {
-					TArray<int32> Queue;
+				else
+				{
 					Queue.Add(Allocation.Quantity);
-					DecayQueue.Add(AllocatedResource.Value.ResourceKey, Queue);
 				}
+			}
+			else {
+				TArray<int32> Queue;
+				Queue.Add(Allocation.Quantity);
+				DecayQueue.Add(AllocatedResource.Value.ResourceKey, Queue);
 			}
 		}
 	}
@@ -755,7 +772,11 @@ void APOTLStructure::ProcessDecay()
 		{
 			for (int32 i = Queue.Num() - 1; i >= 0; i--)
 			{
-				if (i >= ResourceData->MaxAge)
+				if (ResourceData->MaxAge == 0)
+				{
+					Queue.RemoveAt(i);
+				}
+				else if (i >= ResourceData->MaxAge)
 				{
 					int32 AllocationIndex = AllocateResource(nullptr, ResourceKey, Queue[i], EAllocationType::Decay, -1, true, -1);
 					Queue.RemoveAt(i);

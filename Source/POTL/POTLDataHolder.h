@@ -58,6 +58,7 @@ enum class EAllocationType : uint8
 	FactoryLeftover UMETA(DisplayName = "FactoryLeftover"),
 	Gathered UMETA(DisplayName = "Gathered"),
 	Decay UMETA(DisplayName = "Decay"),
+	ProductionDecay UMETA(DisplayName = "ProductionDecay"),
 	WorkForce UMETA(DisplayName = "WorkForce")
 };
 

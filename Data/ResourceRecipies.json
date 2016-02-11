@@ -1,11 +1,17 @@
 [
 	{
+		"Name": "WP",
+		"Ingredients": [],
+		"Servings": 1,
+		"Sequence": 0
+	},
+	{
 		"Name": "Wheat",
 		"Ingredients": [
 			"(Id=\"WP\",Quantity=1)"
 		],
 		"Servings": 1,
-		"Sequence": 0
+		"Sequence": 1
 	},
 	{
 		"Name": "Stick",
@@ -32,7 +38,7 @@
 			"(Id=\"Wheat\",Quantity=4)"
 		],
 		"Servings": 1,
-		"Sequence": 1
+		"Sequence": 2
 	},
 	{
 		"Name": "Bread",
@@ -41,6 +47,6 @@
 			"(Id=\"Flour\",Quantity=2)"
 		],
 		"Servings": 1,
-		"Sequence": 2
+		"Sequence": 3
 	}
 ]

@@ -26,7 +26,7 @@ int32 UFactoryComponent::ProcessInvoice(UDataTable* RecipeTable)
 	Requirements.Empty();
 	Invoice.Empty();
 	Invoice.Add(Recipe, Quantity);
-	int32 MinSequence = 0;
+	int32 MinSequence = -1;
 	if (RecipeTable)
 	{
 		for (auto& InvoiceItem : Invoice)
@@ -45,6 +45,13 @@ int32 UFactoryComponent::ProcessInvoice(UDataTable* RecipeTable)
 				if (Recipe->Sequence > MinSequence) {
 					MinSequence = Recipe->Sequence;
 				}
+			}
+			else
+			{
+				Requirements.Empty();
+				Invoice.Empty(); //~~ If recipe not found, then empty invoice to prevent free production ~~//
+				MinSequence = -1;
+				break;
 			}
 		}
 	}
