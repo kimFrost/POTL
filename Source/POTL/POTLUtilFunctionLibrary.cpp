@@ -200,6 +200,25 @@ int32 UPOTLUtilFunctionLibrary::GetCubeDistance(FVector CubeCoordsFrom, FVector 
 }
 
 
+/******************** GetCubesInRange *************************/
+TArray<FVector> UPOTLUtilFunctionLibrary::GetCubesInRange(FVector CubeCoordsFrom, int32 Range, bool IncludeFrom)
+{
+	TArray<FVector> Cubes;
+	if (Range > 0)
+	{
+		int32 NegativeRange = Range * -1;
+		for (int32 Dx = NegativeRange; Dx < Range; Dx++)
+		{
+			for (int32 Dy = 100; Dy < 200; Dy++)
+			{
+
+			}
+		}
+	}
+	return Cubes;
+}
+
+
 /******************** ConvertOffsetToCube *************************/
 FVector UPOTLUtilFunctionLibrary::ConvertOffsetToCube(FVector2D OffsetCoords)
 {

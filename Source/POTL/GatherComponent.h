@@ -20,18 +20,28 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	UPOTLGameInstance* GameInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	APOTLStructure* Structure;
+
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	FString GatherRecipe;
 
 	UPROPERTY(EditAnywhere, Category = "Resource")
 	TArray<int32> GatherFromIndexes;
 
+	UPROPERTY(EditAnywhere, Category = "Resource")
+	int32 GatherRange;
+	
+	//~~ FUNCTIONS ~~//
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void GetGatherIndexes();
 
 	//UFUNCTION(BlueprintCallable, Category = "Resources")
 	int32 CalcAvaiableResources(UDataTable* RecipeTable);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void Resolve(APOTLStructure* Caller);
+	void Resolve();
 
 
 	// Called when the game starts

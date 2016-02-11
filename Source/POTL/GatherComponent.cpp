@@ -3,6 +3,8 @@
 #include "POTL.h"
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
+#include "POTLStructure.h"
+#include "POTLUtilFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "GatherComponent.h"
 
@@ -16,6 +18,7 @@ UGatherComponent::UGatherComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	
 	GatherRecipe = "";
+	GatherRange = 0;
 }
 
 
@@ -26,10 +29,26 @@ UGatherComponent::UGatherComponent()
 
 
 
+/******************** Resolve *************************/
+void UGatherComponent::GetGatherIndexes()
+{
+	if (GameInstance && Structure)
+	{
+		if (GatherRange > 0)
+		{
+
+		}
+		//FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
+		//int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+	}
+}
+
+
+/******************** CalcAvaiableResources *************************/
 int32 UGatherComponent::CalcAvaiableResources(UDataTable* RecipeTable)
 {
 	int32 QuantityAvaible = 0;
-	if (GameInstance)
+	if (GameInstance && Structure)
 	{
 		for (int32 i = 0; i < GatherFromIndexes.Num(); i++)
 		{
@@ -40,47 +59,19 @@ int32 UGatherComponent::CalcAvaiableResources(UDataTable* RecipeTable)
 			}
 		}
 	}
-	
-	//GatherRecipe
-	
-	
-
-	//GatherFromIndexes
-
-	/*
-	Requirements.Empty();
-	Invoice.Empty();
-	Invoice.Add(Recipe, Quantity);
-	if (RecipeTable)
-	{
-		for (auto& InvoiceItem : Invoice)
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, InvoiceItem.Key);
-			static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
-																 //FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(InvoiceItem.Key, ContextString);
-			FST_ResourceRecipe* Recipe = RecipeTable->FindRow<FST_ResourceRecipe>(*InvoiceItem.Key, ContextString);
-			if (Recipe)
-			{
-				for (auto& Ingredient : Recipe->Ingredients)
-				{
-					if (Requirements.Contains(Ingredient.Id.ToString()))	Requirements[Ingredient.Id.ToString()] += Ingredient.Quantity;
-					else													Requirements.Add(Ingredient.Id.ToString(), Ingredient.Quantity);
-				}
-				if (Recipe->Sequence > MinSequence) {
-					MinSequence = Recipe->Sequence;
-				}
-			}
-		}
-	}
-	*/
 	return QuantityAvaible;
 }
 
 
-void UGatherComponent::Resolve(APOTLStructure* Caller)
+/******************** Resolve *************************/
+void UGatherComponent::Resolve()
 {
+	if (GameInstance && Structure)
+	{
 
+	}
 }
+
 
 
 // Called when the game starts
