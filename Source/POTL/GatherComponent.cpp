@@ -32,14 +32,19 @@ UGatherComponent::UGatherComponent()
 /******************** Resolve *************************/
 void UGatherComponent::GetGatherIndexes()
 {
+	GatherFromIndexes.Empty();
 	if (GameInstance && Structure)
 	{
 		if (GatherRange > 0)
 		{
-
+			TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(Structure->CubeCoord, GatherRange, false); //!! Maybe not right from vector !!//
+			for (int32 i = 0; i < Cubes.Num(); i++)
+			{
+				FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cubes[i]);
+				int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
+				GatherFromIndexes.Add(HexIndex);
+			}
 		}
-		//FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
-		//int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 	}
 }
 
@@ -55,7 +60,8 @@ int32 UGatherComponent::CalcAvaiableResources(UDataTable* RecipeTable)
 			if (GameInstance->Hexes.IsValidIndex(GatherFromIndexes[i]))
 			{
 				FST_Hex& Hex = GameInstance->Hexes[GatherFromIndexes[i]];
-
+				//Hex.Resources.HasLake
+				//Hex.Resources.LakeDepth
 			}
 		}
 	}
