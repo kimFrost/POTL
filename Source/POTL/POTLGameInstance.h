@@ -26,8 +26,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCityUpdated, APOTLStructure*, CityR
 
 
 
-
-
 /**
 *
 */
@@ -86,10 +84,19 @@ public:
 
 	FTimerHandle TurnTimerHandle;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	TEnumAsByte<ECollisionChannel> ChannelLandscape;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	TEnumAsByte<ECollisionChannel> ChannelFoliage;
+
+
+
 	//~~ People ~~//
 
 	UPROPERTY(EditDefaultsOnly, Category = "People")
 	TMap<int32, FST_Person> PeopleInMap;
+
 
 	//~~ Structure ~~//
 
@@ -105,6 +112,8 @@ public:
 	//~~ Debug ~~//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Debug")
 	FString FindmeString;
+
+
 
 	/*********** FUNCTIONS **************/
 

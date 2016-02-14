@@ -13,6 +13,15 @@ class UFactoryComponent;
 
 //~~~~~ ENUMS ~~~~~//
 UENUM(BlueprintType)
+enum class EToolType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Select UMETA(DisplayName = "Select"),
+	PlantStructure UMETA(DisplayName = "PlantStructure"),
+	DevTest UMETA(DisplayName = "DevTest")
+};
+
+UENUM(BlueprintType)
 enum class EPersonGender : uint8
 {
 	Male UMETA(DisplayName = "Male"),

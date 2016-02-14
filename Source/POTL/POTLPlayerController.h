@@ -13,13 +13,10 @@
 
 
 //~~~~~ ENUMS ~~~~~//
-UENUM(BlueprintType)
-enum class EToolType : uint8
-{
-	None UMETA(DisplayName = "None"),
-	Select UMETA(DisplayName = "Select"),
-	PlantStructure UMETA(DisplayName = "PlantStructure")
-};
+
+
+
+
 
 
 
@@ -43,5 +40,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	bool BuildingAllowed;
+
+
+
+	//~~ BeginPlay ~~//
+	virtual void BeginPlay() override;
+
+	//~~ Tock ~~//
+	virtual void Tick(float DeltaSeconds) override;
 
 };

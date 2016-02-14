@@ -20,3 +20,27 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 	ActiveToolType = EToolType::Select;
 	BuildingAllowed = false;
 }
+
+
+//~~ Called when the game starts or when spawned ~~//
+void APOTLPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+
+
+}
+
+//~~ Called every frame ~~//
+void APOTLPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (GameInstance)
+	{
+		if (GameInstance->HexGridReady)
+		{
+			//GameInstance->MouseToHex
+		}
+	}
+}

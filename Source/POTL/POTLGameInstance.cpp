@@ -33,6 +33,10 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	DATA_Structures = nullptr;
 	DATA_Resources = nullptr;
 
+	//~~ For setting custom channels from blueprint ~~//
+	ChannelLandscape = ECollisionChannel::ECC_WorldStatic;
+	ChannelFoliage = ECollisionChannel::ECC_WorldStatic;
+
 	
 	//CreatePerson("King", "Everwood", "The King", 26, EPersonGender::Male, nullptr);
 	//CreatePerson("Lady", "Everwood", "", 22, EPersonGender::Female, nullptr);

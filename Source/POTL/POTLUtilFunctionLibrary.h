@@ -41,8 +41,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static FVector LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location);
 
-	/** AMIT */
-
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static int32 GetCubeDistance(FVector CubeCoordsFrom, FVector CubeCoordsTo);
 
@@ -58,15 +56,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static FVector AxialToCube(float Q, float R);
 
-
-
-	/** Macro */
-
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static int32 GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static int32 GetHexIndex(FVector2D OffsetCoord, int32 GridXCount);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static TArray<int32> CubesToHexIndexes(TArray<FVector> Cubes, int32 GridXCount);
 
 	UFUNCTION(BlueprintCallable, Category = "Util", Meta = (ExpandEnumAsExecs = "Branches"))
 	static void ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEnum>& Branches);

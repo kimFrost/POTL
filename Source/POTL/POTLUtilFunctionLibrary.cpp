@@ -178,6 +178,21 @@ int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCo
 }
 
 
+/******************** CubesToHexIndexes *************************/
+TArray<int32> UPOTLUtilFunctionLibrary::CubesToHexIndexes(TArray<FVector> Cubes, int32 GridXCount)
+{
+	TArray<int32> HexIndexes;
+	for (int32 i = 0; i < Cubes.Num(); i++)
+	{
+		FVector& Cube = Cubes[i];
+		FVector2D Axial = ConvertCubeToOffset(Cube);
+		int32 HexIndex = GetHexIndex(Axial, GridXCount);
+		HexIndexes.Add(HexIndex);
+	}
+	return HexIndexes;
+}
+
+
 /******************** LogMsg *************************/
 void UPOTLUtilFunctionLibrary::LogMsg(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
 {
@@ -207,21 +222,21 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetCubesInRange(FVector CubeCoordsFrom
 	if (Range > 0)
 	{
 		int32 NegativeRange = Range * -1;
-		for (int32 Dx = NegativeRange; Dx < Range; Dx++)
+		for (int32 Dx = NegativeRange; Dx <= Range; Dx++)
 		{
 			//int32 First = FMath::FloorToInt(FMath::Max3(0, 0, 0));
-			int32 First = FMath::FloorToInt(FVector(NegativeRange, Dx * -1 - Range, -999999999).GetMax());
-			int32 Last = FMath::FloorToInt(FVector(Range, Dx * -1 + Range, 999999999).GetMin());
-			for (int32 Dy = First; Dy < Last; Dy++)
+			int32 From = FMath::FloorToInt(FVector(NegativeRange, (Dx * -1) - Range, -99999999).GetMax());
+			int32 To = FMath::FloorToInt(FVector(Range, (Dx * -1) + Range, 99999999).GetMin());
+			for (int32 Dy = From; Dy <= To; Dy++)
 			{
-				int32 Dz = Dx * -1 - Dy;
-				Cubes.Add(FVector(Dx, Dy, Dz));
+				int32 Dz = (Dx * -1) - Dy;
+				Cubes.Add(FVector(Dx + CubeCoordsFrom.X, Dy + CubeCoordsFrom.Y, Dz + CubeCoordsFrom.Z));
 			}
 		}
 	}
-	if (IncludeFrom)
+	if (!IncludeFrom)
 	{
-
+		Cubes.Remove(CubeCoordsFrom);
 	}
 	return Cubes;
 }
