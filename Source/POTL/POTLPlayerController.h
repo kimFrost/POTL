@@ -42,11 +42,41 @@ public:
 	bool BuildingAllowed;
 
 
+	//~~ Input states ~~//
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
+	bool LeftMouseButtonDown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
+	bool RightMouseButtonDown;
+
 
 	//~~ BeginPlay ~~//
 	virtual void BeginPlay() override;
 
 	//~~ Tock ~~//
 	virtual void Tick(float DeltaSeconds) override;
+
+protected:
+
+	UFUNCTION(BlueprintCallable, Category = "Power")
+	void LeftClickPressed();
+
+	UFUNCTION(BlueprintCallable, Category = "Power")
+	void LeftClickReleased();
+
+	UFUNCTION(BlueprintCallable, Category = "Power")
+	void RightClickPressed();
+
+	UFUNCTION(BlueprintCallable, Category = "Power")
+	void RightClickReleased();
+
+
+protected:
+
+	//~~ Input setup ~~//
+	virtual void SetupInputComponent() override;
+	//virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	
 
 };

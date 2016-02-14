@@ -158,10 +158,10 @@ public:
 	//~~ Map - Creation ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
-	void TraceLandscape(ECollisionChannel CollisionChannel);
+	void TraceLandscape();
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
-	void CreateHexes(ECollisionChannel CollisionChannel);
+	void CreateHexes();
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void CleanHexes();
@@ -173,7 +173,7 @@ public:
 	void CalcHexesRot();
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
-	void AnalyseLandscape(ECollisionChannel LandscapeCollisionChannel, ECollisionChannel FoliageCollisionChannel);
+	void AnalyseLandscape();
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void CalcHexResourceDensity();
@@ -216,7 +216,7 @@ public:
 	//~~ Util - Hex ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	FST_Hex MouseToHex(ECollisionChannel CollisionChannel);
+	FST_Hex MouseToHex();
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	FST_Hex LocationToHex(FVector Location);

@@ -558,7 +558,7 @@ void UPOTLGameInstance::RemoveStructureConnection(APOTLStructure* From, APOTLStr
 /*****************************************************************************************************/
 
 /******************** TraceLandscape *************************/
-void UPOTLGameInstance::TraceLandscape(ECollisionChannel CollisionChannel)
+void UPOTLGameInstance::TraceLandscape()
 {
 	FString Tadasdadas = "adasd";
 	//UGameplayStatics::
@@ -595,7 +595,7 @@ void UPOTLGameInstance::TraceLandscape(ECollisionChannel CollisionChannel)
 					FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
 					FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
 
-					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 					//if (RV_Hit.GetActor() != NULL)
 					if (RV_Hit.bBlockingHit)
 					{
@@ -614,7 +614,7 @@ void UPOTLGameInstance::TraceLandscape(ECollisionChannel CollisionChannel)
 
 
 /******************** CreateHexes *************************/
-void UPOTLGameInstance::CreateHexes(ECollisionChannel CollisionChannel)
+void UPOTLGameInstance::CreateHexes()
 {
 	if (Landscape != NULL) {
 		// Get player controller at index 0
@@ -646,7 +646,7 @@ void UPOTLGameInstance::CreateHexes(ECollisionChannel CollisionChannel)
 				if (Creator == 1)
 				{
 					Point.IsCreator = true;
-					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 					if (RV_Hit.bBlockingHit)
 					{
 						FST_Hex Hex;
@@ -789,7 +789,7 @@ void UPOTLGameInstance::CalcHexesRot()
 
 
 /******************** AnalyseLandscape *************************/
-void UPOTLGameInstance::AnalyseLandscape(ECollisionChannel LandscapeCollisionChannel, ECollisionChannel FoliageCollisionChannel)
+void UPOTLGameInstance::AnalyseLandscape()
 {
 	//UGameplayStatics::
 	if (Landscape)
@@ -820,7 +820,7 @@ void UPOTLGameInstance::AnalyseLandscape(ECollisionChannel LandscapeCollisionCha
 				//TArray<FHitResult> OutHits;
 				TArray<FOverlapResult> OutHits;
 
-				PlayerController->GetWorld()->OverlapMultiByChannel(OutHits, Hex.Location, FQuat::Identity, FoliageCollisionChannel, FCollisionShape::MakeSphere(666), RV_TraceParams);
+				PlayerController->GetWorld()->OverlapMultiByChannel(OutHits, Hex.Location, FQuat::Identity, ChannelFoliage, FCollisionShape::MakeSphere(666), RV_TraceParams);
 				for (int32 ii = 0; ii < OutHits.Num(); ii++)
 				{
 					FOverlapResult& OutHit = OutHits[ii];
@@ -866,7 +866,7 @@ void UPOTLGameInstance::AnalyseLandscape(ECollisionChannel LandscapeCollisionCha
 				//Re-initialize hit info
 				FHitResult RV_Hit(ForceInit);
 
-				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, LandscapeCollisionChannel, RV_TraceParams);
+				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 
 				//PlayerController->GetWorld()->SweepMultiByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
 				//if (RV_Hit.GetActor() != NULL)
@@ -1155,7 +1155,7 @@ void  UPOTLGameInstance::SetPersonData(APOTLStructure* AssignedTo, EPersonBaseTa
 /*****************************************************************************************************/
 
 /******************** MouseToHex *************************/
-FST_Hex UPOTLGameInstance::MouseToHex(ECollisionChannel CollisionChannel)
+FST_Hex UPOTLGameInstance::MouseToHex()
 {
 	FST_Hex Hex = FST_Hex{};
 	if (Landscape)
@@ -1165,12 +1165,17 @@ FST_Hex UPOTLGameInstance::MouseToHex(ECollisionChannel CollisionChannel)
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
 		if (PlayerController)
 		{
+
+			//const FName TraceTag("MyTraceTag");
+			//Landscape->GetWorld()->DebugDrawTraceTag = TraceTag;
+
 			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
 			RV_TraceParams.bTraceComplex = true;
 			RV_TraceParams.bTraceAsyncScene = true;
 			RV_TraceParams.bReturnPhysicalMaterial = false;
+			//RV_TraceParams.TraceTag = TraceTag;
 
-			//Re-initialize hit info
+			//~~ Re-initialize hit info ~~//
 			FHitResult RV_Hit(ForceInit);
 
 			FVector WorldLocation;
@@ -1185,7 +1190,7 @@ FST_Hex UPOTLGameInstance::MouseToHex(ECollisionChannel CollisionChannel)
 			FVector LineTraceFrom = WorldLocation + FVector{ 1.f, 1.f, 0.f };
 			FVector LineTraceTo = WorldDirection * 50000 + WorldLocation + FVector{ 1.f, 1.f, 0.f };
 
-			PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+			PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 			if (RV_Hit.bBlockingHit)
 			{
 				// Point.Location = RV_Hit.Location;
@@ -1201,10 +1206,13 @@ FST_Hex UPOTLGameInstance::MouseToHex(ECollisionChannel CollisionChannel)
 FST_Hex UPOTLGameInstance::LocationToHex(FVector Location)
 {
 	FST_Hex Hex = FST_Hex{};
-	FVector Cube = UPOTLUtilFunctionLibrary::LocationToCube(GridXCount, HexWidth, HexHeight, Location);
-	int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cube), GridXCount);
-	if (Hexes.IsValidIndex(HexIndex)) {
-		Hex = Hexes[HexIndex];
+	if (Landscape)
+	{
+		FVector Cube = UPOTLUtilFunctionLibrary::LocationToCube(GridXCount, HexWidth, HexHeight, Location - Landscape->GetActorLocation());
+		int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cube), GridXCount);
+		if (Hexes.IsValidIndex(HexIndex)) {
+			Hex = Hexes[HexIndex];
+		}
 	}
 	return Hex;
 }
