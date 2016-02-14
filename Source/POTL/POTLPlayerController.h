@@ -17,6 +17,11 @@
 
 
 
+//~~~~~ Delegates/Event dispatcher ~~~~~//
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexSelected, FST_Hex, Hex);
+
+
+
 
 
 
@@ -42,13 +47,24 @@ public:
 	bool BuildingAllowed;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn")
+	FST_Hex CachedHex;
+
+
 	//~~ Input states ~~//
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool LeftMouseButtonDown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool RightMouseButtonDown;
+
+
+
+	/*********** Delegates **************/
+
+	UPROPERTY(BlueprintAssignable, Category = "Turn")
+	FHexSelected OnHexSelected;
 
 
 	//~~ BeginPlay ~~//

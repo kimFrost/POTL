@@ -43,7 +43,18 @@ void APOTLPlayerController::Tick(float DeltaTime)
 		if (GameInstance->HexGridReady)
 		{
 			//GameInstance->MouseToHex
-			
+			FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
+			if (TracedHex.HexIndex != CachedHex.HexIndex)
+			{
+				CachedHex = TracedHex;
+
+				OnHexSelected.Broadcast(CachedHex);
+
+
+				//OnTurnSwitched.Broadcast(32.f);
+
+
+			}
 		}
 	}
 }
@@ -61,6 +72,8 @@ void APOTLPlayerController::SetupInputComponent()
 	InputComponent->BindAction("LeftClick", IE_Released, this, &APOTLPlayerController::LeftClickReleased);
 	InputComponent->BindAction("RightClick", IE_Pressed, this, &APOTLPlayerController::RightClickPressed);
 	InputComponent->BindAction("RightClick", IE_Released, this, &APOTLPlayerController::RightClickReleased);
+
+	//InputComponent->BindAction("Rotate", IE_Released, this, &APOTLPlayerController::Rotate);
 
 	//InputComponent->BindAction("LeftClick", IE_Pressed, this, &ACharacter::Jump);
 	//InputComponent->BindAxis("MoveForward", this, &ATutorialCodeCharacter::MoveForward);
