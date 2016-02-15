@@ -18,6 +18,7 @@
 
 
 //~~~~~ Delegates/Event dispatcher ~~~~~//
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexOver, FST_Hex, Hex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexSelected, FST_Hex, Hex);
 
 
@@ -46,6 +47,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	bool BuildingAllowed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	APOTLStructure* BuilderStructure;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FST_Structure BuildStructureData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	int32 BaseRotation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn")
 	FST_Hex CachedHex;
@@ -62,6 +71,9 @@ public:
 
 
 	/*********** Delegates **************/
+
+	UPROPERTY(BlueprintAssignable, Category = "Turn")
+	FHexOver OnHexOver;
 
 	UPROPERTY(BlueprintAssignable, Category = "Turn")
 	FHexSelected OnHexSelected;

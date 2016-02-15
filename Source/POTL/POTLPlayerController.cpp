@@ -19,6 +19,8 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 	GameInstance = nullptr;
 	ActiveToolType = EToolType::Select;
 	BuildingAllowed = false;
+	BuilderStructure = nullptr;
+	BaseRotation = 0;
 }
 
 
@@ -27,9 +29,7 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 void APOTLPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-
-
+	
 
 }
 
@@ -38,21 +38,31 @@ void APOTLPlayerController::BeginPlay()
 void APOTLPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (GameInstance)
+	if (GameInstance && GameInstance->HexGridReady)
 	{
-		if (GameInstance->HexGridReady)
+		//GameInstance->MouseToHex
+		FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
+		if (TracedHex.HexIndex != CachedHex.HexIndex)
 		{
-			//GameInstance->MouseToHex
-			FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
-			if (TracedHex.HexIndex != CachedHex.HexIndex)
+			CachedHex = TracedHex;
+			OnHexOver.Broadcast(CachedHex); //~~ Call hex over event dispatcher ~~//
+			//OnHexSelected.Broadcast(CachedHex);
+			if (ActiveToolType == EToolType::PlantStructure)
 			{
-				CachedHex = TracedHex;
+				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
+				if (City)
+				{
+					if (BuilderStructure)
+					{
+						BuilderStructure->Destroy();
+					}
+					BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
 
-				OnHexSelected.Broadcast(CachedHex);
 
-
-				//OnTurnSwitched.Broadcast(32.f);
-
+				}
+			}
+			else if (ActiveToolType == EToolType::Select)
+			{
 
 			}
 		}
