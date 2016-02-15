@@ -15,3 +15,21 @@ APOTLHUD::APOTLHUD(const FObjectInitializer &ObjectInitializer) : Super(ObjectIn
 }
 
 
+
+
+
+
+/******************** BeginPlay *************************/
+void APOTLHUD::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+}
+
+
+/******************** Tick *************************/
+void APOTLHUD::Tick(float DeltaTime)
+{
+
+}

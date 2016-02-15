@@ -59,6 +59,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn")
 	FST_Hex CachedHex;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FST_Hex> CityConstructionLocations;
 
 	//~~ Input states ~~//
 
@@ -77,6 +79,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Turn")
 	FHexSelected OnHexSelected;
+
+
+	/*********** Functions **************/
+
+	//UFUNCTION(BlueprintCallable, Category = "Data")
+	//void Draw();
 
 
 	//~~ BeginPlay ~~//

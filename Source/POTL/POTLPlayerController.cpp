@@ -24,6 +24,9 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 }
 
 
+
+
+
 /******************** BeginPlay *************************/
 //~~ Called when the game starts or when spawned ~~//
 void APOTLPlayerController::BeginPlay()
@@ -52,13 +55,20 @@ void APOTLPlayerController::Tick(float DeltaTime)
 				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
 				if (City)
 				{
-					if (BuilderStructure)
-					{
-						BuilderStructure->Destroy();
+					if (!CachedHex.AttachedBuilding) {
+						if (BuilderStructure)
+						{
+							BuilderStructure->Destroy();
+						}
+						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
+						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 					}
-					BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
-
-
+					else {
+						if (BuilderStructure)
+						{
+							BuilderStructure->Destroy();
+						}
+					}
 				}
 			}
 			else if (ActiveToolType == EToolType::Select)

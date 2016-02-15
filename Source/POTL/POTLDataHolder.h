@@ -11,6 +11,7 @@ class APOTLStructure;
 class UFactoryComponent;
 
 
+
 //~~~~~ ENUMS ~~~~~//
 UENUM(BlueprintType)
 enum class EToolType : uint8
