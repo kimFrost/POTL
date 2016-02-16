@@ -3,13 +3,13 @@
 #pragma once
 
 #include "Engine/DecalActor.h"
-#include "POTLHexDecal.generated.h"
+#include "HexDecal.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class POTL_API APOTLHexDecal : public ADecalActor
+class POTL_API AHexDecal : public ADecalActor
 {
 	GENERATED_BODY()
 

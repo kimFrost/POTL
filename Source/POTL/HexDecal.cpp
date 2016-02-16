@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
-#include "POTLHexDecal.h"
+#include "HexDecal.h"
 
 
 
 
 
 /******************** ChangeType *************************/
-void APOTLHexDecal::ChangeMaterial()
+void AHexDecal::ChangeMaterial()
 {
 
 

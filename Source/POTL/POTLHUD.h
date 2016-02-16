@@ -6,12 +6,21 @@
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
-#include "POTLHexDecal.h"
+#include "HexDecal.h"
 #include "POTLHUD.generated.h"
 
-/**
- * 
- */
+
+//~~~~~ ENUMS ~~~~~//
+UENUM(BlueprintType)
+enum class EHighlightType : uint8
+{
+	Type1 UMETA(DisplayName = "Type1"),
+	Green UMETA(DisplayName = "Green"),
+	Blue UMETA(DisplayName = "Blue")
+};
+
+
+
 UCLASS()
 class POTL_API APOTLHUD : public AHUD
 {
@@ -26,8 +35,20 @@ public:
 	//APOTLStructure* GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
-	TArray<APOTLHexDecal*> FreeDecalsTest;
+	TArray<AHexDecal*> FreeDecals;
 	//ADecalActor
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
+	TArray<AHexDecal*> DecalsType1;
+
+
+	/****** FUNCTIONS ******/
+
+	UFUNCTION(BlueprintCallable, Category = "Decal")
+	void HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, bool Clear);
+
+	UFUNCTION(BlueprintCallable, Category = "Decal")
+	void HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType Type, bool Clear);
 
 
 	//~~ BeginPlay ~~//
