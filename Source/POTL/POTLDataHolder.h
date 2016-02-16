@@ -80,6 +80,13 @@ enum class EResourceList : uint8
 	Allocations UMETA(DisplayName = "Allocations")
 };
 
+UENUM(BlueprintType)
+enum class EHighlightType : uint8
+{
+	Type1 UMETA(DisplayName = "Type1"),
+	Green UMETA(DisplayName = "Green"),
+	Blue UMETA(DisplayName = "Blue")
+};
 
 
 

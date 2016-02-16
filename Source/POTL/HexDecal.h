@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/DecalActor.h"
+#include "POTLDataHolder.h"
 #include "HexDecal.generated.h"
 
 /**
@@ -20,7 +21,7 @@ public:
 	UMaterialInstanceDynamic* MaterialInstanceTest;
 	
 	UFUNCTION(BlueprintCallable, Category = "Power")
-	void ChangeMaterial();
+	void ChangeMaterial(EHighlightType Type);
 
 
 	//MaterialInstance = UMaterialInstanceDynamic::Create(Material, this);

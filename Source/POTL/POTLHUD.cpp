@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
+#include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
 #include "Kismet/GameplayStatics.h"
@@ -37,6 +38,7 @@ void APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, bool 
 		if (FreeDecals.IsValidIndex(0))
 		{
 			AHexDecal* Decal = FreeDecals[0];
+			Decal->ChangeMaterial(Type);
 			Decal->SetActorLocation(Hex.Location);
 			Decal->SetActorHiddenInGame(false);
 			DecalsType1.Add(Decal);

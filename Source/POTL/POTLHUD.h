@@ -10,14 +10,7 @@
 #include "POTLHUD.generated.h"
 
 
-//~~~~~ ENUMS ~~~~~//
-UENUM(BlueprintType)
-enum class EHighlightType : uint8
-{
-	Type1 UMETA(DisplayName = "Type1"),
-	Green UMETA(DisplayName = "Green"),
-	Blue UMETA(DisplayName = "Blue")
-};
+
 
 
 
