@@ -62,6 +62,26 @@ void APOTLPlayerController::Tick(float DeltaTime)
 						}
 						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
 						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+						
+						APOTLHUD * HUD = Cast<APOTLHUD>(GetHUD());
+						if (HUD)
+						{
+							TArray<FVector> RotatedCubes = UPOTLUtilFunctionLibrary::RotateCubes(BuildStructureData.CubeSizes, BaseRotation, FVector(0, 0, 0));
+							FVector RotatedBroadcastRoot = UPOTLUtilFunctionLibrary::RotateCube(BuildStructureData.BroadcastRoot, BaseRotation, FVector(0,0,0));
+							for (int32 i = 0; i < RotatedCubes.Num(); i++)
+							{
+								FVector& Cube = RotatedCubes[i];
+								FVector CubeInWorld = Cube + CachedHex.HexCubeCoords;
+								FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeInWorld);
+								int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
+								if (GameInstance->Hexes.IsValidIndex(HexIndex))
+								{
+									FST_Hex& Hex = GameInstance->Hexes[HexIndex];
+									BuildStructureHexes.Add(Hex);
+									HUD->HighlightHex(Hex, EHighlightType::Type1, false);
+								}
+							}
+						}
 					}
 					else {
 						if (BuilderStructure)

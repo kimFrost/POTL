@@ -17,6 +17,23 @@ APOTLHUD::APOTLHUD(const FObjectInitializer &ObjectInitializer) : Super(ObjectIn
 
 
 
+/******************** ClearHighlightedHexes *************************/
+void APOTLHUD::ClearHighlightedHexes(EHighlightType Type)
+{
+	if (Type == EHighlightType::Type1)
+	{
+		for (int32 i = 0; i < DecalsType1.Num(); i++)
+		{
+			AHexDecal* Decal = DecalsType1[i];
+			Decal->SetActorHiddenInGame(true);
+		}
+		FreeDecals.Append(DecalsType1);
+		DecalsType1.Empty();
+	}
+}
+
+
+
 /******************** HighlightHex *************************/
 void APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, bool Clear)
 {
@@ -53,16 +70,7 @@ void APOTLHUD::HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType
 {
 	if (Clear)
 	{
-		if (Type == EHighlightType::Type1)
-		{
-			for (int32 i = 0; i < DecalsType1.Num(); i++)
-			{
-				AHexDecal* Decal = DecalsType1[i];
-				Decal->SetActorHiddenInGame(true);
-			}
-			FreeDecals.Append(DecalsType1);
-			DecalsType1.Empty();
-		}
+		ClearHighlightedHexes(Type);
 	}
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{

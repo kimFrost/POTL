@@ -62,6 +62,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FST_Hex> CityConstructionLocations;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FST_Hex> BuildStructureHexes;
+
 	//~~ Input states ~~//
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
