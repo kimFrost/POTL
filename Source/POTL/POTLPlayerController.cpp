@@ -21,6 +21,9 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 	BuildingAllowed = false;
 	BuilderStructure = nullptr;
 	BaseRotation = 0;
+	BuildBroadcastRoot = nullptr;
+	BuildValid = false;
+	BuildMsg = "";
 }
 
 
@@ -80,6 +83,45 @@ void APOTLPlayerController::Tick(float DeltaTime)
 									BuildStructureHexes.Add(Hex);
 									HUD->HighlightHex(Hex, EHighlightType::Type1, false);
 								}
+							}
+							FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RotatedBroadcastRoot + CachedHex.HexCubeCoords);
+							int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
+							if (GameInstance->Hexes.IsValidIndex(HexIndex))
+							{
+								BuildBroadcastRoot = & GameInstance->Hexes[HexIndex];
+							}
+							if (BuildBroadcastRoot)
+							{
+								BuildValid = true;
+								for (int32 i = 0; i < BuildStructureHexes.Num(); i++)
+								{
+									FST_Hex& Hex = BuildStructureHexes[i];
+									bool Buildable = GameInstance->IsHexBuildable(Hex);
+									if (!Buildable)
+									{
+										BuildValid = false;
+										BuildMsg = "Building spaces are not buildable";
+									}
+								}
+								for (int32 i = 0; i < CityConstructionLocations.Num(); i++)
+								{
+									FST_Hex& Hex = CityConstructionLocations[i];
+									EHighlightType Type = EHighlightType::Type1;
+									if (Hex.ConstructInfo.Blocked)
+									{
+
+									}
+									HUD->HighlightHex(Hex, Type, false);
+								}
+								if (!BuildValid)
+								{
+									GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, BuildMsg);
+								}
+							}
+							else
+							{
+								BuildValid = false;
+								BuildMsg = "Building Root is outside of broadcast grid";
 							}
 						}
 					}

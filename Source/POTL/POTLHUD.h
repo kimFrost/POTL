@@ -43,6 +43,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Decal")
 	void HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, bool Clear);
 
+	//EDecalStorage
+
 	UFUNCTION(BlueprintCallable, Category = "Decal")
 	void HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType Type, bool Clear);
 

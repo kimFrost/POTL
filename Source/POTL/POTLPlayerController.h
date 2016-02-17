@@ -62,8 +62,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FST_Hex> CityConstructionLocations;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure") //~~ Strucutre reference cannot be a uproperty. Not supported in editor ~~/
+	FST_Hex* BuildBroadcastRoot;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FST_Hex> BuildStructureHexes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
+	bool BuildValid;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
+	FString BuildMsg;
 
 	//~~ Input states ~~//
 

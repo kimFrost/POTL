@@ -12,7 +12,24 @@
 // Sets default values
 APOTLHUD::APOTLHUD(const FObjectInitializer &ObjectInitializer) : Super(ObjectInitializer)
 {
-
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+		for (int32 i = 0; i < 200; i++)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			FVector SpawnLocation = FVector(0,0,0);
+			FRotator SpawnRotation = FRotator(0,0,0);;
+			//AHexDecal* Decal = World->SpawnActor<AHexDecal>(TSubclassOf<AHexDecal>, SpawnLocation, SpawnRotation, SpawnParams);
+			AHexDecal* Decal = World->SpawnActor<AHexDecal>(class AHexDecal>, SpawnLocation, SpawnRotation, SpawnParams);
+			if (Decal)
+			{
+				FreeDecals.Add(Decal);
+			}
+		}
+	}
 }
 
 
@@ -32,7 +49,7 @@ void APOTLHUD::ClearHighlightedHexes(EHighlightType Type)
 	}
 }
 
-
+//EDecalStorage
 
 /******************** HighlightHex *************************/
 void APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, bool Clear)

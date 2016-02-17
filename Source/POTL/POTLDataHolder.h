@@ -88,6 +88,11 @@ enum class EHighlightType : uint8
 	Blue UMETA(DisplayName = "Blue")
 };
 
+UENUM(BlueprintType)
+enum class EDecalStorage : uint8
+{
+	ConstructLocations UMETA(DisplayName = "ConstructLocations")
+};
 
 
  
