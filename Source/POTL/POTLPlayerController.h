@@ -63,16 +63,20 @@ public:
 	TArray<FST_Hex> CityConstructionLocations;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure") //~~ Strucutre reference cannot be a uproperty. Not supported in editor ~~/
-	FST_Hex* BuildBroadcastRoot;
+	FST_Hex* BuildBroadcastRootHex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FST_Hex> BuildStructureHexes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
+	TArray<AHexDecal*> ConstructDecals;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	bool BuildValid;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	FString BuildMsg;
+
 
 	//~~ Input states ~~//
 
@@ -98,6 +102,11 @@ public:
 	//UFUNCTION(BlueprintCallable, Category = "Data")
 	//void Draw();
 
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void ProcessConstructLocations();
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void RotateStructure();
 
 	//~~ BeginPlay ~~//
 	virtual void BeginPlay() override;
@@ -107,16 +116,16 @@ public:
 
 protected:
 
-	UFUNCTION(BlueprintCallable, Category = "Power")
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void LeftClickPressed();
 
-	UFUNCTION(BlueprintCallable, Category = "Power")
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void LeftClickReleased();
 
-	UFUNCTION(BlueprintCallable, Category = "Power")
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void RightClickPressed();
 
-	UFUNCTION(BlueprintCallable, Category = "Power")
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void RightClickReleased();
 
 

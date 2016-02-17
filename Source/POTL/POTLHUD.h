@@ -31,9 +31,6 @@ public:
 	TArray<AHexDecal*> FreeDecals;
 	//ADecalActor
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
-	TArray<AHexDecal*> DecalsType1;
-
 
 	/****** FUNCTIONS ******/
 
@@ -41,12 +38,16 @@ public:
 	void ClearHighlightedHexes(EHighlightType Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Decal")
-	void HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, bool Clear);
-
-	//EDecalStorage
+	void ClearDecals(UPARAM(ref) TArray<AHexDecal*>& Decals);
 
 	UFUNCTION(BlueprintCallable, Category = "Decal")
-	void HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType Type, bool Clear);
+	AHexDecal* HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type);
+
+
+	//void HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, Decals);
+
+	UFUNCTION(BlueprintCallable, Category = "Decal")
+	TArray<AHexDecal*> HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType Type);
 
 
 	//~~ BeginPlay ~~//

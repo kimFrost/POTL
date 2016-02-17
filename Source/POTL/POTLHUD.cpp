@@ -4,6 +4,7 @@
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
+#include "HexDecal.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLHUD.h"
 
@@ -12,24 +13,7 @@
 // Sets default values
 APOTLHUD::APOTLHUD(const FObjectInitializer &ObjectInitializer) : Super(ObjectInitializer)
 {
-	UWorld* const World = GetWorld();
-	if (World)
-	{
-		for (int32 i = 0; i < 200; i++)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			FVector SpawnLocation = FVector(0,0,0);
-			FRotator SpawnRotation = FRotator(0,0,0);;
-			//AHexDecal* Decal = World->SpawnActor<AHexDecal>(TSubclassOf<AHexDecal>, SpawnLocation, SpawnRotation, SpawnParams);
-			AHexDecal* Decal = World->SpawnActor<AHexDecal>(class AHexDecal>, SpawnLocation, SpawnRotation, SpawnParams);
-			if (Decal)
-			{
-				FreeDecals.Add(Decal);
-			}
-		}
-	}
+	
 }
 
 
@@ -37,6 +21,8 @@ APOTLHUD::APOTLHUD(const FObjectInitializer &ObjectInitializer) : Super(ObjectIn
 /******************** ClearHighlightedHexes *************************/
 void APOTLHUD::ClearHighlightedHexes(EHighlightType Type)
 {
+	//!! REWRITE THIS FUNCTION TO USE THE REFERENCES STORES IN THE HEXES !!//
+	/*
 	if (Type == EHighlightType::Type1)
 	{
 		for (int32 i = 0; i < DecalsType1.Num(); i++)
@@ -47,53 +33,53 @@ void APOTLHUD::ClearHighlightedHexes(EHighlightType Type)
 		FreeDecals.Append(DecalsType1);
 		DecalsType1.Empty();
 	}
+	*/
 }
 
-//EDecalStorage
+
+/******************** ClearDecals *************************/
+void APOTLHUD::ClearDecals(UPARAM(ref) TArray<AHexDecal*>& Decals)
+{
+	for (int32 i = 0; i < Decals.Num(); i++)
+	{
+		AHexDecal* Decal = Decals[i];
+		Decal->SetActorHiddenInGame(true);
+	}
+	FreeDecals.Append(Decals);
+	Decals.Empty();
+}
+
 
 /******************** HighlightHex *************************/
-void APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, bool Clear)
+AHexDecal* APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type)
 {
 	//TArray<AHexDecal*> DecalsRef;
-	if (Type == EHighlightType::Type1)
+	if (FreeDecals.IsValidIndex(0))
 	{
-		if (Clear)
-		{
-			for (int32 i = 0; i < DecalsType1.Num(); i++)
-			{
-				AHexDecal* Decal = DecalsType1[i];
-				Decal->SetActorHiddenInGame(true);
-				//SetActorEnableCollision(false);
-				//Decal->SetActorTickEnabled(false);
-				FreeDecals.Add(Decal);
-			}
-			DecalsType1.Empty();
-		}
-		if (FreeDecals.IsValidIndex(0))
-		{
-			AHexDecal* Decal = FreeDecals[0];
-			Decal->ChangeMaterial(Type);
-			Decal->SetActorLocation(Hex.Location);
-			Decal->SetActorHiddenInGame(false);
-			DecalsType1.Add(Decal);
-			FreeDecals.RemoveAt(0);
-		}
+		AHexDecal* Decal = FreeDecals[0];
+		Decal->ChangeMaterial(Type);
+		Decal->SetActorLocation(Hex.Location);
+		Decal->SetActorHiddenInGame(false);
+		FreeDecals.RemoveAt(0);
+		return Decal;
+	}
+	else {
+		return nullptr;
 	}
 }
 
 
 /******************** HighlightHexes *************************/
-void APOTLHUD::HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType Type, bool Clear)
+TArray<AHexDecal*> APOTLHUD::HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType Type)
 {
-	if (Clear)
-	{
-		ClearHighlightedHexes(Type);
-	}
+	TArray<AHexDecal*> Decals;
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{
 		FST_Hex& Hex = Hexes[i];
-		HighlightHex(Hex, Type, false);
+		AHexDecal* Decal = HighlightHex(Hex, Type);
+		Decals.Add(Decal);
 	}
+	return Decals;
 }
 
 
@@ -103,6 +89,28 @@ void APOTLHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+		for (int32 i = 0; i < 200; i++)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			FVector SpawnLocation = FVector(0, 0, 0);
+			FRotator SpawnRotation = FRotator(0, 0, 0);;
+			//AHexDecal* Decal = World->SpawnActor<AHexDecal>(TSubclassOf<AHexDecal>, SpawnLocation, SpawnRotation, SpawnParams);
+			
+			/*
+			AHexDecal* Decal = World->SpawnActor<AHexDecal>(class AHexDecal>, SpawnLocation, SpawnRotation, SpawnParams);
+			if (Decal)
+			{
+				FreeDecals.Add(Decal);
+			}
+			*/
+		}
+	}
 
 }
 

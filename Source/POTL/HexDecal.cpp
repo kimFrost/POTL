@@ -11,6 +11,16 @@
 /******************** ChangeType *************************/
 void AHexDecal::ChangeMaterial(EHighlightType Type)
 {
+	if (Type == EHighlightType::Blue)
+	{
 
+	}
+	else if (Type == EHighlightType::Green)
+	{
 
+	}
+	else if (Type == EHighlightType::Red)
+	{
+
+	}
 }

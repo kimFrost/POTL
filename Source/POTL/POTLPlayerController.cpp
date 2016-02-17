@@ -21,12 +21,131 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 	BuildingAllowed = false;
 	BuilderStructure = nullptr;
 	BaseRotation = 0;
-	BuildBroadcastRoot = nullptr;
+	BuildBroadcastRootHex = nullptr;
 	BuildValid = false;
 	BuildMsg = "";
 }
 
 
+
+/******************** ProcessConstructLocations *************************/
+void APOTLPlayerController::ProcessConstructLocations()
+{
+	APOTLHUD* HUD = Cast<APOTLHUD>(GetHUD());
+	if (HUD)
+	{
+		BuildStructureHexes.Empty();
+		HUD->ClearDecals(ConstructDecals);
+		TArray<FVector> RotatedCubes = UPOTLUtilFunctionLibrary::RotateCubes(BuildStructureData.CubeSizes, BaseRotation, FVector(0, 0, 0));
+		FVector RotatedBroadcastRoot = UPOTLUtilFunctionLibrary::RotateCube(BuildStructureData.BroadcastRoot, BaseRotation, FVector(0, 0, 0));
+		for (int32 i = 0; i < RotatedCubes.Num(); i++)
+		{
+			FVector& Cube = RotatedCubes[i];
+			FVector CubeInWorld = Cube + CachedHex.HexCubeCoords;
+			FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeInWorld);
+			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
+			if (GameInstance->Hexes.IsValidIndex(HexIndex))
+			{
+				FST_Hex& Hex = GameInstance->Hexes[HexIndex];
+				BuildStructureHexes.Add(Hex);
+				EHighlightType Type = EHighlightType::Green;
+				if (CubeInWorld == RotatedBroadcastRoot + CachedHex.HexCubeCoords)
+				{
+					Type = EHighlightType::Blue;
+				}
+				AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
+				ConstructDecals.Add(Decal);
+			}
+		}
+		FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RotatedBroadcastRoot + CachedHex.HexCubeCoords);
+		int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
+		if (GameInstance->Hexes.IsValidIndex(HexIndex))
+		{
+			BuildBroadcastRootHex = &GameInstance->Hexes[HexIndex];
+		}
+		if (BuildBroadcastRootHex)
+		{
+			BuildValid = true;
+			if (BuildBroadcastRootHex->AttachedBuilding)
+			{
+				//~~ Detect if in range of broadcast grid ~~//
+				BuildValid = BuildBroadcastRootHex->AttachedBuilding->InRangeOfEmitTo; 
+				if (!BuildValid)
+				{
+					BuildMsg = "Building Root is outside of broadcast grid";
+				}
+			}
+			else
+			{
+				BuildValid = false;
+				BuildMsg = "AttachedBuilding is Nullptr";
+			}
+			//~~ Validate build spaces are buildable ~~//
+			for (int32 i = 0; i < BuildStructureHexes.Num(); i++)
+			{
+				FST_Hex& Hex = BuildStructureHexes[i];
+				bool Buildable = GameInstance->IsHexBuildable(Hex);
+				if (!Buildable)
+				{
+					BuildValid = false;
+					BuildMsg = "Building spaces are not buildable";
+				}
+			}
+			//~~ Draw hightlights ~~//
+			for (int32 i = 0; i < CityConstructionLocations.Num(); i++)
+			{
+				FST_Hex& Hex = CityConstructionLocations[i];
+				EHighlightType Type = EHighlightType::Green;
+				if (Hex.ConstructInfo.Blocked)
+				{
+					Type = EHighlightType::Red;
+				}
+				AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
+				ConstructDecals.Add(Decal);
+			}
+			//~~ Display error msg if build is not valid ~~//
+			if (!BuildValid)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, BuildMsg);
+			}
+		}
+		else
+		{
+			BuildValid = false;
+			BuildMsg = "BuildBroadcastRootHex is Nullptr";
+		}
+	}
+}
+
+
+/******************** RotateStructure *************************/
+void APOTLPlayerController::RotateStructure()
+{
+	BaseRotation = (BaseRotation + 1) % 6;
+	//!! Is a copy of the logic from tick !!//
+	if (ActiveToolType == EToolType::PlantStructure)
+	{
+		APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
+		if (City)
+		{
+			if (!CachedHex.AttachedBuilding) {
+				if (BuilderStructure)
+				{
+					BuilderStructure->Destroy();
+				}
+				BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
+				CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+				ProcessConstructLocations();
+			}
+			else {
+				if (BuilderStructure)
+				{
+					BuilderStructure->Destroy();
+				}
+			}
+		}
+	}
+}
 
 
 
@@ -52,7 +171,6 @@ void APOTLPlayerController::Tick(float DeltaTime)
 		{
 			CachedHex = TracedHex;
 			OnHexOver.Broadcast(CachedHex); //~~ Call hex over event dispatcher ~~//
-			//OnHexSelected.Broadcast(CachedHex);
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
 				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
@@ -65,65 +183,7 @@ void APOTLPlayerController::Tick(float DeltaTime)
 						}
 						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
 						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-						
-						APOTLHUD * HUD = Cast<APOTLHUD>(GetHUD());
-						if (HUD)
-						{
-							TArray<FVector> RotatedCubes = UPOTLUtilFunctionLibrary::RotateCubes(BuildStructureData.CubeSizes, BaseRotation, FVector(0, 0, 0));
-							FVector RotatedBroadcastRoot = UPOTLUtilFunctionLibrary::RotateCube(BuildStructureData.BroadcastRoot, BaseRotation, FVector(0,0,0));
-							for (int32 i = 0; i < RotatedCubes.Num(); i++)
-							{
-								FVector& Cube = RotatedCubes[i];
-								FVector CubeInWorld = Cube + CachedHex.HexCubeCoords;
-								FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeInWorld);
-								int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
-								if (GameInstance->Hexes.IsValidIndex(HexIndex))
-								{
-									FST_Hex& Hex = GameInstance->Hexes[HexIndex];
-									BuildStructureHexes.Add(Hex);
-									HUD->HighlightHex(Hex, EHighlightType::Type1, false);
-								}
-							}
-							FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RotatedBroadcastRoot + CachedHex.HexCubeCoords);
-							int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
-							if (GameInstance->Hexes.IsValidIndex(HexIndex))
-							{
-								BuildBroadcastRoot = & GameInstance->Hexes[HexIndex];
-							}
-							if (BuildBroadcastRoot)
-							{
-								BuildValid = true;
-								for (int32 i = 0; i < BuildStructureHexes.Num(); i++)
-								{
-									FST_Hex& Hex = BuildStructureHexes[i];
-									bool Buildable = GameInstance->IsHexBuildable(Hex);
-									if (!Buildable)
-									{
-										BuildValid = false;
-										BuildMsg = "Building spaces are not buildable";
-									}
-								}
-								for (int32 i = 0; i < CityConstructionLocations.Num(); i++)
-								{
-									FST_Hex& Hex = CityConstructionLocations[i];
-									EHighlightType Type = EHighlightType::Type1;
-									if (Hex.ConstructInfo.Blocked)
-									{
-
-									}
-									HUD->HighlightHex(Hex, Type, false);
-								}
-								if (!BuildValid)
-								{
-									GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, BuildMsg);
-								}
-							}
-							else
-							{
-								BuildValid = false;
-								BuildMsg = "Building Root is outside of broadcast grid";
-							}
-						}
+						ProcessConstructLocations();
 					}
 					else {
 						if (BuilderStructure)
@@ -155,6 +215,8 @@ void APOTLPlayerController::SetupInputComponent()
 	InputComponent->BindAction("RightClick", IE_Pressed, this, &APOTLPlayerController::RightClickPressed);
 	InputComponent->BindAction("RightClick", IE_Released, this, &APOTLPlayerController::RightClickReleased);
 
+	InputComponent->BindAction("RotateStructure", IE_Pressed, this, &APOTLPlayerController::RotateStructure);
+
 	//InputComponent->BindAction("Rotate", IE_Released, this, &APOTLPlayerController::Rotate);
 
 	//InputComponent->BindAction("LeftClick", IE_Pressed, this, &ACharacter::Jump);
@@ -168,6 +230,33 @@ void APOTLPlayerController::SetupInputComponent()
 void APOTLPlayerController::LeftClickPressed()
 {
 	LeftMouseButtonDown = true;
+	if (GameInstance && GameInstance->HexGridReady)
+	{
+		FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
+		if (TracedHex.HexIndex != CachedHex.HexIndex)
+		{
+			//CachedHex = TracedHex; //?? Should I cache the hex when tick does it too? ??//
+			if (ActiveToolType == EToolType::PlantStructure)
+			{
+				//~~ If hex has a placeholder structure on it ~~//
+				if (!TracedHex.AttachedBuilding && TracedHex.AttachedBuilding->IsPlaceholder) {
+					GameInstance->RemoveStructure(TracedHex.AttachedBuilding); //~~ GameInstance will remove the strucuture to make sure all data is correct ~~//
+				}
+				//~~ Plant structure on the avaiable hex ~~//
+				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
+				if (City)
+				{
+					GameInstance->PlantStructure(TracedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
+					CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+					ProcessConstructLocations();
+				}
+			}
+			else if (ActiveToolType == EToolType::Select)
+			{
+				OnHexSelected.Broadcast(CachedHex);
+			}
+		}
+	}
 }
 
 /******************** LeftClickReleased *************************/
@@ -187,3 +276,4 @@ void APOTLPlayerController::RightClickReleased()
 {
 	RightMouseButtonDown = false;
 }
+

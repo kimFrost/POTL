@@ -83,16 +83,11 @@ enum class EResourceList : uint8
 UENUM(BlueprintType)
 enum class EHighlightType : uint8
 {
-	Type1 UMETA(DisplayName = "Type1"),
+	Red UMETA(DisplayName = "Red"),
 	Green UMETA(DisplayName = "Green"),
 	Blue UMETA(DisplayName = "Blue")
 };
 
-UENUM(BlueprintType)
-enum class EDecalStorage : uint8
-{
-	ConstructLocations UMETA(DisplayName = "ConstructLocations")
-};
 
 
  
