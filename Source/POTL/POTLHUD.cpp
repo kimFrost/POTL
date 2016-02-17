@@ -43,7 +43,10 @@ void APOTLHUD::ClearDecals(UPARAM(ref) TArray<AHexDecal*>& Decals)
 	for (int32 i = 0; i < Decals.Num(); i++)
 	{
 		AHexDecal* Decal = Decals[i];
-		Decal->SetActorHiddenInGame(true);
+		if (Decal)
+		{	
+			Decal->SetActorHiddenInGame(true);
+		}
 	}
 	FreeDecals.Append(Decals);
 	Decals.Empty();
@@ -57,10 +60,13 @@ AHexDecal* APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type)
 	if (FreeDecals.IsValidIndex(0))
 	{
 		AHexDecal* Decal = FreeDecals[0];
-		Decal->ChangeMaterial(Type);
-		Decal->SetActorLocation(Hex.Location);
-		Decal->SetActorHiddenInGame(false);
-		FreeDecals.RemoveAt(0);
+		if (Decal)
+		{
+			Decal->ChangeMaterial(Type);
+			Decal->SetActorLocation(Hex.Location);
+			Decal->SetActorHiddenInGame(false);
+			FreeDecals.RemoveAt(0);
+		}
 		return Decal;
 	}
 	else {

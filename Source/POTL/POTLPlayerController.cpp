@@ -254,6 +254,34 @@ void APOTLPlayerController::LeftClickPressed()
 			else if (ActiveToolType == EToolType::Select)
 			{
 				OnHexSelected.Broadcast(CachedHex);
+				if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType1) //?? Is this Grass ??//
+				{
+
+				}
+				else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Rock ??//
+				{
+
+				}
+				else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Water ??//
+				{
+
+				}
+
+				/*
+				FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+				RV_TraceParams.bTraceComplex = true;
+				RV_TraceParams.bTraceAsyncScene = true;
+				RV_TraceParams.bReturnPhysicalMaterial = false;
+
+				//Re-initialize hit info
+				FHitResult RV_Hit(ForceInit);
+
+				FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
+				FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
+
+				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
+				*/
+
 			}
 		}
 	}
