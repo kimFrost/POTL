@@ -19,7 +19,8 @@ public:
 	// Sets default values for this actor's properties
 	AHexDecal(const FObjectInitializer &ObjectInitializer);
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Decal)
+	UMaterialInterface* Material;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
 	UMaterialInstanceDynamic* DynamicMaterial;
