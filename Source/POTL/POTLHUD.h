@@ -35,6 +35,9 @@ public:
 	/****** FUNCTIONS ******/
 
 	UFUNCTION(BlueprintCallable, Category = "Decal")
+	void SpawnDecals();
+
+	UFUNCTION(BlueprintCallable, Category = "Decal")
 	void ClearHighlightedHexes(EHighlightType Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Decal")
@@ -42,7 +45,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Decal")
 	AHexDecal* HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type);
-
 
 	//void HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, Decals);
 

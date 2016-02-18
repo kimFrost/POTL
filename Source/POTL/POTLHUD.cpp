@@ -18,6 +18,32 @@ APOTLHUD::APOTLHUD(const FObjectInitializer &ObjectInitializer) : Super(ObjectIn
 
 
 
+/******************** SpawnDecals *************************/
+void APOTLHUD::SpawnDecals()
+{
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+		for (int32 i = 0; i < 200; i++)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			FVector SpawnLocation = FVector(0, 0, 0);
+			//FRotator SpawnRotation = FRotator(0, 0, 0);
+			FRotator SpawnRotation = FRotator(0.f, 90.f, 0.f);
+			FTransform SpawnTM(SpawnRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
+			AHexDecal* Decal = World->SpawnActor<AHexDecal>(AHexDecal::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
+			if (Decal)
+			{
+				Decal->SetActorScale3D(FVector(500.f, 142.f, 124.f));
+				FreeDecals.Add(Decal);
+			}
+		}
+	}
+}
+
+
 /******************** ClearHighlightedHexes *************************/
 void APOTLHUD::ClearHighlightedHexes(EHighlightType Type)
 {
@@ -56,7 +82,6 @@ void APOTLHUD::ClearDecals(UPARAM(ref) TArray<AHexDecal*>& Decals)
 /******************** HighlightHex *************************/
 AHexDecal* APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type)
 {
-	//TArray<AHexDecal*> DecalsRef;
 	if (FreeDecals.IsValidIndex(0))
 	{
 		AHexDecal* Decal = FreeDecals[0];
@@ -69,6 +94,13 @@ AHexDecal* APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type)
 		}
 		return Decal;
 	}
+	//~~ Spawn more decals if none available ~~//
+	else if (FreeDecals.Num() == 0)
+	{
+		SpawnDecals();
+		return HighlightHex(Hex, Type);
+	}
+	//~~ Else no know solution ~~//
 	else {
 		return nullptr;
 	}
@@ -95,29 +127,7 @@ void APOTLHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-	UWorld* const World = GetWorld();
-	if (World)
-	{
-		for (int32 i = 0; i < 200; i++)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			FVector SpawnLocation = FVector(0, 0, 0);
-			FRotator SpawnRotation = FRotator(0, 0, 0);;
-			//AHexDecal* Decal = World->SpawnActor<AHexDecal>(TSubclassOf<AHexDecal>, SpawnLocation, SpawnRotation, SpawnParams);
-			
-			/*
-			AHexDecal* Decal = World->SpawnActor<AHexDecal>(class AHexDecal>, SpawnLocation, SpawnRotation, SpawnParams);
-			if (Decal)
-			{
-				FreeDecals.Add(Decal);
-			}
-			*/
-		}
-	}
-
+	SpawnDecals();
 }
 
 

@@ -16,10 +16,21 @@ class POTL_API AHexDecal : public ADecalActor
 
 public:
 
+	// Sets default values for this actor's properties
+	AHexDecal(const FObjectInitializer &ObjectInitializer);
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
-	UMaterialInstanceDynamic* MaterialInstanceTest;
+	UMaterialInstanceDynamic* DynamicMaterial;
 	
+	// Material
+
+	// Mesh
+	// UPrimitiveComponent
+
+	/*** FUNCTIONS **/
+
 	UFUNCTION(BlueprintCallable, Category = "Power")
 	void ChangeMaterial(EHighlightType Type);
 
@@ -28,5 +39,10 @@ public:
 
 	//UMaterialInstanceDynamic* DynamicMaterial = GetRootPrimitiveComponent()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
 	//DynamicMaterial->SetVectorParameterValue("BodyColor", FLinearColor::Black);
+
+
+	//~~ BeginPlay ~~//
+	virtual void BeginPlay() override;
+
 
 };
