@@ -128,10 +128,11 @@ void APOTLPlayerController::RotateStructure()
 		APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
 		if (City)
 		{
-			if (!CachedHex.AttachedBuilding) {
+			if (!CachedHex.AttachedBuilding) { //!! Might not be right !!//
 				if (BuilderStructure)
 				{
-					BuilderStructure->Destroy();
+					//BuilderStructure->Destroy();
+					GameInstance->RemoveStructure(BuilderStructure);
 				}
 				BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
 				CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
@@ -140,7 +141,8 @@ void APOTLPlayerController::RotateStructure()
 			else {
 				if (BuilderStructure)
 				{
-					BuilderStructure->Destroy();
+					//BuilderStructure->Destroy();
+					GameInstance->RemoveStructure(BuilderStructure);
 				}
 			}
 		}
@@ -232,57 +234,58 @@ void APOTLPlayerController::LeftClickPressed()
 	LeftMouseButtonDown = true;
 	if (GameInstance && GameInstance->HexGridReady)
 	{
-		FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
-		if (TracedHex.HexIndex != CachedHex.HexIndex)
+		if (ActiveToolType == EToolType::PlantStructure)
 		{
-			//CachedHex = TracedHex; //?? Should I cache the hex when tick does it too? ??//
-			if (ActiveToolType == EToolType::PlantStructure)
+			if (BuildValid)
 			{
-				//~~ If hex has a placeholder structure on it ~~//
-				if (!TracedHex.AttachedBuilding && TracedHex.AttachedBuilding->IsPlaceholder) {
-					GameInstance->RemoveStructure(TracedHex.AttachedBuilding); //~~ GameInstance will remove the strucuture to make sure all data is correct ~~//
-				}
-				//~~ Plant structure on the avaiable hex ~~//
-				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
-				if (City)
+				FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
+				if (TracedHex.HexIndex != CachedHex.HexIndex)
 				{
-					GameInstance->PlantStructure(TracedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
-					CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-					ProcessConstructLocations();
+					//~~ If hex has a placeholder structure on it ~~//
+					if (TracedHex.AttachedBuilding && TracedHex.AttachedBuilding->IsPlaceholder) {
+						GameInstance->RemoveStructure(TracedHex.AttachedBuilding);
+						//~~ Plant structure on the avaiable hex ~~//
+						APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
+						if (City)
+						{
+							GameInstance->PlantStructure(TracedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
+							CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+							ProcessConstructLocations();
+						}
+					}
 				}
 			}
-			else if (ActiveToolType == EToolType::Select)
+		}
+		else if (ActiveToolType == EToolType::Select)
+		{
+			OnHexSelected.Broadcast(CachedHex);
+			if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType1) //?? Is this Grass ??//
 			{
-				OnHexSelected.Broadcast(CachedHex);
-				if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType1) //?? Is this Grass ??//
-				{
-
-				}
-				else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Rock ??//
-				{
-
-				}
-				else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Water ??//
-				{
-
-				}
-
-				/*
-				FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
-				RV_TraceParams.bTraceComplex = true;
-				RV_TraceParams.bTraceAsyncScene = true;
-				RV_TraceParams.bReturnPhysicalMaterial = false;
-
-				//Re-initialize hit info
-				FHitResult RV_Hit(ForceInit);
-
-				FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
-				FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
-
-				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
-				*/
 
 			}
+			else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Rock ??//
+			{
+
+			}
+			else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Water ??//
+			{
+
+			}
+
+			/*
+			FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+			RV_TraceParams.bTraceComplex = true;
+			RV_TraceParams.bTraceAsyncScene = true;
+			RV_TraceParams.bReturnPhysicalMaterial = false;
+
+			//Re-initialize hit info
+			FHitResult RV_Hit(ForceInit);
+
+			FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
+			FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
+
+			PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
+			*/
 		}
 	}
 }
