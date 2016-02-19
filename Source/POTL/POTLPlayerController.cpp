@@ -179,7 +179,7 @@ void APOTLPlayerController::Tick(float DeltaTime)
 					if (!CachedHex.AttachedBuilding) {
 						if (BuilderStructure)
 						{
-							BuilderStructure->Destroy();
+							GameInstance->RemoveStructure(BuilderStructure);
 						}
 						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
 						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
@@ -188,7 +188,7 @@ void APOTLPlayerController::Tick(float DeltaTime)
 					else {
 						if (BuilderStructure)
 						{
-							BuilderStructure->Destroy();
+							GameInstance->RemoveStructure(BuilderStructure);
 						}
 					}
 				}
