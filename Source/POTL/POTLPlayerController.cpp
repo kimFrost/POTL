@@ -69,7 +69,7 @@ void APOTLPlayerController::ProcessConstructLocations()
 			if (BuildBroadcastRootHex->AttachedBuilding)
 			{
 				//~~ Detect if in range of broadcast grid ~~//
-				BuildValid = BuildBroadcastRootHex->AttachedBuilding->InRangeOfEmitTo; 
+				BuildValid = BuildBroadcastRootHex->AttachedBuilding->InRangeOfEmitTo;
 				if (!BuildValid)
 				{
 					BuildMsg = "Building Root is outside of broadcast grid";
