@@ -168,8 +168,8 @@ void APOTLPlayerController::Tick(float DeltaTime)
 	if (GameInstance && GameInstance->HexGridReady)
 	{
 		//GameInstance->MouseToHex
-		FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
-		if (TracedHex.HexIndex != CachedHex.HexIndex)
+		FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!// //?? Make to * ref ??//
+		if (TracedHex.HexIndex != CachedHex.HexIndex && TracedHex.HexIndex != -1)
 		{
 			CachedHex = TracedHex;
 			OnHexOver.Broadcast(CachedHex); //~~ Call hex over event dispatcher ~~//
@@ -178,20 +178,14 @@ void APOTLPlayerController::Tick(float DeltaTime)
 				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
 				if (City)
 				{
+					if (BuilderStructure)
+					{
+						GameInstance->RemoveStructure(BuilderStructure);
+					}
 					if (!CachedHex.AttachedBuilding) {
-						if (BuilderStructure)
-						{
-							GameInstance->RemoveStructure(BuilderStructure);
-						}
 						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
 						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 						ProcessConstructLocations();
-					}
-					else {
-						if (BuilderStructure)
-						{
-							GameInstance->RemoveStructure(BuilderStructure);
-						}
 					}
 				}
 			}
@@ -239,19 +233,16 @@ void APOTLPlayerController::LeftClickPressed()
 			if (BuildValid)
 			{
 				FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
-				if (TracedHex.HexIndex != CachedHex.HexIndex)
-				{
-					//~~ If hex has a placeholder structure on it ~~//
-					if (TracedHex.AttachedBuilding && TracedHex.AttachedBuilding->IsPlaceholder) {
-						GameInstance->RemoveStructure(TracedHex.AttachedBuilding);
-						//~~ Plant structure on the avaiable hex ~~//
-						APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
-						if (City)
-						{
-							GameInstance->PlantStructure(TracedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
-							CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-							ProcessConstructLocations();
-						}
+				//~~ If hex has a placeholder structure on it ~~//
+				if (TracedHex.AttachedBuilding && TracedHex.AttachedBuilding->IsPlaceholder) {
+					GameInstance->RemoveStructure(TracedHex.AttachedBuilding);
+					//~~ Plant structure on the avaiable hex ~~//
+					APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
+					if (City)
+					{
+						GameInstance->PlantStructure(TracedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
+						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+						ProcessConstructLocations();
 					}
 				}
 			}
