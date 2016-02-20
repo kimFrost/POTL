@@ -48,10 +48,10 @@ void APOTLPlayerController::ProcessConstructLocations()
 			{
 				FST_Hex& Hex = GameInstance->Hexes[HexIndex];
 				BuildStructureHexes.Add(Hex);
-				EHighlightType Type = EHighlightType::Green;
+				EHighlightType Type = EHighlightType::Blue;
 				if (CubeInWorld == RotatedBroadcastRoot + CachedHex.HexCubeCoords)
 				{
-					Type = EHighlightType::Blue;
+					Type = EHighlightType::Green;
 				}
 				AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
 				ConstructDecals.Add(Decal);
@@ -106,7 +106,7 @@ void APOTLPlayerController::ProcessConstructLocations()
 			//~~ Display error msg if build is not valid ~~//
 			if (!BuildValid)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, BuildMsg);
+				GEngine->AddOnScreenDebugMessage(42, 15.0f, FColor::Yellow, BuildMsg);
 			}
 		}
 		else
