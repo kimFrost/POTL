@@ -29,6 +29,24 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	Root = this;
 
 	//GameInstance = Cast<UPOTLGameInstance>(GetGameInstance()); //~~ <== Will crash. The game instance is not ready at this point ~~//
+
+
+	/*
+	#define    COLLISION_PLAYERMOVEMENT    ECollisionChannel::ECC_GameTraceChannel1
+	#define    COLLISION_TETHERBALL        ECollisionChannel::ECC_GameTraceChannel2
+	#define    COLLISION_PLAYERPAWN        ECollisionChannel::ECC_GameTraceChannel3
+	*/
+
+	/*
+	CollisionComp->BodyInstance.SetCollisionProfileName("Custom");
+	CollisionComp->SetCollisionObjectType(COLLISION_TETHERBALL);
+	CollisionComp->SetNotifyRigidBodyCollision(true);
+	CollisionComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	CollisionComp->SetCollisionResponseToChannel(COLLISION_PLAYERMOVEMENT, ECollisionResponse::ECR_Ignore);
+	CollisionComp->SetCollisionResponseToChannel(COLLISION_TETHERBALL, ECollisionResponse::ECR_Ignore);
+	CollisionComp->SetCollisionResponseToChannel(COLLISION_PLAYERPAWN, ECollisionResponse::ECR_Ignore);
+	CollisionComp->BodyInstance.SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics, true);
+	*/
 }
 
 //AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);

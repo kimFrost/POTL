@@ -249,18 +249,25 @@ void APOTLPlayerController::LeftClickPressed()
 		}
 		else if (ActiveToolType == EToolType::Select)
 		{
+			const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhysicalSurface"), true);
+			if (EnumPtr)
+			{
+				//FString SurfaceString = EnumPtr->GetEnumName(CachedHex.Resources.SurfaceType);
+				FText SurfaceString = EnumPtr->GetEnumText(CachedHex.Resources.SurfaceType);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "trace surface type: " + SurfaceString.ToString());
+			}
 			OnHexSelected.Broadcast(CachedHex);
 			if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType1) //?? Is this Grass ??//
 			{
-
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "Grass");
 			}
 			else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Rock ??//
 			{
-
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "Rock");
 			}
 			else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Water ??//
 			{
-
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "Water");
 			}
 
 			/*

@@ -30,13 +30,13 @@ void APOTLHUD::SpawnDecals()
 			SpawnParams.Owner = this;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			FVector SpawnLocation = FVector(0, 0, 0);
-			//FRotator SpawnRotation = FRotator(0, 0, 0);
-			FRotator SpawnRotation = FRotator(0.f, 90.f, 0.f);
-			FTransform SpawnTM(SpawnRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
+			FRotator SpawnRotation = FRotator(0, 0, 0);
+			//FRotator SpawnRotation = FRotator(22.5f, -90.f, 0.f);
+			//FTransform SpawnTM(SpawnRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
 			AHexDecal* Decal = World->SpawnActor<AHexDecal>(AHexDecal::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
 			if (Decal)
 			{
-				Decal->SetActorScale3D(FVector(500.f, 142.f, 124.f));
+				//Decal->SetActorScale3D(FVector(500.f, 142.f, 124.f));
 				FreeDecals.Add(Decal);
 			}
 		}
@@ -134,5 +134,7 @@ void APOTLHUD::BeginPlay()
 /******************** Tick *************************/
 void APOTLHUD::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
 
 }

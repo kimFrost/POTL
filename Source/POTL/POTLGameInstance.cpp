@@ -403,7 +403,9 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 					//SpawnParams.bNoCollisionFail = true; //~~ Spawn event if collision ~~//
 					SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 					FVector SpawnLocation = Hex.Location;
-					FRotator SpawnRotation = Hex.Rotation;
+					FRotator SpawnRotation = Hex.Rotation + FRotator(0, RotationDirection * (360 / 6), 0);
+					//FRotator SpawnRotation = Hex.Rotation;
+
 					// Spawn the pickup
 					//APOTLStructure* const
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);

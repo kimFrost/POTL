@@ -19,6 +19,10 @@ AHexDecal::AHexDecal(const FObjectInitializer &ObjectInitializer) : Super(Object
 		DynamicMaterial = GetDecal()->CreateDynamicMaterialInstance();
 		//DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Yellow);
 	}
+
+
+	SetActorScale3D(FVector(500.f, 142.f, 124.f));
+
 	
 	//DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
 
@@ -48,6 +52,9 @@ AHexDecal::AHexDecal(const FObjectInitializer &ObjectInitializer) : Super(Object
 	//BoxComponent->SetBoxExtent(FVector(20,10,5), false);
 	// Scale 500, 142, 124
 	// Rotation 0, -90, 0
+
+
+	
 }
 
 
