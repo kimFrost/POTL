@@ -600,7 +600,8 @@ void APOTLStructure::ProcessResourceRequests()
 						{
 							AvailableQuantity = ReqResource.Value;
 						}
-						int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, true, -1);
+						//int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, ii, true, -1);
+						int32 AllocationIndex = AllocateResource(ResourceRequest.From, ReqResource.Key, AvailableQuantity, EAllocationType::FactoryBilling, i, true, -1);
 						AllocationIndexes.Add(AllocationIndex);
 						ReqResource.Value = ReqResource.Value - AvailableQuantity;
 					}
@@ -621,7 +622,8 @@ void APOTLStructure::ProcessResourceRequests()
 									Allocation.Quantity = Allocation.Quantity - ReqResource.Value; //~~ Subtract resource request quantity from the allocation, and then let it be ~~//
 									//Split logic //~~ Make new allocation with ~~//
 									int RemainingQuantity = ReqResource.Value;
-									int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, ii, false, -1);
+									//int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, ii, false, -1);
+									int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, i, false, -1);
 									AllocationIndexes.Add(AllocationIndex);
 									ReqResource.Value = 0;
 								}
@@ -644,7 +646,8 @@ void APOTLStructure::ProcessResourceRequests()
 				{
 					//~~ Add resource payoff to the keeper of the factory, and then allocate it to root afterwards ~~//
 					//ResourceRequest.From->AddResource(Resource.Key, Resource.Value, EResourceList::Free); //~~ Add Resources and then consume them with AllocateResource(true) ~~// //!~~ No need for adding them, and then consuming them anymore. AllocateResource can not be called with consume: false ~~//
-					int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					//int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, ii, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
+					int32 AllocationIndex = ResourceRequest.From->AllocateResource(this, Resource.Key, Resource.Value, EAllocationType::FactoryProduction, i, false, -1); // Maybe ii + 1 ? I think not. Are checked if sequence is lower, not lower or equal
 					if (ResourceRequest.Factory)
 					{
 						ResourceRequest.Factory->AllocationIndex = AllocationIndex;
@@ -680,6 +683,12 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 			}
 		}
 	}
+
+	if (Request.Num() > 0)
+	{
+		FString ASasdsa = "";
+	}
+
 	for (auto& ResourceRequest : Request)
 	{
 		if (ResourceAvailable.Contains(ResourceRequest.Key))
