@@ -1,0 +1,105 @@
+
+
+
+BP_House
+	FacoryComponent
+	- Recipe = WP
+	- Quantity = 1
+	
+BP_House
+	FacoryComponent
+	- Recipe = WP
+	- Quantity = 1
+
+BP_Farm
+	FacoryComponent
+	- Recipe = Wheat
+	- Quantity = 2
+
+
+
+	
+FST_ResourceRequest
+	From = BP_Farm
+	Factory = BP_Farm->FacoryComponent
+	Sequence = 1
+	Request = [{WP, 2}];
+	Payoff = [{Wheat, 2}];
+	Type = EAllocationType::RequestDirect
+	RequestMet = true/false
+	
+	
+
+	
+	
+FST_ResourceAllocation [0]
+	From = BP_House;
+	To = Root
+	ResourceKey = WP
+	Quantity = 1
+	Type = EAllocationType::FactoryProduction
+	Sequence = 0
+	
+FST_ResourceAllocation [0]
+	From = BP_House;
+	To = Root
+	ResourceKey = WP
+	Quantity = 1
+	Type = EAllocationType::FactoryProduction
+	Sequence = 0
+	
+	
+	
+	
+	
+FST_ResourceAllocation [1]
+	From = BP_House;
+	To = BP_Farm
+	ResourceKey = WP
+	Quantity = 1
+	Type = EAllocationType::FactoryBilling
+	Sequence = 0
+	
+FST_ResourceAllocation [1]
+	From = BP_House;
+	To = BP_Farm
+	ResourceKey = WP
+	Quantity = 1
+	Type = EAllocationType::FactoryBilling
+	Sequence = 0
+	
+FST_ResourceAllocation [1]
+	From = BP_Farm;
+	To = Root
+	ResourceKey = Wheat
+	Quantity = 2
+	Type = EAllocationType::FactoryProduction
+	Sequence = 1
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FST_ResourceAllocation
+  From = nullptr;
+  To = nullptr;	
+  ResourceKey = "";	
+  Quantity = 0;	
+  Type = EAllocationType::None;	
+  Sequence = 0;	
+  PersonIndex = -1;	
+  Locked = false;	
+  LockedMin = 0;
