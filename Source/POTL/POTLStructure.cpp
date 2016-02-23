@@ -586,6 +586,12 @@ void APOTLStructure::ProcessResourceRequests()
 		for (int32 ii = 0; ii < RequestList.Num(); ii++) // Loop through sequence row list. Ex 0[{R}, {R}, {R}]
 		{
 			FST_ResourceRequest& ResourceRequest = RequestList[ii];
+
+			if (ResourceRequest.Request.Num() > 1)
+			{
+				FString Sasdsa;
+			}
+
 			if (HasResourcesAvailable(ResourceRequest.Request, true, i)) //~~ If self has the resources required. (i) is the sequence, not (ii), it is just a list index for the nested array. ~~//
 			{
 				TArray<int32> AllocationIndexes;
@@ -610,34 +616,42 @@ void APOTLStructure::ProcessResourceRequests()
 						for (auto& AllocatedResource : AllocatedResources)
 						{
 							FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-							if (Allocation.Sequence < ResourceRequest.Sequence && Allocation.To == this && Allocation.Type == EAllocationType::FactoryProduction && Allocation.Quantity > 0)
+							if (Allocation.ResourceKey == ReqResource.Key && Allocation.Sequence < ResourceRequest.Sequence && Allocation.To == this && Allocation.Type == EAllocationType::FactoryProduction && Allocation.Quantity > 0)
 							{	
-								int32 AvailableQuantity = Allocation.Quantity;
-								if (AvailableQuantity > ReqResource.Value)
+								//!! BUG BEGIN
+								if (ReqResource.Value < Allocation.Quantity) //~~ If request if less than allocation quantity, then split allocation ~~//
 								{
-									AvailableQuantity = ReqResource.Value;
-								}
-								if (AvailableQuantity < Allocation.Quantity) //~~ If request if less than allocation quantity, then split allocation ~~//
-								{
+									//Allocation.Quantity = Allocation.Quantity - ReqResource.Value; //~~ Subtract resource request quantity from the allocation, and then let it be ~~//
+									//int32 NewAllocationAmount = Allocation.Quantity - ReqResource.Value;
+									int32 NewAllocationAmount = ReqResource.Value;
 									Allocation.Quantity = Allocation.Quantity - ReqResource.Value; //~~ Subtract resource request quantity from the allocation, and then let it be ~~//
 									//Split logic //~~ Make new allocation with ~~//
-									int RemainingQuantity = ReqResource.Value;
 									//int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, ii, false, -1);
-									int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, ReqResource.Value, EAllocationType::FactoryBilling, i, false, -1);
+									int32 AllocationIndex = Allocation.From->AllocateResource(ResourceRequest.From, ReqResource.Key, NewAllocationAmount, EAllocationType::FactoryBilling, Allocation.Sequence, false, -1);
 									AllocationIndexes.Add(AllocationIndex);
 									ReqResource.Value = 0;
 								}
-								else if (AvailableQuantity >= Allocation.Quantity) //~~ If request is more or equal to allocation quantity, then just change allocation to target ~~//
+								else if (ReqResource.Value >= Allocation.Quantity) //~~ If request is more or equal to allocation quantity, then just change allocation to target ~~//
 								{
 									Allocation.To = ResourceRequest.From;
 									Allocation.Type = EAllocationType::FactoryBilling; //! Maybe it needs to be a unique type, like FactoryProductionReallocation or something.
-									ReqResource.Value = ReqResource.Value - AvailableQuantity;
+									//ReqResource.Value = ReqResource.Value - AvailableQuantity;
+									//ReqResource.Value = ReqResource.Value - Allocation.Quantity;
+									FString TestValue = FString::FromInt(Allocation.Quantity);
+									ReqResource.Value = ReqResource.Value - Allocation.Quantity;
+									// 3 ? = 4 - 4
+									// ? = 4 - 2;
 								}
+								//!! BUG END
 							}
-							if (ReqResource.Value == 0)
+ 							if (ReqResource.Value == 0)
 							{
 								break;
 							}
+						}
+						if (ReqResource.Value > 0)
+						{
+							FString Bug;
 						}
 					}
 				}
@@ -671,6 +685,7 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 	bool RequestMet = true;
 	TMap<FString, int32> ResourceAvailable = FreeResources; //~~ Copy resources ~~//
 	//~~ Append all allocated resources  with lower sequence to available resources ~~//
+
 	if (IncludeAllocations) 
 	{
 		for (auto& AllocatedResource : AllocatedResources)
@@ -684,10 +699,7 @@ bool APOTLStructure::HasResourcesAvailable(TMap<FString, int32>& Request, bool I
 		}
 	}
 
-	if (Request.Num() > 0)
-	{
-		FString ASasdsa = "";
-	}
+	
 
 	for (auto& ResourceRequest : Request)
 	{

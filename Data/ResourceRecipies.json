@@ -14,24 +14,6 @@
 		"Sequence": 1
 	},
 	{
-		"Name": "Stick",
-		"Ingredients": [
-			"(Id=\"WP\",Quantity=1)",
-			"(Id=\"Wood\",Quantity=1)"
-		],
-		"Servings": 16,
-		"Sequence": 2
-	},
-	{
-		"Name": "Plank",
-		"Ingredients": [
-			"(Id=\"WP\",Quantity=1)",
-			"(Id=\"Wood\",Quantity=2)"
-		],
-		"Servings": 1,
-		"Sequence": 1
-	},
-	{
 		"Name": "Flour",
 		"Ingredients": [
 			"(Id=\"WP\",Quantity=1)",
@@ -48,5 +30,23 @@
 		],
 		"Servings": 1,
 		"Sequence": 3
+	},
+	{
+		"Name": "Stick",
+		"Ingredients": [
+			"(Id=\"WP\",Quantity=1)",
+			"(Id=\"Wood\",Quantity=1)"
+		],
+		"Servings": 16,
+		"Sequence": 2
+	},
+	{
+		"Name": "Plank",
+		"Ingredients": [
+			"(Id=\"WP\",Quantity=1)",
+			"(Id=\"Wood\",Quantity=2)"
+		],
+		"Servings": 1,
+		"Sequence": 1
 	}
 ]
