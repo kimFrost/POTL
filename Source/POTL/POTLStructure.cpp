@@ -616,7 +616,11 @@ void APOTLStructure::ProcessResourceRequests()
 						for (auto& AllocatedResource : AllocatedResources)
 						{
 							FST_ResourceAllocation& Allocation = AllocatedResource.Value;
-							if (Allocation.ResourceKey == ReqResource.Key && Allocation.Sequence < ResourceRequest.Sequence && Allocation.To == this && Allocation.Type == EAllocationType::FactoryProduction && Allocation.Quantity > 0)
+							if (Allocation.ResourceKey == ReqResource.Key && 
+								Allocation.Sequence < ResourceRequest.Sequence && 
+								Allocation.To == this && 
+								Allocation.Type == EAllocationType::FactoryProduction && 
+								Allocation.Quantity > 0)
 							{	
 								//!! BUG BEGIN
 								if (ReqResource.Value < Allocation.Quantity) //~~ If request if less than allocation quantity, then split allocation ~~//
