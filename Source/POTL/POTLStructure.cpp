@@ -758,6 +758,9 @@ void APOTLStructure::ProcessDecay()
 
 	//~~ Overwrite decay queue with a copy of the backup ~~//
 	DecayQueue = DecayQueueBackup;
+
+	FString ADASdasd;
+
 	//~~ Move freeResources up the decay queue ~~//
 	for (auto& Decay : DecayQueue)
 	{
@@ -771,6 +774,9 @@ void APOTLStructure::ProcessDecay()
 		}
 		*/
 	}
+
+	
+
 	//~~ Add production to decay queue ~~//
 	for (auto& AllocatedResource : AllocatedResources)
 	{
@@ -804,6 +810,9 @@ void APOTLStructure::ProcessDecay()
 			}
 		}
 	}
+
+
+
 	//~~ Make decay allocations based on maxage and decay queue ~~//
 	for (auto& Decay : DecayQueue)
 	{
@@ -828,6 +837,24 @@ void APOTLStructure::ProcessDecay()
 		}
 	}
 
+
+	//~~ Debug print ~~//
+	int32 Count = 100;
+	for (auto& Decay : DecayQueue)
+	{
+		Count++;
+		FString ResourceKey = Decay.Key;
+		TArray<int32>& Queue = Decay.Value;
+		FString PrintString = ResourceKey + " : ";
+		for (int32 i = 0; i < Queue.Num(); i++)
+		{
+			int32 QueuItem = Queue[i];
+			PrintString += FString::FromInt(QueuItem) + ", ";
+		}
+		GEngine->AddOnScreenDebugMessage(Count, 60.0f, FColor::Yellow, PrintString);
+	}
+
+	
 
 	// WP 3 - Production x 2
 	// Wheat 1 - Production x 1
