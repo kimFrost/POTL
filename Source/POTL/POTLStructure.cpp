@@ -187,7 +187,7 @@ TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 	}
 	for (auto& AllocatedResource : AllocatedResources)
 	{
-		//!! I have to check for allocation type, cause of decay !!//
+		//~~ Add alteration if allocation key isn't in free resources ~~//
 		if (AllocatedResource.Value.From == this || AllocatedResource.Value.To == this) //~~~ If either outgoing or incomming, then create an alteration struct  ~~//
 		{
 			if (!TMapList.Contains(AllocatedResource.Value.ResourceKey))
@@ -197,7 +197,8 @@ TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 				TMapList.Add(AllocatedResource.Value.ResourceKey, ResourceAlteration);
 			}
 		}
-		if (AllocatedResource.Value.From == this) //~~ Outgoing resources from root ~~//
+		//~~ Outgoing resources from root ~~//
+		if (AllocatedResource.Value.From == this) 
 		{
 			if (AllocatedResource.Value.Type == EAllocationType::Decay)
 			{
@@ -210,7 +211,8 @@ TArray<FST_ResourceAlteration> APOTLStructure::GetResourceAlteration()
 				TMapList[AllocatedResource.Value.ResourceKey].Storage += AllocatedResource.Value.Quantity;
 			}
 		}
-		if (AllocatedResource.Value.To == this) //~~ Incomming resources to root ~~//
+		//~~ Incomming resources to root ~~//
+		if (AllocatedResource.Value.To == this) 
 		{ 
 			if (AllocatedResource.Value.Type == EAllocationType::ProductionDecay)
 			{
@@ -789,7 +791,7 @@ void APOTLStructure::ProcessDecay()
 			{
 				//int32 AllocationIndex = AllocateResource(nullptr, Allocation.ResourceKey, Allocation.Quantity, EAllocationType::Decay, -1, false, -1);
 				//Allocation.Type = EAllocationType::Decay; //!! Almost right. But missing the decay information for displaying to the user (+1,-1). 
-				Allocation.Type = EAllocationType::ProductionDecay; 
+				Allocation.Type = EAllocationType::ProductionDecay;
 			}
 			if (DecayQueue.Contains(Allocation.ResourceKey))
 			{
@@ -809,8 +811,38 @@ void APOTLStructure::ProcessDecay()
 				DecayQueue.Add(AllocatedResource.Value.ResourceKey, Queue);
 			}
 		}
+		//~~ If bill and from root, then remove from decay que end ~~//
+		else if (Allocation.Type == EAllocationType::FactoryBilling && Allocation.From == this)
+		{
+			if (DecayQueue.Contains(Allocation.ResourceKey))
+			{
+				TArray<int32>& Queue = DecayQueue[Allocation.ResourceKey];
+				if (Queue.Num() > 0)
+				{
+					Queue[Queue.Num() - 1] -= Allocation.Quantity;
+				}
+			}
+		}
 	}
 
+
+	/*
+	//~~ Debug print ~~//
+	int32 Count = 100;
+	for (auto& Decay : DecayQueue)
+	{
+		Count++;
+		FString ResourceKey = Decay.Key;
+		TArray<int32>& Queue = Decay.Value;
+		FString PrintString = ResourceKey + " : ";
+		for (int32 i = 0; i < Queue.Num(); i++)
+		{
+			int32 QueuItem = Queue[i];
+			PrintString += FString::FromInt(QueuItem) + ", ";
+		}
+		GEngine->AddOnScreenDebugMessage(Count, 60.0f, FColor::Yellow, PrintString);
+	}
+	*/
 
 
 	//~~ Make decay allocations based on maxage and decay queue ~~//
@@ -837,9 +869,9 @@ void APOTLStructure::ProcessDecay()
 		}
 	}
 
-
+	/*
 	//~~ Debug print ~~//
-	int32 Count = 100;
+	Count = 200;
 	for (auto& Decay : DecayQueue)
 	{
 		Count++;
@@ -851,9 +883,9 @@ void APOTLStructure::ProcessDecay()
 			int32 QueuItem = Queue[i];
 			PrintString += FString::FromInt(QueuItem) + ", ";
 		}
-		GEngine->AddOnScreenDebugMessage(Count, 60.0f, FColor::Yellow, PrintString);
+		GEngine->AddOnScreenDebugMessage(Count, 60.0f, FColor::Blue, PrintString);
 	}
-
+	*/
 	
 
 	// WP 3 - Production x 2
@@ -901,6 +933,7 @@ int32 APOTLStructure::AllocateResource(APOTLStructure* To, FString ResourceKey, 
 			}
 			else
 			{
+				bool Bug = true;
 				return -1; //~~ If FreeResources doesn't have the resource. Just for safe handling ~~//
 			}
 		}
