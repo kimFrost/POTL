@@ -36,6 +36,8 @@
 *.opensdf
 *.sdf
 *.sln
+*.VC.db
+*.VC.opendb
 
 # Precompiled Assets
 SourceArt/**/*.png
@@ -67,6 +69,7 @@ DerivedDataCache/*
 *.swo
 .ctrlp_cache/
 
+ipch/*
 
 #Coherent UI
 Plugins/Runtime/Coherent/CoherentUIPlugin/Intermediate/*
