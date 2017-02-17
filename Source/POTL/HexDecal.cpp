@@ -23,7 +23,10 @@ AHexDecal::AHexDecal(const FObjectInitializer &ObjectInitializer) : Super(Object
 	// Way to big. Why??
 	//SetActorScale3D(FVector(500.f, 142.f, 124.f));
 
-
+	if (Decal)
+	{
+		Decal->DecalSize = FVector(500.f, 142.f, 124.f);
+	}
 
 	
 	//DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
