@@ -20,8 +20,10 @@ AHexDecal::AHexDecal(const FObjectInitializer &ObjectInitializer) : Super(Object
 		//DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Yellow);
 	}
 
+	// Way to big. Why??
+	//SetActorScale3D(FVector(500.f, 142.f, 124.f));
 
-	SetActorScale3D(FVector(500.f, 142.f, 124.f));
+
 
 	
 	//DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);

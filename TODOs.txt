@@ -1,0 +1,16 @@
+
+17.2.17: 
+ - Make solution work with 4.14
+ - Fix BP_Hexdecal broken
+
+ 
+ 
+Backlog -----------------------------
+ - Refactor decal system to be decal per hex 
+ - Refactor FST_Hex to be Uobject instead UHex class
+
+ 
+ 
+ 
+Ideas ----------------------
+ - 
