@@ -45,13 +45,13 @@ public:
 	void ClearDecals(UPARAM(ref) TArray<AHexDecal*>& Decals);
 
 	UFUNCTION(BlueprintCallable, Category = "Decal")
-	AHexDecal* HighlightHex(UHexTile* Hex, EHighlightType Type);
+	AHexDecal* HighlightHex(UHexTile* Hex, EDecalType Type);
 	//AHexDecal* HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type);
 
 	//void HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type, Decals);
 
 	UFUNCTION(BlueprintCallable, Category = "Decal")
-	TArray<AHexDecal*> HighlightHexes(UPARAM(ref) TArray<UHexTile*>& Hexes, EHighlightType Type);
+	TArray<AHexDecal*> HighlightHexes(UPARAM(ref) TArray<UHexTile*>& Hexes, EDecalType Type);
 	//TArray<AHexDecal*> HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType Type);
 
 

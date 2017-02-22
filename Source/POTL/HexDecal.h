@@ -25,6 +25,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
 	UMaterialInstanceDynamic* DynamicMaterial;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
+	EHighlightType DecalType;
+
 	// Material
 
 	// Mesh
@@ -32,8 +35,11 @@ public:
 
 	/*** FUNCTIONS **/
 
-	UFUNCTION(BlueprintCallable, Category = "Power")
-	void ChangeMaterial(EHighlightType Type);
+	UFUNCTION(BlueprintCallable, Category = "Decal")
+	void HideDecal();
+
+	UFUNCTION(BlueprintCallable, Category = "Decal")
+	void ChangeMaterial(EDecalType Type);
 
 
 	//MaterialInstance = UMaterialInstanceDynamic::Create(Material, this);

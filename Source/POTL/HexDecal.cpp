@@ -71,19 +71,28 @@ AHexDecal::AHexDecal(const FObjectInitializer &ObjectInitializer) : Super(Object
 //toAdd->SetMaterial(0, dynamic);
 
 
-/******************** ChangeType *************************/
-void AHexDecal::ChangeMaterial(EHighlightType Type)
+/******************** HideDecal *************************/
+void AHexDecal::HideDecal()
 {
+
+}
+
+
+/******************** ChangeType *************************/
+void AHexDecal::ChangeMaterial(EDecalType Type)
+{
+	/*
 	if (Type == EHighlightType::Blue)
 	{
 		//DynamicMaterial->SetScalarParameterValue();
 		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Blue);
 	}
-	else if (Type == EHighlightType::Green)
+	*/
+	if (Type == EDecalType::ValidBuild)
 	{
 		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Green);
 	}
-	else if (Type == EHighlightType::Red)
+	else if (Type == EDecalType::InvalidBuild)
 	{
 		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Red);
 	}

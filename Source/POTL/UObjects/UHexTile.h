@@ -87,8 +87,16 @@ public:
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	bool DebugMe;
 
+	UFUNCTION(BlueprintCallable, Category = "Decal")
+	void HideDecal();
+
+	UFUNCTION(BlueprintCallable, Category = "Decal")
+	void ShowDecal(EDecalType Type);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hex")
 	void Init();
+
+
 
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")

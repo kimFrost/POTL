@@ -89,6 +89,13 @@ enum class EHighlightType : uint8
 	Blue UMETA(DisplayName = "Blue")
 };
 
+UENUM(BlueprintType)
+enum class EDecalType : uint8
+{
+	ValidBuild UMETA(DisplayName = "ValidBuild"),
+	InvalidBuild UMETA(DisplayName = "InvalidBuild")
+};
+
 
 
  

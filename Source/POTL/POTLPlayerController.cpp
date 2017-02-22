@@ -50,13 +50,14 @@ void APOTLPlayerController::ProcessConstructLocations()
 				if (IsValid(Hex))
 				{
 					BuildStructureHexes.Add(Hex);
-					EHighlightType Type = EHighlightType::Blue;
+					EDecalType Type = EDecalType::InvalidBuild;
 					if (CubeInWorld == RotatedBroadcastRoot + CachedHex->HexCubeCoords)
 					{
-						Type = EHighlightType::Green;
+						Type = EDecalType::ValidBuild;
 					}
-					AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
-					ConstructDecals.Add(Decal);
+					Hex->ShowDecal(Type);
+					//AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
+					//ConstructDecals.Add(Decal);
 				}
 			}
 		}
@@ -104,13 +105,14 @@ void APOTLPlayerController::ProcessConstructLocations()
 				UHexTile* Hex = CityConstructionLocations[i];
 				if (IsValid(Hex))
 				{
-					EHighlightType Type = EHighlightType::Green;
+					EDecalType Type = EDecalType::ValidBuild;
 					if (Hex->ConstructInfo.Blocked)
 					{
-						Type = EHighlightType::Red;
+						Type = EDecalType::InvalidBuild;
 					}
-					AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
-					ConstructDecals.Add(Decal);
+					Hex->ShowDecal(Type);
+					//AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
+					//ConstructDecals.Add(Decal);
 				}
 			}
 			//~~ Display error msg if build is not valid ~~//

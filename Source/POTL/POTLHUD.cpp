@@ -80,7 +80,7 @@ void APOTLHUD::ClearDecals(UPARAM(ref) TArray<AHexDecal*>& Decals)
 
 
 /******************** HighlightHex *************************/
-AHexDecal* APOTLHUD::HighlightHex(UHexTile* Hex, EHighlightType Type)
+AHexDecal* APOTLHUD::HighlightHex(UHexTile* Hex, EDecalType Type)
 {
 	if (IsValid(Hex))
 	{
@@ -115,7 +115,7 @@ AHexDecal* APOTLHUD::HighlightHex(UHexTile* Hex, EHighlightType Type)
 
 
 /******************** HighlightHexes *************************/
-TArray<AHexDecal*> APOTLHUD::HighlightHexes(UPARAM(ref) TArray<UHexTile*>& Hexes, EHighlightType Type)
+TArray<AHexDecal*> APOTLHUD::HighlightHexes(UPARAM(ref) TArray<UHexTile*>& Hexes, EDecalType Type)
 {
 	TArray<AHexDecal*> Decals;
 	for (int32 i = 0; i < Hexes.Num(); i++)

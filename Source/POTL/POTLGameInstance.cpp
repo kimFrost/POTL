@@ -718,6 +718,10 @@ void UPOTLGameInstance::CreateHexes()
 						{
 							Hex->Point5 = Points[PointIndex];
 						}
+
+						Hex->WorldRef = Landscape->GetWorld();
+						Hex->Init();
+
 						Hexes.Add(Hex);
 					}
 				}

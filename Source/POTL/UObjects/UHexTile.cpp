@@ -11,6 +11,7 @@
 UHexTile::UHexTile()
 {
 	WorldRef = nullptr;
+	HexDecal = nullptr;
 
 	Location = { -1, -1, -1 };
 	Rotation = { 0.f, 0.f, 0.f };
@@ -38,6 +39,26 @@ UHexTile::UHexTile()
 UHexTile::~UHexTile()
 {
 
+}
+
+
+/******************** Init *************************/
+void UHexTile::HideDecal()
+{
+	if (HexDecal)
+	{
+		HexDecal->HideDecal();
+	}
+}
+
+
+/******************** Init *************************/
+void UHexTile::ShowDecal(EDecalType Type)
+{
+	if (HexDecal)
+	{
+		HexDecal->ChangeMaterial(Type);
+	}
 }
 
 
