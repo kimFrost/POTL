@@ -13,7 +13,7 @@ class APOTLStructure;
 
 
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class POTL_API UHexTile : public UObject
 {
 	GENERATED_BODY()

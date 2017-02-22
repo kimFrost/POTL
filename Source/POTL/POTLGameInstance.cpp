@@ -739,7 +739,7 @@ void UPOTLGameInstance::CleanHexes()
 		UHexTile* Hex = Hexes[i];
 		if (IsValid(Hex))
 		{
-			bool Remove = (!Hex->Point0->Exits || !Hex->Point1->Exits || !Hex->Point2->Exits || !Hex->Point3->Exits || !Hex->Point4->Exits || !Hex->Point5->Exits);
+			bool Remove = (!Hex->Point0 || !Hex->Point1 || !Hex->Point2 || !Hex->Point3 || !Hex->Point4 || !Hex->Point5);
 			if (Remove)
 			{
 				Count++;

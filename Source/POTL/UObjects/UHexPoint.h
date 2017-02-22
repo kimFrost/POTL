@@ -10,7 +10,7 @@
 class UHexTile;
 
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class POTL_API UHexPoint : public UObject
 {
 	GENERATED_BODY()
