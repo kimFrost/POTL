@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UObjects/UHexTile.h"
 #include "POTLDataHolder.h"
 #include "POTLUtilFunctionLibrary.generated.h"
 
@@ -69,13 +70,13 @@ public:
 	static void ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEnum>& Branches);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	static TArray<int32> HexesToHexIndexes(const TArray<FST_Hex>& Hexes);
+	static TArray<int32> HexesToHexIndexes(const TArray<UHexTile*>& Hexes);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	static TArray<FST_Hex> SubtractHexes(const TArray<FST_Hex>& Hexes, const TArray<FST_Hex>& Subtraction);
+	static TArray<UHexTile*> SubtractHexes(const TArray<UHexTile*>& Hexes, const TArray<UHexTile*>& Subtraction);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	static TArray<FST_Hex> IntersectHexes(const TArray<FST_Hex>& Hexes, const TArray<FST_Hex>& Intersection);
+	static TArray<UHexTile*> IntersectHexes(const TArray<UHexTile*>& Hexes, const TArray<UHexTile*>& Intersection);
 
 
 	/** Map - Pathing */

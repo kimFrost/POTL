@@ -80,42 +80,52 @@ void APOTLHUD::ClearDecals(UPARAM(ref) TArray<AHexDecal*>& Decals)
 
 
 /******************** HighlightHex *************************/
-AHexDecal* APOTLHUD::HighlightHex(UPARAM(ref) FST_Hex& Hex, EHighlightType Type)
+AHexDecal* APOTLHUD::HighlightHex(UHexTile* Hex, EHighlightType Type)
 {
-	if (FreeDecals.IsValidIndex(0))
+	if (IsValid(Hex))
 	{
-		AHexDecal* Decal = FreeDecals[0];
-		if (Decal)
+		if (FreeDecals.IsValidIndex(0))
 		{
-			Decal->ChangeMaterial(Type);
-			Decal->SetActorLocation(Hex.Location);
-			Decal->SetActorHiddenInGame(false);
-			FreeDecals.RemoveAt(0);
+			AHexDecal* Decal = FreeDecals[0];
+			if (Decal)
+			{
+				Decal->ChangeMaterial(Type);
+				Decal->SetActorLocation(Hex->Location);
+				Decal->SetActorHiddenInGame(false);
+				FreeDecals.RemoveAt(0);
+			}
+			return Decal;
 		}
-		return Decal;
+		//~~ Spawn more decals if none available ~~//
+		else if (FreeDecals.Num() == 0)
+		{
+			SpawnDecals();
+			return HighlightHex(Hex, Type);
+		}
+		//~~ Else no know solution ~~//
+		else {
+			return nullptr;
+		}
 	}
-	//~~ Spawn more decals if none available ~~//
-	else if (FreeDecals.Num() == 0)
+	else
 	{
-		SpawnDecals();
-		return HighlightHex(Hex, Type);
-	}
-	//~~ Else no know solution ~~//
-	else {
 		return nullptr;
 	}
 }
 
 
 /******************** HighlightHexes *************************/
-TArray<AHexDecal*> APOTLHUD::HighlightHexes(UPARAM(ref) TArray<FST_Hex>& Hexes, EHighlightType Type)
+TArray<AHexDecal*> APOTLHUD::HighlightHexes(UPARAM(ref) TArray<UHexTile*>& Hexes, EHighlightType Type)
 {
 	TArray<AHexDecal*> Decals;
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{
-		FST_Hex& Hex = Hexes[i];
-		AHexDecal* Decal = HighlightHex(Hex, Type);
-		Decals.Add(Decal);
+		UHexTile* Hex = Hexes[i];
+		if (IsValid(Hex))
+		{
+			AHexDecal* Decal = HighlightHex(Hex, Type);
+			Decals.Add(Decal);
+		}
 	}
 	return Decals;
 }

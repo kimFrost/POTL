@@ -32,7 +32,7 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 void APOTLPlayerController::ProcessConstructLocations()
 {
 	APOTLHUD* HUD = Cast<APOTLHUD>(GetHUD());
-	if (HUD)
+	if (HUD && GameInstance && IsValid(CachedHex))
 	{
 		BuildStructureHexes.Empty();
 		HUD->ClearDecals(ConstructDecals);
@@ -41,27 +41,31 @@ void APOTLPlayerController::ProcessConstructLocations()
 		for (int32 i = 0; i < RotatedCubes.Num(); i++)
 		{
 			FVector& Cube = RotatedCubes[i];
-			FVector CubeInWorld = Cube + CachedHex.HexCubeCoords;
+			FVector CubeInWorld = Cube + CachedHex->HexCubeCoords;
 			FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeInWorld);
 			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
 			if (GameInstance->Hexes.IsValidIndex(HexIndex))
 			{
-				FST_Hex& Hex = GameInstance->Hexes[HexIndex];
-				BuildStructureHexes.Add(Hex);
-				EHighlightType Type = EHighlightType::Blue;
-				if (CubeInWorld == RotatedBroadcastRoot + CachedHex.HexCubeCoords)
+				UHexTile* Hex = GameInstance->Hexes[HexIndex];
+				if (IsValid(Hex))
 				{
-					Type = EHighlightType::Green;
+					BuildStructureHexes.Add(Hex);
+					EHighlightType Type = EHighlightType::Blue;
+					if (CubeInWorld == RotatedBroadcastRoot + CachedHex->HexCubeCoords)
+					{
+						Type = EHighlightType::Green;
+					}
+					AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
+					ConstructDecals.Add(Decal);
 				}
-				AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
-				ConstructDecals.Add(Decal);
 			}
 		}
-		FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RotatedBroadcastRoot + CachedHex.HexCubeCoords);
+		FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RotatedBroadcastRoot + CachedHex->HexCubeCoords);
 		int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
 		if (GameInstance->Hexes.IsValidIndex(HexIndex))
 		{
-			BuildBroadcastRootHex = &GameInstance->Hexes[HexIndex];
+			//BuildBroadcastRootHex = &GameInstance->Hexes[HexIndex];
+			BuildBroadcastRootHex = GameInstance->Hexes[HexIndex];
 		}
 		if (BuildBroadcastRootHex)
 		{
@@ -83,25 +87,31 @@ void APOTLPlayerController::ProcessConstructLocations()
 			//~~ Validate build spaces are buildable ~~//
 			for (int32 i = 0; i < BuildStructureHexes.Num(); i++)
 			{
-				FST_Hex& Hex = BuildStructureHexes[i];
-				bool Buildable = GameInstance->IsHexBuildable(Hex);
-				if (!Buildable)
+				UHexTile* Hex = BuildStructureHexes[i];
+				if (IsValid(Hex))
 				{
-					BuildValid = false;
-					BuildMsg = "Building spaces are not buildable";
+					bool Buildable = GameInstance->IsHexBuildable(Hex);
+					if (!Buildable)
+					{
+						BuildValid = false;
+						BuildMsg = "Building spaces are not buildable";
+					}
 				}
 			}
 			//~~ Draw hightlights ~~//
 			for (int32 i = 0; i < CityConstructionLocations.Num(); i++)
 			{
-				FST_Hex& Hex = CityConstructionLocations[i];
-				EHighlightType Type = EHighlightType::Green;
-				if (Hex.ConstructInfo.Blocked)
+				UHexTile* Hex = CityConstructionLocations[i];
+				if (IsValid(Hex))
 				{
-					Type = EHighlightType::Red;
+					EHighlightType Type = EHighlightType::Green;
+					if (Hex->ConstructInfo.Blocked)
+					{
+						Type = EHighlightType::Red;
+					}
+					AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
+					ConstructDecals.Add(Decal);
 				}
-				AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
-				ConstructDecals.Add(Decal);
 			}
 			//~~ Display error msg if build is not valid ~~//
 			if (!BuildValid)
@@ -125,16 +135,16 @@ void APOTLPlayerController::RotateStructure()
 	//!! Is a copy of the logic from tick !!//
 	if (ActiveToolType == EToolType::PlantStructure)
 	{
-		APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
+		APOTLStructure* City = GameInstance->GetNearestCity(CachedHex->Location);
 		if (City)
 		{
-			if (!CachedHex.AttachedBuilding) { //!! Might not be right !!//
+			if (!CachedHex->AttachedBuilding) { //!! Might not be right !!//
 				if (BuilderStructure)
 				{
 					//BuilderStructure->Destroy();
 					GameInstance->RemoveStructure(BuilderStructure);
 				}
-				BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
+				BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
 				CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 				ProcessConstructLocations();
 			}
@@ -168,22 +178,22 @@ void APOTLPlayerController::Tick(float DeltaTime)
 	if (GameInstance && GameInstance->HexGridReady)
 	{
 		//GameInstance->MouseToHex
-		FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!// //?? Make to * ref ??//
-		if (TracedHex.HexIndex != CachedHex.HexIndex && TracedHex.HexIndex != -1)
+		UHexTile* TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!// //?? Make to * ref ??//
+		if (IsValid(TracedHex) && TracedHex->HexIndex != CachedHex->HexIndex && TracedHex->HexIndex != -1)
 		{
 			CachedHex = TracedHex;
 			OnHexOver.Broadcast(CachedHex); //~~ Call hex over event dispatcher ~~//
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
-				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
+				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex->Location);
 				if (City)
 				{
 					if (BuilderStructure)
 					{
 						GameInstance->RemoveStructure(BuilderStructure);
 					}
-					if (!CachedHex.AttachedBuilding) {
-						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
+					if (!CachedHex->AttachedBuilding) {
+						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
 						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 						ProcessConstructLocations();
 					}
@@ -232,17 +242,20 @@ void APOTLPlayerController::LeftClickPressed()
 		{
 			if (BuildValid)
 			{
-				FST_Hex TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
-				//~~ If hex has a placeholder structure on it ~~//
-				if (TracedHex.AttachedBuilding && TracedHex.AttachedBuilding->IsPlaceholder) {
-					GameInstance->RemoveStructure(TracedHex.AttachedBuilding);
-					//~~ Plant structure on the avaiable hex ~~//
-					APOTLStructure* City = GameInstance->GetNearestCity(CachedHex.Location);
-					if (City)
-					{
-						GameInstance->PlantStructure(TracedHex.HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
-						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-						ProcessConstructLocations();
+				UHexTile* TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
+				if (IsValid(TracedHex))
+				{
+					//~~ If hex has a placeholder structure on it ~~//
+					if (TracedHex->AttachedBuilding && TracedHex->AttachedBuilding->IsPlaceholder) {
+						GameInstance->RemoveStructure(TracedHex->AttachedBuilding);
+						//~~ Plant structure on the avaiable hex ~~//
+						APOTLStructure* City = GameInstance->GetNearestCity(CachedHex->Location);
+						if (City)
+						{
+							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
+							CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+							ProcessConstructLocations();
+						}
 					}
 				}
 			}
@@ -252,20 +265,20 @@ void APOTLPlayerController::LeftClickPressed()
 			const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhysicalSurface"), true);
 			if (EnumPtr)
 			{
-				//FString SurfaceString = EnumPtr->GetEnumName(CachedHex.Resources.SurfaceType);
-				FText SurfaceString = EnumPtr->GetEnumText(CachedHex.Resources.SurfaceType);
+				//FString SurfaceString = EnumPtr->GetEnumName(CachedHex->Resources.SurfaceType);
+				FText SurfaceString = EnumPtr->GetEnumText(CachedHex->Resources.SurfaceType);
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "trace surface type: " + SurfaceString.ToString());
 			}
 			OnHexSelected.Broadcast(CachedHex);
-			if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType1) //?? Is this Grass ??//
+			if (CachedHex->Resources.SurfaceType == EPhysicalSurface::SurfaceType1) //?? Is this Grass ??//
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "Grass");
 			}
-			else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Rock ??//
+			else if (CachedHex->Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Rock ??//
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "Rock");
 			}
-			else if (CachedHex.Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Water ??//
+			else if (CachedHex->Resources.SurfaceType == EPhysicalSurface::SurfaceType2) //?? Is this Water ??//
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "Water");
 			}

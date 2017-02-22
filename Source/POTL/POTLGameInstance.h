@@ -3,6 +3,8 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "UObjects/UHexPoint.h"
+#include "UObjects/UHexTile.h"
 #include "POTLDataHolder.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLGameInstance.generated.h"
@@ -55,23 +57,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Calculated")
 	int32 GridYCount;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
-	TArray<FST_Point> Points;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
+	TArray<UHexPoint*> Points;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
-	TArray<FST_Hex> Hexes;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
+	TArray<UHexTile*> Hexes;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	bool HexGridReady;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	AActor* Landscape;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resources")
-	//UDataTable* RecipeTable;
-
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
-	//UDataTable* StructureTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	UDataTable* DATA_Recipes;
@@ -82,12 +79,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	UDataTable* DATA_Resources;
 
+
 	FTimerHandle TurnTimerHandle;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	TEnumAsByte<ECollisionChannel> ChannelLandscape;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	TEnumAsByte<ECollisionChannel> ChannelFoliage;
 
 
@@ -125,19 +123,19 @@ public:
 	//~~ Structure ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	TArray<FST_Hex> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
+	TArray<UHexTile*> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	TArray<int32> GetConstructLocationIndexes(APOTLStructure* Structure, bool IncludeChildren);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	bool IsHexBlocked(const FST_Hex& Hex);
+	bool IsHexBlocked(const UHexTile* Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	bool IsHexBuildable(const FST_Hex& Hex);
+	bool IsHexBuildable(const UHexTile* Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	bool IsHexTerrainBuildable(const FST_Hex& Hex);
+	bool IsHexTerrainBuildable(const UHexTile* Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
@@ -157,25 +155,25 @@ public:
 
 	//~~ Map - Creation ~~//
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void TraceLandscape();
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void CreateHexes();
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void CleanHexes();
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void EnrichHexes();
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void CalcHexesRot();
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void AnalyseLandscape();
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void CalcHexResourceDensity();
 
 	//~~ Turn ~~//
@@ -188,10 +186,10 @@ public:
 
 	//~~ Map - Structure ~~//
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	APOTLStructure* GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass);
 
-	UFUNCTION(BlueprintCallable, Category = "Map")
+	UFUNCTION(BlueprintCallable, Category = "Grid")
 	APOTLStructure* GetNearestCity(FVector Location);
 
 
@@ -216,10 +214,10 @@ public:
 	//~~ Util - Hex ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	FST_Hex MouseToHex();
+	UHexTile* MouseToHex();
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
-	FST_Hex LocationToHex(FVector Location);
+	UHexTile* LocationToHex(FVector Location);
 
 
 	//~~ Debug - Log ~~//

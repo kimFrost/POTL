@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
+#include "UObjects/UHexTile.h"
 #include "POTLStructure.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLHUD.h"
@@ -18,8 +19,8 @@
 
 
 //~~~~~ Delegates/Event dispatcher ~~~~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexOver, FST_Hex, Hex);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexSelected, FST_Hex, Hex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexOver, UHexTile*, Hex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexSelected, UHexTile*, Hex);
 
 
 
@@ -57,16 +58,16 @@ public:
 	int32 BaseRotation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn")
-	FST_Hex CachedHex;
+	UHexTile* CachedHex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<FST_Hex> CityConstructionLocations;
+	TArray<UHexTile*> CityConstructionLocations;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure") //~~ Strucutre reference cannot be a uproperty. Not supported in editor ~~/
-	FST_Hex* BuildBroadcastRootHex;
+	UHexTile* BuildBroadcastRootHex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<FST_Hex> BuildStructureHexes;
+	TArray<UHexTile*> BuildStructureHexes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	TArray<AHexDecal*> ConstructDecals;

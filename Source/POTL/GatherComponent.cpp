@@ -14,7 +14,6 @@ UGatherComponent::UGatherComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
 	
 	GatherRecipe = "";
@@ -59,7 +58,7 @@ int32 UGatherComponent::CalcAvaiableResources(UDataTable* RecipeTable)
 		{
 			if (GameInstance->Hexes.IsValidIndex(GatherFromIndexes[i]))
 			{
-				FST_Hex& Hex = GameInstance->Hexes[GatherFromIndexes[i]];
+				//FST_Hex& Hex = GameInstance->Hexes[GatherFromIndexes[i]];
 				//Hex.Resources.HasLake
 				//Hex.Resources.LakeDepth
 			}

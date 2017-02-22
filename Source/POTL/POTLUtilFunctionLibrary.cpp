@@ -293,21 +293,25 @@ void UPOTLUtilFunctionLibrary::ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEn
 
 
 /******************** HexesToHexIndex *************************/
-TArray<int32> UPOTLUtilFunctionLibrary::HexesToHexIndexes(const TArray<FST_Hex>& Hexes)
+TArray<int32> UPOTLUtilFunctionLibrary::HexesToHexIndexes(const TArray<UHexTile*>& Hexes)
 {
 	TArray<int32> HexIndexes;
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{
-		HexIndexes.Add(Hexes[i].HexIndex);
+		UHexTile* Hex = Hexes[i];
+		if (IsValid(Hex))
+		{
+			HexIndexes.Add(Hexes[i]->HexIndex);
+		}
 	}
 	return HexIndexes;
 }
 
 
 /******************** SubtractHexes *************************/
-TArray<FST_Hex> UPOTLUtilFunctionLibrary::SubtractHexes(const TArray<FST_Hex>& Hexes, const TArray<FST_Hex>& Subtraction)
+TArray<UHexTile*> UPOTLUtilFunctionLibrary::SubtractHexes(const TArray<UHexTile*>& Hexes, const TArray<UHexTile*>& Subtraction)
 {
-	TArray<FST_Hex> Result;
+	TArray<UHexTile*> Result;
 	TArray<int32> HexIndexes = HexesToHexIndexes(Hexes);
 	TArray<int32> SubtractionIndexes = HexesToHexIndexes(Subtraction);
 	int32 i;
@@ -317,9 +321,10 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::SubtractHexes(const TArray<FST_Hex>& H
 	}
 	for (i = 0; i < Hexes.Num(); i++) 
 	{ 
-		if (HexIndexes.Contains(Hexes[i].HexIndex))
+		UHexTile* Hex = Hexes[i];
+		if (IsValid(Hex) && HexIndexes.Contains(Hex->HexIndex))
 		{
-			Result.Add(Hexes[i]);
+			Result.Add(Hex);
 		}
 	}
 	return Result;
@@ -327,9 +332,9 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::SubtractHexes(const TArray<FST_Hex>& H
 
 
 /******************** IntersectHexes *************************/
-TArray<FST_Hex> UPOTLUtilFunctionLibrary::IntersectHexes(const TArray<FST_Hex>& Hexes, const TArray<FST_Hex>& Intersection)
+TArray<UHexTile*> UPOTLUtilFunctionLibrary::IntersectHexes(const TArray<UHexTile*>& Hexes, const TArray<UHexTile*>& Intersection)
 {
-	TArray<FST_Hex> Result;
+	TArray<UHexTile*> Result;
 	TArray<int32> HexIndexes = HexesToHexIndexes(Hexes);
 	TArray<int32> IntersectionIndexes = HexesToHexIndexes(Intersection);
 	int32 i;
@@ -342,9 +347,10 @@ TArray<FST_Hex> UPOTLUtilFunctionLibrary::IntersectHexes(const TArray<FST_Hex>& 
 	}
 	for (i = 0; i < Hexes.Num(); i++)
 	{
-		if (HexIndexes.Contains(Hexes[i].HexIndex))
+		UHexTile* Hex = Hexes[i];
+		if (IsValid(Hex) && HexIndexes.Contains(Hex->HexIndex))
 		{
-			Result.Add(Hexes[i]);
+			Result.Add(Hex);
 		}
 	}
 	return Result;

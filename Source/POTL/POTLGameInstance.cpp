@@ -118,9 +118,9 @@ void UPOTLGameInstance::ReadTables()
 
 
 /******************** GetConstructLocations *************************/
-TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
+TArray<UHexTile*> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
 {
-	TArray<FST_Hex> ConstructHexes; 
+	TArray<UHexTile*> ConstructHexes;
 	if (Structure)
 	{
 		//Log("--> GetConstructLocations: " + Structure->GetName(), 15.0f, FColor::Yellow, -1);
@@ -142,8 +142,11 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 		for (int32 m = 0; m < ConstructHexIndexes.Num(); m++)
 		{
 			int32 Index = ConstructHexIndexes[m];
-			FST_Hex& ConstructHex = Hexes[Index];
-			FST_ConstructLocation& ConstructInfo = ConstructHex.ConstructInfo;
+			UHexTile* ConstructHex = Hexes[Index];
+			if (!IsValid(ConstructHex)) {
+				continue;
+			}
+			FST_ConstructLocation& ConstructInfo = ConstructHex->ConstructInfo;
 			int32 NumOfAttachTo = ConstructInfo.AdjacentStructures.Num();
 			if (!ConstructInfo.Blocked) //~~ If not already blocked ~~//
 			{
@@ -153,15 +156,18 @@ TArray<FST_Hex> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structu
 				}
 				else if (NumOfAttachTo >= 3 && NumOfAttachTo <= 5)
 				{
-					for (int32 mm = 0; mm < ConstructHex.HexNeighborIndexes.Num(); mm++)
+					for (int32 mm = 0; mm < ConstructHex->HexNeighborIndexes.Num(); mm++)
 					{
-						int32 AdjacentHexIndex = ConstructHex.HexNeighborIndexes[mm];
+						int32 AdjacentHexIndex = ConstructHex->HexNeighborIndexes[mm];
 						if (Hexes.IsValidIndex(AdjacentHexIndex))
 						{
-							FST_Hex& AdjacentHex = Hexes[AdjacentHexIndex];
-							if (AdjacentHex.AttachedBuilding && AdjacentHex.AttachedBuilding->BroadcastHexIndex == AdjacentHexIndex) //~~ If adjacent hex has a structure & the hexindex is the same as the structure broadcast hexindex ~~//
+							UHexTile* AdjacentHex = Hexes[AdjacentHexIndex];
+							if (!IsValid(AdjacentHex)) {
+								continue;
+							}
+							if (AdjacentHex->AttachedBuilding && AdjacentHex->AttachedBuilding->BroadcastHexIndex == AdjacentHexIndex) //~~ If adjacent hex has a structure & the hexindex is the same as the structure broadcast hexindex ~~//
 							{
-								if (AdjacentHex.ConstructInfo.AdjacentStructures.Num() >= 5) //~~ is next to 5 or 6 structures ~~// //~~ then the current hex, is the only way out ~~//
+								if (AdjacentHex->ConstructInfo.AdjacentStructures.Num() >= 5) //~~ is next to 5 or 6 structures ~~// //~~ then the current hex, is the only way out ~~//
 								{
 									ConstructInfo.Blocked = true;
 								}
@@ -231,50 +237,57 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 			frontier = Frontiers[k - 1];
 			for (int32 m = 0; m < frontier.HexIndexes.Num(); m++)
 			{
-				FST_Hex& Hex = Hexes[frontier.HexIndexes[m]];
+				UHexTile* Hex = Hexes[frontier.HexIndexes[m]];
+				if (!IsValid(Hex)) {
+					continue;
+				}
 				//~~ Reset construct info if the storred tre id ain't the same. ~~//
-				if (Hex.ConstructInfo.TreeId != TreeId) //!! This might not be correct.
+				if (Hex->ConstructInfo.TreeId != TreeId) //!! This might not be correct.
 				{
-					Hex.ConstructInfo = FST_ConstructLocation{};
+					Hex->ConstructInfo = FST_ConstructLocation{};
 				}
 				//~~ Make Construct Location ~~//
-				Hex.ConstructInfo.Cube = Hex.HexCubeCoords;
-				Hex.ConstructInfo.EmitDistances.Add(k); //~~ Store smallest distance between broadcaster and structure. Have to use index of structure in EmitTo array, to find the right distance value ~~//
-				Hex.ConstructInfo.EmitTo.Add(Structure);  //~~ Update info for telling if structures are in range of emitTo broadcast's range ~~//
+				Hex->ConstructInfo.Cube = Hex->HexCubeCoords;
+				Hex->ConstructInfo.EmitDistances.Add(k); //~~ Store smallest distance between broadcaster and structure. Have to use index of structure in EmitTo array, to find the right distance value ~~//
+				Hex->ConstructInfo.EmitTo.Add(Structure);  //~~ Update info for telling if structures are in range of emitTo broadcast's range ~~//
 
 				
 				//~~ Store broadcasted resources? NO. Will result in a lot of hex updating. Could then result in bugs with imcomplete data. ~~//
 
 				int32 ValidNeighborCount = 0;
 				//~~ Add neighbors to the new frontier/next step. Only if they haven't been visited yet. ~~//
-				for (int32 i = 0; i < Hex.HexNeighborIndexes.Num(); i++)
+				for (int32 i = 0; i < Hex->HexNeighborIndexes.Num(); i++)
 				{
-					int32 Index = Hex.HexNeighborIndexes[i];
+					int32 Index = Hex->HexNeighborIndexes[i];
 					if (Index != -1 && Hexes.IsValidIndex(Index))
 					{
-						FST_Hex& NeighborHex = Hexes[Index];
+						UHexTile* NeighborHex = Hexes[Index];
+						if (!IsValid(NeighborHex)) {
+							continue;
+						}
+
 						ValidNeighborCount++;
 
-						if (NeighborHex.AttachedBuilding != nullptr //~~ Only if pointer to structure isn't null ~~//
-						&& !Hex.ConstructInfo.AttachTo.Contains(NeighborHex.AttachedBuilding) //~~ Only if structure isn't already stored in attachments. Will cause structure to block for itself ~~//
-						&& NeighborHex.AttachedBuilding->TreeId == TreeId) //~~  Only structures in same Tree ~~//
+						if (NeighborHex->AttachedBuilding != nullptr //~~ Only if pointer to structure isn't null ~~//
+						&& !Hex->ConstructInfo.AttachTo.Contains(NeighborHex->AttachedBuilding) //~~ Only if structure isn't already stored in attachments. Will cause structure to block for itself ~~//
+						&& NeighborHex->AttachedBuilding->TreeId == TreeId) //~~  Only structures in same Tree ~~//
 						{
-							Hex.ConstructInfo.AttachTo.Add(NeighborHex.AttachedBuilding);
+							Hex->ConstructInfo.AttachTo.Add(NeighborHex->AttachedBuilding);
 						}
-						if (NeighborHex.AttachedBuilding != nullptr) //~~ Only if pointer to structure isn't null ~~//
+						if (NeighborHex->AttachedBuilding != nullptr) //~~ Only if pointer to structure isn't null ~~//
 						{
-							Hex.ConstructInfo.AdjacentStructures.Add(NeighborHex.AttachedBuilding);
-							if (NeighborHex.HexIndex == NeighborHex.AttachedBuilding->BroadcastHexIndex) //~~ If hex index is the same as the structure root hexindex ~~// //!! This might not be right
+							Hex->ConstructInfo.AdjacentStructures.Add(NeighborHex->AttachedBuilding);
+							if (NeighborHex->HexIndex == NeighborHex->AttachedBuilding->BroadcastHexIndex) //~~ If hex index is the same as the structure root hexindex ~~// //!! This might not be right
 							{
-								Hex.ConstructInfo.AdjacentRootStructures.Add(NeighborHex.AttachedBuilding);
+								Hex->ConstructInfo.AdjacentRootStructures.Add(NeighborHex->AttachedBuilding);
 							}
 							if (k != (Structure->BroadcastRange + 1)) //~~ If not the last broadcast range step ~~//
 							{
-								if (NeighborHex.HexIndex == NeighborHex.AttachedBuilding->BroadcastHexIndex)
+								if (NeighborHex->HexIndex == NeighborHex->AttachedBuilding->BroadcastHexIndex)
 								{
-									if (NeighborHex.AttachedBuilding->EmitTo == Structure) //~~ If hex attached structure's parent structure is this current broadcast structure ~~//
+									if (NeighborHex->AttachedBuilding->EmitTo == Structure) //~~ If hex attached structure's parent structure is this current broadcast structure ~~//
 									{
-										NeighborHex.AttachedBuilding->InRangeOfEmitTo = true; //~~ Set child structure to be in range of this structure's broadcast range  ~~//
+										NeighborHex->AttachedBuilding->InRangeOfEmitTo = true; //~~ Set child structure to be in range of this structure's broadcast range  ~~//
 									}
 								}
 							}
@@ -296,16 +309,16 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 							*/
 							if (!IsHexTerrainBuildable(NeighborHex) || k == Structure->BroadcastRange)
 							{
-								Hex.ConstructInfo.OnRidge = true; //!!~~ NOT CORRECT ~~//
+								Hex->ConstructInfo.OnRidge = true; //!!~~ NOT CORRECT ~~//
 							}
 						}
 					}
 				}
 				if (ValidNeighborCount < 6 ) //~~ If ValidNeighborCount is less than 6 the hex is on the ridge of map~~//
 				{
-					Hex.ConstructInfo.OnMapEdge = true;
+					Hex->ConstructInfo.OnMapEdge = true;
 				}
-				ConstructHexIndexes.AddUnique(Hex.HexIndex);
+				ConstructHexIndexes.AddUnique(Hex->HexIndex);
 			}
 		}
 		ConstructHexIndexes.Remove(Structure->BroadcastHexIndex); //~~ Remove self cubeCoord ~~//
@@ -317,18 +330,21 @@ TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Str
 
 
 /******************** IsHexBlocked *************************/
-bool UPOTLGameInstance::IsHexBlocked(const FST_Hex& Hex)
+bool UPOTLGameInstance::IsHexBlocked(const UHexTile* Hex)
 {
 	bool Blocked = false;
-	if (!IsHexTerrainBuildable(Hex))
+	if (IsValid(Hex))
 	{
-		Blocked = true;
-	}
-	else if (Hex.AttachedBuilding)
-	{
-		if (Hex.AttachedBuilding->BlockPathing)
+		if (!IsHexTerrainBuildable(Hex))
 		{
 			Blocked = true;
+		}
+		else if (Hex->AttachedBuilding)
+		{
+			if (Hex->AttachedBuilding->BlockPathing)
+			{
+				Blocked = true;
+			}
 		}
 	}
 	return Blocked;
@@ -336,18 +352,21 @@ bool UPOTLGameInstance::IsHexBlocked(const FST_Hex& Hex)
 
 
 /******************** IsHexBuildable *************************/
-bool UPOTLGameInstance::IsHexBuildable(const FST_Hex& Hex)
+bool UPOTLGameInstance::IsHexBuildable(const UHexTile* Hex)
 {
 	bool Buildable = true;
-	if (!IsHexTerrainBuildable(Hex))
+	if (IsValid(Hex))
 	{
-		Buildable = false;
-	}
-	else if (Hex.AttachedBuilding)
-	{
-		if (!Hex.AttachedBuilding->IsPlaceholder)
+		if (!IsHexTerrainBuildable(Hex))
 		{
 			Buildable = false;
+		}
+		else if (Hex->AttachedBuilding)
+		{
+			if (!Hex->AttachedBuilding->IsPlaceholder)
+			{
+				Buildable = false;
+			}
 		}
 	}
 	return Buildable;
@@ -355,12 +374,19 @@ bool UPOTLGameInstance::IsHexBuildable(const FST_Hex& Hex)
 
 
 /******************** IsHexTerrainBuildable *************************/
-bool UPOTLGameInstance::IsHexTerrainBuildable(const FST_Hex& Hex)
+bool UPOTLGameInstance::IsHexTerrainBuildable(const UHexTile* Hex)
 {
-	//FRotator HexRotation = Hex.Rotation;
-	FVector HexRotation = FVector(Hex.Rotation.Pitch, Hex.Rotation.Yaw, Hex.Rotation.Roll);
-	float maxFlatDiviation = HexRotation.GetAbsMax();
-	return (maxFlatDiviation <= 15.f);
+	if (IsValid(Hex))
+	{
+		//FRotator HexRotation = Hex->Rotation;
+		FVector HexRotation = FVector(Hex->Rotation.Pitch, Hex->Rotation.Yaw, Hex->Rotation.Roll);
+		float maxFlatDiviation = HexRotation.GetAbsMax();
+		return (maxFlatDiviation <= 15.f);
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
@@ -392,7 +418,10 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 			if (Hexes.IsValidIndex(HexIndex))
 			{
-				FST_Hex& Hex = Hexes[HexIndex];
+				UHexTile* Hex = Hexes[HexIndex];
+				if (!IsValid(Hex)) {
+					return nullptr;
+				}
 				UWorld* World = Landscape->GetWorld();
 				if (World)
 				{
@@ -402,9 +431,9 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 					//SpawnParams.Instigator = Instigator;
 					//SpawnParams.bNoCollisionFail = true; //~~ Spawn event if collision ~~//
 					SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-					FVector SpawnLocation = Hex.Location;
-					FRotator SpawnRotation = Hex.Rotation + FRotator(0, RotationDirection * (360 / 6), 0);
-					//FRotator SpawnRotation = Hex.Rotation;
+					FVector SpawnLocation = Hex->Location;
+					FRotator SpawnRotation = Hex->Rotation + FRotator(0, RotationDirection * (360 / 6), 0);
+					//FRotator SpawnRotation = Hex->Rotation;
 
 					// Spawn the pickup
 					//APOTLStructure* const
@@ -436,7 +465,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						int32 BroadcastHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(BroadcastOffsetCoords, GridXCount);
 						if (Hexes.IsValidIndex(BroadcastHexIndex))
 						{
-							FST_Hex& Hex = Hexes[BroadcastHexIndex];
+							UHexTile* Hex = Hexes[BroadcastHexIndex];
 							Structure->BroadcastHexIndex = BroadcastHexIndex;
 						}
 
@@ -457,8 +486,11 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 							int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 							if (Hexes.IsValidIndex(HexIndex))
 							{
-								FST_Hex& Hex = Hexes[HexIndex];
-								Hex.AttachedBuilding = Structure;
+								UHexTile* Hex = Hexes[HexIndex];
+								if (IsValid(Hex))
+								{
+									Hex->AttachedBuilding = Structure;
+								}
 							}
 						}
 
@@ -517,10 +549,10 @@ void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 			if (Hexes.IsValidIndex(HexIndex))
 			{
-				FST_Hex& Hex = Hexes[HexIndex];
-				if (Hex.AttachedBuilding == Structure)
+				UHexTile* Hex = Hexes[HexIndex];
+				if (IsValid(Hex) && Hex->AttachedBuilding == Structure)
 				{
-					Hex.AttachedBuilding = nullptr; //~~ Remove pointer set on hex ~~//
+					Hex->AttachedBuilding = nullptr; //~~ Remove pointer set on hex ~~//
 				}
 			}
 		}
@@ -601,11 +633,11 @@ void UPOTLGameInstance::TraceLandscape()
 					//if (RV_Hit.GetActor() != NULL)
 					if (RV_Hit.bBlockingHit)
 					{
-						FST_Point Point;
-						Point.Location = RV_Hit.Location;
-						Point.Row = Row;
-						Point.Column = Column;
-						Point.Exits = true;
+						UHexPoint* Point = NewObject<UHexPoint>();
+						Point->Location = RV_Hit.Location;
+						Point->Row = Row;
+						Point->Column = Column;
+						Point->Exits = true;
 						Points.Add(Point);
 					}
 				}
@@ -640,51 +672,51 @@ void UPOTLGameInstance::CreateHexes()
 
 			for (int32 i = 0; i < Points.Num(); i++)
 			{
-				FST_Point& Point = Points[i];
-				FVector LineTraceFrom = Point.Location + FVector{ X, Y, 3000 };
-				FVector LineTraceTo = Point.Location + FVector{ X, Y, -3000 };
+				UHexPoint* Point = Points[i];
+				FVector LineTraceFrom = Point->Location + FVector{ X, Y, 3000 };
+				FVector LineTraceTo = Point->Location + FVector{ X, Y, -3000 };
 
-				int32 Creator = ((Point.Row + 1) % 2) + ((Point.Column + 2) % 2);
+				int32 Creator = ((Point->Row + 1) % 2) + ((Point->Column + 2) % 2);
 				if (Creator == 1)
 				{
-					Point.IsCreator = true;
+					Point->IsCreator = true;
 					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 					if (RV_Hit.bBlockingHit)
 					{
-						FST_Hex Hex;
-						Hex.Location = RV_Hit.Location;
-						Hex.HexOffsetCoords = FVector2D{ (float)FMath::FloorToInt((float)Point.Column / 2), (float)FMath::FloorToInt((float)Point.Row) };
-						Hex.HexCubeCoords = UPOTLUtilFunctionLibrary::ConvertOffsetToCube(Hex.HexOffsetCoords);
+						UHexTile* Hex = NewObject<UHexTile>();
+						Hex->Location = RV_Hit.Location;
+						Hex->HexOffsetCoords = FVector2D{ (float)FMath::FloorToInt((float)Point->Column / 2), (float)FMath::FloorToInt((float)Point->Row) };
+						Hex->HexCubeCoords = UPOTLUtilFunctionLibrary::ConvertOffsetToCube(Hex->HexOffsetCoords);
 
 						// Points Ref
 						int32 PointIndex = -1;
-						Hex.Point0 = Point;
+						Hex->Point0 = Point;
 						
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column + 1, Point.Row, true);
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 1, Point->Row, true);
 						
 						if (Points.IsValidIndex(PointIndex))
 						{
-							Hex.Point1 = Points[PointIndex];
+							Hex->Point1 = Points[PointIndex];
 						}
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column + 2, Point.Row, true);
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 2, Point->Row, true);
 						if (Points.IsValidIndex(PointIndex))
 						{
-							Hex.Point2 = Points[PointIndex];
+							Hex->Point2 = Points[PointIndex];
 						}
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column + 2, Point.Row + 1, true);
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 2, Point->Row + 1, true);
 						if (Points.IsValidIndex(PointIndex))
 						{
-							Hex.Point3 = Points[PointIndex];
+							Hex->Point3 = Points[PointIndex];
 						}
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column + 1, Point.Row + 1, true);
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 1, Point->Row + 1, true);
 						if (Points.IsValidIndex(PointIndex))
 						{
-							Hex.Point4 = Points[PointIndex];
+							Hex->Point4 = Points[PointIndex];
 						}
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point.Column, Point.Row + 1, true);
+						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column, Point->Row + 1, true);
 						if (Points.IsValidIndex(PointIndex))
 						{
-							Hex.Point5 = Points[PointIndex];
+							Hex->Point5 = Points[PointIndex];
 						}
 						Hexes.Add(Hex);
 					}
@@ -699,23 +731,26 @@ void UPOTLGameInstance::CreateHexes()
 void UPOTLGameInstance::CleanHexes()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CleanHexes");
-	TArray<FST_Hex> ValidHexes;
+	TArray<UHexTile*> ValidHexes;
 	int32 Count = 0;
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hexes.Num() - before clean" + FString::FromInt(Hexes.Num()));
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{
-		FST_Hex Hex = Hexes[i];
-		bool Remove = (!Hex.Point0.Exits || !Hex.Point1.Exits || !Hex.Point2.Exits || !Hex.Point3.Exits || !Hex.Point4.Exits || !Hex.Point5.Exits);
-		if (Remove)
+		UHexTile* Hex = Hexes[i];
+		if (IsValid(Hex))
 		{
-			Count++;
-			Hex.Remove = true;
-		}
-		else
-		{
-			FString Msg = "Add Hex : ";
-			Msg += Hex.Remove ? "true" : "false";
-			ValidHexes.Add(Hex);
+			bool Remove = (!Hex->Point0->Exits || !Hex->Point1->Exits || !Hex->Point2->Exits || !Hex->Point3->Exits || !Hex->Point4->Exits || !Hex->Point5->Exits);
+			if (Remove)
+			{
+				Count++;
+				Hex->Remove = true;
+			}
+			else
+			{
+				FString Msg = "Add Hex : ";
+				Msg += Hex->Remove ? "true" : "false";
+				ValidHexes.Add(Hex);
+			}
 		}
 	}
 	FString CountMsg = FString::FromInt(Count);
@@ -732,28 +767,31 @@ void UPOTLGameInstance::EnrichHexes()
 	int32 Count = 0;
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{
-		FST_Hex& Hex = Hexes[i];
-		Hex.HexIndex = i; // Set HexIndex
-
-		TArray<FVector> CubeDirections;
-		CubeDirections.Add({ 0, 1, -1 });
-		CubeDirections.Add({ 1, 0, -1 });
-		CubeDirections.Add({ 1, -1, 0 });
-		CubeDirections.Add({ 0, -1, 1 });
-		CubeDirections.Add({ -1, 0, 1 });
-		CubeDirections.Add({ -1, 1, 0 });
-
-		FVector CubeCoord = Hex.HexCubeCoords;
-		for (int32 ii = 0; ii < CubeDirections.Num(); ii++)
+		UHexTile* Hex = Hexes[i];
+		if (IsValid(Hex))
 		{
-			FVector CubeDirection = CubeDirections[ii];
-			FVector CombinedVector = CubeCoord + CubeDirection;
-			
-			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CombinedVector);
-			int32 HexDirectionIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
-			if (Hexes.IsValidIndex(HexDirectionIndex))
+			Hex->HexIndex = i; // Set HexIndex
+
+			TArray<FVector> CubeDirections;
+			CubeDirections.Add({ 0, 1, -1 });
+			CubeDirections.Add({ 1, 0, -1 });
+			CubeDirections.Add({ 1, -1, 0 });
+			CubeDirections.Add({ 0, -1, 1 });
+			CubeDirections.Add({ -1, 0, 1 });
+			CubeDirections.Add({ -1, 1, 0 });
+
+			FVector CubeCoord = Hex->HexCubeCoords;
+			for (int32 ii = 0; ii < CubeDirections.Num(); ii++)
 			{
-				Hex.HexNeighborIndexes[ii] = HexDirectionIndex;
+				FVector CubeDirection = CubeDirections[ii];
+				FVector CombinedVector = CubeCoord + CubeDirection;
+
+				FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CombinedVector);
+				int32 HexDirectionIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+				if (Hexes.IsValidIndex(HexDirectionIndex))
+				{
+					Hex->HexNeighborIndexes[ii] = HexDirectionIndex;
+				}
 			}
 		}
 	}
@@ -766,26 +804,29 @@ void UPOTLGameInstance::CalcHexesRot()
 	float HexRealHeight = HexWidth / FMath::Sqrt(3) * 2;
 	for (int32 i = 0; i < Hexes.Num(); i++)
 	{
-		FST_Hex& Hex = Hexes[i];
-		FRotator Rotation;
+		UHexTile* Hex = Hexes[i];
+		if (IsValid(Hex))
+		{
+			FRotator Rotation = FRotator(0.f, 0.f, 0.f);
 
-		float Angle;
-		float xDiff;
-		float yDiff;
+			float Angle;
+			float xDiff;
+			float yDiff;
 
-		xDiff = Hex.Point2.Location.X - Hex.Point0.Location.X;
-		yDiff = Hex.Point2.Location.Z - Hex.Point0.Location.Z;
-		Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592);
-		Rotation.Pitch = Angle;
+			xDiff = Hex->Point2->Location.X - Hex->Point0->Location.X;
+			yDiff = Hex->Point2->Location.Z - Hex->Point0->Location.Z;
+			Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592);
+			Rotation.Pitch = Angle;
 
-		Rotation.Yaw = 0.0f;
+			Rotation.Yaw = 0.0f;
 
-		xDiff = Hex.Point4.Location.Y - Hex.Point1.Location.Y;
-		yDiff = Hex.Point4.Location.Z - Hex.Point1.Location.Z;
-		Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592) * -1;
-		Rotation.Roll = Angle;
+			xDiff = Hex->Point4->Location.Y - Hex->Point1->Location.Y;
+			yDiff = Hex->Point4->Location.Z - Hex->Point1->Location.Z;
+			Angle = FMath::Atan2(yDiff, xDiff) * (180 / 3.141592) * -1;
+			Rotation.Roll = Angle;
 
-		Hex.Rotation = Rotation;
+			Hex->Rotation = Rotation;
+		}
 	}
 }
 
@@ -804,47 +845,50 @@ void UPOTLGameInstance::AnalyseLandscape()
 			//~~ Sphere trace for foliage analyse ~~//
 			for (int32 i = 0; i < Hexes.Num(); i++)
 			{
-				FST_Hex& Hex = Hexes[i];
-				FVector LineTraceFrom = Hex.Location + FVector{ 0, 0, 1000 };
-				FVector LineTraceTo = Hex.Location + FVector{ 0, 0, -1000 };
-
-				//const FCollisionResponseParams & ResponseParam
-
-				//const FName TraceTag("TraceAnalyseResources");
-				//PlayerController->GetWorld()->DebugDrawTraceTag = TraceTag;
-
-				FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
-				RV_TraceParams.bTraceComplex = true;
-				RV_TraceParams.bTraceAsyncScene = true;
-				RV_TraceParams.bReturnPhysicalMaterial = false;
-				//RV_TraceParams.TraceTag = TraceTag;
-
-				//TArray<FHitResult> OutHits;
-				TArray<FOverlapResult> OutHits;
-
-				PlayerController->GetWorld()->OverlapMultiByChannel(OutHits, Hex.Location, FQuat::Identity, ChannelFoliage, FCollisionShape::MakeSphere(666), RV_TraceParams);
-				for (int32 ii = 0; ii < OutHits.Num(); ii++)
+				UHexTile* Hex = Hexes[i];
+				if (IsValid(Hex))
 				{
-					FOverlapResult& OutHit = OutHits[ii];
-					if (OutHit.bBlockingHit)
+					FVector LineTraceFrom = Hex->Location + FVector{ 0, 0, 1000 };
+					FVector LineTraceTo = Hex->Location + FVector{ 0, 0, -1000 };
+
+					//const FCollisionResponseParams & ResponseParam
+
+					//const FName TraceTag("TraceAnalyseResources");
+					//PlayerController->GetWorld()->DebugDrawTraceTag = TraceTag;
+
+					FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+					RV_TraceParams.bTraceComplex = true;
+					RV_TraceParams.bTraceAsyncScene = true;
+					RV_TraceParams.bReturnPhysicalMaterial = false;
+					//RV_TraceParams.TraceTag = TraceTag;
+
+					//TArray<FHitResult> OutHits;
+					TArray<FOverlapResult> OutHits;
+
+					PlayerController->GetWorld()->OverlapMultiByChannel(OutHits, Hex->Location, FQuat::Identity, ChannelFoliage, FCollisionShape::MakeSphere(666), RV_TraceParams);
+					for (int32 ii = 0; ii < OutHits.Num(); ii++)
 					{
-						UPrimitiveComponent* Component = OutHit.GetComponent();
-						FString ComponentClassName = "";
-
-						UInstancedStaticMeshComponent* MeshKeeper = Cast<UInstancedStaticMeshComponent>(Component);
-						if (MeshKeeper)
+						FOverlapResult& OutHit = OutHits[ii];
+						if (OutHit.bBlockingHit)
 						{
-							FString adasds = "jjasdasd";
-						}
+							UPrimitiveComponent* Component = OutHit.GetComponent();
+							FString ComponentClassName = "";
+
+							UInstancedStaticMeshComponent* MeshKeeper = Cast<UInstancedStaticMeshComponent>(Component);
+							if (MeshKeeper)
+							{
+								FString adasds = "jjasdasd";
+							}
 						
-						//UFoliageType_InstancedStaticMesh
-						//UFoliageInstancedStaticMeshComponent* MeshKeeper = Cast<UFoliageInstancedStaticMeshComponent>(Component);
-						/*
-						if (MeshKeeper)
-						{
+							//UFoliageType_InstancedStaticMesh
+							//UFoliageInstancedStaticMeshComponent* MeshKeeper = Cast<UFoliageInstancedStaticMeshComponent>(Component);
+							/*
+							if (MeshKeeper)
+							{
 
+							}
+							*/
 						}
-						*/
 					}
 				}
 
@@ -856,25 +900,28 @@ void UPOTLGameInstance::AnalyseLandscape()
 			//~~ Line trace for material and river analyse ~~//
 			for (int32 i = 0; i < Hexes.Num(); i++)
 			{
-				FST_Hex& Hex = Hexes[i];
-				FVector LineTraceFrom = Hex.Location + FVector{ 0, 0, 1000 };
-				FVector LineTraceTo = Hex.Location + FVector{ 0, 0, -1000 };
-
-				FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
-				RV_TraceParams.bTraceComplex = true;
-				RV_TraceParams.bTraceAsyncScene = true;
-				RV_TraceParams.bReturnPhysicalMaterial = true;
-
-				//Re-initialize hit info
-				FHitResult RV_Hit(ForceInit);
-
-				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
-
-				//PlayerController->GetWorld()->SweepMultiByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
-				//if (RV_Hit.GetActor() != NULL)
-				if (RV_Hit.bBlockingHit)
+				UHexTile* Hex = Hexes[i];
+				if (IsValid(Hex))
 				{
-					//RV_Hit.Location;
+					FVector LineTraceFrom = Hex->Location + FVector{ 0, 0, 1000 };
+					FVector LineTraceTo = Hex->Location + FVector{ 0, 0, -1000 };
+
+					FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, PlayerController);
+					RV_TraceParams.bTraceComplex = true;
+					RV_TraceParams.bTraceAsyncScene = true;
+					RV_TraceParams.bReturnPhysicalMaterial = true;
+
+					//Re-initialize hit info
+					FHitResult RV_Hit(ForceInit);
+
+					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
+
+					//PlayerController->GetWorld()->SweepMultiByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
+					//if (RV_Hit.GetActor() != NULL)
+					if (RV_Hit.bBlockingHit)
+					{
+						//RV_Hit.Location;
+					}
 				}
 			}
 		}
@@ -893,17 +940,17 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 	{
 		for (int32 i = 0; i < Hexes.Num(); i++)
 		{
-			FST_Hex& Hex = Hexes[i];
-			if (Hex.Resources.HasTrees)
+			UHexTile* Hex = Hexes[i];
+			if (IsValid(Hex) && Hex->Resources.HasTrees)
 			{
 				bool Surrounded = true;
-				for (int32 ii = 0; ii < Hex.HexNeighborIndexes.Num(); ii++)
+				for (int32 ii = 0; ii < Hex->HexNeighborIndexes.Num(); ii++)
 				{
-					int32 HexNeighborIndex = Hex.HexNeighborIndexes[ii];
+					int32 HexNeighborIndex = Hex->HexNeighborIndexes[ii];
 					if (Hexes.IsValidIndex(HexNeighborIndex))
 					{
-						FST_Hex& NeighborHex = Hexes[HexNeighborIndex];
-						if (!NeighborHex.Resources.HasTrees || NeighborHex.Resources.ForestDepth < DepthIndex)
+						UHexTile* NeighborHex = Hexes[HexNeighborIndex];
+						if (IsValid(NeighborHex) && !NeighborHex->Resources.HasTrees || NeighborHex->Resources.ForestDepth < DepthIndex)
 						{
 							Surrounded = false;
 						}
@@ -915,7 +962,7 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 				}
 				if (Surrounded)
 				{
-					Hex.Resources.ForestDepth++;
+					Hex->Resources.ForestDepth++;
 				}
 			}
 		}
@@ -925,17 +972,17 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 	{
 		for (int32 i = 0; i < Hexes.Num(); i++)
 		{
-			FST_Hex& Hex = Hexes[i];
-			if (Hex.Resources.HasLake)
+			UHexTile* Hex = Hexes[i];
+			if (IsValid(Hex) && Hex->Resources.HasLake)
 			{
 				bool Surrounded = true;
-				for (int32 ii = 0; ii < Hex.HexNeighborIndexes.Num(); ii++)
+				for (int32 ii = 0; ii < Hex->HexNeighborIndexes.Num(); ii++)
 				{
-					int32 HexNeighborIndex = Hex.HexNeighborIndexes[ii];
+					int32 HexNeighborIndex = Hex->HexNeighborIndexes[ii];
 					if (Hexes.IsValidIndex(HexNeighborIndex))
 					{
-						FST_Hex& NeighborHex = Hexes[HexNeighborIndex];
-						if (!NeighborHex.Resources.HasLake || NeighborHex.Resources.LakeDepth < DepthIndex)
+						UHexTile* NeighborHex = Hexes[HexNeighborIndex];
+						if (IsValid(NeighborHex) && !NeighborHex->Resources.HasLake || NeighborHex->Resources.LakeDepth < DepthIndex)
 						{
 							Surrounded = false;
 						}
@@ -947,7 +994,7 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 				}
 				if (Surrounded)
 				{
-					Hex.Resources.LakeDepth++;
+					Hex->Resources.LakeDepth++;
 				}
 			}
 		}
@@ -1157,9 +1204,9 @@ void  UPOTLGameInstance::SetPersonData(APOTLStructure* AssignedTo, EPersonBaseTa
 /*****************************************************************************************************/
 
 /******************** MouseToHex *************************/
-FST_Hex UPOTLGameInstance::MouseToHex()
+UHexTile* UPOTLGameInstance::MouseToHex()
 {
-	FST_Hex Hex = FST_Hex{};
+	UHexTile* Hex = nullptr;
 	if (Landscape)
 	{
 		FVector LandscapeLocation = Landscape->GetActorLocation();
@@ -1195,7 +1242,7 @@ FST_Hex UPOTLGameInstance::MouseToHex()
 			PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 			if (RV_Hit.bBlockingHit)
 			{
-				// Point.Location = RV_Hit.Location;
+				// Point->Location = RV_Hit.Location;
 				Hex = LocationToHex(RV_Hit.Location);
 			}
 		}
@@ -1205,9 +1252,9 @@ FST_Hex UPOTLGameInstance::MouseToHex()
 
 
 /******************** LocationToHex *************************/
-FST_Hex UPOTLGameInstance::LocationToHex(FVector Location)
+UHexTile* UPOTLGameInstance::LocationToHex(FVector Location)
 {
-	FST_Hex Hex = FST_Hex{};
+	UHexTile* Hex = nullptr;
 	if (Landscape)
 	{
 		FVector Cube = UPOTLUtilFunctionLibrary::LocationToCube(GridXCount, HexWidth, HexHeight, Location - Landscape->GetActorLocation());
@@ -1245,13 +1292,13 @@ void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor Debu
 //Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);
 
 //Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
-//Log("hex cube: " + Hex.HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
+//Log("hex cube: " + Hex->HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
 
 
 /*
-for (int32 testI = 0; testI < Structure->Hex.HexNeighborIndexes.Num(); testI++)
+for (int32 testI = 0; testI < Structure->Hex->HexNeighborIndexes.Num(); testI++)
 {
-int32 Index = Structure->Hex.HexNeighborIndexes[testI];
+int32 Index = Structure->Hex->HexNeighborIndexes[testI];
 
 //Log("testI: " + FString::FromInt(testI) + "  Index:" + FString::FromInt(Index) + FString::Printf(TEXT("Bool: %s"), (Index != -1 && Hexes.IsValidIndex(Index) ? TEXT("true") : TEXT("false"))), 15.0f, FColor::Green, -1);
 
@@ -1261,7 +1308,7 @@ FST_Hex& NeighborHex = Hexes[Index];
 
 // Make Construct Location
 FST_ConstructLocation ConstructLocation;
-ConstructLocation.Cube = NeighborHex.HexCubeCoords;
+ConstructLocation.Cube = NeighborHex->HexCubeCoords;
 ConstructLocation.Hex = NeighborHex;
 ConstructLocation.EmitTo.Add(NeighborHex);
 ConstructLocations.Add(ConstructLocation);
