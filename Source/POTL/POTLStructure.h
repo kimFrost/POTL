@@ -218,9 +218,8 @@ public:
 	APOTLStructure* GetNearestStructure();
 
 
-	//Delegates
-	UFUNCTION()
-	void BindToDelegate(float Turn);
+	UFUNCTION(BlueprintCallable, Category = "Time")
+	void OnTimeUpdate(float Time, float TimeProgressed);
 
 
 	// Called when the game starts or when spawned

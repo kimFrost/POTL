@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
-#include "UResource.h"
+#include "URuler.h"
 
 
 
 
-UResource::UResource()
+URuler::URuler()
 {
 	
 }
 
 
-UResource::~UResource()
+URuler::~URuler()
 {
 
 }

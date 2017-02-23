@@ -3,6 +3,7 @@
 #include "POTL.h"
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
+#include "POTLGameMode.h"
 #include "FactoryComponent.h"
 #include "GatherComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -1070,7 +1071,7 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 
 
 
-void APOTLStructure::BindToDelegate(float Turn)
+void APOTLStructure::OnTimeUpdate(float Time, float TimeProgressed)
 {
 
 }
@@ -1080,6 +1081,13 @@ void APOTLStructure::BindToDelegate(float Turn)
 void APOTLStructure::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Bind to time update
+	APOTLGameMode* GameMode = Cast<APOTLGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode)
+	{
+		GameMode->OnTimeUpdated.AddDynamic(this, &APOTLStructure::OnTimeUpdate);
+	}
 
 	GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
 	if (GameInstance)
