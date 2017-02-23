@@ -74,7 +74,7 @@ AHexDecal::AHexDecal(const FObjectInitializer &ObjectInitializer) : Super(Object
 /******************** HideDecal *************************/
 void AHexDecal::HideDecal()
 {
-
+	SetActorHiddenInGame(true);
 }
 
 
@@ -90,11 +90,13 @@ void AHexDecal::ChangeMaterial(EDecalType Type)
 	*/
 	if (Type == EDecalType::ValidBuild)
 	{
-		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Green);
+		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Blue);
+		SetActorHiddenInGame(false);
 	}
 	else if (Type == EDecalType::InvalidBuild)
 	{
 		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Red);
+		SetActorHiddenInGame(false);
 	}
 }
 
@@ -103,5 +105,5 @@ void AHexDecal::ChangeMaterial(EDecalType Type)
 void AHexDecal::BeginPlay()
 {
 	Super::BeginPlay();
-
+	HideDecal();
 }

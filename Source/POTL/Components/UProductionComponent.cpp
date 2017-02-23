@@ -13,6 +13,7 @@ UProductionComponent::UProductionComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+
 	/*
 	StorageCapacity = 0.f;
 	PowerUpkeep = 0.f;

@@ -34,8 +34,15 @@ void APOTLPlayerController::ProcessConstructLocations()
 	APOTLHUD* HUD = Cast<APOTLHUD>(GetHUD());
 	if (HUD && GameInstance && IsValid(CachedHex))
 	{
+		//~~ Hide decals on old hexes ~~//
+		for (auto& Hex : BuildStructureHexes)
+		{
+			if (Hex)
+			{
+				Hex->HideDecal();
+			}
+		}
 		BuildStructureHexes.Empty();
-		HUD->ClearDecals(ConstructDecals);
 		TArray<FVector> RotatedCubes = UPOTLUtilFunctionLibrary::RotateCubes(BuildStructureData.CubeSizes, BaseRotation, FVector(0, 0, 0));
 		FVector RotatedBroadcastRoot = UPOTLUtilFunctionLibrary::RotateCube(BuildStructureData.BroadcastRoot, BaseRotation, FVector(0, 0, 0));
 		for (int32 i = 0; i < RotatedCubes.Num(); i++)
@@ -56,8 +63,6 @@ void APOTLPlayerController::ProcessConstructLocations()
 						Type = EDecalType::ValidBuild;
 					}
 					Hex->ShowDecal(Type);
-					//AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
-					//ConstructDecals.Add(Decal);
 				}
 			}
 		}
@@ -65,7 +70,6 @@ void APOTLPlayerController::ProcessConstructLocations()
 		int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
 		if (GameInstance->Hexes.IsValidIndex(HexIndex))
 		{
-			//BuildBroadcastRootHex = &GameInstance->Hexes[HexIndex];
 			BuildBroadcastRootHex = GameInstance->Hexes[HexIndex];
 		}
 		if (BuildBroadcastRootHex)
@@ -111,8 +115,6 @@ void APOTLPlayerController::ProcessConstructLocations()
 						Type = EDecalType::InvalidBuild;
 					}
 					Hex->ShowDecal(Type);
-					//AHexDecal* Decal = HUD->HighlightHex(Hex, Type);
-					//ConstructDecals.Add(Decal);
 				}
 			}
 			//~~ Display error msg if build is not valid ~~//
