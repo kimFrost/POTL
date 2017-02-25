@@ -97,6 +97,21 @@ enum class EDecalType : uint8
 };
 
 
+//~~~~~ Custom types ~~~~~//
+
+struct CubeCoord
+{
+public:
+	CubeCoord()
+		: X(0)
+		, Y(0)
+		, Z(0)
+	{}
+
+	int X;
+	int Y;
+	int Z;
+};
 
  
 //~~~~~ TEST DATA IMPORT ~~~~~//

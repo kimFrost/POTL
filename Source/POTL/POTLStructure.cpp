@@ -15,10 +15,15 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	GameInstance = nullptr;
+	EmitTo = nullptr;
+	AttachedTo = nullptr;
+
+	IsRoot = true;
 	TreeId = TEXT("");
 	HexIndex = -1;
 	CubeCoord = { -1, -1, -1 };
-	IsRoot = true;
 	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};
 	StructureRowName = TEXT("");
@@ -1073,7 +1078,7 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 
 void APOTLStructure::OnTimeUpdate(float Time, float TimeProgressed)
 {
-
+	// Add to labor progress
 }
 
 
@@ -1103,6 +1108,13 @@ void APOTLStructure::BeginPlay()
 		//Factories.Add(Factory);
 
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, Factory.Invoice[FName(TEXT("Plank")]);
+	}
+
+	if (IsValid(AttachedTo))
+	{
+		// Bind to labor 
+
+
 	}
 
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FName(TEXT("Plank")).ToString());

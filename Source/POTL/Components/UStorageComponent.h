@@ -8,7 +8,7 @@
 
 
 //~~ DELEGATES ~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPowerPulse, float, Amount);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPowerPulse, float, Amount);
 
 
 

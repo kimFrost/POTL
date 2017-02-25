@@ -8,7 +8,7 @@
 
 
 //~~ DELEGATES ~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPowerPulse, float, Amount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FProductionPulse, float, Amount);
 
 
 
@@ -49,7 +49,7 @@ public:
 
 
 	UPROPERTY(BlueprintAssignable, Category = "Power|Module")
-	FPowerPulse OnPowerGeneration;
+	FProductionPulse OnProductionGeneration;
 
 
 	// Called when the game starts

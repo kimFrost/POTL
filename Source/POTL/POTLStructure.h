@@ -43,6 +43,9 @@ public:
 	APOTLStructure* EmitTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	APOTLStructure* AttachedTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool IsRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")

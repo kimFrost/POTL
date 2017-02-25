@@ -12,6 +12,7 @@
 
 //~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
+class UStorageComponent;
 
 
 
@@ -68,6 +69,11 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	AActor* Landscape;
+
+
+	TMap<FVector, UStorageComponent*> StorageMap;
+
+	TMap<FString, UStorageComponent*> ResourceMap; 
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")

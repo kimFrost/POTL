@@ -2,27 +2,55 @@
 
 #include "POTL.h"
 #include "POTLStructure.h"
+#include "POTLGameMode.h"
 #include "UStructureComponent.h"
 
 
 // Sets default values for this component's properties
 UStructureComponent::UStructureComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	ParentStructure = nullptr;
 	bCanToggle = true;
 	bIsOn = true;
 	Progress = 0.f;
+	TaskLength = 0.f;
 }
 
 
+/******************** ToggleOn *************************/
 bool UStructureComponent::ToggleOn()
 {
 
 	return bIsOn;
 }
+
+
+/******************** OnTimeUpdate *************************/
+void UStructureComponent::OnTimeUpdate(float Time, float TimeProgressed)
+{
+	if (bIsOn)
+	{
+		if (TaskLength > 0)
+		{
+			Progress += TimeProgressed;
+			if (Progress >= TaskLength)
+			{
+				OnProgressComplete();
+				Progress = 0.f;
+				//OnProgressComplete.Broadcast();
+			}
+		}
+	}
+}
+
+
+/******************** OnProgressComplete *************************/
+void UStructureComponent::OnProgressComplete()
+{
+
+}
+
 
 // Called when the game starts
 void UStructureComponent::BeginPlay()
@@ -33,13 +61,19 @@ void UStructureComponent::BeginPlay()
 	if (Structure)
 	{
 		ParentStructure = Structure;
+
+		// Bind to time update
+		APOTLGameMode* GameMode = Cast<APOTLGameMode>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->OnTimeUpdated.AddDynamic(this, &UStructureComponent::OnTimeUpdate);
+		}
 	}
 	else 
 	{
 		bIsOn = false;
 		// Failed to find parent structure
 	}
-
 }
 
 
