@@ -6,6 +6,7 @@
 #include "POTLGameMode.h"
 #include "FactoryComponent.h"
 #include "GatherComponent.h"
+#include "Components/UStorageComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLStructure.h"
 
@@ -67,6 +68,24 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
 {
 	bool Added = false;
+	
+	// Check for storage component
+	TArray<UActorComponent*> StorageComponents = GetComponentsByClass(UStorageComponent::StaticClass());
+	for (auto& Component : StorageComponents)
+	{
+		UStorageComponent* StorageComponent = Cast<UStorageComponent>(Component);
+		if (StorageComponent)
+		{
+
+		}
+	}
+
+	// Check Attached To for AddResource
+
+
+
+
+	/*
 	switch (Type)
 	{
 	case EResourceList::Free:
@@ -110,6 +129,7 @@ bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
 	default:
 		break;
 	}
+	*/
 	return Added;
 }
 

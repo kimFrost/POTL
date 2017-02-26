@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "POTLStructure.h"
 #include "UStructureComponent.generated.h"
 
 
@@ -11,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnProgressComplete);
 
 
 //~~ Forward declarations ~~//
-class APOTLStructure;
+//class APOTLStructure;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -37,7 +38,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Module")
 	float Progress;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Module")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	float TaskLength;
 
 	UFUNCTION(BlueprintCallable, Category = "Module")

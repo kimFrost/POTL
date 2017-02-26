@@ -8,7 +8,7 @@
 
 
 //~~ DELEGATES ~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLaborPulse, float, Amount);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLaborPulse, float, Amount);
 
 
 
@@ -22,6 +22,7 @@ public:
 	// Sets default values for this component's properties
 	ULaborComponent();
 
+	int LaborPoints; // Type ULaborPoint. Allocate labor points to structures
 
 	//UFUNCTION(BlueprintCallable, Category = "Order")
 	virtual void OnProgressComplete() override;

@@ -3,12 +3,13 @@
 #pragma once
 
 #include "Components/UStructureComponent.h"
+#include "UObjects/UResource.h"
 #include "UStorageComponent.generated.h"
 
 
 
 //~~ DELEGATES ~~//
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPowerPulse, float, Amount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStorageUpdate);
 
 
 
@@ -21,6 +22,30 @@ public:
 	
 	// Sets default values for this component's properties
 	UStorageComponent();
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	int StorageCapacity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	TArray<FString> AllowedResources;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	TMap<FString, int> StoredResources;
+	//TArray<UResource*> StoredResources;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Storage")
+	bool AddResource(FString ResourceId, int Quantity);
+	
+	UFUNCTION(BlueprintCallable, Category = "Storage")
+	void StoreResource(UResource* Resource);
+
+	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
+	FOnStorageUpdate OnStorageUpdate;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage")
+	void StorageUpdate();
 
 
 	//~~ Options variables ~~//
@@ -48,8 +73,7 @@ public:
 	float GeneratePower();
 
 
-	UPROPERTY(BlueprintAssignable, Category = "Power|Module")
-	FPowerPulse OnPowerGeneration;
+
 
 
 	// Called when the game starts

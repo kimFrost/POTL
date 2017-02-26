@@ -2,6 +2,8 @@
 
 #include "POTL.h"
 #include "POTLGameMode.h"
+#include "POTLGameInstance.h"
+#include "POTLStructure.h"
 #include "UProductionComponent.h"
 
 
@@ -13,6 +15,7 @@ UProductionComponent::UProductionComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	//TaskLength = 5.f;
 
 	/*
 	StorageCapacity = 0.f;
@@ -22,6 +25,30 @@ UProductionComponent::UProductionComponent()
 	StoredPower = 0.f;
 	SurplusPower = 0.f;
 	*/
+}
+
+
+/******************** OnProgressComplete *************************/
+void UProductionComponent::OnProgressComplete()
+{
+	Super::OnProgressComplete();
+
+	//UE_LOG(LogTemp, Log, TEXT("ULaborComponent::OnProgressComplete"));
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UProductionComponent::OnProgressComplete"));
+
+	if (IsValid(ParentStructure))
+	{
+		// Add resource to storage
+		for (auto& ProductionItem : Production)
+		{
+			ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value, EResourceList::Free);
+		}
+
+		if (ParentStructure->AttachedTo)
+		{
+
+		}
+	}
 }
 
 

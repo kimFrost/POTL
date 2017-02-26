@@ -13,16 +13,59 @@ UStorageComponent::UStorageComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-
-	/*
-	StorageCapacity = 0.f;
-	PowerUpkeep = 0.f;
-	PowerGenerated = 0.f;
-
-	StoredPower = 0.f;
-	SurplusPower = 0.f;
-	*/
+	StorageCapacity = 0;
 }
+
+
+/******************** AddResource *************************/
+bool UStorageComponent::AddResource(FString ResourceId, int Quantity)
+{
+	bool AddedSuccessfully = false;
+
+	if (AllowedResources.Num() > 0)
+	{
+		if (!AllowedResources.Contains(ResourceId))
+		{
+			return false;
+		}
+	}
+
+
+	// if Enough storage
+
+	// Create resource
+
+	// Add to storage list
+	if (StoredResources.Contains(ResourceId))
+	{
+		StoredResources[ResourceId] += Quantity;
+		AddedSuccessfully = true;
+	}
+	else 
+	{ 
+		StoredResources.Add(ResourceId, Quantity);
+		AddedSuccessfully = true;
+	}
+
+	// Call resource map update // Broadcast storage update
+	
+	return AddedSuccessfully;
+}
+
+/******************** StoreResource *************************/
+void UStorageComponent::StoreResource(UResource* Resource)
+{
+
+}
+
+
+/******************** StorageUpdate *************************/
+void UStorageComponent::StorageUpdate_Implementation()
+{
+	OnStorageUpdate.Broadcast();
+
+}
+
 
 
 /*
@@ -56,3 +99,4 @@ void UProductionComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 }
 */
+

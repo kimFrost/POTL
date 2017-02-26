@@ -8,7 +8,7 @@
 
 
 //~~ DELEGATES ~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FProductionPulse, float, Amount);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FProductionPulse, float, Amount);
 
 
 
@@ -21,6 +21,12 @@ public:
 	
 	// Sets default values for this component's properties
 	UProductionComponent();
+
+	// Production Item and quantity
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
+	TMap<FString, int> Production;
+
+	virtual void OnProgressComplete() override;
 
 
 	//~~ Options variables ~~//
