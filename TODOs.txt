@@ -8,7 +8,10 @@
 Backlog -----------------------------
  - Refactor decal system to be decal per hex 
  - Refactor FST_Hex to be Uobject instead UHex class
-
+- UProductionComponent Production on time update is on
+- Dwelling Labor Points & Types
+- Resource Map
+- Dwelling attachment points. In data ?
  
  
  
