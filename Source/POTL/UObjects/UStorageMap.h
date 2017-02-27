@@ -19,12 +19,15 @@ public:
 	UStorageMap();
 	~UStorageMap();
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	TMap<FVector, UStorageComponent*> Storages;
 
 	void UpdateMap();
 
 	void IncludeStorage(UStorageComponent* StorageComp);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage")
+	void StorageMapUpdated();
 
 	//void OnStorageUpdate(UStorageComponent* StorageComp); // Bind to onstorageupdate and call this with storage and changes
 
