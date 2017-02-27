@@ -2,6 +2,10 @@
 
 #include "POTL.h"
 #include "POTLDataHolder.h"
+#include "UObjects/UHexPoint.h"
+#include "UObjects/UHexTile.h"
+#include "UObjects/UResourceMap.h"
+#include "UObjects/UStorageMap.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLStructure.h"
 #include "Kismet/GameplayStatics.h"
@@ -594,6 +598,9 @@ void UPOTLGameInstance::RemoveStructureConnection(APOTLStructure* From, APOTLStr
 /******************** TraceLandscape *************************/
 void UPOTLGameInstance::TraceLandscape()
 {
+	StorageMap = NewObject<UStorageMap>();
+	ResourceMap = NewObject<UResourceMap>();
+
 	FString Tadasdadas = "adasd";
 	//UGameplayStatics::
 	if (Landscape)
@@ -1102,6 +1109,17 @@ APOTLStructure* UPOTLGameInstance::GetNearestCity(FVector Location)
 	}
 	return RootStructure;
 }
+
+
+/******************** IncludeStorage *************************/
+void UPOTLGameInstance::IncludeStorage(UStorageComponent* StorageComp)
+{
+	if (StorageMap)
+	{
+		//StorageMap->IncludeStorage(StorageComp);
+	}
+}
+
 
 /*****************************************************************************************************/
 /******************************************* PEOPÆE **************************************************/

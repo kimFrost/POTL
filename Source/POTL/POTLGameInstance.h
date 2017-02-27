@@ -3,9 +3,11 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "POTLDataHolder.h"
 #include "UObjects/UHexPoint.h"
 #include "UObjects/UHexTile.h"
-#include "POTLDataHolder.h"
+#include "UObjects/UResourceMap.h"
+#include "UObjects/UStorageMap.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLGameInstance.generated.h"
 
@@ -46,7 +48,7 @@ public:
 	/*********** VARIABLES **************/
 
 	// Map
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Map")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	float HexWidth;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Calculated")
@@ -71,9 +73,15 @@ public:
 	AActor* Landscape;
 
 
-	TMap<FVector, UStorageComponent*> StorageMap;
+	//TMap<FVector, UStorageComponent*> StorageMap;
 
-	TMap<FString, UStorageComponent*> ResourceMap; 
+	//TMap<FString, UStorageComponent*> ResourceMap; 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource")
+	UResourceMap* ResourceMap;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource")
+	UStorageMap* StorageMap;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
@@ -182,6 +190,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void CalcHexResourceDensity();
 
+
 	//~~ Turn ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Turn")
@@ -190,6 +199,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turn")
 	void NewTurn(float WaitTime);
 
+
 	//~~ Map - Structure ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Grid")
@@ -197,6 +207,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Grid")
 	APOTLStructure* GetNearestCity(FVector Location);
+
+
+	//~~ Map - Resources ~~//
+
+	void IncludeStorage(UStorageComponent* StorageComp);
 
 
 	//~~ People ~~//

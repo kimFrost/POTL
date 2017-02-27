@@ -3,6 +3,7 @@
 #include "POTL.h"
 #include "POTLStructure.h"
 #include "POTLGameMode.h"
+#include "POTLGameInstance.h"
 #include "UStructureComponent.h"
 
 
@@ -61,6 +62,13 @@ void UStructureComponent::BeginPlay()
 	if (Structure)
 	{
 		ParentStructure = Structure;
+
+		// Add self to UStorageMap in GameInstance
+		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+		if (GameInstance)
+		{
+
+		}
 
 		// Bind to time update
 		APOTLGameMode* GameMode = Cast<APOTLGameMode>(GetWorld()->GetAuthGameMode());
