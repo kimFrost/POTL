@@ -22,6 +22,7 @@ class UStorageComponent;
 //~~~~~ Delegates/Event dispatcher ~~~~~//
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTurnSwitched);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams();
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMapReady);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnSwitched, float, Turn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewTurn, float, Turn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStructurePlanted, APOTLStructure*, Structure);
@@ -249,6 +250,9 @@ public:
 
 	/*********** Delegates **************/
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Grid")
+	FOnMapReady OnMapReady;
+
 	UPROPERTY(BlueprintAssignable, Category = "Turn")
 	FTurnSwitched OnTurnSwitched;
 
@@ -260,5 +264,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Structure")
 	FCityUpdated OnCityUpdated;
+	
 
 };

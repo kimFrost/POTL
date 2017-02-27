@@ -68,6 +68,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
 {
 	bool Added = false;
+	int Leftovers = Quantity;
 	
 	// Check for storage component
 	TArray<UActorComponent*> StorageComponents = GetComponentsByClass(UStorageComponent::StaticClass());
@@ -76,11 +77,20 @@ bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
 		UStorageComponent* StorageComponent = Cast<UStorageComponent>(Component);
 		if (StorageComponent)
 		{
+			Leftovers = StorageComponent->AddResource(Id, Leftovers);
+			if (Leftovers > 0)
+			{
 
+			}
+			else
+			{
+				Added = true;
+				break;
+			}
 		}
 	}
 
-	// Check Attached To for AddResource
+	// Check Attachments for storage with AddResource
 
 
 
@@ -1117,6 +1127,9 @@ void APOTLStructure::BeginPlay()
 	GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
 	if (GameInstance)
 	{
+
+		//IncludeStorage
+
 		// Add test resources
 		//FreeResources.Add(TEXT("Wood"), 9.f);
 		//FreeResources.Add(TEXT("Stone"), 15.f);

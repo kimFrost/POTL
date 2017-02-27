@@ -18,23 +18,19 @@ UStorageMap::~UStorageMap()
 
 }
 
-void UStorageMap::UpdateMap()
-{
-	StorageMapUpdated();
-}
 
 void UStorageMap::IncludeStorage(UStorageComponent* StorageComp)
 {
 	if (IsValid(StorageComp))
 	{
 		Storages.Add(FVector(0.f, 0.f, 0.f), StorageComp);
-		StorageComp->OnStorageUpdate.AddDynamic(this, &UStorageMap::UpdateMap);
+		StorageComp->OnStorageUpdate.AddDynamic(this, &UStorageMap::StorageMapUpdated);
 	}
 }
 
 /******************** StorageMapUpdated *************************/
 void UStorageMap::StorageMapUpdated_Implementation()
 {
-	//OnStorageUpdate.Broadcast();
+	OnStorageMapUpdated.Broadcast();
 
 }

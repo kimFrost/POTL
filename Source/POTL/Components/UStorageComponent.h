@@ -36,7 +36,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "Storage")
-	bool AddResource(FString ResourceId, int Quantity);
+	int AddResource(FString ResourceId, int Quantity);
 	
 	UFUNCTION(BlueprintCallable, Category = "Storage")
 	void StoreResource(UResource* Resource);
@@ -46,6 +46,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage")
 	void StorageUpdate();
+
+
+
+	// Called when the game starts
+	virtual void BeginPlay() override;
 
 
 	//~~ Options variables ~~//

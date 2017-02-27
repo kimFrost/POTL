@@ -28,10 +28,20 @@ UProductionComponent::UProductionComponent()
 }
 
 
+/******************** OnProduction *************************/
+void UProductionComponent::OnProduction_Implementation()
+{
+
+}
+
+
+
 /******************** OnProgressComplete *************************/
 void UProductionComponent::OnProgressComplete()
 {
 	Super::OnProgressComplete();
+
+	OnProduction();
 
 	//UE_LOG(LogTemp, Log, TEXT("ULaborComponent::OnProgressComplete"));
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UProductionComponent::OnProgressComplete"));

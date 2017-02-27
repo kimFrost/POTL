@@ -63,13 +63,6 @@ void UStructureComponent::BeginPlay()
 	{
 		ParentStructure = Structure;
 
-		// Add self to UStorageMap in GameInstance
-		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-		if (GameInstance)
-		{
-
-		}
-
 		// Bind to time update
 		APOTLGameMode* GameMode = Cast<APOTLGameMode>(GetWorld()->GetAuthGameMode());
 		if (GameMode)

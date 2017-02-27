@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "POTLGameMode.h"
+#include "POTLGameInstance.h"
 #include "UStorageComponent.h"
 
 
@@ -18,15 +19,15 @@ UStorageComponent::UStorageComponent()
 
 
 /******************** AddResource *************************/
-bool UStorageComponent::AddResource(FString ResourceId, int Quantity)
+int UStorageComponent::AddResource(FString ResourceId, int Quantity)
 {
-	bool AddedSuccessfully = false;
+	int LeftOvers = Quantity;
 
 	if (AllowedResources.Num() > 0)
 	{
 		if (!AllowedResources.Contains(ResourceId))
 		{
-			return false;
+			return Quantity;
 		}
 	}
 
@@ -39,17 +40,21 @@ bool UStorageComponent::AddResource(FString ResourceId, int Quantity)
 	if (StoredResources.Contains(ResourceId))
 	{
 		StoredResources[ResourceId] += Quantity;
-		AddedSuccessfully = true;
+		LeftOvers = 0;
+		StorageUpdate();
+		//AddedSuccessfully = true;
 	}
 	else 
 	{ 
 		StoredResources.Add(ResourceId, Quantity);
-		AddedSuccessfully = true;
+		LeftOvers = 0;
+		StorageUpdate();
+		//AddedSuccessfully = true;
 	}
 
 	// Call resource map update // Broadcast storage update
 	
-	return AddedSuccessfully;
+	return LeftOvers;
 }
 
 /******************** StoreResource *************************/
@@ -68,6 +73,21 @@ void UStorageComponent::StorageUpdate_Implementation()
 
 
 
+
+// Called when the game starts
+void UStorageComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Add self to UStorageMap in GameInstance
+	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+	if (GameInstance)
+	{
+		GameInstance->IncludeStorage(this);
+	}
+	
+}
+
 /*
 float UProductionComponent::GeneratePower()
 {
@@ -76,20 +96,6 @@ float UProductionComponent::GeneratePower()
 }
 
 
-// Called when the game starts
-void UProductionComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (IsValid(Module))
-	{
-		AGameModeBattle* GameMode = Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode());
-		if (GameMode)
-		{
-
-		}
-	}
-}
 
 
 // Called every frame

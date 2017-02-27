@@ -8,6 +8,7 @@
 
 class UStorageComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStorageMapUpdated);
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -19,15 +20,16 @@ public:
 	UStorageMap();
 	~UStorageMap();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	TMap<FVector, UStorageComponent*> Storages;
-
-	void UpdateMap();
 
 	void IncludeStorage(UStorageComponent* StorageComp);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Storage")
 	void StorageMapUpdated();
+
+	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
+	FOnStorageMapUpdated OnStorageMapUpdated;
 
 	//void OnStorageUpdate(UStorageComponent* StorageComp); // Bind to onstorageupdate and call this with storage and changes
 
