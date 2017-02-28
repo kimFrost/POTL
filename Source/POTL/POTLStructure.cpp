@@ -1079,6 +1079,24 @@ void APOTLStructure::ProcessBaseData()
 	}
 }
 
+void APOTLStructure::AttachToStructure(APOTLStructure* Structure)
+{
+	if (IsValid(Structure))
+	{
+		AttachedTo = Structure;
+		Structure->AttachedStructures.Add(this);
+	}
+}
+
+void APOTLStructure::DetachFromStructure()
+{
+	if (AttachedTo)
+	{
+		AttachedTo->AttachedStructures.Remove(this);
+		AttachedTo = nullptr;
+	}
+}
+
 
 /*****************************************************************************************************/
 /********************************************** MAP **************************************************/

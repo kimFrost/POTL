@@ -46,6 +46,9 @@ public:
 	APOTLStructure* AttachedTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<APOTLStructure*> AttachedStructures;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool IsRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -214,6 +217,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void ProcessBaseData();
 
+	UFUNCTION(BlueprintCallable, Category = "Construction")
+	void AttachToStructure(APOTLStructure* Structure);
+
+	UFUNCTION(BlueprintCallable, Category = "Construction")
+	void DetachFromStructure();
 
 	/** Map */
 
