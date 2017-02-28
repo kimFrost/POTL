@@ -1120,6 +1120,15 @@ void UPOTLGameInstance::IncludeStorage(UStorageComponent* StorageComp)
 	}
 }
 
+UStorageComponent * UPOTLGameInstance::FindResource(FString ResourceId, int Quantity)
+{
+	if (StorageMap)
+	{
+		
+	}
+	return nullptr;
+}
+
 
 /*****************************************************************************************************/
 /******************************************* PEOPLE **************************************************/

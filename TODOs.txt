@@ -17,14 +17,17 @@ x.2.17
 Backlog -----------------------------
  - Structure addResource. Distribute to storage in self first, and then to attachments
  - Search StorageMap for resource from location
+ - StorageMap - RequestResouce - Sort Storages by distance to requester
  - Visualize StorageMap
  - Dwelling Labor Points & Types
  - Dwelling attachment points. In data ?
- 
+ - Resource transfer / Transaction between dwellings
  
  
 Ideas ----------------------
  - 
+ 
+ 
  
  
  
@@ -45,6 +48,17 @@ AFarm
 	
 	
 ABakery
-	- UProductionComponent
+	- UProductionComponent (internal storage?)
+	- UStorageComponent(Required Resources)?
 	
+
+	
+	
+UProduction 
+	- Request Resource on StorageMap
+	- Storage Map search storages for resource of quantity (Only single unit at a time?)
+
+	
+- In / Out Production
+- Storage / Vendor
 	

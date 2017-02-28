@@ -22,13 +22,26 @@ public:
 	// Sets default values for this component's properties
 	UProductionComponent();
 
+	// Production storage. Storage on required resources x 1 ?
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
+	TMap<FString, int> MissingResources;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
+	TMap<FString, int> RequiredResources;
+
 	// Production Item and quantity
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
 	TMap<FString, int> Production;
+
+	FTimerHandle ProductionCheckTimer;
+
+	void CheckProduction();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Production")
 	void OnProduction();
 
 	virtual void OnProgressComplete() override;
 
+	virtual void BeginPlay() override;
 };

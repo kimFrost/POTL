@@ -31,9 +31,28 @@ UProductionComponent::UProductionComponent()
 /******************** OnProduction *************************/
 void UProductionComponent::OnProduction_Implementation()
 {
-
+	MissingResources = RequiredResources;
+	CheckProduction();
 }
 
+
+void UProductionComponent::CheckProduction()
+{
+	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+	if (GameInstance)
+	{
+
+	}
+
+	// Fetch resource with transaction
+	// Subtract for missing resource. When empty, start production.
+
+	// Transactions of resources.
+
+	if (MissingResources.Num() > 0) {
+		bIsOn = false;
+	}
+}
 
 
 /******************** OnProgressComplete *************************/
@@ -51,7 +70,7 @@ void UProductionComponent::OnProgressComplete()
 		// Add resource to storage
 		for (auto& ProductionItem : Production)
 		{
-			ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value, EResourceList::Free);
+			ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value);
 		}
 
 		if (ParentStructure->AttachedTo)
@@ -61,35 +80,9 @@ void UProductionComponent::OnProgressComplete()
 	}
 }
 
-
-/*
-float UProductionComponent::GeneratePower()
-{
-	return PowerGenerated;
-
-}
-
-
-// Called when the game starts
 void UProductionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsValid(Module))
-	{
-		AGameModeBattle* GameMode = Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode());
-		if (GameMode)
-		{
-
-		}
-	}
+	GetWorld()->GetTimerManager().SetTimer(ProductionCheckTimer, this, &UProductionComponent::CheckProduction, 1.f, true);
 }
-
-
-// Called every frame
-void UProductionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-}
-*/

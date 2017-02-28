@@ -28,6 +28,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Storage")
 	void StorageMapUpdated();
 
+	void RequestResouce(APOTLStructure* Requester, FString ResourceId, int Quantity);
+
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageMapUpdated OnStorageMapUpdated;
 

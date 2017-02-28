@@ -34,12 +34,16 @@ public:
 	TMap<FString, int> StoredResources;
 	//TArray<UResource*> StoredResources;
 
+	// ?? Locked for internal use ??
+	// ?? Storage for production ??
 
 	UFUNCTION(BlueprintCallable, Category = "Storage")
 	int AddResource(FString ResourceId, int Quantity);
 	
 	UFUNCTION(BlueprintCallable, Category = "Storage")
 	void StoreResource(UResource* Resource);
+
+	bool RequestResouce(APOTLStructure* Requester, FString ResourceId, int Quantity);
 
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageUpdate OnStorageUpdate;

@@ -214,6 +214,8 @@ public:
 
 	void IncludeStorage(UStorageComponent* StorageComp);
 
+	UStorageComponent* FindResource(FString ResourceId, int Quantity);
+
 
 	//~~ People ~~//
 

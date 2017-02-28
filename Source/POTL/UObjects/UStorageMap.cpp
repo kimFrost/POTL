@@ -23,8 +23,29 @@ void UStorageMap::IncludeStorage(UStorageComponent* StorageComp)
 {
 	if (IsValid(StorageComp))
 	{
-		Storages.Add(FVector(0.f, 0.f, 0.f), StorageComp);
-		StorageComp->OnStorageUpdate.AddDynamic(this, &UStorageMap::StorageMapUpdated);
+		if (StorageComp->ParentStructure)
+		{
+			FVector WorldLocation = StorageComp->ParentStructure->GetActorLocation();
+			Storages.Add(WorldLocation, StorageComp);
+			StorageComp->OnStorageUpdate.AddDynamic(this, &UStorageMap::StorageMapUpdated);
+			StorageMapUpdated();
+		}
+	}
+}
+
+
+void UStorageMap::RequestResouce(APOTLStructure* Requester, FString ResourceId, int Quantity)
+{
+	//TODO: Sort storages by distance to requester
+
+	for (auto& Entry : Storages)
+	{
+		FVector WorldLocation = Entry.Key;
+		UStorageComponent* StorageComp = Entry.Value;
+		if (IsValid(StorageComp))
+		{
+			StorageComp->RequestResouce(Requester, ResourceId, Quantity);
+		}
 	}
 }
 

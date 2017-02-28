@@ -65,34 +65,48 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 
 
 /******************** AddResource *************************/
-bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
+int APOTLStructure::AddResource(FString ResourceId, int32 Quantity)
 {
-	bool Added = false;
 	int Leftovers = Quantity;
 	
-	// Check for storage component
-	TArray<UActorComponent*> StorageComponents = GetComponentsByClass(UStorageComponent::StaticClass());
-	for (auto& Component : StorageComponents)
+	// Check Attachments for storage with AddResource
+	if (AttachedTo)
 	{
-		UStorageComponent* StorageComponent = Cast<UStorageComponent>(Component);
-		if (StorageComponent)
+		Leftovers = AttachedTo->AddResource(ResourceId, Quantity);
+	}
+	else {
+		// distribute to self and attachments?
+		for (auto& Attachment : AttachedStructures)
 		{
-			Leftovers = StorageComponent->AddResource(Id, Leftovers);
-			if (Leftovers > 0)
+			if (IsValid(Attachment))
 			{
 
-			}
-			else
-			{
-				Added = true;
-				break;
 			}
 		}
 	}
 
-	// Check Attachments for storage with AddResource
+	// Check for storage component in self
+	if (Leftovers > 0)
+	{
+		TArray<UActorComponent*> StorageComponents = GetComponentsByClass(UStorageComponent::StaticClass());
+		for (auto& Component : StorageComponents)
+		{
+			UStorageComponent* StorageComponent = Cast<UStorageComponent>(Component);
+			if (StorageComponent)
+			{
+				Leftovers = StorageComponent->AddResource(ResourceId, Leftovers);
+				if (Leftovers > 0)
+				{
 
-
+				}
+				else
+				{
+					//Added = true;
+					break;
+				}
+			}
+		}
+	}
 
 
 	/*
@@ -140,7 +154,7 @@ bool APOTLStructure::AddResource(FString Id, int32 Quantity, EResourceList Type)
 		break;
 	}
 	*/
-	return Added;
+	return Leftovers;
 }
 
 
@@ -362,7 +376,7 @@ void APOTLStructure::ReverseAllocations(bool Broadcast)
 		{
 			if (Allocation.Type == EAllocationType::FactoryBilling || Allocation.Type == EAllocationType::Decay)
 			{
-				AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free); // Re-add resource that was allocated from this/root
+				AddResource(Allocation.ResourceKey, Allocation.Quantity); //, EResourceList::Free // Re-add resource that was allocated from this/root
 			}
 			/*
 			else if (Allocation.Type == EAllocationType::ProductionDecay)
@@ -568,7 +582,7 @@ void APOTLStructure::ResolveAllocations(EAllocationType Type, bool Broadcast)
 			}
 			else
 			{
-				Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity, EResourceList::Free);
+				Allocation.To->AddResource(Allocation.ResourceKey, Allocation.Quantity); // , EResourceList::Free;
 				AllocatedResources.Remove(AllocatedResource.Key);
 			}
 		}

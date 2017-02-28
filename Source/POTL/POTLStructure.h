@@ -144,7 +144,7 @@ public:
 	/** Resources */
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
-	bool AddResource(FString Id, int32 Quantity , EResourceList Type);
+	int AddResource(FString ResourceId, int32 Quantity); // , EResourceList Type
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);

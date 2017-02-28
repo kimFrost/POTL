@@ -64,6 +64,26 @@ void UStorageComponent::StoreResource(UResource* Resource)
 }
 
 
+/******************** RequestResouce *************************/
+bool UStorageComponent::RequestResouce(APOTLStructure* Requester, FString ResourceId, int Quantity)
+{
+	bool RequestMet = false;
+	if (Requester)
+	{
+		if (StoredResources.Contains(ResourceId))
+		{
+			if (StoredResources[ResourceId] >= Quantity)
+			{
+				RequestMet = true;
+				StoredResources[ResourceId] -= Quantity;
+				Requester->AddResource(ResourceId, Quantity);
+			}
+		}
+	}
+	return RequestMet;
+}
+
+
 /******************** StorageUpdate *************************/
 void UStorageComponent::StorageUpdate_Implementation()
 {
