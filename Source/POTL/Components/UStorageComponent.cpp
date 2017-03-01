@@ -37,6 +37,8 @@ int UStorageComponent::AddResource(FString ResourceId, int Quantity)
 	// Create resource
 
 	// Add to storage list
+
+	/*
 	if (StoredResources.Contains(ResourceId))
 	{
 		StoredResources[ResourceId] += Quantity;
@@ -51,6 +53,7 @@ int UStorageComponent::AddResource(FString ResourceId, int Quantity)
 		StorageUpdate();
 		//AddedSuccessfully = true;
 	}
+	*/
 
 	// Call resource map update // Broadcast storage update
 	
@@ -58,26 +61,65 @@ int UStorageComponent::AddResource(FString ResourceId, int Quantity)
 }
 
 /******************** StoreResource *************************/
-void UStorageComponent::StoreResource(UResource* Resource)
+bool UStorageComponent::StoreResource(UResource* Resource)
 {
-
+	bool Stored = false;
+	if (Resource)
+	{
+		// Check for allowed storage type
+		if (AllowedResources.Num() > 0)
+		{
+			if (!AllowedResources.Contains(Resource->ResourceId))
+			{
+				return false;
+			}
+		}
+		// Check for room in storage
+		if (StorageCapacity > 0)
+		{
+			if (StoredResourceCompleteList.Num() == StorageCapacity)
+			{
+				return false;
+			}
+		}
+		// Store resource
+		if (StoredResources.Contains(Resource->ResourceId))
+		{
+			StoredResources[Resource->ResourceId].Add(Resource);
+			StoredResourceCompleteList.Add(Resource);
+			Stored = true;
+			StorageUpdate(Resource);
+		}
+		else
+		{
+			TArray<UResource*> NewStorageList;
+			NewStorageList.Add(Resource);
+			StoredResources.Add(Resource->ResourceId, NewStorageList);
+			StoredResourceCompleteList.Add(Resource);
+			Stored = true;
+			StorageUpdate(Resource);
+		}
+	}
+	return Stored;
 }
 
 
-/******************** RequestResouce *************************/
-bool UStorageComponent::RequestResouce(APOTLStructure* Requester, FString ResourceId, int Quantity)
+/******************** RequestResource *************************/
+bool UStorageComponent::RequestResource(APOTLStructure* Requester, FString ResourceId, int Quantity)
 {
 	bool RequestMet = false;
 	if (Requester)
 	{
 		if (StoredResources.Contains(ResourceId))
 		{
+			/*
 			if (StoredResources[ResourceId] >= Quantity)
 			{
 				RequestMet = true;
 				StoredResources[ResourceId] -= Quantity;
 				Requester->AddResource(ResourceId, Quantity);
 			}
+			*/
 		}
 	}
 	return RequestMet;
@@ -85,9 +127,9 @@ bool UStorageComponent::RequestResouce(APOTLStructure* Requester, FString Resour
 
 
 /******************** StorageUpdate *************************/
-void UStorageComponent::StorageUpdate_Implementation()
+void UStorageComponent::StorageUpdate_Implementation(UResource* Resource)
 {
-	OnStorageUpdate.Broadcast();
+	OnStorageUpdate.Broadcast(this, Resource);
 
 }
 

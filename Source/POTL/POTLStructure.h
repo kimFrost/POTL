@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "UObjects/UResource.h"
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "FactoryComponent.h"
@@ -145,6 +146,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	int AddResource(FString ResourceId, int32 Quantity); // , EResourceList Type
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	bool StoreResource(UResource* Resource);
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);

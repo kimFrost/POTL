@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
+#include "UObjects/UResource.h"
 #include "POTLGameMode.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
@@ -70,7 +71,13 @@ void UProductionComponent::OnProgressComplete()
 		// Add resource to storage
 		for (auto& ProductionItem : Production)
 		{
-			ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value);
+			for (int i = 0; i < ProductionItem.Value; i++)
+			{
+				UResource* ProducedResource = NewObject<UResource>();
+				ProducedResource->ResourceId = ProductionItem.Key;
+				ParentStructure->StoreResource(ProducedResource);
+			}
+			//ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value);
 		}
 
 		if (ParentStructure->AttachedTo)

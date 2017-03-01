@@ -9,7 +9,7 @@
 
 
 //~~ DELEGATES ~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStorageUpdate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStorageUpdate, UStorageComponent*, StorageComp, UResource*, Resource);
 
 
 
@@ -31,8 +31,7 @@ public:
 	TArray<FString> AllowedResources;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
-	TMap<FString, int> StoredResources;
-	//TArray<UResource*> StoredResources;
+	TArray<UResource*> StoredResourceCompleteList;
 
 	// ?? Locked for internal use ??
 	// ?? Storage for production ??
@@ -41,21 +40,27 @@ public:
 	int AddResource(FString ResourceId, int Quantity);
 	
 	UFUNCTION(BlueprintCallable, Category = "Storage")
-	void StoreResource(UResource* Resource);
+	bool StoreResource(UResource* Resource);
 
-	bool RequestResouce(APOTLStructure* Requester, FString ResourceId, int Quantity);
+	bool RequestResource(APOTLStructure* Requester, FString ResourceId, int Quantity);
 
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageUpdate OnStorageUpdate;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage")
-	void StorageUpdate();
+	void StorageUpdate(UResource* Resource);
 
 
 
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+
+private:
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	TMap<FString, TArray<UResource*>> StoredResources;
+	//TArray<UResource*> StoredResources;
 
 	//~~ Options variables ~~//
 

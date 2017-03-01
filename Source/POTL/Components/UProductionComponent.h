@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/UStructureComponent.h"
+#include "UObjects/UResource.h"
 #include "UProductionComponent.generated.h"
 
 

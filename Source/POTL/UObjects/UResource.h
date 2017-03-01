@@ -20,8 +20,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	FString ResourceId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
-	int Amount;
+	float ExpirationTime;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	//int Amount;
+	// No Amount. A resource is one resource
+
 
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")

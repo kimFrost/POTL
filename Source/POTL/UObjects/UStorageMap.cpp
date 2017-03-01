@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
+#include "UObjects/UResource.h"
 #include "Components/UStorageComponent.h"
 #include "UStorageMap.h"
 
@@ -28,13 +29,13 @@ void UStorageMap::IncludeStorage(UStorageComponent* StorageComp)
 			FVector WorldLocation = StorageComp->ParentStructure->GetActorLocation();
 			Storages.Add(WorldLocation, StorageComp);
 			StorageComp->OnStorageUpdate.AddDynamic(this, &UStorageMap::StorageMapUpdated);
-			StorageMapUpdated();
+			StorageMapUpdated(nullptr, nullptr);
 		}
 	}
 }
 
 
-void UStorageMap::RequestResouce(APOTLStructure* Requester, FString ResourceId, int Quantity)
+void UStorageMap::RequestResource(APOTLStructure* Requester, FString ResourceId, int Quantity)
 {
 	//TODO: Sort storages by distance to requester
 
@@ -44,14 +45,14 @@ void UStorageMap::RequestResouce(APOTLStructure* Requester, FString ResourceId, 
 		UStorageComponent* StorageComp = Entry.Value;
 		if (IsValid(StorageComp))
 		{
-			StorageComp->RequestResouce(Requester, ResourceId, Quantity);
+			StorageComp->RequestResource(Requester, ResourceId, Quantity);
 		}
 	}
 }
 
 /******************** StorageMapUpdated *************************/
-void UStorageMap::StorageMapUpdated_Implementation()
+void UStorageMap::StorageMapUpdated_Implementation(UStorageComponent* StorageComp, UResource* Resource)
 {
-	OnStorageMapUpdated.Broadcast();
+	OnStorageMapUpdated.Broadcast(StorageComp, Resource);
 
 }

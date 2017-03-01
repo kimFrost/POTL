@@ -3,12 +3,13 @@
 #pragma once
 
 #include "UObject/NoExportTypes.h"
-//#include "Components/UStorageComponent.h"
+#include "UObjects/UResource.h"
 #include "UStorageMap.generated.h"
 
 class UStorageComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStorageMapUpdated);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStorageMapUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStorageMapUpdated, UStorageComponent*, StorageComp, UResource*, Resource);
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -26,12 +27,16 @@ public:
 	void IncludeStorage(UStorageComponent* StorageComp);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Storage")
-	void StorageMapUpdated();
+	void StorageMapUpdated(UStorageComponent* StorageComp, UResource* Resource);
 
-	void RequestResouce(APOTLStructure* Requester, FString ResourceId, int Quantity);
+	void RequestResource(APOTLStructure* Requester, FString ResourceId, int Quantity);
 
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageMapUpdated OnStorageMapUpdated;
+
+private:
+
+	TMap<FVector, int> QuantityMapOfType;
 
 	//void OnStorageUpdate(UStorageComponent* StorageComp); // Bind to onstorageupdate and call this with storage and changes
 
