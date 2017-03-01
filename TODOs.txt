@@ -17,7 +17,7 @@ x.2.17
  - UStorageComponent store resource as UResource instead of int
  - UProductionComponent produces UResource instead of just string with quantity
  - Make UStorageMap OnStorageUpdate broadcast updated UStorageComponent and UResource
- 
+
  
  
 
@@ -25,7 +25,7 @@ x.2.17
 Backlog -----------------------------
  - Search StorageMap for resource from location
  - StorageMap - RequestResouce - Sort Storages by distance to requester
- - Resource transfer / Transaction between dwellings
+ - Resource transfer / Transaction between dwellings (Option for resource consume on transaction with success callback)
  - Visualize StorageMap
  - Dwelling Labor Points & Types
  - Dwelling attachment points. In data ?
@@ -45,6 +45,11 @@ Ideas ----------------------
  
 Temp Notes ----------------------
 
+!!RequestResource function only return a pointer to a avaiable resource. It does not consume or transfer the resource!!
+
+
+
+
 UPOTLGameInstance
 	- UStorageMap
 	
@@ -58,13 +63,14 @@ AFarm
 	
 	
 ABakery
-	- UProductionComponent (internal storage?)
-	- UStorageComponent(Required Resources)?
+	- UProductionComponent ((MissingResourcesList - recheck every second)
 	
 
 	
 	
-
+AMill
+	UProductionComponent - Require 2 wheat
+	
 	
 	
 UProduction 

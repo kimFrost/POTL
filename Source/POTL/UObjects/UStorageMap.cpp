@@ -35,9 +35,11 @@ void UStorageMap::IncludeStorage(UStorageComponent* StorageComp)
 }
 
 
-void UStorageMap::RequestResource(APOTLStructure* Requester, FString ResourceId, int Quantity)
+UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString ResourceId)
 {
 	//TODO: Sort storages by distance to requester
+
+	//TODO: Use QuantityMapOfType instead
 
 	for (auto& Entry : Storages)
 	{
@@ -45,9 +47,15 @@ void UStorageMap::RequestResource(APOTLStructure* Requester, FString ResourceId,
 		UStorageComponent* StorageComp = Entry.Value;
 		if (IsValid(StorageComp))
 		{
-			StorageComp->RequestResource(Requester, ResourceId, Quantity);
+			UResource* Resource = StorageComp->RequestResource(Requester, ResourceId);
+			if (Resource)
+			{
+				return Resource;
+			}
 		}
 	}
+
+	return nullptr;
 }
 
 /******************** StorageMapUpdated *************************/

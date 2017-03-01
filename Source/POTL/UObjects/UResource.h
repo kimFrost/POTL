@@ -5,7 +5,8 @@
 #include "UObject/NoExportTypes.h"
 #include "UResource.generated.h"
 
-
+//~~~~~ Forward Declarations ~~~~~//
+class UStorageComponent;
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -21,6 +22,10 @@ public:
 	FString ResourceId;
 
 	float ExpirationTime;
+
+	UStorageComponent* StoredIn;
+
+	void Consume();
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	//int Amount;

@@ -39,11 +39,28 @@ void UProductionComponent::OnProduction_Implementation()
 
 void UProductionComponent::CheckProduction()
 {
-	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-	if (GameInstance)
+	if (ParentStructure)
 	{
-
+		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+		if (GameInstance && GameInstance->StorageMap)
+		{
+			for (auto& Entry : MissingResources)
+			{
+				for (int i = 0; i < Entry.Value; i++)
+				{
+					UResource* Resource = GameInstance->StorageMap->RequestResource(ParentStructure, Entry.Key);
+					if (Resource)
+					{
+						// Trigger transaction that consumes resource and adds wealth
+						//Resource->Consume();
+						Entry.Value--;
+						i--;
+					}
+				}
+			}
+		}
 	}
+
 
 	// Fetch resource with transaction
 	// Subtract for missing resource. When empty, start production.

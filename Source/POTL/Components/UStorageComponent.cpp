@@ -104,26 +104,45 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 }
 
 
-/******************** RequestResource *************************/
-bool UStorageComponent::RequestResource(APOTLStructure* Requester, FString ResourceId, int Quantity)
+/******************** RemoveResourceFromStorage *************************/
+void UStorageComponent::RemoveResourceFromStorage(UResource* Resource)
 {
-	bool RequestMet = false;
+	if (Resource)
+	{
+		StoredResourceCompleteList.Remove(Resource);
+		if (StoredResources.Contains(Resource->ResourceId))
+		{
+			TArray<UResource*>& EstimatedList = StoredResources[Resource->ResourceId];
+			int NumRemoved = EstimatedList.Remove(Resource);
+			if (NumRemoved > 0)
+			{
+				StorageUpdate(nullptr);
+			}
+		}
+	}
+}
+
+
+/******************** RequestResource *************************/
+UResource* UStorageComponent::RequestResource(APOTLStructure* Requester, FString ResourceId)
+{
 	if (Requester)
 	{
 		if (StoredResources.Contains(ResourceId))
 		{
-			/*
-			if (StoredResources[ResourceId] >= Quantity)
+			for (auto& Resource : StoredResources[ResourceId])
 			{
-				RequestMet = true;
-				StoredResources[ResourceId] -= Quantity;
-				Requester->AddResource(ResourceId, Quantity);
+				if (IsValid(Resource))
+				{
+					//Requester->AddResource(ResourceId, Quantity);
+					return Resource;
+				}
 			}
-			*/
 		}
 	}
-	return RequestMet;
+	return nullptr; // Return nullptr since no other return has happenend
 }
+
 
 
 /******************** StorageUpdate *************************/

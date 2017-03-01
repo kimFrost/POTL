@@ -42,7 +42,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Storage")
 	bool StoreResource(UResource* Resource);
 
-	bool RequestResource(APOTLStructure* Requester, FString ResourceId, int Quantity);
+	void RemoveResourceFromStorage(UResource* Resource);
+
+	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
 
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageUpdate OnStorageUpdate;
