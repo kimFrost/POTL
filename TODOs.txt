@@ -17,15 +17,21 @@ x.2.17
  - UStorageComponent store resource as UResource instead of int
  - UProductionComponent produces UResource instead of just string with quantity
  - Make UStorageMap OnStorageUpdate broadcast updated UStorageComponent and UResource
-  
+ 
+ 
+ 
 
+ 
 Backlog -----------------------------
  - Search StorageMap for resource from location
  - StorageMap - RequestResouce - Sort Storages by distance to requester
+ - Resource transfer / Transaction between dwellings
  - Visualize StorageMap
  - Dwelling Labor Points & Types
  - Dwelling attachment points. In data ?
- - Resource transfer / Transaction between dwellings
+
+ 
+ 
  
  
 Ideas ----------------------
