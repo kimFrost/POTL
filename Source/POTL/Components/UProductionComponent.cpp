@@ -70,16 +70,29 @@ void UProductionComponent::CheckProduction()
 			});
 			*/
 
-			/*
 			for (int32 Index = MissingResources.Num() - 1; Index >= 0; --Index)
 			{
+				//MissingResources[Index]
+				/*
 				if (MissingResources[Index] == nullptr)
 				{
 					const bool bAllowShrinking = false;
 					A.RemoveAt(Index, 1, bAllowShrinking);
 				}
+				*/
 			}
+			/*
+			MissingResources.KeySort([](FString A, FString B) {
+				return A.Len()  > B.Len(); // sort strings by length 
+			});
 			*/
+
+			/*
+			MissingResources.ValueSort([](const int& A, const int& B) {
+				return A< B; // sort keys in reverse
+			});
+			*/
+
 
 			for (auto& Entry : MissingResources)
 			{
