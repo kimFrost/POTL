@@ -46,16 +46,46 @@ void UProductionComponent::CheckProduction()
 		{
 			for (auto& Entry : MissingResources)
 			{
+				int NumOfResourcesFound = 0;
 				for (int i = 0; i < Entry.Value; i++)
 				{
 					UResource* Resource = GameInstance->StorageMap->RequestResource(ParentStructure, Entry.Key);
 					if (Resource)
 					{
+						NumOfResourcesFound++;
 						// Trigger transaction that consumes resource and adds wealth
 						//Resource->Consume();
-						Entry.Value--;
-						i--;
 					}
+					else
+					{
+						break; // Break quantity loop if no resource found.
+					}
+				}
+				Entry.Value -= NumOfResourcesFound;
+			}
+
+			/*
+			A.RemoveAll([](const FBla* Ptr) {
+				return Ptr == nullptr;
+			});
+			*/
+
+			/*
+			for (int32 Index = MissingResources.Num() - 1; Index >= 0; --Index)
+			{
+				if (MissingResources[Index] == nullptr)
+				{
+					const bool bAllowShrinking = false;
+					A.RemoveAt(Index, 1, bAllowShrinking);
+				}
+			}
+			*/
+
+			for (auto& Entry : MissingResources)
+			{
+				if (Entry.Value < 1)
+				{
+					//MissingResources.Remove()
 				}
 			}
 		}
