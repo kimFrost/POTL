@@ -14,6 +14,7 @@
 
 //~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
+class UStructureComponent;
 class UStorageComponent;
 
 
@@ -215,6 +216,10 @@ public:
 	void IncludeStorage(UStorageComponent* StorageComp);
 
 	UStorageComponent* FindResource(FString ResourceId, int Quantity);
+
+	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
+
+	void TransferResource(UResource* Resource, UStructureComponent* ToComp, bool Consume, bool IsFree);
 
 
 	//~~ People ~~//

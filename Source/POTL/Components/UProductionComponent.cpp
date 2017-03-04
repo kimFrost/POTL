@@ -42,18 +42,19 @@ void UProductionComponent::CheckProduction()
 	if (ParentStructure)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-		if (GameInstance && GameInstance->StorageMap)
+		if (GameInstance)
 		{
 			for (auto& Entry : MissingResources)
 			{
 				int NumOfResourcesFound = 0;
 				for (int i = 0; i < Entry.Value; i++)
 				{
-					UResource* Resource = GameInstance->StorageMap->RequestResource(ParentStructure, Entry.Key);
+					UResource* Resource = GameInstance->RequestResource(ParentStructure, Entry.Key);
 					if (Resource)
 					{
 						NumOfResourcesFound++;
-						// Trigger transaction that consumes resource and adds wealth
+						// Trigger transaction that co nsumes resource and adds wealth
+						GameInstance->TransferResource(Resource, nullptr, true, false);
 						//Resource->Consume();
 					}
 					else
@@ -63,44 +64,40 @@ void UProductionComponent::CheckProduction()
 				}
 				Entry.Value -= NumOfResourcesFound;
 			}
+			for (auto& Entry : MissingResources)
+			{
+				if (Entry.Value < 1)
+				{
+					MissingResources.Remove(Entry.Key);
+				}
+			}
+			MissingResources.Compact(); // Remove invalid entries if any
 
 			/*
 			A.RemoveAll([](const FBla* Ptr) {
 				return Ptr == nullptr;
 			});
 			*/
-
+			/*
 			for (int32 Index = MissingResources.Num() - 1; Index >= 0; --Index)
 			{
-				//MissingResources[Index]
-				/*
 				if (MissingResources[Index] == nullptr)
 				{
 					const bool bAllowShrinking = false;
 					A.RemoveAt(Index, 1, bAllowShrinking);
 				}
-				*/
 			}
+			*/
 			/*
 			MissingResources.KeySort([](FString A, FString B) {
 				return A.Len()  > B.Len(); // sort strings by length 
 			});
 			*/
-
 			/*
 			MissingResources.ValueSort([](const int& A, const int& B) {
 				return A< B; // sort keys in reverse
 			});
 			*/
-
-
-			for (auto& Entry : MissingResources)
-			{
-				if (Entry.Value < 1)
-				{
-					//MissingResources.Remove()
-				}
-			}
 		}
 	}
 

@@ -27,6 +27,10 @@ public:
 
 	void Consume();
 
+	//void StoreInStorage(UStorageComponent* Storage);
+
+
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	//int Amount;
 	// No Amount. A resource is one resource

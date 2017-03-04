@@ -8,6 +8,8 @@
 #include "UObjects/UStorageMap.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLStructure.h"
+#include "Components/UStructureComponent.h"
+#include "Components/UStorageComponent.h"
 #include "Kismet/GameplayStatics.h"
 //#include "Runtime/Foliage/Public/FoliageInstancedStaticMeshComponent.h"
 //#include "Components/InstancedStaticMeshComponent.h"
@@ -1120,6 +1122,8 @@ void UPOTLGameInstance::IncludeStorage(UStorageComponent* StorageComp)
 	}
 }
 
+
+/******************** FindResource *************************/
 UStorageComponent * UPOTLGameInstance::FindResource(FString ResourceId, int Quantity)
 {
 	if (StorageMap)
@@ -1128,6 +1132,45 @@ UStorageComponent * UPOTLGameInstance::FindResource(FString ResourceId, int Quan
 	}
 	return nullptr;
 }
+
+
+/******************** RequestResource *************************/
+UResource* UPOTLGameInstance::RequestResource(APOTLStructure* Requester, FString ResourceId)
+{
+	if (StorageMap)
+	{
+		return StorageMap->RequestResource(Requester, ResourceId);
+	}
+	return nullptr;
+}
+
+
+/******************** TransferResource *************************/
+void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponent* ToComp, bool Consume, bool IsFree)
+{
+	if (Resource)
+	{
+		if (Resource->StoredIn)
+		{
+
+		}
+		if (ToComp)
+		{
+			UStorageComponent* StorageComp = Cast<UStorageComponent>(ToComp);
+			if (StorageComp)
+			{
+				StorageComp->StoreResource(Resource);
+				//Resource->StoredIn = StorageComp;
+			}
+		}
+	}
+	// From Storage
+	// To Storage
+
+	// Consume
+
+}
+
 
 
 /*****************************************************************************************************/

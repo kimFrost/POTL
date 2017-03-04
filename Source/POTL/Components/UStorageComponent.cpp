@@ -99,6 +99,10 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 			Stored = true;
 			StorageUpdate(Resource);
 		}
+		if (Stored)
+		{
+			Resource->StoredIn = this;
+		}
 	}
 	return Stored;
 }

@@ -18,14 +18,13 @@ x.2.17
  - UProductionComponent produces UResource instead of just string with quantity
  - Make UStorageMap OnStorageUpdate broadcast updated UStorageComponent and UResource
 
+4.3.17
+ - Resource transfer / Transaction between dwellings (Option for resource consume on transaction with success callback)
  
- 
-
  
 Backlog -----------------------------
  - Search StorageMap for resource from location
  - StorageMap - RequestResouce - Sort Storages by distance to requester
- - Resource transfer / Transaction between dwellings (Option for resource consume on transaction with success callback)
  - Visualize StorageMap
  - Dwelling Labor Points & Types
  - Dwelling attachment points. In data ?
@@ -48,6 +47,13 @@ Temp Notes ----------------------
 !!RequestResource function only return a pointer to a avaiable resource. It does not consume or transfer the resource!!
 
 
+Transaction call on what? GameInstance? Between structures? Storages? Components? StorageMap?
+
+
+Transfer to UStorageComponent or UStructureComponent or Structure
+
+
+Transfer resource from one storage to anotger. Storage bind to resource event "stored" ?
 
 
 UPOTLGameInstance
