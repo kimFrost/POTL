@@ -53,9 +53,8 @@ void UProductionComponent::CheckProduction()
 					if (Resource)
 					{
 						NumOfResourcesFound++;
-						// Trigger transaction that co nsumes resource and adds wealth
+						// Trigger transaction that consumes resource and adds wealth
 						GameInstance->TransferResource(Resource, nullptr, true, false);
-						//Resource->Consume();
 					}
 					else
 					{
@@ -102,7 +101,7 @@ void UProductionComponent::CheckProduction()
 	}
 
 
-	// Fetch resource with transaction
+	// Fetch resource with transbIsOnaction
 	// Subtract for missing resource. When empty, start production.
 
 	// Transactions of resources.

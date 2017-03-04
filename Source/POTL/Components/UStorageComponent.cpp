@@ -113,6 +113,10 @@ void UStorageComponent::RemoveResourceFromStorage(UResource* Resource)
 {
 	if (Resource)
 	{
+		if (Resource->StoredIn == this)
+		{
+			Resource->StoredIn = nullptr;
+		}
 		StoredResourceCompleteList.Remove(Resource);
 		if (StoredResources.Contains(Resource->ResourceId))
 		{

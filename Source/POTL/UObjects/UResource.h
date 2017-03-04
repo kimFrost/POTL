@@ -27,7 +27,7 @@ public:
 
 	void Consume();
 
-	//void StoreInStorage(UStorageComponent* Storage);
+	bool Transfer(UStorageComponent* Storage);
 
 
 

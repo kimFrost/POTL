@@ -28,3 +28,17 @@ void UResource::Consume()
 	StoredIn = nullptr;
 	// Destroy self
 }
+
+
+bool UResource::Transfer(UStorageComponent* Storage)
+{
+	if (Storage)
+	{
+		if (StoredIn)
+		{
+			StoredIn->RemoveResourceFromStorage(this);
+		}
+		return Storage->StoreResource(this);
+	}
+	return false;
+}

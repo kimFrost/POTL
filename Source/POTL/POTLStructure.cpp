@@ -161,7 +161,6 @@ int APOTLStructure::AddResource(FString ResourceId, int32 Quantity)
 /******************** StoreResource *************************/
 bool APOTLStructure::StoreResource(UResource* Resource)
 {
-	bool Added = false;
 	if (Resource)
 	{
 		TArray<UActorComponent*> StorageComponents = GetComponentsByClass(UStorageComponent::StaticClass());
@@ -172,12 +171,16 @@ bool APOTLStructure::StoreResource(UResource* Resource)
 			{
 				if (StorageComponent->StoreResource(Resource))
 				{
-					break;
+					return true;
 				}
 			}
 		}
 	}
-	return Added;
+	if (AttachedTo)
+	{
+		return AttachedTo->StoreResource(Resource);
+	}
+	return false;
 }
 
 

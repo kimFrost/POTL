@@ -23,6 +23,7 @@ x.2.17
  
  
 Backlog -----------------------------
+ - bIsOn is being ignore in production component.. Weird!
  - Search StorageMap for resource from location
  - StorageMap - RequestResouce - Sort Storages by distance to requester
  - Visualize StorageMap
@@ -45,6 +46,19 @@ Ideas ----------------------
 Temp Notes ----------------------
 
 !!RequestResource function only return a pointer to a avaiable resource. It does not consume or transfer the resource!!
+
+
+// Transaction result benifit types?
+	- Wealth
+	- Happiness
+	- Nothing
+	- 
+
+
+UProductionComponent call Request resource on game instance to get a pointer to a resource of type.
+Then UProductionComponent call TransferResource on game instance with parameter for consume and/or free transaction
+	- TransferResource() - will call resource->Transfer and update all storages associated with the resource
+
 
 
 Transaction call on what? GameInstance? Between structures? Storages? Components? StorageMap?

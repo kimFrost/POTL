@@ -1146,22 +1146,37 @@ UResource* UPOTLGameInstance::RequestResource(APOTLStructure* Requester, FString
 
 
 /******************** TransferResource *************************/
-void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponent* ToComp, bool Consume, bool IsFree)
+void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponent* ToComp, bool Consume = false, bool IsFree = false)
 {
 	if (Resource)
 	{
-		if (Resource->StoredIn)
-		{
-
-		}
 		if (ToComp)
 		{
-			UStorageComponent* StorageComp = Cast<UStorageComponent>(ToComp);
-			if (StorageComp)
-			{
-				StorageComp->StoreResource(Resource);
-				//Resource->StoredIn = StorageComp;
+			if (Consume) {
+				Resource->Consume();
 			}
+			else {
+				UStorageComponent* StorageComp = Cast<UStorageComponent>(ToComp);
+				if (StorageComp)
+				{
+					bool Transfered = Resource->Transfer(StorageComp);
+					if (Transfered)
+					{
+
+					}
+				}
+			}
+			// Trigger transaction result in wealth/benifit
+			//TODO: Add transaction here
+		}
+		else if (Consume) {
+			Resource->Consume();
+			// No wealth. There is no end target
+			/*
+			if (Resource->StoredIn)
+			{
+			}
+			*/
 		}
 	}
 	// From Storage
