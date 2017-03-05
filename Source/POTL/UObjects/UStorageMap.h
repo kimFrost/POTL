@@ -24,6 +24,9 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	TMap<FVector, UStorageComponent*> Storages;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	//TArray<UStorageComponent*> Storage;
+
 	void IncludeStorage(UStorageComponent* StorageComp);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Storage")

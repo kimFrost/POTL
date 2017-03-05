@@ -61,8 +61,11 @@ public:
 private:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
-	TMap<FString, TArray<UResource*>> StoredResources;
-	//TArray<UResource*> StoredResources;
+	//TMap<FString, TArray<UResource*>> StoredResources;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	TArray<UResource*> StoredResources;
+
 
 	//~~ Options variables ~~//
 

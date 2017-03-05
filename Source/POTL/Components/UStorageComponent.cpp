@@ -38,22 +38,7 @@ int UStorageComponent::AddResource(FString ResourceId, int Quantity)
 
 	// Add to storage list
 
-	/*
-	if (StoredResources.Contains(ResourceId))
-	{
-		StoredResources[ResourceId] += Quantity;
-		LeftOvers = 0;
-		StorageUpdate();
-		//AddedSuccessfully = true;
-	}
-	else 
-	{ 
-		StoredResources.Add(ResourceId, Quantity);
-		LeftOvers = 0;
-		StorageUpdate();
-		//AddedSuccessfully = true;
-	}
-	*/
+
 
 	// Call resource map update // Broadcast storage update
 	
@@ -82,7 +67,15 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 				return false;
 			}
 		}
+
 		// Store resource
+		StoredResources.Add(Resource);
+		Stored = true;
+		StorageUpdate(Resource);
+		StoredResourceCompleteList.Add(Resource);
+
+
+		/*
 		if (StoredResources.Contains(Resource->ResourceId))
 		{
 			StoredResources[Resource->ResourceId].Add(Resource);
@@ -99,6 +92,7 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 			Stored = true;
 			StorageUpdate(Resource);
 		}
+		*/
 		if (Stored)
 		{
 			Resource->StoredIn = this;
@@ -118,6 +112,16 @@ void UStorageComponent::RemoveResourceFromStorage(UResource* Resource)
 			Resource->StoredIn = nullptr;
 		}
 		StoredResourceCompleteList.Remove(Resource);
+		
+		if (StoredResources.Contains(Resource))
+		{
+			int NumRemoved = StoredResources.Remove(Resource);
+			if (NumRemoved > 0)
+			{
+				StorageUpdate(nullptr);
+			}
+		}
+		/*
 		if (StoredResources.Contains(Resource->ResourceId))
 		{
 			TArray<UResource*>& EstimatedList = StoredResources[Resource->ResourceId];
@@ -127,6 +131,7 @@ void UStorageComponent::RemoveResourceFromStorage(UResource* Resource)
 				StorageUpdate(nullptr);
 			}
 		}
+		*/
 	}
 }
 
@@ -138,13 +143,33 @@ UResource* UStorageComponent::RequestResource(APOTLStructure* Requester, FString
 	{
 		// Clean StoredResources tmap ?
 
-		/*
-		for (auto& Entry : StoredResources)
+
+		for (int i = 0; i < StoredResources.Num(); i++)
 		{
-			if (!Entry || (Entry && Entry.Value))
+			UResource* Resource = StoredResources[i];
+			if (Resource)
+			{
+				return Resource;
+			}
+		}
+		/*
+		for (auto& List : StoredResources)
+		{
+			if (List.Key == ResourceId)
+			{
+				for (int i = 0; i < List.Value.Num(); i++)
+				{
+					UResource* Resource = List.Value[i];
+					if (Resource)
+					{
+						return Resource;
+					}
+				}
+			}
 		}
 		*/
 
+		/*
 		if (StoredResources.Contains(ResourceId))
 		{
 			for (auto& Resource : StoredResources[ResourceId])
@@ -152,11 +177,13 @@ UResource* UStorageComponent::RequestResource(APOTLStructure* Requester, FString
 				if (Resource)
 				{
 					//Requester->AddResource(ResourceId, Quantity);
-					return Resource;
+					
 				}
 			}
 		}
+		*/
 	}
+
 	return nullptr; // Return nullptr since no other return has happenend
 }
 
