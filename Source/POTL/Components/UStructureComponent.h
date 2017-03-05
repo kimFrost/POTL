@@ -32,10 +32,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Module")
 	bool bCanToggle;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Module")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	bool bIsOn; 
 
-	UPROPERTY(BlueprintReadWrite, Category = "Module")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	float Progress;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")

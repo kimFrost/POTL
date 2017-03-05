@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "Components/UStorageComponent.h"
+#include "POTLUtilFunctionLibrary.h"
 #include "UResource.h"
 
 
@@ -20,6 +21,17 @@ UResource::~UResource()
 
 void UResource::Consume()
 {
+	// Get all with reference to this. For debugging
+	TArray<UObject*> ReferredToObjs;
+	UPOTLUtilFunctionLibrary::GetObjReferenceCount(this, &ReferredToObjs);
+	for (UObject* Each : ReferredToObjs)
+	{
+		if (Each)
+		{
+			//UE_LOG(YourLog, Warning, TEXT("%s"), *Each->GetName());
+		}
+	}
+
 	// Remove from storage in StoredIn
 	if (StoredIn)
 	{
@@ -27,6 +39,7 @@ void UResource::Consume()
 	}
 	StoredIn = nullptr;
 	// Destroy self
+	this->ConditionalBeginDestroy(); //instantly clears UObject out of memory
 }
 
 

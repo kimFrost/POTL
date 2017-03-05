@@ -27,6 +27,8 @@ public:
 
 	UPOTLUtilFunctionLibrary(const FObjectInitializer& ObjectInitializer);
 
+	static int32 GetObjReferenceCount(UObject* Obj, TArray<UObject*>* OutReferredToObjects);
+
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	static void LogMsg(FString Msg, float Duration, FColor DebugColor, int32 GroupIndex);
 

@@ -39,6 +39,8 @@ void UProductionComponent::OnProduction_Implementation()
 
 void UProductionComponent::CheckProduction()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::CheckProduction"));
+
 	if (ParentStructure)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
@@ -71,32 +73,6 @@ void UProductionComponent::CheckProduction()
 				}
 			}
 			MissingResources.Compact(); // Remove invalid entries if any
-
-			/*
-			A.RemoveAll([](const FBla* Ptr) {
-				return Ptr == nullptr;
-			});
-			*/
-			/*
-			for (int32 Index = MissingResources.Num() - 1; Index >= 0; --Index)
-			{
-				if (MissingResources[Index] == nullptr)
-				{
-					const bool bAllowShrinking = false;
-					A.RemoveAt(Index, 1, bAllowShrinking);
-				}
-			}
-			*/
-			/*
-			MissingResources.KeySort([](FString A, FString B) {
-				return A.Len()  > B.Len(); // sort strings by length 
-			});
-			*/
-			/*
-			MissingResources.ValueSort([](const int& A, const int& B) {
-				return A< B; // sort keys in reverse
-			});
-			*/
 		}
 	}
 
@@ -109,6 +85,9 @@ void UProductionComponent::CheckProduction()
 	if (MissingResources.Num() > 0) {
 		bIsOn = false;
 	}
+	else {
+		bIsOn = true;
+	}
 }
 
 
@@ -120,9 +99,9 @@ void UProductionComponent::OnProgressComplete()
 	OnProduction();
 
 	//UE_LOG(LogTemp, Log, TEXT("ULaborComponent::OnProgressComplete"));
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UProductionComponent::OnProgressComplete"));
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::OnProgressComplete"));
 
-	if (IsValid(ParentStructure))
+	if (ParentStructure)
 	{
 		// Add resource to storage
 		for (auto& ProductionItem : Production)
@@ -132,6 +111,7 @@ void UProductionComponent::OnProgressComplete()
 				UResource* ProducedResource = NewObject<UResource>();
 				ProducedResource->ResourceId = ProductionItem.Key;
 				ParentStructure->StoreResource(ProducedResource);
+				ProducedResource->AddToRoot();
 			}
 			//ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value);
 		}
@@ -147,5 +127,6 @@ void UProductionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	bIsOn = false;
 	GetWorld()->GetTimerManager().SetTimer(ProductionCheckTimer, this, &UProductionComponent::CheckProduction, 1.f, true);
 }

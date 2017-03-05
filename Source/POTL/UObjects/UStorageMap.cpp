@@ -22,7 +22,7 @@ UStorageMap::~UStorageMap()
 
 void UStorageMap::IncludeStorage(UStorageComponent* StorageComp)
 {
-	if (IsValid(StorageComp))
+	if (StorageComp)
 	{
 		if (StorageComp->ParentStructure)
 		{
@@ -40,21 +40,33 @@ UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString Resou
 	//TODO: Sort storages by distance to requester
 
 	//TODO: Use QuantityMapOfType instead
-
-	for (auto& Entry : Storages)
+	
+	if (Requester)
 	{
-		FVector WorldLocation = Entry.Key;
-		UStorageComponent* StorageComp = Entry.Value;
-		if (IsValid(StorageComp))
+		for (auto& Entry : Storages)
 		{
-			UResource* Resource = StorageComp->RequestResource(Requester, ResourceId);
-			if (Resource)
+			if (Entry.Value)
 			{
-				return Resource;
+				if (Entry.Value->IsValidLowLevel())
+				{
+					FVector WorldLocation = Entry.Key;
+					UStorageComponent* StorageComp = Entry.Value;
+					if (StorageComp)
+					{
+						UResource* Resource = StorageComp->RequestResource(Requester, ResourceId);
+						if (Resource)
+						{
+							return Resource;
+						}
+					}
+				}
+				else
+				{
+					bool Failed = true;
+				}
 			}
 		}
 	}
-
 	return nullptr;
 }
 

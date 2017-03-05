@@ -136,11 +136,20 @@ UResource* UStorageComponent::RequestResource(APOTLStructure* Requester, FString
 {
 	if (Requester)
 	{
+		// Clean StoredResources tmap ?
+
+		/*
+		for (auto& Entry : StoredResources)
+		{
+			if (!Entry || (Entry && Entry.Value))
+		}
+		*/
+
 		if (StoredResources.Contains(ResourceId))
 		{
 			for (auto& Resource : StoredResources[ResourceId])
 			{
-				if (IsValid(Resource))
+				if (Resource)
 				{
 					//Requester->AddResource(ResourceId, Quantity);
 					return Resource;

@@ -14,6 +14,28 @@ UPOTLUtilFunctionLibrary::UPOTLUtilFunctionLibrary(const FObjectInitializer& Obj
 
 }
 
+
+/******************** GetObjReferenceCount *************************/
+int32 UPOTLUtilFunctionLibrary::GetObjReferenceCount(UObject* Obj, TArray<UObject*>* OutReferredToObjects = nullptr)
+{
+	if (!Obj || !Obj->IsValidLowLevelFast())
+	{
+		return -1;
+	}
+
+	TArray<UObject*> ReferredToObjects;				//req outer, ignore archetype, recursive, ignore transient
+	FReferenceFinder ObjectReferenceCollector(ReferredToObjects, Obj, false, true, true, false);
+	ObjectReferenceCollector.FindReferences(Obj);
+
+	if (OutReferredToObjects)
+	{
+		OutReferredToObjects->Append(ReferredToObjects);
+	}
+	//return OutReferredToObjects.Num();
+	return 0;
+}
+
+
 /******************** RotateCube *************************/
 FVector UPOTLUtilFunctionLibrary::RotateCube(FVector CubeCoord, int32 Direction, FVector CenterCube)
 {

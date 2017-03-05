@@ -1172,13 +1172,9 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 		else if (Consume) {
 			Resource->Consume();
 			// No wealth. There is no end target
-			/*
-			if (Resource->StoredIn)
-			{
-			}
-			*/
 		}
 	}
+
 	// From Storage
 	// To Storage
 
