@@ -74,25 +74,19 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 		StorageUpdate(Resource);
 		StoredResourceCompleteList.Add(Resource);
 
-
 		/*
-		if (StoredResources.Contains(Resource->ResourceId))
+		if (StoredResourcesMap.Contains(Resource->ResourceId))
 		{
-			StoredResources[Resource->ResourceId].Add(Resource);
-			StoredResourceCompleteList.Add(Resource);
-			Stored = true;
-			StorageUpdate(Resource);
+			StoredResourcesMap[Resource->ResourceId].Add(Resource);
 		}
 		else
 		{
 			TArray<UResource*> NewStorageList;
 			NewStorageList.Add(Resource);
-			StoredResources.Add(Resource->ResourceId, NewStorageList);
-			StoredResourceCompleteList.Add(Resource);
-			Stored = true;
-			StorageUpdate(Resource);
+			StoredResourcesMap.Add(Resource->ResourceId, NewStorageList);
 		}
 		*/
+
 		if (Stored)
 		{
 			Resource->StoredIn = this;
@@ -121,17 +115,16 @@ void UStorageComponent::RemoveResourceFromStorage(UResource* Resource)
 				StorageUpdate(nullptr);
 			}
 		}
+
 		/*
-		if (StoredResources.Contains(Resource->ResourceId))
+		if (StoredResourcesMap.Contains(Resource->ResourceId))
 		{
-			TArray<UResource*>& EstimatedList = StoredResources[Resource->ResourceId];
+			TArray<UResource*>& EstimatedList = StoredResourcesMap[Resource->ResourceId];
 			int NumRemoved = EstimatedList.Remove(Resource);
-			if (NumRemoved > 0)
-			{
-				StorageUpdate(nullptr);
-			}
 		}
+		StoredResourcesMap.Compact();
 		*/
+		
 	}
 }
 
@@ -152,8 +145,9 @@ UResource* UStorageComponent::RequestResource(APOTLStructure* Requester, FString
 				return Resource;
 			}
 		}
+
 		/*
-		for (auto& List : StoredResources)
+		for (auto& List : StoredResourcesMap)
 		{
 			if (List.Key == ResourceId)
 			{
@@ -170,14 +164,15 @@ UResource* UStorageComponent::RequestResource(APOTLStructure* Requester, FString
 		*/
 
 		/*
-		if (StoredResources.Contains(ResourceId))
+		if (StoredResourcesMap.Contains(ResourceId))
 		{
-			for (auto& Resource : StoredResources[ResourceId])
+			TArray<UResource*>& ResourceList = StoredResourcesMap[ResourceId];
+			for (int i = 0; i < ResourceList.Num(); i++)
 			{
+				UResource* Resource = ResourceList[i];
 				if (Resource)
 				{
-					//Requester->AddResource(ResourceId, Quantity);
-					
+					//Return resource
 				}
 			}
 		}
