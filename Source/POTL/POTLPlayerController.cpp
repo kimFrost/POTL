@@ -78,11 +78,13 @@ void APOTLPlayerController::ProcessConstructLocations()
 			if (BuildBroadcastRootHex->AttachedBuilding)
 			{
 				//~~ Detect if in range of broadcast grid ~~//
+				/*
 				BuildValid = BuildBroadcastRootHex->AttachedBuilding->InRangeOfEmitTo;
 				if (!BuildValid)
 				{
 					BuildMsg = "Building Root is outside of broadcast grid";
 				}
+				*/
 			}
 			else
 			{
@@ -145,11 +147,10 @@ void APOTLPlayerController::RotateStructure()
 			if (!CachedHex->AttachedBuilding) { //!! Might not be right !!//
 				if (BuilderStructure)
 				{
-					//BuilderStructure->Destroy();
 					GameInstance->RemoveStructure(BuilderStructure);
 				}
 				BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
-				CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+				//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 				ProcessConstructLocations();
 			}
 			else {
@@ -198,7 +199,7 @@ void APOTLPlayerController::Tick(float DeltaTime)
 					}
 					if (!CachedHex->AttachedBuilding) {
 						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
-						CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+						//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 						ProcessConstructLocations();
 					}
 				}
@@ -259,7 +260,7 @@ void APOTLPlayerController::LeftClickPressed()
 							if (City)
 							{
 								GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
-								CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+								//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 								ProcessConstructLocations();
 							}
 						}

@@ -6,7 +6,7 @@
 #include "UObjects/UResource.h"
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
-#include "FactoryComponent.h"
+#include "UObjects/UHexTile.h"
 #include "POTLStructure.generated.h"
 
 
@@ -14,8 +14,6 @@
 
 
 //~~~~~ STRUCTS ~~~~~
-
-
 
  
 //~~~~~ ENUMS ~~~~~
@@ -33,15 +31,9 @@ public:
 	APOTLStructure(const FObjectInitializer &ObjectInitializer);
 	//AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	UPOTLGameInstance* GameInstance;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<APOTLStructure*> BroadcastTo;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	//TArray<APOTLStructure*> EmitTo;
-	APOTLStructure* EmitTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	APOTLStructure* AttachedTo;
@@ -50,13 +42,7 @@ public:
 	TArray<APOTLStructure*> AttachedStructures;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	bool IsRoot;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	APOTLStructure* Root;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	FString TreeId;
+	UHexTile* Hex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 HexIndex;
@@ -76,18 +62,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BroadcastRange;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	int32 BroadcastHexIndex;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<int32> BroadcastGridHexIndexes;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	bool IsResolvedThisTurn;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	bool InRangeOfEmitTo;
-
 
 	/** Construction */
 
@@ -101,45 +75,6 @@ public:
 	bool IsUnderConstruction;
 
 
-	/** People */
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "People")
-	int32 NumOfLivingSpaces;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "People")
-	TArray<int32> PeopleIndexes;
-
-
-	/** Resources */
-
-	UPROPERTY(EditAnywhere, Category = "Resources")
-	TMap<FString, int32> FreeResources;
-
-	UPROPERTY(EditAnywhere, Category = "Resources")
-	TMap<int32, FST_ResourceAllocation> AllocatedResources;
-
-	//UPROPERTY(EditAnywhere, Category = "Resources") //~~ UPROPERTY doesn't support nested containers ~~//
-	TMap<APOTLStructure*, TArray<FST_ResourceAllocation>> ResourceFlowMap;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	TArray<FST_ResourceRequest> ResourceRequests;
-
-	UPROPERTY(EditAnywhere, Category = "Resources")
-	TMap<FString, int32> ResourceUpkeep;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	TArray<class UFactoryComponent*> Factories;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	TArray<class UGatherComponent*> Gatherers;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	int32 WorkForceAvaiable;
-
-	TMap<FString, TArray<int32>> DecayQueue;
-
-	TMap<FString, TArray<int32>> DecayQueueBackup;
-
 	/*********** FUNCTIONS **************/
 
 	/** Resources */
@@ -150,72 +85,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	bool StoreResource(UResource* Resource);
 
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	TArray<FST_Resource> GetResourcesAsList(EResourceList Type);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	int32 GetAllocationTotal(FString Type);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	TArray<FST_ResourceAlteration> GetResourceAlteration();
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	TArray<FST_ResourceAllocation> GetAllocationsAsList(FString Type);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void CalculateUpkeep(bool Broadcast);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void MakeTreeAllocations();
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ProcessResourceRequests();
-
-	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
-	bool HasResourcesAvailable(TMap<FString, int32>& Request, bool IncludeAllocations, int32 Sequence);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ProcessDecay();
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ResolveTree();
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ResolveAllocations(EAllocationType Type, bool Broadcast);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	int32 MakeAllocationKey();
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	int32 AllocateResource(APOTLStructure* To, FString ResourceKey, int32 Quantity, EAllocationType Type, int32 Sequence, bool Consume, int32 Key);
-
-	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
-	TArray<int32> AllocateResources(APOTLStructure* To, TMap<FString, int32>& Resources, EAllocationType Type, int32 Sequence, bool Consume, int32 Key);
-
-	UFUNCTION(Category = "Resources")
-	void ReverseAllocations(bool Broadcast);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ResolveUpkeep(bool Broadcast);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ProcessFactories(bool Broadcast);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	void ProcessGatherers(bool Broadcast);
-
-	//UFUNCTION(Category = "Resources") // Not a UFunction. Can only be called in c++ because of the TMap, which isn't supported in Blueprint
-	//TMap<FName, FST_Resource> RequestResources(bool Bubble, const APOTLStructure* RequestFrom, const TMap<FName, FST_Resource>& Request, int32 Steps);
-	//TMap<FName, FST_Resource> RequestResources(bool Bubble, APOTLStructure* RequestFrom, TMap<FName, FST_Resource>& Request, int32 Steps);
-	void RequestResources(APOTLStructure* RequestFrom, UFactoryComponent* Factory, TMap<FString, int32>& Request, TMap<FString, int32>& Payoff, int32 Sequence, int32 Steps, EAllocationType Type, bool Consume, bool Bubble);
-
-	UFUNCTION(BlueprintCallable, Category = "Resources")
-	TArray<FST_ResourceAllocation> GetStructureResourceFlow(APOTLStructure* Structure);
-
 
 	/** Construction */
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Construction") // BlueprintNativeEvent
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Construction")
 	void UpdateConstrunction();
 	
 	UFUNCTION(BlueprintCallable, Category = "Construction")
@@ -226,6 +99,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void DetachFromStructure();
+
 
 	/** Map */
 

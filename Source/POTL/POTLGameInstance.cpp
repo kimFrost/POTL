@@ -27,14 +27,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	GridYCount = 200; // Temp. Needs to be calc in point creation.
 	HexGridReady = false;
 
-	//FindmeString = "set in constructor";
-	
-	//DataTable'/Game/Resources/TestData.TestData'
-	//DataTable'/Game/Resources/ResourceConversion.ResourceConversion'
-
 	//~~ Table data ~~//
-	//RecipeTable = nullptr;
-	//StructureTable = nullptr;
 	DATA_Recipes = nullptr;
 	DATA_Structures = nullptr;
 	DATA_Resources = nullptr;
@@ -43,57 +36,6 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	ChannelLandscape = ECollisionChannel::ECC_WorldStatic;
 	ChannelFoliage = ECollisionChannel::ECC_WorldStatic;
 
-	
-	//CreatePerson("King", "Everwood", "The King", 26, EPersonGender::Male, nullptr);
-	//CreatePerson("Lady", "Everwood", "", 22, EPersonGender::Female, nullptr);
-	//CreatePerson("Evan", "Everwood", "", 12, EPersonGender::Male, nullptr);
-	//CreatePerson("Dales", "Everwood", "", 14, EPersonGender::Male, nullptr);
-
-
-	//FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender
-
-	//~~ Recipes ~~//
-	/*
-	static ConstructorHelpers::FObjectFinder<UDataTable>RecipeTable_BP(TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'")); //~~ Get the Uassets file reference ~~//
-	if (RecipeTable_BP.Succeeded())
-	{
-		RecipeTable = RecipeTable_BP.Object;
-		FindmeString = "RecipeTable Succeeded : " + FString::FromInt(RecipeTable->GetRowNames().Num());
-	}
-	*/
-	
-	//~~ Structures ~~//
-	//ConstructorHelpersInternal::FindOrLoadObject();
-	//template<typename T>
-	//T ConstructorHelpersInternal::FindOrLoadObject<UDataTable>(TEXT("DataTable'/Game/Resources/Structures.Structures'"));
-
-	/*
-	static ConstructorHelpers::FObjectFinder<UDataTable>StructureTable_BP(TEXT("DataTable'/Game/Resources/Structures.Structures'")); //~~ Get the Uassets file reference ~~//
-	if (StructureTable_BP.Succeeded())
-	{ 
-		StructureTable = StructureTable_BP.Object;
-		int TempLength = StructureTable->GetRowNames().Num();
-		FindmeString = "StructureTable Succeeded : " + FString::FromInt(TempLength);
-	}
-	else {
-		FindmeString = "Failed";
-	}
-	*/
-
-	/* 
-	if (RecipeTable)
-	{
-		TArray<FName> RowNames = RecipeTable->GetRowNames();
-		static const FString ContextString(TEXT("RowName")); // Key value for each column of values
-		FST_ResourceRecipe* LookUpRow = RecipeTable->FindRow<FST_ResourceRecipe>(FName(TEXT("0")), ContextString); // o-- Search using FindRow. It returns a handle to the row.
-		// Access the variables like LookUpRow->Blueprint_Class, GOLookupRow->Usecode
-		//uint8 SkillsCount = InformationTable->GetTableData().Num(); 
-		if (LookUpRow)
-		{
-
-		}
-	}
-	*/	
 }
 
 
@@ -120,217 +62,6 @@ void UPOTLGameInstance::ReadTables()
 	{
 		DATA_Resources = ResourceTable;
 	}
-}
-
-
-/******************** GetConstructLocations *************************/
-TArray<UHexTile*> UPOTLGameInstance::GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren)
-{
-	TArray<UHexTile*> ConstructHexes;
-	if (Structure)
-	{
-		//Log("--> GetConstructLocations: " + Structure->GetName(), 15.0f, FColor::Yellow, -1);
-		TArray<int32> ConstructHexIndexes;
-		ConstructHexIndexes = GetConstructLocationIndexes(Structure, IncludeChildren); //~~ Get self hex indexes ~~//
-		//~~ Get children hex indexes ~~//
-		if (IncludeChildren) {
-			//Log("Structure->BroadcastTo.Num(): " + FString::FromInt(Structure->BroadcastTo.Num()), 15.0f, FColor::Yellow, -1);
-			for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++) 
-			{
-				TArray<int32> ChildrenConstructLocationIndexes = GetConstructLocationIndexes(Structure->BroadcastTo[i], IncludeChildren);
-				for (int32 ii = 0; ii < ChildrenConstructLocationIndexes.Num(); ii++)
-				{
-					ConstructHexIndexes.AddUnique(ChildrenConstructLocationIndexes[ii]);
-				}
-			}
-		}
-		//~~ Loop ConstructHexes and calced blocked construction state, based on number of adjacent structures ~~//
-		for (int32 m = 0; m < ConstructHexIndexes.Num(); m++)
-		{
-			int32 Index = ConstructHexIndexes[m];
-			UHexTile* ConstructHex = Hexes[Index];
-			if (!IsValid(ConstructHex)) {
-				continue;
-			}
-			FST_ConstructLocation& ConstructInfo = ConstructHex->ConstructInfo;
-			int32 NumOfAttachTo = ConstructInfo.AdjacentStructures.Num();
-			if (!ConstructInfo.Blocked) //~~ If not already blocked ~~//
-			{
-				if (NumOfAttachTo < 3)
-				{
-					ConstructInfo.Blocked = false;
-				}
-				else if (NumOfAttachTo >= 3 && NumOfAttachTo <= 5)
-				{
-					for (int32 mm = 0; mm < ConstructHex->HexNeighborIndexes.Num(); mm++)
-					{
-						int32 AdjacentHexIndex = ConstructHex->HexNeighborIndexes[mm];
-						if (Hexes.IsValidIndex(AdjacentHexIndex))
-						{
-							UHexTile* AdjacentHex = Hexes[AdjacentHexIndex];
-							if (!IsValid(AdjacentHex)) {
-								continue;
-							}
-							if (AdjacentHex->AttachedBuilding && AdjacentHex->AttachedBuilding->BroadcastHexIndex == AdjacentHexIndex) //~~ If adjacent hex has a structure & the hexindex is the same as the structure broadcast hexindex ~~//
-							{
-								if (AdjacentHex->ConstructInfo.AdjacentStructures.Num() >= 5) //~~ is next to 5 or 6 structures ~~// //~~ then the current hex, is the only way out ~~//
-								{
-									ConstructInfo.Blocked = true;
-								}
-							}
-						}
-					}
-				}
-				else {
-					ConstructInfo.Blocked = true;
-				}
-			}
-		}
-		//~~ Convert indexes into real hexes and send a array of copies of them ~~//
-		for (int32 h = 0; h < ConstructHexIndexes.Num(); h++)
-		{
-			ConstructHexes.Add(Hexes[ConstructHexIndexes[h]]);
-		}
-	}
-	//Log("ConstructHexes.Num(): " + FString::FromInt(ConstructHexes.Num()), 15.0f, FColor::Yellow, -1);
-	return ConstructHexes;
-}
-
-
-/******************** GetConstructLocationIndexes *************************/
-TArray<int32> UPOTLGameInstance::GetConstructLocationIndexes(APOTLStructure* Structure, bool IncludeChildren)
-{
-	TArray<int32> ConstructHexIndexes;
-	if (Structure) 
-	{
-		//~~ Reset all broadcastTo children for InRange check
-		for (APOTLStructure* ChildStructure : Structure->BroadcastTo) 
-		{
-			ChildStructure->InRangeOfEmitTo = false;
-		}
-
-		//Log("GetConstructLocationIndexes: " + Structure->GetName(), 15.0f, FColor::Yellow, -1);
-		struct Frontier
-		{
-			TArray<int32> HexIndexes;
-		};
-		TArray<Frontier> Frontiers;
-		TArray<int32> VisitedHexIndexes;
-		//Log("Structure->HexIndex: " + FString::FromInt(Structure->HexIndex), 15.0f, FColor::Yellow, -1);
-		//VisitedHexIndexes.Add(Structure->HexIndex); //~~ Add Start Hex to VisitedHexes ~~// //~~ Not needed, i think~~//
-		Frontier frontier;
-		//frontier.HexIndexes.Add(Structure->HexIndex);
-		frontier.HexIndexes.Add(Structure->BroadcastHexIndex);
-		Frontiers.Add(frontier);
-
-		FString TreeId = Structure->TreeId;
-
-		if (IncludeChildren) {
-			for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
-			{
-				TArray<int32> ChildrenConstructLocationIndexes = GetConstructLocationIndexes(Structure->BroadcastTo[i], IncludeChildren);
-				for (int32 ii = 0; ii < ChildrenConstructLocationIndexes.Num(); ii++)
-				{
-					ConstructHexIndexes.AddUnique(ChildrenConstructLocationIndexes[ii]);
-				}
-			}
-		}
-		//Log("structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, -1);
-		for (int32 k = 1; k <= Structure->BroadcastRange + 1; k++)
-		{
-			Frontier frontier;
-			Frontiers.Add(frontier);
-			frontier = Frontiers[k - 1];
-			for (int32 m = 0; m < frontier.HexIndexes.Num(); m++)
-			{
-				UHexTile* Hex = Hexes[frontier.HexIndexes[m]];
-				if (!IsValid(Hex)) {
-					continue;
-				}
-				//~~ Reset construct info if the storred tre id ain't the same. ~~//
-				if (Hex->ConstructInfo.TreeId != TreeId) //!! This might not be correct.
-				{
-					Hex->ConstructInfo = FST_ConstructLocation{};
-				}
-				//~~ Make Construct Location ~~//
-				Hex->ConstructInfo.Cube = Hex->HexCubeCoords;
-				Hex->ConstructInfo.EmitDistances.Add(k); //~~ Store smallest distance between broadcaster and structure. Have to use index of structure in EmitTo array, to find the right distance value ~~//
-				Hex->ConstructInfo.EmitTo.Add(Structure);  //~~ Update info for telling if structures are in range of emitTo broadcast's range ~~//
-
-				
-				//~~ Store broadcasted resources? NO. Will result in a lot of hex updating. Could then result in bugs with imcomplete data. ~~//
-
-				int32 ValidNeighborCount = 0;
-				//~~ Add neighbors to the new frontier/next step. Only if they haven't been visited yet. ~~//
-				for (int32 i = 0; i < Hex->HexNeighborIndexes.Num(); i++)
-				{
-					int32 Index = Hex->HexNeighborIndexes[i];
-					if (Index != -1 && Hexes.IsValidIndex(Index))
-					{
-						UHexTile* NeighborHex = Hexes[Index];
-						if (!IsValid(NeighborHex)) {
-							continue;
-						}
-
-						ValidNeighborCount++;
-
-						if (NeighborHex->AttachedBuilding != nullptr //~~ Only if pointer to structure isn't null ~~//
-						&& !Hex->ConstructInfo.AttachTo.Contains(NeighborHex->AttachedBuilding) //~~ Only if structure isn't already stored in attachments. Will cause structure to block for itself ~~//
-						&& NeighborHex->AttachedBuilding->TreeId == TreeId) //~~  Only structures in same Tree ~~//
-						{
-							Hex->ConstructInfo.AttachTo.Add(NeighborHex->AttachedBuilding);
-						}
-						if (NeighborHex->AttachedBuilding != nullptr) //~~ Only if pointer to structure isn't null ~~//
-						{
-							Hex->ConstructInfo.AdjacentStructures.Add(NeighborHex->AttachedBuilding);
-							if (NeighborHex->HexIndex == NeighborHex->AttachedBuilding->BroadcastHexIndex) //~~ If hex index is the same as the structure root hexindex ~~// //!! This might not be right
-							{
-								Hex->ConstructInfo.AdjacentRootStructures.Add(NeighborHex->AttachedBuilding);
-							}
-							if (k != (Structure->BroadcastRange + 1)) //~~ If not the last broadcast range step ~~//
-							{
-								if (NeighborHex->HexIndex == NeighborHex->AttachedBuilding->BroadcastHexIndex)
-								{
-									if (NeighborHex->AttachedBuilding->EmitTo == Structure) //~~ If hex attached structure's parent structure is this current broadcast structure ~~//
-									{
-										NeighborHex->AttachedBuilding->InRangeOfEmitTo = true; //~~ Set child structure to be in range of this structure's broadcast range  ~~//
-									}
-								}
-							}
-						}
-						if (!VisitedHexIndexes.Contains(Index))
-						{
-							//~~ Search for attachments/adjacent buildings and store them in hexes ~~//
-							if (!IsHexBlocked(NeighborHex))
-							{
-								Frontiers[k].HexIndexes.Add(Index); //~~ Add Neighbor Hex to the next frontier ~~//
-								VisitedHexIndexes.Add(Index); //~~ Add index to visited indexes, so that neighbors don't overlap each other. ~~//
-							}
-							/*
-							if (IsHexBuildable(NeighborHex))
-							{
-								Frontiers[k].HexIndexes.Add(Index); //~~ Add Neighbor Hex to the next frontier ~~//
-								VisitedHexIndexes.Add(Index); //~~ Add index to visited indexes, so that neighbors don't overlap each other. ~~//
-							}
-							*/
-							if (!IsHexTerrainBuildable(NeighborHex) || k == Structure->BroadcastRange)
-							{
-								Hex->ConstructInfo.OnRidge = true; //!!~~ NOT CORRECT ~~//
-							}
-						}
-					}
-				}
-				if (ValidNeighborCount < 6 ) //~~ If ValidNeighborCount is less than 6 the hex is on the ridge of map~~//
-				{
-					Hex->ConstructInfo.OnMapEdge = true;
-				}
-				ConstructHexIndexes.AddUnique(Hex->HexIndex);
-			}
-		}
-		ConstructHexIndexes.Remove(Structure->BroadcastHexIndex); //~~ Remove self cubeCoord ~~//
-		Structure->BroadcastGridHexIndexes = ConstructHexIndexes; //~~ Store indexes in structure. It cludes all hex broadcast grid index, including childrens hex indexes ~~//
-	}
-	return ConstructHexIndexes; //~~ Return ~~//
 }
 
 
@@ -446,20 +177,6 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
 					if (Structure)
 					{
-						//~~ Tree id & IsRoot logic here ~~//
-						if (EmitTo)
-						{
-							Structure->TreeId = EmitTo->TreeId;
-							Structure->IsRoot = false;
-							Structure->Root = EmitTo;
-						}
-						else
-						{
-							Structure->TreeId = Structure->GetName();
-							Structure->IsRoot = true;
-							Structure->Root = Structure; //~~ Self reference ~~//
-							RootStructures.Add(Structure);
-						}
 
 						//~~ Store cubecoord in structure ~~//
 						Structure->CubeCoord = CubeCoord;
@@ -472,7 +189,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						if (Hexes.IsValidIndex(BroadcastHexIndex))
 						{
 							UHexTile* Hex = Hexes[BroadcastHexIndex];
-							Structure->BroadcastHexIndex = BroadcastHexIndex;
+							Structure->Hex = Hex;
 						}
 
 						//~~ Store hex index in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
@@ -568,30 +285,6 @@ void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 }
 
 
-/******************** CreateStructureConnection *************************/
-void UPOTLGameInstance::CreateStructureConnection(APOTLStructure* From, APOTLStructure* To)
-{
-	if (From && To)
-	{
-		From->EmitTo = To;
-		From->TreeId = To->TreeId;
-		To->BroadcastTo.Add(From);
-	}
-}
-
-
-/******************** RemoveStructureConnection *************************/
-void UPOTLGameInstance::RemoveStructureConnection(APOTLStructure* From, APOTLStructure* To)
-{
-	if (From) {
-		From->EmitTo = nullptr;
-		From->TreeId = From->GetName();
-	}
-	if (From && To)
-	{
-		To->BroadcastTo.Remove(From);
-	}
-}
 
 /*****************************************************************************************************/
 /**************************************** MAP - CREATION *********************************************/

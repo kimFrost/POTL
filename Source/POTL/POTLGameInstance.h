@@ -139,12 +139,6 @@ public:
 	//~~ Structure ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	TArray<UHexTile*> GetConstructLocations(APOTLStructure* Structure, bool IncludeChildren);
-
-	UFUNCTION(BlueprintCallable, Category = "Structure")
-	TArray<int32> GetConstructLocationIndexes(APOTLStructure* Structure, bool IncludeChildren);
-
-	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexBlocked(const UHexTile* Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
@@ -161,12 +155,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void RemoveStructure(APOTLStructure* Structure);
-
-	UFUNCTION(BlueprintCallable, Category = "Structure")
-	void CreateStructureConnection(APOTLStructure* From, APOTLStructure* To);
-
-	UFUNCTION(BlueprintCallable, Category = "Structure")
-	void RemoveStructureConnection(APOTLStructure* From, APOTLStructure* To);
 
 
 	//~~ Map - Creation ~~//

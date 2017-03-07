@@ -33,6 +33,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	TArray<UResource*> StoredResourceCompleteList;
 
+
+	
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	//TMap<FString, TArray<UResource*>> StoredResourcesMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Storage")
+	TArray<UResource*> StoredResources;
+
 	// ?? Locked for internal use ??
 	// ?? Storage for production ??
 
@@ -46,6 +54,9 @@ public:
 
 	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
 
+
+
+
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageUpdate OnStorageUpdate;
 
@@ -58,13 +69,11 @@ public:
 	virtual void BeginPlay() override;
 
 
-private:
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
-	//TMap<FString, TArray<UResource*>> StoredResourcesMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
-	TArray<UResource*> StoredResources;
+
+
+	
 
 
 	//~~ Options variables ~~//
