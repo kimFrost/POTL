@@ -92,6 +92,9 @@ public:
 	void UpdateConstrunction();
 	
 	UFUNCTION(BlueprintCallable, Category = "Construction")
+	void Init();
+
+	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void ProcessBaseData();
 
 	UFUNCTION(BlueprintCallable, Category = "Construction")

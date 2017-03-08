@@ -148,6 +148,15 @@ void APOTLStructure::UpdateConstrunction_Implementation()
 }
 
 
+/******************** Init *************************/
+void APOTLStructure::Init()
+{
+	// Initialize all UStructureComponents
+
+	ProcessBaseData();
+}
+
+
 /******************** ProcessBaseData *************************/
 void APOTLStructure::ProcessBaseData()
 {

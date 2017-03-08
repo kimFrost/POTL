@@ -75,10 +75,6 @@ public:
 	AActor* Landscape;
 
 
-	//TMap<FVector, UStorageComponent*> StorageMap;
-
-	//TMap<FString, UStorageComponent*> ResourceMap; 
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource")
 	UResourceMap* ResourceMap;
 
@@ -105,28 +101,13 @@ public:
 	TEnumAsByte<ECollisionChannel> ChannelFoliage;
 
 
-
-	//~~ People ~~//
-
-	UPROPERTY(EditDefaultsOnly, Category = "People")
-	TMap<int32, FST_Person> PeopleInMap;
-
-
 	//~~ Structure ~~//
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	TArray<APOTLStructure*> Structures;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
-	TArray<APOTLStructure*> RootStructures;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	TArray<APOTLStructure*> PlaceholderStructures;
-
-	//~~ Debug ~~//
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Debug")
-	FString FindmeString;
-
 
 
 	/*********** FUNCTIONS **************/
@@ -148,10 +129,10 @@ public:
 	bool IsHexTerrainBuildable(const UHexTile* Hex);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild);
+	APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild);
 	
 	UFUNCTION(BlueprintCallable, Category = "Structure")
-	APOTLStructure* PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild, bool IsPlaceholder);
+	APOTLStructure* PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild, bool IsPlaceholder);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void RemoveStructure(APOTLStructure* Structure);
@@ -181,24 +162,6 @@ public:
 	void CalcHexResourceDensity();
 
 
-	//~~ Turn ~~//
-
-	UFUNCTION(BlueprintCallable, Category = "Turn")
-	void SwitchTurn();
-
-	UFUNCTION(BlueprintCallable, Category = "Turn")
-	void NewTurn(float WaitTime);
-
-
-	//~~ Map - Structure ~~//
-
-	UFUNCTION(BlueprintCallable, Category = "Grid")
-	APOTLStructure* GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass);
-
-	UFUNCTION(BlueprintCallable, Category = "Grid")
-	APOTLStructure* GetNearestCity(FVector Location);
-
-
 	//~~ Map - Resources ~~//
 
 	void IncludeStorage(UStorageComponent* StorageComp);
@@ -210,22 +173,6 @@ public:
 	void TransferResource(UResource* Resource, UStructureComponent* ToComp, bool Consume, bool IsFree);
 
 
-	//~~ People ~~//
-
-	UFUNCTION(BlueprintCallable, Category = "People")
-	int32 CreatePerson(FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender, APOTLStructure* Home);
-
-	UFUNCTION(BlueprintCallable, Category = "People")
-	void SwitchHome(UPARAM(ref) FST_Person& Person, APOTLStructure* NewHome);
-
-	UFUNCTION(BlueprintCallable, Category = "People")
-	FST_Person GetPerson(int32 Index);
-
-	UFUNCTION(BlueprintCallable, Category = "People")
-	TArray<FST_Person> GetPeople(const TArray<int32>& Indexes);
-
-	UFUNCTION(BlueprintCallable, Category = "People")
-	void SetPersonData(APOTLStructure* AssignedTo, EPersonBaseTaskList AssignedTask, int32 OwnIndex);
 
 
 	//~~ Util - Hex ~~//
@@ -248,17 +195,7 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Grid")
 	FOnMapReady OnMapReady;
 
-	UPROPERTY(BlueprintAssignable, Category = "Turn")
-	FTurnSwitched OnTurnSwitched;
-
-	UPROPERTY(BlueprintAssignable, Category = "Turn")
-	FNewTurn OnNewTurn;
-
 	UPROPERTY(BlueprintAssignable, Category = "Structure")
 	FStructurePlanted OnStructurePlanted;
-
-	UPROPERTY(BlueprintAssignable, Category = "Structure")
-	FCityUpdated OnCityUpdated;
-	
 
 };

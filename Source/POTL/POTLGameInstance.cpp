@@ -128,10 +128,10 @@ bool UPOTLGameInstance::IsHexTerrainBuildable(const UHexTile* Hex)
 
 
 /******************** PlantPlaceholderStructure *************************/
-APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild)
+APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild)
 {
 	APOTLStructure* Structure = nullptr;
-	Structure = PlantStructure(CubeCoord, RotationDirection, RowName, TreeId, EmitTo, InstaBuild, true);
+	Structure = PlantStructure(CubeCoord, RotationDirection, RowName, AttachTo, InstaBuild, true);
 	if (Structure)
 	{
 		Structure->IsPlaceholder = true;
@@ -142,7 +142,7 @@ APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, 
 
 
 /******************** PlantStructure *************************/
-APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, FString TreeId, APOTLStructure* EmitTo, bool InstaBuild, bool IsPlaceholder)
+APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild, bool IsPlaceholder)
 {
 	APOTLStructure* Structure = nullptr;
 	if (Landscape && DATA_Structures)
@@ -173,7 +173,6 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 					//FRotator SpawnRotation = Hex->Rotation;
 
 					// Spawn the pickup
-					//APOTLStructure* const
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
 					if (Structure)
 					{
@@ -188,8 +187,8 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						int32 BroadcastHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(BroadcastOffsetCoords, GridXCount);
 						if (Hexes.IsValidIndex(BroadcastHexIndex))
 						{
-							UHexTile* Hex = Hexes[BroadcastHexIndex];
-							Structure->Hex = Hex;
+							//UHexTile* Hex = Hexes[BroadcastHexIndex];
+							//Structure->Hex = Hex;
 						}
 
 						//~~ Store hex index in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
@@ -197,7 +196,9 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 						if (Hexes.IsValidIndex(HexIndex))
 						{
-							Structure->HexIndex = HexIndex;
+							UHexTile* Hex = Hexes[HexIndex];
+							Structure->Hex = Hex;
+							//Structure->HexIndex = HexIndex;
 						}
 
 						//~~ Set Structure on all hexes based on cube location and structure size ~~//
@@ -227,18 +228,15 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						{
 
 						}
-						//~~ Create Broadcast/Emit Connection ~~//
-						if (EmitTo)
-						{
-							CreateStructureConnection(Structure, EmitTo);
-						}
 						//~~ InstaBuild for debugging ~~//
 						if (InstaBuild)
 						{
 							Structure->IsUnderConstruction = false;
 						}
+						Structure->AttachedTo = AttachTo;
+
 						//~~ Process Structure Data internally ~~//
-						Structure->ProcessBaseData();
+						Structure->Init();
 					}
 				}
 			}
@@ -254,11 +252,6 @@ void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 {
 	if (Structure)
 	{
-		RemoveStructureConnection(Structure, Structure->EmitTo);
-		for (int32 i = 0; i < Structure->BroadcastTo.Num(); i++)
-		{
-			RemoveStructureConnection(Structure->BroadcastTo[i], Structure);
-		}
 		//~~ Remove self from hexes ~~//
 		// Sizes cubecoords logic here
 		FST_Structure& StructureBaseData = Structure->StructureBaseData;
@@ -296,8 +289,6 @@ void UPOTLGameInstance::TraceLandscape()
 	StorageMap = NewObject<UStorageMap>();
 	ResourceMap = NewObject<UResourceMap>();
 
-	FString Tadasdadas = "adasd";
-	//UGameplayStatics::
 	if (Landscape)
 	{
 		FVector ActorLocation = Landscape->GetActorLocation();
@@ -708,102 +699,10 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 }
 
 
-/*****************************************************************************************************/
-/****************************************** Turn *****************************************************/
-/*****************************************************************************************************/
-
-/******************** SwitchTurn *************************/
-void UPOTLGameInstance::SwitchTurn()
-{
-	OnTurnSwitched.Broadcast(32.f);
-	//GetWorld()->GetTimerManager().SetTimer(this, &UPOTLGameInstance::NewTurn, 5.0f, false);
-	//TimerManager->SetTimer(TurnTimerHandle, this, &UPOTLGameInstance::NewTurn, 1.0f, false);
-
-	NewTurn(0.2f);
-}
-
-/******************** NewTurn *************************/
-void UPOTLGameInstance::NewTurn(float WaitTime)
-{
-	if (Landscape)
-	{
-		bool AllResolved = true;
-		for (int32 i = 0; i < Structures.Num(); i++)
-		{
-			APOTLStructure* Structure = Structures[i];
-			if (!Structure->IsResolvedThisTurn)
-			{
-				AllResolved = false;
-				break;
-			}
-		}
-		if (AllResolved)
-		{
-			OnNewTurn.Broadcast(17.f);
-		}
-		else {
-			FTimerHandle UniqueHandle;
-			FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &UPOTLGameInstance::NewTurn, WaitTime * 2); //~~ Doubles wait time for each loop ~~//
-			Landscape->GetWorldTimerManager().SetTimer(UniqueHandle, TimerDelegate, WaitTime, false);
-		}
-	}
-}
 
 /*****************************************************************************************************/
-/************************************** Map - Structure **********************************************/
+/************************************** Map - Resources **********************************************/
 /*****************************************************************************************************/
-
-/******************** GetNearestStructure *************************/
-APOTLStructure* UPOTLGameInstance::GetNearestStructure(FVector Location, TSubclassOf<APOTLStructure> StructureClass)
-{
-	APOTLStructure* NearestStructure = nullptr;
-	float LastNearestDistance = 99999999999999.f;
-	TArray<AActor*> FoundStructures;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), StructureClass, FoundStructures);
-	for (auto Actor : FoundStructures)
-	{
-		APOTLStructure* Structure = Cast<APOTLStructure>(Actor);
-		if (Structure)
-		{
-			FVector StructureLocation = Structure->GetActorLocation();
-			FVector VectorDistance = StructureLocation - Location;
-			VectorDistance = VectorDistance.GetAbs();
-			//FVector2D Vector2DDistance = FVector2D({ VectorDistance.X, VectorDistance.Y });
-			FVector2D Vector2DDistance = FVector2D::FVector2D(VectorDistance.X, VectorDistance.Y);
-			float Distance = Vector2DDistance.Size();
-			if (Distance < LastNearestDistance)
-			{
-				NearestStructure = Structure;
-				LastNearestDistance = Distance;
-			}
-		}
-	}
-	return NearestStructure;
-}
-
-
-
-/******************** GetNearestCity *************************/
-APOTLStructure* UPOTLGameInstance::GetNearestCity(FVector Location)
-{
-	APOTLStructure* RootStructure = nullptr;
-	float LastNearestDistance = 99999999999999.f;
-	for (auto Structure : RootStructures)
-	{
-		FVector StructureLocation = Structure->GetActorLocation();
-		FVector VectorDistance = StructureLocation - Location;
-		VectorDistance = VectorDistance.GetAbs();
-		//FVector2D Vector2DDistance = FVector2D({ VectorDistance.X, VectorDistance.Y });
-		FVector2D Vector2DDistance = FVector2D::FVector2D(VectorDistance.X, VectorDistance.Y);
-		float Distance = Vector2DDistance.Size();
-		if (Distance < LastNearestDistance)
-		{
-			RootStructure = Structure;
-			LastNearestDistance = Distance;
-		}
-	}
-	return RootStructure;
-}
 
 
 /******************** IncludeStorage *************************/
@@ -867,113 +766,6 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 			// No wealth. There is no end target
 		}
 	}
-
-	// From Storage
-	// To Storage
-
-	// Consume
-
-}
-
-
-
-/*****************************************************************************************************/
-/******************************************* PEOPLE **************************************************/
-/*****************************************************************************************************/
-
-
-/******************** CreatePerson *************************/
-int32 UPOTLGameInstance::CreatePerson(FString FirstName, FString FamilyName, FString NickName, int32 Age, EPersonGender Gender, APOTLStructure* Home)
-{
-	int32 Index = 0;
-	FST_Person Person;
-	Person.FirstName = FirstName;
-	Person.FamilyName = FamilyName;
-	Person.NickName = NickName;
-	Person.Age = Age;
-	Person.Gender = Gender;
-	Person.Home = Home;
-
-	do 
-	{
-		Index = FMath::RandRange(0, 50000);
-	} while (PeopleInMap.Contains(Index));
-	Person.OwnIndex = Index;
-
-	if (Home)
-	{
-		Home->PeopleIndexes.Add(Index);
-	}
-	PeopleInMap.Add(Index, Person);
-	return Index;
-}
-
-
-/******************** SwitchHome *************************/
-void UPOTLGameInstance::SwitchHome(UPARAM(ref) FST_Person& Person, APOTLStructure* NewHome)
-{
-	if (Person.Home)
-	{
-		if (Person.Home->PeopleIndexes.Contains(Person.OwnIndex))
-		{
-			Person.Home->PeopleIndexes.Remove(Person.OwnIndex);
-		}
-	}
-	Person.Home = NewHome;
-	NewHome->PeopleIndexes.Add(Person.OwnIndex);
-}
-
-
-/******************** GetPerson *************************/
-FST_Person UPOTLGameInstance::GetPerson(int32 Index)
-{
-	FST_Person Person;
-	if (PeopleInMap.Contains(Index))
-	{
-		Person = PeopleInMap[Index];
-	}
-	return Person;
-}
-
-
-/******************** GetPeople *************************/
-TArray<FST_Person> UPOTLGameInstance::GetPeople(const TArray<int32>& Indexes)
-{
-	TArray<FST_Person> People;
-	for (int32 i = 0; i < Indexes.Num(); i++)
-	{
-		int32 Index = Indexes[i];
-		if (PeopleInMap.Contains(Index))
-		{
-			People.Add(PeopleInMap[Index]);
-		}
-	}
-	return People;
-}
-
-
-/******************** SetPersonData *************************/
-void  UPOTLGameInstance::SetPersonData(APOTLStructure* AssignedTo, EPersonBaseTaskList AssignedTask, int32 OwnIndex)
-{
-	if (PeopleInMap.Contains(OwnIndex))
-	{
-		FST_Person& Person = PeopleInMap[OwnIndex];
-		Person.AssignedTo = AssignedTo;
-		Person.AssignedTask = AssignedTask;
-	}
-	/*
-	TArray<FString> Groups;
-	TArray<EPersonTags> Tags;
-	int32 Age;
-	TMap<FString, int32> Modifiers;
-	TMap<FString, int32> Traits;
-	EPersonGender Gender;
-	EPersonTypesEnum Type;
-	APOTLStructure* Home;
-	APOTLStructure* AssignedTo;
-	EPersonBaseTaskList AssignedTask;
-	int32 OwnIndex;
-	*/
 }
 
 
@@ -992,7 +784,6 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
 		if (PlayerController)
 		{
-
 			//const FName TraceTag("MyTraceTag");
 			//Landscape->GetWorld()->DebugDrawTraceTag = TraceTag;
 
@@ -1020,7 +811,6 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 			PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 			if (RV_Hit.bBlockingHit)
 			{
-				// Point->Location = RV_Hit.Location;
 				Hex = LocationToHex(RV_Hit.Location);
 			}
 		}
@@ -1055,43 +845,3 @@ void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor Debu
 	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);
 }
 
-
-
-
-/*****************************************************************************************************/
-/**************************************** DELEGATES **************************************************/
-/*****************************************************************************************************/
-
-//OnTurnSwitched.AddDynamic(this);
-// Broadcast Delegate 
-//OnTurnSwitched.Broadcast(CurrentHouer, CurrentMinute, CurrentSeconds);
-
-
-//Log("Structure->BroadcastRange: " + FString::FromInt(Structure->BroadcastRange), 15.0f, FColor::Yellow, 3);
-
-//Log("k: " + FString::FromInt(k) + "/" + FString::FromInt(m), 15.0f, FColor::Yellow, -1);
-//Log("hex cube: " + Hex->HexCubeCoords.ToString(), 15.0f, FColor::Yellow, -1);
-
-
-/*
-for (int32 testI = 0; testI < Structure->Hex->HexNeighborIndexes.Num(); testI++)
-{
-int32 Index = Structure->Hex->HexNeighborIndexes[testI];
-
-//Log("testI: " + FString::FromInt(testI) + "  Index:" + FString::FromInt(Index) + FString::Printf(TEXT("Bool: %s"), (Index != -1 && Hexes.IsValidIndex(Index) ? TEXT("true") : TEXT("false"))), 15.0f, FColor::Green, -1);
-
-if (Index != -1 && Hexes.IsValidIndex(Index))
-{
-FST_Hex& NeighborHex = Hexes[Index];
-
-// Make Construct Location
-FST_ConstructLocation ConstructLocation;
-ConstructLocation.Cube = NeighborHex->HexCubeCoords;
-ConstructLocation.Hex = NeighborHex;
-ConstructLocation.EmitTo.Add(NeighborHex);
-ConstructLocations.Add(ConstructLocation);
-}
-}
-Log("ConstructLocations.Num(): " + FString::FromInt(ConstructLocations.Num()), 15.0f, FColor::Green, 4);
-return ConstructLocations;
-*/

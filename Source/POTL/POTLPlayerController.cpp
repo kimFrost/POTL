@@ -141,24 +141,20 @@ void APOTLPlayerController::RotateStructure()
 	//!! Is a copy of the logic from tick !!//
 	if (ActiveToolType == EToolType::PlantStructure)
 	{
-		APOTLStructure* City = GameInstance->GetNearestCity(CachedHex->Location);
-		if (City)
-		{
-			if (!CachedHex->AttachedBuilding) { //!! Might not be right !!//
-				if (BuilderStructure)
-				{
-					GameInstance->RemoveStructure(BuilderStructure);
-				}
-				BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
-				//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-				ProcessConstructLocations();
+		if (!CachedHex->AttachedBuilding) { //!! Might not be right !!//
+			if (BuilderStructure)
+			{
+				GameInstance->RemoveStructure(BuilderStructure);
 			}
-			else {
-				if (BuilderStructure)
-				{
-					//BuilderStructure->Destroy();
-					GameInstance->RemoveStructure(BuilderStructure);
-				}
+			BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
+			//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+			ProcessConstructLocations();
+		}
+		else {
+			if (BuilderStructure)
+			{
+				//BuilderStructure->Destroy();
+				GameInstance->RemoveStructure(BuilderStructure);
 			}
 		}
 	}
@@ -190,19 +186,17 @@ void APOTLPlayerController::Tick(float DeltaTime)
 			OnHexOver.Broadcast(CachedHex); //~~ Call hex over event dispatcher ~~//
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
-				APOTLStructure* City = GameInstance->GetNearestCity(CachedHex->Location);
-				if (City)
+				
+				if (BuilderStructure)
 				{
-					if (BuilderStructure)
-					{
-						GameInstance->RemoveStructure(BuilderStructure);
-					}
-					if (!CachedHex->AttachedBuilding) {
-						BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, false);
-						//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-						ProcessConstructLocations();
-					}
+					GameInstance->RemoveStructure(BuilderStructure);
 				}
+				if (!CachedHex->AttachedBuilding) {
+					BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
+					//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+					ProcessConstructLocations();
+				}
+				
 			}
 			else if (ActiveToolType == EToolType::Select)
 			{
@@ -256,13 +250,9 @@ void APOTLPlayerController::LeftClickPressed()
 						if (TracedHex->AttachedBuilding && TracedHex->AttachedBuilding->IsPlaceholder) {
 							GameInstance->RemoveStructure(TracedHex->AttachedBuilding);
 							//~~ Plant structure on the avaiable hex ~~//
-							APOTLStructure* City = GameInstance->GetNearestCity(CachedHex->Location);
-							if (City)
-							{
-								GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, City->TreeId, City, true, false);
-								//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-								ProcessConstructLocations();
-							}
+							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, true, false);
+							//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+							ProcessConstructLocations();
 						}
 					}
 				}
@@ -272,7 +262,6 @@ void APOTLPlayerController::LeftClickPressed()
 				const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhysicalSurface"), true);
 				if (EnumPtr)
 				{
-					//FString SurfaceString = EnumPtr->GetEnumName(CachedHex->Resources.SurfaceType);
 					FText SurfaceString = EnumPtr->GetEnumText(CachedHex->Resources.SurfaceType);
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "trace surface type: " + SurfaceString.ToString());
 				}
