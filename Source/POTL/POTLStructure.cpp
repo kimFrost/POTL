@@ -22,7 +22,6 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	HexIndex = -1;
 	Hex = nullptr;
 	CubeCoord = { -1, -1, -1 };
-	BroadcastRange = 0;
 	StructureBaseData = FST_Structure{};
 	StructureRowName = TEXT("");
 	IsPlaceholder = false;
@@ -152,14 +151,44 @@ void APOTLStructure::UpdateConstrunction_Implementation()
 void APOTLStructure::Init()
 {
 	// Initialize all UStructureComponents
+	TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
+	for (auto& Component : StructureComponents)
+	{
+		UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
+		if (StructureComponent)
+		{
+			StructureComponent->Init();
+		}
+	}
 
 	ProcessBaseData();
+}
+
+
+/******************** RemoveStructure *************************/
+void APOTLStructure::RemoveStructure()
+{
+	//~~ Remove self from hexes ~~//
+	for (auto& OccupiedHex : OccupiedHexes)
+	{
+		if (OccupiedHex)
+		{
+			OccupiedHex->AttachedBuilding = nullptr;
+		}
+	}
+	if (Hex)
+	{
+		Hex->AttachedBuilding = nullptr;
+	}
+	//~~ DESTROY ~~//
+	Destroy();
 }
 
 
 /******************** ProcessBaseData *************************/
 void APOTLStructure::ProcessBaseData()
 {
+	/*
 	for (auto& Factory : StructureBaseData.Factories)
 	{
 		//FST_ResourceAllocation& Allocation = AllocatedResource.Value;
@@ -169,6 +198,7 @@ void APOTLStructure::ProcessBaseData()
 		//FactoryComponent->MaxQuantity = Factory.MaxQuantity;
 		//Factories.Add(FactoryComponent);
 	}
+	*/
 }
 
 void APOTLStructure::AttachToStructure(APOTLStructure* Structure)

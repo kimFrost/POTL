@@ -1,31 +1,36 @@
 
 17.2.17: 
- - Make solution work with 4.14
- - Fix BP_Hexdecal broken
+ x Make solution work with 4.14
+ x Fix BP_Hexdecal broken
 
 x.2.17
- - Refactor FST_Hex to be Uobject instead UHex class
- - Refactor decal system to be decal per hex 
+ x Refactor FST_Hex to be Uobject instead UHex class
+ x Refactor decal system to be decal per hex 
  
 27.2.17
- - UProductionComponent Production on time update if on
- - StorageMap
+ x UProductionComponent Production on time update if on
+ x StorageMap
 
 1.3.17
- - Structure addResource. Distribute to storage in self first, and then to attachments
- - Make resource unique uobjects instead of just number in a list
- - UStorageComponent store resource as UResource instead of int
- - UProductionComponent produces UResource instead of just string with quantity
- - Make UStorageMap OnStorageUpdate broadcast updated UStorageComponent and UResource
+ x Structure addResource. Distribute to storage in self first, and then to attachments
+ x Make resource unique uobjects instead of just number in a list
+ x UStorageComponent store resource as UResource instead of int
+ x UProductionComponent produces UResource instead of just string with quantity
+ x Make UStorageMap OnStorageUpdate broadcast updated UStorageComponent and UResource
 
 4.3.17
- - Resource transfer / Transaction between dwellings (Option for resource consume on transaction with success callback)
+ x Resource transfer / Transaction between dwellings (Option for resource consume on transaction with success callback)
  
-7.3.17
- - 
+8.3.17
+ x Structure placeholder init on place to trigger init on child components
+ x Clean/Remove old code and clean structure json data
+ x New Plant structure logic for player controller
+ - New structure placement validation logic
+ 
+ 
  
 Backlog -----------------------------
- - Structure placeholder init on place to trigger init on child components
+ - Get logic out of HUD_Map
  - Dwelling request food
  - Resquest Resource by type/tag/group
  - Search StorageMap for resource from location
@@ -33,6 +38,7 @@ Backlog -----------------------------
  - Visualize StorageMap
  - Dwelling Labor Points & Types
  - Dwelling attachment points. In data ?
+
 
  
  

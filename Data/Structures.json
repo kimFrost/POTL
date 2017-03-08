@@ -1,78 +1,96 @@
 [
-	{
-		"Name": "NewRow",
-		"Id": "NewRow",
-		"Modules": [
-			{
-				"Title": "Core",
-				"Type": "BlockCore",
-				"Rotation": 0,
-				"Position": {
-					"X": 0,
-					"Y": 0,
-					"Z": 0
-				}
-			},
-			{
-				"Title": "Blank",
-				"Type": "BlockSquare",
-				"Rotation": 0,
-				"Position": {
-					"X": 1,
-					"Y": 0,
-					"Z": 0
-				}
-			},
-			{
-				"Title": "Blank",
-				"Type": "BlockSquare",
-				"Rotation": 0,
-				"Position": {
-					"X": 2,
-					"Y": 0,
-					"Z": 1
-				}
-			},
-			{
-				"Title": "Blank",
-				"Type": "BlockCorner",
-				"Rotation": 0,
-				"Position": {
-					"X": 2,
-					"Y": 0,
-					"Z": 0
-				}
-			},
-			{
-				"Title": "Turret 1",
-				"Type": "TurretLaser",
-				"Rotation": 0,
-				"Position": {
-					"X": 3,
-					"Y": 0,
-					"Z": 0
-				}
-			},
-			{
-				"Title": "Turret 2",
-				"Type": "TurretLaser",
-				"Rotation": 90,
-				"Position": {
-					"X": 1,
-					"Y": 0,
-					"Z": 1
-				}
-			},
-			{
-				"Title": "Engine 1",
-				"Type": "Engine",
-				"Rotation": 0,
-				"Position": {
-					"X": -1,
-					"Y": 0,
-					"Z": 0
-				}
-			}
-		]
-	}
+    {
+        "Name": "Townhall",
+        "Id": "Townhall",
+        "Title": "Townhall",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_TownHall.BP_TownHall_C'",
+        "AttachTo": [ ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0},
+			{"X":1, "Y":0, "Z":-1},
+            {"X":1, "Y":-1, "Z":0},
+            {"X":0, "Y":-1, "Z":1},
+            {"X":-1, "Y":0, "Z":1},
+            {"X":-1, "Y":1, "Z":0},
+            {"X":0, "Y":1, "Z":-1}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":-1, "Y":0, "Z":1},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "House",
+        "Id": "House",
+        "Title": "House",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_House.BP_House_C'",
+        "AttachTo": [
+            "Townhall"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "Farm",
+        "Id": "Farm",
+        "Title": "Farm",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Farm.BP_Farm_C'",
+        "AttachTo": [
+            "House"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "Windmill",
+        "Id": "Windmill",
+        "Title": "Windmill",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Windmill.BP_Windmill_C'",
+        "AttachTo": [
+            "House"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "Bakery",
+        "Id": "Bakery",
+        "Title": "Bakery",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Bakery.BP_Bakery_C'",
+        "AttachTo": [
+            "House"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    }
 ]

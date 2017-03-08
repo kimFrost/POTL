@@ -13,7 +13,7 @@ UStructureComponent::UStructureComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	ParentStructure = nullptr;
 	bCanToggle = true;
-	bIsOn = true;
+	bIsOn = false;
 	Progress = 0.f;
 	TaskLength = 0.f;
 }
@@ -24,6 +24,30 @@ bool UStructureComponent::ToggleOn()
 {
 
 	return bIsOn;
+}
+
+
+/******************** Init *************************/
+void UStructureComponent::Init()
+{
+	APOTLStructure* Structure = Cast<APOTLStructure>(GetOwner());
+	if (Structure)
+	{
+		ParentStructure = Structure;
+		bIsOn = true;
+
+		// Bind to time update
+		APOTLGameMode* GameMode = Cast<APOTLGameMode>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->OnTimeUpdated.AddDynamic(this, &UStructureComponent::OnTimeUpdate);
+		}
+	}
+	else
+	{
+		bIsOn = false;
+		// Failed to find parent structure
+	}
 }
 
 
@@ -58,23 +82,7 @@ void UStructureComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APOTLStructure* Structure = Cast<APOTLStructure>(GetOwner());
-	if (Structure)
-	{
-		ParentStructure = Structure;
 
-		// Bind to time update
-		APOTLGameMode* GameMode = Cast<APOTLGameMode>(GetWorld()->GetAuthGameMode());
-		if (GameMode)
-		{
-			GameMode->OnTimeUpdated.AddDynamic(this, &UStructureComponent::OnTimeUpdate);
-		}
-	}
-	else 
-	{
-		bIsOn = false;
-		// Failed to find parent structure
-	}
 }
 
 

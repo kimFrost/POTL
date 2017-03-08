@@ -89,14 +89,6 @@ public:
 
 
 
-	/*********** Delegates **************/
-
-	UPROPERTY(BlueprintAssignable, Category = "Turn")
-	FHexOver OnHexOver;
-
-	UPROPERTY(BlueprintAssignable, Category = "Turn")
-	FHexSelected OnHexSelected;
-
 
 	/*********** Functions **************/
 
@@ -109,11 +101,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	void RotateStructure();
 
+	UFUNCTION(BlueprintCallable, Category = "Tool")
+	void SetToolType(EToolType ToolType);
+
 	//~~ BeginPlay ~~//
 	virtual void BeginPlay() override;
 
 	//~~ Tock ~~//
 	virtual void Tick(float DeltaSeconds) override;
+
+
+	/*********** Delegates **************/
+
+	UPROPERTY(BlueprintAssignable, Category = "Turn")
+	FHexOver OnHexOver;
+
+	UPROPERTY(BlueprintAssignable, Category = "Turn")
+	FHexSelected OnHexSelected;
 
 
 protected:

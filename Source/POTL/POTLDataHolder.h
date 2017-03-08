@@ -474,17 +474,24 @@ struct FST_Structure : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FST_Structure(FString Id = "", FString Title = "", bool Burnable = false)
-		: Id = Id
-		, Title = Title;
-		, Burnable = Burnable;
-		, BaseBroadcastRange = 0;
-		, BroadcastRoot = { 0, 0, 0 };
-		, RotationDirection = 0;
-		, BlockConstruction = true;
-		, BlockPathing = true;
+	FST_Structure(
+		FString Id = "",
+		FString Title = "",
+		bool Burnable = false,
+		TArray<FVector> CubeSizes = TArray<FVector>(),
+		FVector Entrance = { 0, 0, 0 }, 
+		int RotationDirection = 0, 
+		bool BlockConstruction = true, 
+		bool BlockPathing = true)
+		: Id(Id)
+		, Title(Title)
+		, Burnable(Burnable)
+		, CubeSizes(CubeSizes)
+		, Entrance(Entrance)
+		, RotationDirection(RotationDirection)
+		, BlockConstruction(BlockConstruction)
+		, BlockPathing(BlockPathing)
 	{}
-	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FString Id;
@@ -500,6 +507,21 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FString> AttachTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FVector> CubeSizes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FVector Entrance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	int RotationDirection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	bool BlockConstruction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	bool BlockPathing;
 
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -517,21 +539,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BaseBroadcastRange;
 	*/
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<FVector> CubeSizes;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	FVector BroadcastRoot;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	int32 RotationDirection;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	bool BlockConstruction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	bool BlockPathing;
 };
 
 

@@ -45,6 +45,9 @@ public:
 	UHexTile* Hex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<UHexTile*> OccupiedHexes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 HexIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -58,9 +61,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FString StructureRowName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	int32 BroadcastRange;
 
 
 	/** Construction */
@@ -93,6 +93,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void Init();
+
+	UFUNCTION(BlueprintCallable, Category = "Construction")
+	void RemoveStructure();
 
 	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void ProcessBaseData();

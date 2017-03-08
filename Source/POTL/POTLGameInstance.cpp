@@ -174,14 +174,13 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 
 					// Spawn the pickup
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
-					if (Structure)
+					if (Structure && !IsPlaceholder)
 					{
-
 						//~~ Store cubecoord in structure ~~//
 						Structure->CubeCoord = CubeCoord;
 
 						//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
-						FVector BroadcastCubeCoord = StructureData->BroadcastRoot + CubeCoord;
+						FVector BroadcastCubeCoord = StructureData->Entrance + CubeCoord;
 						BroadcastCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(BroadcastCubeCoord, RotationDirection, CubeCoord);
 						FVector2D BroadcastOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(BroadcastCubeCoord);
 						int32 BroadcastHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(BroadcastOffsetCoords, GridXCount);
@@ -191,7 +190,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 							//Structure->Hex = Hex;
 						}
 
-						//~~ Store hex index in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
+						//~~ Store hex in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
 						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
 						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 						if (Hexes.IsValidIndex(HexIndex))
@@ -214,6 +213,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 								if (IsValid(Hex))
 								{
 									Hex->AttachedBuilding = Structure;
+									Structure->OccupiedHexes.Add(Hex);
 								}
 							}
 						}
@@ -221,7 +221,6 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						//~~ Store structure raw data ~~//
 						Structure->StructureRowName = RowName;
 						Structure->StructureBaseData = *StructureData;
-						Structure->BroadcastRange = StructureData->BaseBroadcastRange; //!! Use a read/load function instead
 						Structure->StructureBaseData.RotationDirection = RotationDirection;
 						Structure->IsPlaceholder = IsPlaceholder;
 						if (Structure->IsPlaceholder)

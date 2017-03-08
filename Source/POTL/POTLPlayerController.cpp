@@ -31,106 +31,7 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 /******************** ProcessConstructLocations *************************/
 void APOTLPlayerController::ProcessConstructLocations()
 {
-	APOTLHUD* HUD = Cast<APOTLHUD>(GetHUD());
-	if (HUD && GameInstance && IsValid(CachedHex))
-	{
-		//~~ Hide decals on old hexes ~~//
-		for (auto& Hex : BuildStructureHexes)
-		{
-			if (Hex)
-			{
-				Hex->HideDecal();
-			}
-		}
-		BuildStructureHexes.Empty();
-		TArray<FVector> RotatedCubes = UPOTLUtilFunctionLibrary::RotateCubes(BuildStructureData.CubeSizes, BaseRotation, FVector(0, 0, 0));
-		FVector RotatedBroadcastRoot = UPOTLUtilFunctionLibrary::RotateCube(BuildStructureData.BroadcastRoot, BaseRotation, FVector(0, 0, 0));
-		for (int32 i = 0; i < RotatedCubes.Num(); i++)
-		{
-			FVector& Cube = RotatedCubes[i];
-			FVector CubeInWorld = Cube + CachedHex->HexCubeCoords;
-			FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeInWorld);
-			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
-			if (GameInstance->Hexes.IsValidIndex(HexIndex))
-			{
-				UHexTile* Hex = GameInstance->Hexes[HexIndex];
-				if (IsValid(Hex))
-				{
-					BuildStructureHexes.Add(Hex);
-					EDecalType Type = EDecalType::InvalidBuild;
-					if (CubeInWorld == RotatedBroadcastRoot + CachedHex->HexCubeCoords)
-					{
-						Type = EDecalType::ValidBuild;
-					}
-					Hex->ShowDecal(Type);
-				}
-			}
-		}
-		FVector2D GlobalAxial = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(RotatedBroadcastRoot + CachedHex->HexCubeCoords);
-		int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(GlobalAxial, GameInstance->GridXCount);
-		if (GameInstance->Hexes.IsValidIndex(HexIndex))
-		{
-			BuildBroadcastRootHex = GameInstance->Hexes[HexIndex];
-		}
-		if (BuildBroadcastRootHex)
-		{
-			BuildValid = true;
-			if (BuildBroadcastRootHex->AttachedBuilding)
-			{
-				//~~ Detect if in range of broadcast grid ~~//
-				/*
-				BuildValid = BuildBroadcastRootHex->AttachedBuilding->InRangeOfEmitTo;
-				if (!BuildValid)
-				{
-					BuildMsg = "Building Root is outside of broadcast grid";
-				}
-				*/
-			}
-			else
-			{
-				BuildValid = false;
-				BuildMsg = "AttachedBuilding is Nullptr";
-			}
-			//~~ Validate build spaces are buildable ~~//
-			for (int32 i = 0; i < BuildStructureHexes.Num(); i++)
-			{
-				UHexTile* Hex = BuildStructureHexes[i];
-				if (IsValid(Hex))
-				{
-					bool Buildable = GameInstance->IsHexBuildable(Hex);
-					if (!Buildable)
-					{
-						BuildValid = false;
-						BuildMsg = "Building spaces are not buildable";
-					}
-				}
-			}
-			//~~ Draw hightlights ~~//
-			for (int32 i = 0; i < CityConstructionLocations.Num(); i++)
-			{
-				UHexTile* Hex = CityConstructionLocations[i];
-				if (IsValid(Hex))
-				{
-					EDecalType Type = EDecalType::ValidBuild;
-					if (Hex->ConstructInfo.Blocked)
-					{
-						Type = EDecalType::InvalidBuild;
-					}
-					Hex->ShowDecal(Type);
-				}
-			}
-			//~~ Display error msg if build is not valid ~~//
-			if (!BuildValid)
-			{
-				GEngine->AddOnScreenDebugMessage(42, 15.0f, FColor::Yellow, BuildMsg);
-			}
-		}
-		else
-		{
-			BuildValid = false;
-			BuildMsg = "BuildBroadcastRootHex is Nullptr";
-		}
-	}
+	
 }
 
 
@@ -141,8 +42,17 @@ void APOTLPlayerController::RotateStructure()
 	//!! Is a copy of the logic from tick !!//
 	if (ActiveToolType == EToolType::PlantStructure)
 	{
+		if (BuilderStructure && GameInstance)
+		{
+			BuilderStructure->RemoveStructure();
+		}
+		BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
+		//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+		ProcessConstructLocations();
+
+		/*
 		if (!CachedHex->AttachedBuilding) { //!! Might not be right !!//
-			if (BuilderStructure)
+			if (BuilderStructure && GameInstance)
 			{
 				GameInstance->RemoveStructure(BuilderStructure);
 			}
@@ -151,13 +61,28 @@ void APOTLPlayerController::RotateStructure()
 			ProcessConstructLocations();
 		}
 		else {
-			if (BuilderStructure)
+			if (BuilderStructure && GameInstance)
 			{
 				//BuilderStructure->Destroy();
 				GameInstance->RemoveStructure(BuilderStructure);
 			}
 		}
+		*/
 	}
+}
+
+
+/******************** SetToolType *************************/
+void APOTLPlayerController::SetToolType(EToolType ToolType)
+{
+	if (ActiveToolType == EToolType::PlantStructure)
+	{
+		if (BuilderStructure)
+		{
+			BuilderStructure->RemoveStructure();
+		}
+	}
+	ActiveToolType = ToolType;
 }
 
 
@@ -187,10 +112,9 @@ void APOTLPlayerController::Tick(float DeltaTime)
 			OnHexOver.Broadcast(CachedHex); //~~ Call hex over event dispatcher ~~//
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
-				
 				if (BuilderStructure)
 				{
-					GameInstance->RemoveStructure(BuilderStructure);
+					BuilderStructure->RemoveStructure();
 				}
 				if (!CachedHex->AttachedBuilding) {
 					BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
@@ -242,21 +166,25 @@ void APOTLPlayerController::LeftClickPressed()
 		{
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
-				if (BuildValid)
-				{
-					UHexTile* TracedHex = GameInstance->MouseToHex(); //!! A copy of the hex !!//
+				//if (BuildValid)
+				//{
+					UHexTile* TracedHex = GameInstance->MouseToHex();
 					if (IsValid(TracedHex))
 					{
 						//~~ If hex has a placeholder structure on it ~~//
-						if (TracedHex->AttachedBuilding && TracedHex->AttachedBuilding->IsPlaceholder) {
-							GameInstance->RemoveStructure(TracedHex->AttachedBuilding);
+						//if (TracedHex->AttachedBuilding && TracedHex->AttachedBuilding->IsPlaceholder) {
+							//GameInstance->RemoveStructure(TracedHex->AttachedBuilding);
+							if (BuilderStructure)
+							{
+								BuilderStructure->RemoveStructure();
+							}
 							//~~ Plant structure on the avaiable hex ~~//
 							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, true, false);
 							//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 							ProcessConstructLocations();
-						}
+						//}
 					}
-				}
+				//}
 			}
 			else if (ActiveToolType == EToolType::Select)
 			{
@@ -309,6 +237,7 @@ void APOTLPlayerController::LeftClickReleased()
 void APOTLPlayerController::RightClickPressed()
 {
 	RightMouseButtonDown = true;
+	SetToolType(EToolType::Select);
 }
 
 /******************** LeftClickReleased *************************/
