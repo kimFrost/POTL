@@ -1,0 +1,135 @@
+[
+    {
+        "Name": "Townhall",
+        "Id": "Townhall",
+        "Title": "Townhall",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_TownHall.BP_TownHall_C'",
+        "AttachTo": [ ],
+        "EmitTo": [ ],
+		"Providers": [], 
+		"Factories": [],
+		"Gatherers": [],
+        "BaseBroadcastRange": 7,
+        "CubeSizes": [
+            "(X=0.000000,Y=0.000000,Z=0.000000)",
+            "(X=1.000000,Y=0.000000,Z=-1.000000)",
+            "(X=1.000000,Y=-1.000000,Z=0.000000)",
+            "(X=0.000000,Y=-1.000000,Z=1.000000)",
+            "(X=-1.000000,Y=0.000000,Z=1.000000)",
+            "(X=-1.000000,Y=1.000000,Z=0.000000)",
+            "(X=0.000000,Y=1.000000,Z=-1.000000)"
+        ],
+        "CubeRotationRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "BroadcastRoot": "(X=-1.000000,Y=0.000000,Z=1.000000)",
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "House",
+        "Id": "House",
+        "Title": "House",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_House.BP_House_C'",
+        "AttachTo": [
+            "Townhall"
+        ],
+        "EmitTo": [
+            "Townhall"
+        ],
+		"Providers": [], 
+		"Factories": [
+			"(Recipe=\"WP\",MaxQuantity=4)"
+		],
+		"Gatherers": [],
+        "BaseBroadcastRange": 1,
+        "CubeSizes": [
+            "(X=0.000000,Y=0.000000,Z=0.000000)"
+        ],
+        "CubeRotationRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "BroadcastRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "Farm",
+        "Id": "Farm",
+        "Title": "Farm",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Farm.BP_Farm_C'",
+        "AttachTo": [
+            "House"
+        ],
+        "EmitTo": [
+            "House"
+        ],
+		"Providers": [], 
+		"Factories": [
+			"(Recipe=\"Wheat\",MaxQuantity=8)"
+		],
+		"Gatherers": [],
+        "BaseBroadcastRange": 0,
+        "CubeSizes": [
+            "(X=0.000000,Y=0.000000,Z=0.000000)"
+        ],
+        "CubeRotationRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "BroadcastRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "Windmill",
+        "Id": "Windmill",
+        "Title": "Windmill",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Windmill.BP_Windmill_C'",
+        "AttachTo": [
+            "House"
+        ],
+        "EmitTo": [
+            "House"
+        ],
+		"Providers": [], 
+		"Factories": [
+			"(Recipe=\"Flour\",MaxQuantity=4)"
+		],
+		"Gatherers": [],
+        "BaseBroadcastRange": 0,
+        "CubeSizes": [
+            "(X=0.000000,Y=0.000000,Z=0.000000)"
+        ],
+        "CubeRotationRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "BroadcastRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "Bakery",
+        "Id": "Bakery",
+        "Title": "Bakery",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Bakery.BP_Bakery_C'",
+        "AttachTo": [
+            "House"
+        ],
+        "EmitTo": [
+            "House"
+        ],
+		"Providers": [], 
+		"Factories": [],
+		"Gatherers": [],
+        "BaseBroadcastRange": 0,
+        "CubeSizes": [
+            "(X=0.000000,Y=0.000000,Z=0.000000)"
+        ],
+        "CubeRotationRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "BroadcastRoot": "(X=0.000000,Y=0.000000,Z=0.000000)",
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    }
+]

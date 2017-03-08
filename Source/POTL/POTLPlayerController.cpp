@@ -168,6 +168,7 @@ void APOTLPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//GameInstance->OnMapReady.AddDynamic();
 
 }
 

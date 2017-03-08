@@ -473,6 +473,18 @@ USTRUCT(BlueprintType)
 struct FST_Structure : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
+public:
+	FST_Structure(FString Id = "", FString Title = "", bool Burnable = false)
+		: Id = Id
+		, Title = Title;
+		, Burnable = Burnable;
+		, BaseBroadcastRange = 0;
+		, BroadcastRoot = { 0, 0, 0 };
+		, RotationDirection = 0;
+		, BlockConstruction = true;
+		, BlockPathing = true;
+	{}
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FString Id;
@@ -484,12 +496,12 @@ struct FST_Structure : public FTableRowBase
 	bool Burnable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	//class APOTLStructure* StructureClass;
 	TSubclassOf<APOTLStructure> StructureClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FString> AttachTo;
 
+	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FString> EmitTo;
 
@@ -504,6 +516,7 @@ struct FST_Structure : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BaseBroadcastRange;
+	*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FVector> CubeSizes;
@@ -519,18 +532,6 @@ struct FST_Structure : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool BlockPathing;
-
-	FST_Structure()
-	{
-		Id = TEXT("");
-		Title = "";
-		Burnable = false;
-		BaseBroadcastRange = 0;
-		BroadcastRoot = { 0, 0, 0 };
-		RotationDirection = 0;
-		BlockConstruction = true;
-		BlockPathing = true;
-	}
 };
 
 

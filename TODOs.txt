@@ -49,6 +49,9 @@ Ideas ----------------------
  
 Temp Notes ----------------------
 
+255 (1020)
+294.4486 (1177.7945) => 294 (1176)
+
 !!RequestResource function only return a pointer to a avaiable resource. It does not consume or transfer the resource!!
 
 
