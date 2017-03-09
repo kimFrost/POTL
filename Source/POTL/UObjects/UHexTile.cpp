@@ -31,6 +31,7 @@ UHexTile::UHexTile()
 	HexOffsetCoords = { -1, -1 };
 	HexIndex = -1;
 	HexNeighborIndexes.Init(-1, 6);
+	HexNeighbors.Init(nullptr, 6);
 	//HighlightDecal = nullptr;
 	DebugMe = false;
 }

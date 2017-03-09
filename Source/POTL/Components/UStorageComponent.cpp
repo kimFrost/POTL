@@ -192,12 +192,10 @@ void UStorageComponent::StorageUpdate_Implementation(UResource* Resource)
 }
 
 
-
-
-// Called when the game starts
-void UStorageComponent::BeginPlay()
+// Called by parent structure when ready
+void UStorageComponent::Init()
 {
-	Super::BeginPlay();
+	Super::Init();
 
 	// Add self to UStorageMap in GameInstance
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
@@ -205,6 +203,13 @@ void UStorageComponent::BeginPlay()
 	{
 		GameInstance->IncludeStorage(this);
 	}
+}
+
+
+// Called when the game starts
+void UStorageComponent::BeginPlay()
+{
+	Super::BeginPlay();
 	
 }
 

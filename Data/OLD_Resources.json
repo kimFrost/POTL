@@ -1,0 +1,80 @@
+[
+	{
+		"Name": "WP",
+		"Id": "",
+		"Title": "Work force",
+		"Tags": ["MainLine"],
+		"UnitMass": 0,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": -1,
+		"Quantity": 0,
+		"MaxAge": 0,
+		"SortSequence": 0
+	},
+	{
+		"Name": "Wood",
+		"Id": "",
+		"Title": "Wood",
+		"Tags": [],
+		"UnitMass": 10,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1,
+		"SortSequence": 1
+	},
+	{
+		"Name": "Stone",
+		"Id": "",
+		"Tags": [],
+		"Title": "Stone",
+		"UnitMass": 50,
+		"Stackable": true,
+		"Burnable": false,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1,
+		"SortSequence": 2
+	},
+	{
+		"Name": "Wheat",
+		"Id": "",
+		"Tags": [],
+		"Title": "Wheat",
+		"UnitMass": 1,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": 1,
+		"SortSequence": 3
+	},
+	{
+		"Name": "Flour",
+		"Id": "",
+		"Tags": [],
+		"Title": "Flour",
+		"UnitMass": 2,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": 5,
+		"SortSequence": 4
+	},
+	{
+		"Name": "Bread",
+		"Id": "",
+		"Tags": ["Food"],
+		"Title": "Stone",
+		"UnitMass": 3,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": 1,
+		"SortSequence": 5
+	}
+]

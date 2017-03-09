@@ -64,6 +64,7 @@ public:
 	void StorageUpdate(UResource* Resource);
 
 
+	virtual void Init() override;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;

@@ -678,6 +678,9 @@ struct FST_Resource : public FTableRowBase
 	float UnitMass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	float Value;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	bool Stackable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
@@ -700,6 +703,7 @@ struct FST_Resource : public FTableRowBase
 		Id = TEXT("");
 		Title = TEXT("");
 		UnitMass = 1.f;
+		Value = 0.f;
 		Stackable = true;
 		Burnable = true;
 		StackSize = 64;

@@ -39,7 +39,7 @@ void UProductionComponent::OnProduction_Implementation()
 
 void UProductionComponent::CheckProduction()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::CheckProduction"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::CheckProduction"));
 
 	if (ParentStructure)
 	{
@@ -99,7 +99,7 @@ void UProductionComponent::OnProgressComplete()
 	OnProduction();
 
 	//UE_LOG(LogTemp, Log, TEXT("ULaborComponent::OnProgressComplete"));
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::OnProgressComplete"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::OnProgressComplete"));
 
 	if (ParentStructure)
 	{
@@ -123,10 +123,18 @@ void UProductionComponent::OnProgressComplete()
 	}
 }
 
+
+void UProductionComponent::Init()
+{
+	Super::Init();
+
+	GetWorld()->GetTimerManager().SetTimer(ProductionCheckTimer, this, &UProductionComponent::CheckProduction, 1.f, true);
+}
+
+
 void UProductionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	bIsOn = false;
-	GetWorld()->GetTimerManager().SetTimer(ProductionCheckTimer, this, &UProductionComponent::CheckProduction, 1.f, true);
 }

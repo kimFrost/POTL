@@ -119,9 +119,13 @@ bool APOTLStructure::StoreResource(UResource* Resource)
 			}
 		}
 	}
-	if (AttachedTo)
+	if (AttachedTo && AttachedTo != this)
 	{
 		return AttachedTo->StoreResource(Resource);
+	}
+	else if (AttachedTo == this)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("WARNING: AttachTo link to self!"));
 	}
 	return false;
 }

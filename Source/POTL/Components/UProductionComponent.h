@@ -39,8 +39,12 @@ public:
 
 	void CheckProduction();
 
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Production")
 	void OnProduction();
+
+
+	virtual void Init() override;
 
 	virtual void OnProgressComplete() override;
 

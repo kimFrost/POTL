@@ -44,8 +44,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	bool ToggleOn();
 
-	UFUNCTION(BlueprintCallable, Category = "Module")
-	void Init();
+
 
 	UFUNCTION(BlueprintCallable, Category = "Time")
 	void OnTimeUpdate(float Time, float TimeProgressed);
@@ -53,6 +52,8 @@ public:
 	//UPROPERTY(BlueprintAssignable, Category = "Time|Module")
 	//FOnProgressComplete OnProgressComplete;
 
+	UFUNCTION(BlueprintCallable, Category = "Module")
+	virtual void Init();
 
 	UFUNCTION(BlueprintCallable, Category = "Time")
 	virtual void OnProgressComplete();

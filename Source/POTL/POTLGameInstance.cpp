@@ -242,7 +242,10 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 							UHexTile* AttachToHex = Hex->GetNeighbourHex(RotationDirection);
 							if (AttachToHex && AttachToHex->AttachedBuilding)
 							{
-								Structure->AttachedTo = AttachToHex->AttachedBuilding;
+								if (AttachToHex->AttachedBuilding != Structure)
+								{
+									Structure->AttachedTo = AttachToHex->AttachedBuilding;
+								}
 							}
 						}
 
@@ -500,11 +503,6 @@ void UPOTLGameInstance::EnrichHexes()
 				{
 					Hex->HexNeighborIndexes[ii] = HexDirectionIndex;
 					Hex->HexNeighbors[ii] = Hexes[HexDirectionIndex];
-				}
-				else
-				{
-					Hex->HexNeighborIndexes[ii] = -1;
-					Hex->HexNeighbors[ii] = nullptr;
 				}
 			}
 		}
