@@ -232,7 +232,17 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						{
 							Structure->IsUnderConstruction = false;
 						}
-						Structure->AttachedTo = AttachTo;
+
+						if (AttachTo)
+						{
+							Structure->AttachedTo = AttachTo;
+						}
+						else
+						{
+							// Trace for attachTo though hex and direction to hex
+							//RotationDirection
+
+						}
 
 						//~~ Process Structure Data internally ~~//
 						Structure->Init();
@@ -487,6 +497,12 @@ void UPOTLGameInstance::EnrichHexes()
 				if (Hexes.IsValidIndex(HexDirectionIndex))
 				{
 					Hex->HexNeighborIndexes[ii] = HexDirectionIndex;
+					Hex->HexNeighbors[ii] = Hexes[HexDirectionIndex];
+				}
+				else
+				{
+					Hex->HexNeighborIndexes[ii] = -1;
+					Hex->HexNeighbors[ii] = nullptr;
 				}
 			}
 		}

@@ -178,6 +178,8 @@ void APOTLPlayerController::LeftClickPressed()
 							{
 								BuilderStructure->RemoveStructure();
 							}
+							//?? Trace for attach To or make plantstructure handle it??
+
 							//~~ Plant structure on the avaiable hex ~~//
 							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, true, false);
 							//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);

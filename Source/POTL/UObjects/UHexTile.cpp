@@ -42,6 +42,18 @@ UHexTile::~UHexTile()
 }
 
 
+/******************** GetNeighbourHex *************************/
+UHexTile* UHexTile::GetNeighbourHex(int Direction)
+{
+	UHexTile* NeighbourHex = HexNeighbors[Direction];
+	if (NeighbourHex)
+	{
+		return NeighbourHex;
+	}
+	return nullptr;
+}
+
+
 /******************** Init *************************/
 void UHexTile::HideDecal()
 {
