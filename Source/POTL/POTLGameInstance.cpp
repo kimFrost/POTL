@@ -239,9 +239,11 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						}
 						else
 						{
-							// Trace for attachTo though hex and direction to hex
-							//RotationDirection
-
+							UHexTile* AttachToHex = Hex->GetNeighbourHex(RotationDirection);
+							if (AttachToHex && AttachToHex->AttachedBuilding)
+							{
+								Structure->AttachedTo = AttachToHex->AttachedBuilding;
+							}
 						}
 
 						//~~ Process Structure Data internally ~~//
