@@ -34,6 +34,8 @@ public:
 
 	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
 
+	UResource* RequestResourceByTag(APOTLStructure* Requester, FString Tag);
+
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageMapUpdated OnStorageMapUpdated;
 

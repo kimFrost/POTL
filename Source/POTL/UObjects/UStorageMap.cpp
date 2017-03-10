@@ -62,7 +62,38 @@ UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString Resou
 				}
 				else
 				{
-					bool Failed = true;
+					// Trigger Warning
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
+UResource* UStorageMap::RequestResourceByTag(APOTLStructure * Requester, FString Tag)
+{
+	if (Requester)
+	{
+		for (auto& Entry : Storages)
+		{
+			if (Entry.Value)
+			{
+				if (Entry.Value->IsValidLowLevel())
+				{
+					FVector WorldLocation = Entry.Key;
+					UStorageComponent* StorageComp = Entry.Value;
+					if (StorageComp)
+					{
+						UResource* Resource = StorageComp->RequestResourceByTag(Requester, Tag);
+						if (Resource)
+						{
+							return Resource;
+						}
+					}
+				}
+				else
+				{
+					// Trigger Warning
 				}
 			}
 		}

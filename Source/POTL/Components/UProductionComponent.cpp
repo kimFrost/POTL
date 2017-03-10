@@ -83,10 +83,10 @@ void UProductionComponent::CheckProduction()
 	// Transactions of resources.
 
 	if (MissingResources.Num() > 0) {
-		bIsOn = false;
+		bIsWorking = false;
 	}
 	else {
-		bIsOn = true;
+		bIsWorking = true;
 	}
 }
 
@@ -136,5 +136,4 @@ void UProductionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	bIsOn = false;
 }

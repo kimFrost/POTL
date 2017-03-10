@@ -54,14 +54,14 @@ public:
 
 	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
 
-
+	UResource* RequestResourceByTag(APOTLStructure* Requester, FString Tag);
 
 
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageUpdate OnStorageUpdate;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage")
-	void StorageUpdate(UResource* Resource);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Storage")
+	void OnStorageUpdated(UResource* Resource);
 
 
 	virtual void Init() override;

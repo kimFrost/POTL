@@ -71,7 +71,7 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 		// Store resource
 		StoredResources.Add(Resource);
 		Stored = true;
-		StorageUpdate(Resource);
+		OnStorageUpdated(Resource);
 		StoredResourceCompleteList.Add(Resource);
 
 		/*
@@ -112,7 +112,7 @@ void UStorageComponent::RemoveResourceFromStorage(UResource* Resource)
 			int NumRemoved = StoredResources.Remove(Resource);
 			if (NumRemoved > 0)
 			{
-				StorageUpdate(nullptr);
+				OnStorageUpdated(nullptr);
 			}
 		}
 
@@ -136,11 +136,10 @@ UResource* UStorageComponent::RequestResource(APOTLStructure* Requester, FString
 	{
 		// Clean StoredResources tmap ?
 
-
 		for (int i = 0; i < StoredResources.Num(); i++)
 		{
 			UResource* Resource = StoredResources[i];
-			if (Resource)
+			if (Resource && Resource->ResourceId == ResourceId)
 			{
 				return Resource;
 			}
@@ -183,9 +182,26 @@ UResource* UStorageComponent::RequestResource(APOTLStructure* Requester, FString
 }
 
 
+/******************** RequestResourceByTag *************************/
+UResource* UStorageComponent::RequestResourceByTag(APOTLStructure* Requester, FString Tag)
+{
+	if (Requester)
+	{
+		for (int i = 0; i < StoredResources.Num(); i++)
+		{
+			UResource* Resource = StoredResources[i];
+			if (Resource && Resource->Tags.Contains(Tag))
+			{
+				return Resource;
+			}
+		}
+	}
+	return nullptr; // Return nullptr since no other return has happenend
+}
 
-/******************** StorageUpdate *************************/
-void UStorageComponent::StorageUpdate_Implementation(UResource* Resource)
+
+/******************** OnStorageUpdated *************************/
+void UStorageComponent::OnStorageUpdated_Implementation(UResource* Resource)
 {
 	OnStorageUpdate.Broadcast(this, Resource);
 

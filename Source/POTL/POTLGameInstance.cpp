@@ -761,6 +761,8 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 		{
 			if (Consume) {
 				Resource->Consume();
+				// Trigger transaction result in wealth/benifit
+				//TODO: Add transaction here
 			}
 			else {
 				UStorageComponent* StorageComp = Cast<UStorageComponent>(ToComp);
@@ -769,12 +771,11 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 					bool Transfered = Resource->Transfer(StorageComp);
 					if (Transfered)
 					{
-
+						// Trigger transaction result in wealth/benifit
+						//TODO: Add transaction here
 					}
 				}
 			}
-			// Trigger transaction result in wealth/benifit
-			//TODO: Add transaction here
 		}
 		else if (Consume) {
 			Resource->Consume();

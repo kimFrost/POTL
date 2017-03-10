@@ -30,6 +30,9 @@ x.2.17
  
  
 Backlog -----------------------------
+ - Storage visualization
+ - Request resource by tag
+ - StructureComponent - Production loop & bIsWorking
  - Get logic out of HUD_Map
  - Dwelling request food
  - Resquest Resource by type/tag/group

@@ -33,6 +33,9 @@ public:
 	bool bCanToggle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
+	bool bIsWorking; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	bool bIsOn; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
@@ -51,6 +54,9 @@ public:
 
 	//UPROPERTY(BlueprintAssignable, Category = "Time|Module")
 	//FOnProgressComplete OnProgressComplete;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Module")
+	void OnInit();
 
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	virtual void Init();

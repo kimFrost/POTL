@@ -11,6 +11,7 @@
 UResource::UResource()
 {
 	StoredIn = nullptr;
+	Value = 0.f;
 }
 
 

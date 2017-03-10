@@ -14,6 +14,7 @@ UStructureComponent::UStructureComponent()
 	ParentStructure = nullptr;
 	bCanToggle = true;
 	bIsOn = false;
+	bIsWorking = false;
 	Progress = 0.f;
 	TaskLength = 0.f;
 }
@@ -22,7 +23,7 @@ UStructureComponent::UStructureComponent()
 /******************** ToggleOn *************************/
 bool UStructureComponent::ToggleOn()
 {
-
+	bIsOn = !bIsOn;
 	return bIsOn;
 }
 
@@ -45,16 +46,18 @@ void UStructureComponent::Init()
 	}
 	else
 	{
-		bIsOn = false;
 		// Failed to find parent structure
+		bIsOn = false;
 	}
+
+	OnInit();
 }
 
 
 /******************** OnTimeUpdate *************************/
 void UStructureComponent::OnTimeUpdate(float Time, float TimeProgressed)
 {
-	if (bIsOn)
+	if (bIsOn && bIsWorking)
 	{
 		if (TaskLength > 0)
 		{
@@ -67,6 +70,13 @@ void UStructureComponent::OnTimeUpdate(float Time, float TimeProgressed)
 			}
 		}
 	}
+}
+
+
+/******************** OnInit *************************/
+void UStructureComponent::OnInit_Implementation()
+{
+
 }
 
 

@@ -21,6 +21,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	FString ResourceId;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	TArray<FString> Tags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	float Value;
+
 	float ExpirationTime;
 
 	UStorageComponent* StoredIn;
