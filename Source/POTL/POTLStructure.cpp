@@ -166,6 +166,8 @@ void APOTLStructure::Init()
 	}
 
 	ProcessBaseData();
+
+	OnInit();
 }
 
 
@@ -253,6 +255,12 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 void APOTLStructure::OnTimeUpdate(float Time, float TimeProgressed)
 {
 	// Add to labor progress
+}
+
+
+void APOTLStructure::OnInit_Implementation()
+{
+
 }
 
 

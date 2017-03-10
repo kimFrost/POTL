@@ -116,6 +116,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Time")
 	void OnTimeUpdate(float Time, float TimeProgressed);
 
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnInit();
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
