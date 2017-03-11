@@ -27,18 +27,20 @@ x.2.17
  x New Plant structure logic for player controller
  - New structure placement validation logic
  
+10.3.17 
+ x Request resource by tag
+ x StructureComponent - Production loop & bIsWorking
  
+11.3.17
+
  
 Backlog -----------------------------
  - Storage visualization
- - Request resource by tag
- - StructureComponent - Production loop & bIsWorking
+ - Transaction visualization
  - Get logic out of HUD_Map
  - Dwelling request food
- - Resquest Resource by type/tag/group
  - Search StorageMap for resource from location
  - StorageMap - RequestResouce - Sort Storages by distance to requester
- - Visualize StorageMap
  - Dwelling Labor Points & Types
  - Dwelling attachment points. In data ?
 

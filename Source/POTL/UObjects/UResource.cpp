@@ -20,6 +20,15 @@ UResource::~UResource()
 
 }
 
+APOTLStructure * UResource::GetOwner()
+{
+	if (StoredIn)
+	{
+		return StoredIn->ParentStructure;
+	}
+	return nullptr;
+}
+
 void UResource::Consume()
 {
 	// Get all with reference to this. For debugging

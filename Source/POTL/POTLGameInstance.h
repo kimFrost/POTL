@@ -8,6 +8,7 @@
 #include "UObjects/UHexTile.h"
 #include "UObjects/UResourceMap.h"
 #include "UObjects/UStorageMap.h"
+#include "UObjects/UTransaction.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLGameInstance.generated.h"
 
@@ -24,10 +25,8 @@ class UStorageComponent;
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTurnSwitched);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams();
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMapReady);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnSwitched, float, Turn);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewTurn, float, Turn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTransaction, UTransaction*, Transaction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStructurePlanted, APOTLStructure*, Structure);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCityUpdated, APOTLStructure*, CityRootStructure);
 //DECLARE_EVENT(FTurnSwitched);
 
 
@@ -197,5 +196,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Structure")
 	FStructurePlanted OnStructurePlanted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Structure")
+	FOnTransaction OnTransaction;
 
 };

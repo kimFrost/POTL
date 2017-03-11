@@ -7,6 +7,7 @@
 
 //~~~~~ Forward Declarations ~~~~~//
 class UStorageComponent;
+class APOTLStructure;
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -30,6 +31,9 @@ public:
 	float ExpirationTime;
 
 	UStorageComponent* StoredIn;
+
+
+	APOTLStructure* GetOwner();
 
 	void Consume();
 

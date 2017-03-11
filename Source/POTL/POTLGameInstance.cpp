@@ -6,6 +6,7 @@
 #include "UObjects/UHexTile.h"
 #include "UObjects/UResourceMap.h"
 #include "UObjects/UStorageMap.h"
+#include "UObjects/UTransaction.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "POTLStructure.h"
 #include "Components/UStructureComponent.h"
@@ -762,7 +763,16 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 			if (Consume) {
 				Resource->Consume();
 				// Trigger transaction result in wealth/benifit
-				//TODO: Add transaction here
+
+				UTransaction* Transaction = NewObject<UTransaction>();
+				if (Transaction)
+				{
+					Transaction->Seller = Resource->GetOwner();
+					Transaction->Buyer = ToComp->ParentStructure;
+					Transaction->Resource = Resource;
+					Transaction->bConsume = Consume;
+					OnTransaction.Broadcast(Transaction);
+				}
 			}
 			else {
 				UStorageComponent* StorageComp = Cast<UStorageComponent>(ToComp);
@@ -772,7 +782,15 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 					if (Transfered)
 					{
 						// Trigger transaction result in wealth/benifit
-						//TODO: Add transaction here
+						UTransaction* Transaction = NewObject<UTransaction>();
+						if (Transaction)
+						{
+							Transaction->Seller = Resource->GetOwner();
+							Transaction->Buyer = ToComp->ParentStructure;
+							Transaction->Resource = Resource;
+							Transaction->bConsume = Consume;
+							OnTransaction.Broadcast(Transaction);
+						}
 					}
 				}
 			}
