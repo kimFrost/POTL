@@ -56,7 +56,7 @@ void UProductionComponent::CheckProduction()
 					{
 						NumOfResourcesFound++;
 						// Trigger transaction that consumes resource and adds wealth
-						GameInstance->TransferResource(Resource, nullptr, true, false);
+						GameInstance->TransferResource(Resource, this, true, false);
 					}
 					else
 					{

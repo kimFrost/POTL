@@ -797,7 +797,7 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 		}
 		else if (Consume) {
 			Resource->Consume();
-			// No wealth. There is no end target
+			// No transaction if there is no end target
 		}
 	}
 }
