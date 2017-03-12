@@ -761,7 +761,6 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 		if (ToComp)
 		{
 			if (Consume) {
-				Resource->Consume();
 				// Trigger transaction result in wealth/benifit
 
 				UTransaction* Transaction = NewObject<UTransaction>();
@@ -773,22 +772,23 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 					Transaction->bConsume = Consume;
 					OnTransaction.Broadcast(Transaction);
 				}
+				Resource->Consume();
 			}
 			else {
 				UStorageComponent* StorageComp = Cast<UStorageComponent>(ToComp);
 				if (StorageComp)
 				{
-					bool Transfered = Resource->Transfer(StorageComp);
-					if (Transfered)
+					// Trigger transaction result in wealth/benifit
+					UTransaction* Transaction = NewObject<UTransaction>();
+					if (Transaction)
 					{
-						// Trigger transaction result in wealth/benifit
-						UTransaction* Transaction = NewObject<UTransaction>();
-						if (Transaction)
+						Transaction->Seller = Resource->GetOwner();
+						Transaction->Buyer = ToComp->ParentStructure;
+						Transaction->Resource = Resource;
+						Transaction->bConsume = Consume;
+						bool Transfered = Resource->Transfer(StorageComp);
+						if (Transfered)
 						{
-							Transaction->Seller = Resource->GetOwner();
-							Transaction->Buyer = ToComp->ParentStructure;
-							Transaction->Resource = Resource;
-							Transaction->bConsume = Consume;
 							OnTransaction.Broadcast(Transaction);
 						}
 					}

@@ -41,7 +41,9 @@ void UProductionComponent::CheckProduction()
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::CheckProduction"));
 
-	if (ParentStructure)
+	//TODO: Better validation Logic for attachedTo
+
+	if (ParentStructure && ParentStructure->AttachedTo)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
@@ -74,19 +76,17 @@ void UProductionComponent::CheckProduction()
 			}
 			MissingResources.Compact(); // Remove invalid entries if any
 		}
+
+		if (MissingResources.Num() > 0) {
+			bIsWorking = false;
+		}
+		else {
+			bIsWorking = true;
+		}
 	}
-
-
-	// Fetch resource with transbIsOnaction
-	// Subtract for missing resource. When empty, start production.
-
-	// Transactions of resources.
-
-	if (MissingResources.Num() > 0) {
+	else
+	{
 		bIsWorking = false;
-	}
-	else {
-		bIsWorking = true;
 	}
 }
 
@@ -128,6 +128,11 @@ void UProductionComponent::Init()
 {
 	Super::Init();
 
+	if (!ParentStructure || (ParentStructure && !ParentStructure->AttachedTo))
+	{
+		bIsOn = false;
+	}
+	// CheckProduction every second
 	GetWorld()->GetTimerManager().SetTimer(ProductionCheckTimer, this, &UProductionComponent::CheckProduction, 1.f, true);
 }
 
