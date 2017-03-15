@@ -14,9 +14,6 @@ UStructureComponent::UStructureComponent()
 	ParentStructure = nullptr;
 	bCanToggle = true;
 	bIsOn = false;
-	bIsWorking = false;
-	Progress = 0.f;
-	TaskLength = 0.f;
 }
 
 
@@ -57,31 +54,12 @@ void UStructureComponent::Init()
 /******************** OnTimeUpdate *************************/
 void UStructureComponent::OnTimeUpdate(float Time, float TimeProgressed)
 {
-	if (bIsOn && bIsWorking)
-	{
-		if (TaskLength > 0)
-		{
-			Progress += TimeProgressed;
-			if (Progress >= TaskLength)
-			{
-				OnProgressComplete();
-				Progress = 0.f;
-				//OnProgressComplete.Broadcast();
-			}
-		}
-	}
+	
 }
 
 
 /******************** OnInit *************************/
 void UStructureComponent::OnInit_Implementation()
-{
-
-}
-
-
-/******************** OnProgressComplete *************************/
-void UStructureComponent::OnProgressComplete()
 {
 
 }
