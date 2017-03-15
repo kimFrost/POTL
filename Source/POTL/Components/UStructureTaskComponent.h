@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "Components/UStructureComponent.h"
 #include "POTLStructure.h"
 #include "Components/UStructureComponent.h"
 #include "UStructureTaskComponent.generated.h"
@@ -39,10 +39,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "Time")
-	void OnTimeUpdate(float Time, float TimeProgressed);
-
-	//UFUNCTION(BlueprintNativeEvent, Category = "Module")
-	//void OnInit();
+	virtual void OnTimeUpdate(float Time, float TimeProgressed) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	virtual void Init() override;

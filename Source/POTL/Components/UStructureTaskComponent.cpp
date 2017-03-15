@@ -11,8 +11,6 @@
 UStructureTaskComponent::UStructureTaskComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	bCanToggle = true;
-	bIsOn = false;
 	bIsWorking = false;
 	Progress = 0.f;
 	TaskLength = 0.f;
@@ -20,8 +18,11 @@ UStructureTaskComponent::UStructureTaskComponent()
 
 
 /******************** Init *************************/
-void UStructureTaskComponent::Init_Implementation()
+void UStructureTaskComponent::Init()
 {
+	Super::Init();
+
+	/*
 	APOTLStructure* Structure = Cast<APOTLStructure>(GetOwner());
 	if (Structure)
 	{
@@ -40,14 +41,16 @@ void UStructureTaskComponent::Init_Implementation()
 		// Failed to find parent structure
 		bIsOn = false;
 	}
+	*/
 
-	OnInit();
 }
 
 
 /******************** OnTimeUpdate *************************/
 void UStructureTaskComponent::OnTimeUpdate(float Time, float TimeProgressed)
 {
+	Super::OnTimeUpdate(Time, TimeProgressed);
+
 	if (bIsOn && bIsWorking)
 	{
 		if (TaskLength > 0)
@@ -62,14 +65,6 @@ void UStructureTaskComponent::OnTimeUpdate(float Time, float TimeProgressed)
 		}
 	}
 }
-
-
-/******************** OnInit *************************/
-void UStructureTaskComponent::OnInit_Implementation()
-{
-
-}
-
 
 /******************** OnProgressComplete *************************/
 void UStructureTaskComponent::OnProgressComplete()

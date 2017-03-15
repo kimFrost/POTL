@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Components/UStructureComponent.h"
+#include "UStructureComponent.h"
 #include "UObjects/UResource.h"
 #include "UStorageComponent.generated.h"
 

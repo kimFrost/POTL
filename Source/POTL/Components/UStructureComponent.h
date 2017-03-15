@@ -46,8 +46,8 @@ public:
 	bool ToggleOn();
 
 
-	//UFUNCTION(BlueprintCallable, Category = "Time")
-	//void OnTimeUpdate(float Time, float TimeProgressed);
+	UFUNCTION(BlueprintCallable, Category = "Time")
+	virtual void OnTimeUpdate(float Time, float TimeProgressed);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Module")
 	void OnInit();

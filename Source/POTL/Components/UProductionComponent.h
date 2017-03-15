@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Components/UStructureComponent.h"
+#include "UStructureTaskComponent.h"
 #include "UObjects/UResource.h"
 #include "UProductionComponent.generated.h"
 
@@ -14,7 +14,7 @@
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class POTL_API UProductionComponent : public UStructureComponent
+class POTL_API UProductionComponent : public UStructureTaskComponent
 {
 	GENERATED_BODY()
 
