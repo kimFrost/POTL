@@ -762,7 +762,12 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 		{
 			if (Consume) {
 				// Trigger transaction result in wealth/benifit
-
+				APOTLStructure* ResourceOwner = Resource->GetOwner();
+				if (ResourceOwner && ToComp->ParentStructure)
+				{
+					ToComp->ParentStructure->SubtractWealth(1.f);
+					ResourceOwner->AddWealth(1.f);
+				}
 				UTransaction* Transaction = NewObject<UTransaction>();
 				if (Transaction)
 				{
@@ -779,6 +784,12 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 				if (StorageComp)
 				{
 					// Trigger transaction result in wealth/benifit
+					APOTLStructure* ResourceOwner = Resource->GetOwner();
+					if (ResourceOwner && ToComp->ParentStructure)
+					{
+						ToComp->ParentStructure->SubtractWealth(1.f);
+						ResourceOwner->AddWealth(1.f);
+					}
 					UTransaction* Transaction = NewObject<UTransaction>();
 					if (Transaction)
 					{

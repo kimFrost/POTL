@@ -5,6 +5,7 @@
 #include "POTLGameInstance.h"
 #include "POTLGameMode.h"
 #include "Components/UStorageComponent.h"
+#include "Components/UResidentsComponent.h"
 #include "UObjects/UHexTile.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLStructure.h"
@@ -128,6 +129,44 @@ bool APOTLStructure::StoreResource(UResource* Resource)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("WARNING: AttachTo link to self!"));
 	}
 	return false;
+}
+
+
+/******************** AddWealth *************************/
+void APOTLStructure::AddWealth(float Amount)
+{
+	UActorComponent* ChildComponent = GetComponentByClass(UResidentsComponent::StaticClass());
+	if (ChildComponent)
+	{
+		UResidentsComponent* ResidentsComponent = Cast<UResidentsComponent>(ChildComponent);
+		if (ResidentsComponent)
+		{
+
+		}
+	}
+	else
+	{
+
+	}
+}
+
+
+/******************** SubtractWealth *************************/
+void APOTLStructure::SubtractWealth(float Amount)
+{
+	UActorComponent* ChildComponent = GetComponentByClass(UResidentsComponent::StaticClass());
+	if (ChildComponent)
+	{
+		UResidentsComponent* ResidentsComponent = Cast<UResidentsComponent>(ChildComponent);
+		if (ResidentsComponent)
+		{
+
+		}
+	}
+	else
+	{
+
+	}
 }
 
 

@@ -2,9 +2,8 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "UStructureComponent.h"
 #include "POTLStructure.h"
-#include "Components/UStructureComponent.h"
 #include "UResidentsComponent.generated.h"
 
 
@@ -24,7 +23,30 @@ public:
 	// Sets default values for this component's properties
 	UResidentsComponent();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
+	float ResidentDensity;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
+	int NumOfHoseholds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
+	float Wealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
+	float Food;
+
+	bool bIsReligious;
+
+	float ConsumptionRate;
+
+	FTimerHandle NeedsCheckTimer;
+
+	void CheckNeeds();
+
+
+	virtual void Init() override;
+
+	virtual void OnTimeUpdate(float Time, float TimeProgressed) override;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;

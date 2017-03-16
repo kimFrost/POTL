@@ -85,6 +85,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	bool StoreResource(UResource* Resource);
 
+	void AddWealth(float Amount);
+
+	void SubtractWealth(float Amount);
+
+	// Security. Constant. Church gives security if religious
+
+	//bool AddNeed(ENeedType Need, float Amount);
+
 
 	/** Construction */
 
