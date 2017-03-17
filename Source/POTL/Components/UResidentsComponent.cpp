@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
+#include "UObjects/UResource.h"
 #include "POTLStructure.h"
 #include "POTLGameMode.h"
 #include "POTLGameInstance.h"
@@ -25,20 +26,21 @@ void UResidentsComponent::CheckNeeds()
 {
 	// Parse needs and make requests
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-	if (GameInstance)
+	if (GameInstance && ParentStructure)
 	{
-		if (Food < 10.f)
-		{
-			// Request food of quality matching 1/10 of wealth
-			//GameInstance->RequestResourceByTag();
-		}
 		if (Food < 1.f)
 		{
 			// Request food of quality matching below or equal wealth;
-			UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-			if (GameInstance)
+			
+		}
+		if (Food < 10.f)
+		{
+			// Request food of quality matching 1/10 of wealth
+			UResource* Resource = GameInstance->RequestResourceByTag(ParentStructure, TEXT("Food"));
+			if (Resource)
 			{
-
+				GameInstance->TransferResource(Resource, this, true, false); // Consume and pay
+				Food += 10.f; //TODO: Add real food satisfaction value
 			}
 		}
 	}

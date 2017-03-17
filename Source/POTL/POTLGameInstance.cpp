@@ -731,12 +731,23 @@ void UPOTLGameInstance::IncludeStorage(UStorageComponent* StorageComp)
 }
 
 
-/******************** FindResource *************************/
-UStorageComponent * UPOTLGameInstance::FindResource(FString ResourceId, int Quantity)
+/******************** CreateResource *************************/
+UResource* UPOTLGameInstance::CreateResource(FString ResourceId)
 {
-	if (StorageMap)
+	if (DATA_Resources)
 	{
-		
+		static const FString ContextString(TEXT("ResourceLookup")); //~~ Key value for each column of values ~~//
+		FST_Resource* ResourceData = DATA_Resources->FindRow<FST_Resource>(*ResourceId, ContextString);
+		if (ResourceData)
+		{
+			//Structure->StructureBaseData = *StructureData;
+			UResource* Resource = NewObject<UResource>();
+			Resource->ResourceId = ResourceId;
+			Resource->Tags = ResourceData->Tags;
+			Resource->Value = ResourceData->Value;
+			Resource->AddToRoot(); // Prevent Garbage collection
+			return Resource;
+		}
 	}
 	return nullptr;
 }
@@ -748,6 +759,17 @@ UResource* UPOTLGameInstance::RequestResource(APOTLStructure* Requester, FString
 	if (StorageMap)
 	{
 		return StorageMap->RequestResource(Requester, ResourceId);
+	}
+	return nullptr;
+}
+
+
+/******************** RequestResourceByTag *************************/
+UResource * UPOTLGameInstance::RequestResourceByTag(APOTLStructure * Requester, FString Tag)
+{
+	if (StorageMap)
+	{
+		return StorageMap->RequestResourceByTag(Requester, Tag);
 	}
 	return nullptr;
 }

@@ -165,9 +165,11 @@ public:
 
 	void IncludeStorage(UStorageComponent* StorageComp);
 
-	UStorageComponent* FindResource(FString ResourceId, int Quantity);
+	UResource* CreateResource(FString ResourceId);
 
 	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
+
+	UResource* RequestResourceByTag(APOTLStructure* Requester, FString Tag);
 
 	void TransferResource(UResource* Resource, UStructureComponent* ToComp, bool Consume, bool IsFree);
 

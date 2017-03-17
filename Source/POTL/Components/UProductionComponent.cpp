@@ -101,24 +101,30 @@ void UProductionComponent::OnProgressComplete()
 	//UE_LOG(LogTemp, Log, TEXT("ULaborComponent::OnProgressComplete"));
 	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::OnProgressComplete"));
 
+	
 	if (ParentStructure)
 	{
-		// Add resource to storage
-		for (auto& ProductionItem : Production)
+		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+		if (GameInstance)
 		{
-			for (int i = 0; i < ProductionItem.Value; i++)
+			// Add resource to storage
+			for (auto& ProductionItem : Production)
 			{
-				UResource* ProducedResource = NewObject<UResource>();
-				ProducedResource->ResourceId = ProductionItem.Key;
-				ParentStructure->StoreResource(ProducedResource);
-				ProducedResource->AddToRoot();
+				for (int i = 0; i < ProductionItem.Value; i++)
+				{
+					UResource* ProducedResource = GameInstance->CreateResource(ProductionItem.Key);
+					if (ProducedResource)
+					{
+						ParentStructure->StoreResource(ProducedResource);
+					}
+				}
+				//ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value);
 			}
-			//ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value);
-		}
 
-		if (ParentStructure->AttachedTo)
-		{
+			if (ParentStructure->AttachedTo)
+			{
 
+			}
 		}
 	}
 }

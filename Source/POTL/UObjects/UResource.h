@@ -30,6 +30,8 @@ public:
 
 	float ExpirationTime;
 
+	float LuxucyRating; // 1-10 factor. The richer the more luxury resource people will require.
+
 	UStorageComponent* StoredIn;
 
 
@@ -39,11 +41,13 @@ public:
 
 	bool Transfer(UStorageComponent* Storage);
 
+	void Init();
 
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	//int Amount;
 	// No Amount. A resource is one resource
+
 
 
 	/*

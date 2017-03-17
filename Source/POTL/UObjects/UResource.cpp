@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "Components/UStorageComponent.h"
+#include "POTLGameInstance.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "UResource.h"
 
@@ -17,7 +18,7 @@ UResource::UResource()
 
 UResource::~UResource()
 {
-
+	
 }
 
 APOTLStructure * UResource::GetOwner()
@@ -64,4 +65,17 @@ bool UResource::Transfer(UStorageComponent* Storage)
 		return Storage->StoreResource(this);
 	}
 	return false;
+}
+
+
+void UResource::Init()
+{
+	// Get resource data
+	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+	if (GameInstance)
+	{
+		//GameInstance->DATA_Resources->
+	}
+
+	// Create resource throught game instance instead
 }
