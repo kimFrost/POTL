@@ -32,6 +32,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Storage")
 	void StorageMapUpdated(UStorageComponent* StorageComp, UResource* Resource);
 
+	UFUNCTION(BlueprintCallable, Category = "Storage")
+	TArray<UResource*> GetResourceList();
+
 	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
 
 	UResource* RequestResourceByTag(APOTLStructure* Requester, FString Tag);

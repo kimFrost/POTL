@@ -35,6 +35,21 @@ void UStorageMap::IncludeStorage(UStorageComponent* StorageComp)
 }
 
 
+TArray<UResource*> UStorageMap::GetResourceList()
+{
+	TArray<UResource*> ResourceList = TArray<UResource*>();
+	for (auto& Entry : Storages)
+	{
+		if (Entry.Value)
+		{
+			UStorageComponent* StorageComp = Entry.Value;
+			ResourceList.Append(StorageComp->StoredResources);
+		}
+	}
+	return ResourceList;
+}
+
+
 UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString ResourceId)
 {
 	//TODO: Sort storages by distance to requester
