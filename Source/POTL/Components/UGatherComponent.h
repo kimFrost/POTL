@@ -44,9 +44,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
 	TMap<FString, int> Production;
 
-	FTimerHandle ProductionCheckTimer;
+	FTimerHandle GatherCheckTimer;
 
-	void CheckProduction();
+	void CheckGather();
 
 	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
 

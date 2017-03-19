@@ -28,12 +28,12 @@ UGatherComponent::UGatherComponent()
 /******************** OnProduction *************************/
 void UGatherComponent::OnProduction_Implementation()
 {
-	MissingResources = RequiredResources;
-	CheckProduction();
+	//MissingResources = RequiredResources;
+	CheckGather();
 }
 
 
-void UGatherComponent::CheckProduction()
+void UGatherComponent::CheckGather()
 {
 	//TODO: Better validation Logic for attachedTo
 
@@ -42,40 +42,7 @@ void UGatherComponent::CheckProduction()
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
 		{
-			for (auto& Entry : MissingResources)
-			{
-				int NumOfResourcesFound = 0;
-				for (int i = 0; i < Entry.Value; i++)
-				{
-					UResource* Resource = GameInstance->RequestResource(ParentStructure, Entry.Key);
-					if (Resource)
-					{
-						NumOfResourcesFound++;
-						// Trigger transaction that consumes resource and adds wealth
-						GameInstance->TransferResource(Resource, this, true, false);
-					}
-					else
-					{
-						break; // Break quantity loop if no resource found.
-					}
-				}
-				Entry.Value -= NumOfResourcesFound;
-			}
-			for (auto& Entry : MissingResources)
-			{
-				if (Entry.Value < 1)
-				{
-					MissingResources.Remove(Entry.Key);
-				}
-			}
-			MissingResources.Compact(); // Remove invalid entries if any
-		}
-
-		if (MissingResources.Num() > 0) {
-			bIsWorking = false;
-		}
-		else {
-			bIsWorking = true;
+			
 		}
 	}
 	else
@@ -136,18 +103,21 @@ void UGatherComponent::Init()
 	{
 		if (GatherRange > 0)
 		{
-			TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(ParentStructure->CubeCoord, GatherRange, false); //!! Maybe not right from vector !!//
+			TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(ParentStructure->CubeCoord, GatherRange, false);
 			for (int32 i = 0; i < Cubes.Num(); i++)
 			{
 				FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cubes[i]);
 				int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
-				//GatherFromIndexes.Add(HexIndex);
+				if (GameInstance->Hexes.IsValidIndex(HexIndex))
+				{
+					HexesInRange.Add(GameInstance->Hexes[HexIndex]);
+				}
 			}
 		}
 	}
 
-	// CheckProduction every second
-	GetWorld()->GetTimerManager().SetTimer(ProductionCheckTimer, this, &UGatherComponent::CheckProduction, 1.f, true);
+	// CheckGather every second
+	GetWorld()->GetTimerManager().SetTimer(GatherCheckTimer, this, &UGatherComponent::CheckGather, 1.f, true);
 }
 
 
