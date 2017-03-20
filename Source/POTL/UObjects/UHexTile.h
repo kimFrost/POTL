@@ -84,6 +84,9 @@ public:
 
 	TMap<FString, int> Resources;
 
+	// SupplyTo // GatheredBy // Timer??
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	//TArray<FST_ConstructLocation> ConstructLocations;
 	FST_ConstructLocation ConstructInfo;

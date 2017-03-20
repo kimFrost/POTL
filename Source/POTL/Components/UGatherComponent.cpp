@@ -80,13 +80,33 @@ void UGatherComponent::OnProgressComplete()
 			{
 				if (Hex)
 				{
+					if (MaxGatheredPerCycle <= 0)
+					{
+						break;
+					}
 					for (auto& ResourceId : GatherResources)
 					{
+						if (MaxGatheredPerCycle <= 0)
+						{
+							break;
+						}
 						if (Hex->Resources.Contains(ResourceId))
 						{
+							UResource* Resource = GameInstance->CreateResource(ResourceId);
+							if (Resource)
+							{
 
+								MaxGatheredPerCycle--;
+							}
 						}
 					}
+					
+					/*
+					for (int i = 0; i < MaxGatheredPerCycle; i++)
+					{
+
+					}
+					*/
 				}
 			}
 
