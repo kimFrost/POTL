@@ -654,8 +654,9 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 		for (int32 i = 0; i < Hexes.Num(); i++)
 		{
 			UHexTile* Hex = Hexes[i];
-			if (IsValid(Hex) && Hex->Resources.HasTrees)
+			if (IsValid(Hex) && Hex->HexResourceInfo.HasTrees)
 			{
+				Hex->Resources.Add("Wood", 1);
 				bool Surrounded = true;
 				for (int32 ii = 0; ii < Hex->HexNeighborIndexes.Num(); ii++)
 				{
@@ -663,7 +664,7 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 					if (Hexes.IsValidIndex(HexNeighborIndex))
 					{
 						UHexTile* NeighborHex = Hexes[HexNeighborIndex];
-						if (IsValid(NeighborHex) && !NeighborHex->Resources.HasTrees || NeighborHex->Resources.ForestDepth < DepthIndex)
+						if (IsValid(NeighborHex) && !NeighborHex->HexResourceInfo.HasTrees || NeighborHex->HexResourceInfo.ForestDepth < DepthIndex)
 						{
 							Surrounded = false;
 						}
@@ -675,7 +676,7 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 				}
 				if (Surrounded)
 				{
-					Hex->Resources.ForestDepth++;
+					Hex->HexResourceInfo.ForestDepth++;
 				}
 			}
 		}
@@ -686,8 +687,9 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 		for (int32 i = 0; i < Hexes.Num(); i++)
 		{
 			UHexTile* Hex = Hexes[i];
-			if (IsValid(Hex) && Hex->Resources.HasLake)
+			if (IsValid(Hex) && Hex->HexResourceInfo.HasLake)
 			{
+				Hex->Resources.Add("Fish", 1);
 				bool Surrounded = true;
 				for (int32 ii = 0; ii < Hex->HexNeighborIndexes.Num(); ii++)
 				{
@@ -695,7 +697,7 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 					if (Hexes.IsValidIndex(HexNeighborIndex))
 					{
 						UHexTile* NeighborHex = Hexes[HexNeighborIndex];
-						if (IsValid(NeighborHex) && !NeighborHex->Resources.HasLake || NeighborHex->Resources.LakeDepth < DepthIndex)
+						if (IsValid(NeighborHex) && !NeighborHex->HexResourceInfo.HasLake || NeighborHex->HexResourceInfo.LakeDepth < DepthIndex)
 						{
 							Surrounded = false;
 						}
@@ -707,7 +709,7 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 				}
 				if (Surrounded)
 				{
-					Hex->Resources.LakeDepth++;
+					Hex->HexResourceInfo.LakeDepth++;
 				}
 			}
 		}

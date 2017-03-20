@@ -80,7 +80,9 @@ public:
 	TArray<UHexTile*> HexNeighbors;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
-	FST_HexResourceInfo Resources;
+	FST_HexResourceInfo HexResourceInfo;
+
+	TMap<FString, int> Resources;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	//TArray<FST_ConstructLocation> ConstructLocations;

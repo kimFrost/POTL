@@ -19,31 +19,41 @@ UGatherComponent::UGatherComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	GatherRange = 3;
-
-	//TaskLength = 5.f;
-
+	TaskLength = 5.f;
+	MaxGatheredPerCycle = 1;
 }
 
 
-/******************** OnProduction *************************/
-void UGatherComponent::OnProduction_Implementation()
+/******************** OnGathered *************************/
+void UGatherComponent::OnGathered_Implementation()
 {
 	//MissingResources = RequiredResources;
-	CheckGather();
+	ValidateRequirements();
 }
 
 
-void UGatherComponent::CheckGather()
+void UGatherComponent::ValidateRequirements()
 {
 	//TODO: Better validation Logic for attachedTo
 
 	if (ParentStructure && ParentStructure->AttachedTo)
 	{
+		bool anyResourceInRange = false;
+		for (auto& Hex : HexesInRange)
+		{
+			if (Hex)
+			{
+				
+			}
+		}
+		bIsWorking = anyResourceInRange;
+		/*
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
 		{
 			
 		}
+		*/
 	}
 	else
 	{
@@ -57,15 +67,32 @@ void UGatherComponent::OnProgressComplete()
 {
 	Super::OnProgressComplete();
 
-	OnProduction();
-
+	OnGathered();
 	
 	if (ParentStructure)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
 		{
-			// Add resource to storage
+			// Collect resource/resources from hex
+
+			for (auto& Hex : HexesInRange)
+			{
+				if (Hex)
+				{
+					for (auto& ResourceId : GatherResources)
+					{
+						if (Hex->Resources.Contains(ResourceId))
+						{
+
+						}
+					}
+				}
+			}
+
+			//GatherResources
+
+			/*
 			for (auto& ProductionItem : Production)
 			{
 				for (int i = 0; i < ProductionItem.Value; i++)
@@ -76,13 +103,8 @@ void UGatherComponent::OnProgressComplete()
 						ParentStructure->StoreResource(ProducedResource);
 					}
 				}
-				//ParentStructure->AddResource(ProductionItem.Key, ProductionItem.Value);
 			}
-
-			if (ParentStructure->AttachedTo)
-			{
-
-			}
+			*/
 		}
 	}
 }
@@ -116,8 +138,8 @@ void UGatherComponent::Init()
 		}
 	}
 
-	// CheckGather every second
-	GetWorld()->GetTimerManager().SetTimer(GatherCheckTimer, this, &UGatherComponent::CheckGather, 1.f, true);
+	// ValidateRequirements every second
+	GetWorld()->GetTimerManager().SetTimer(GatherCheckTimer, this, &UGatherComponent::ValidateRequirements, 1.f, true);
 }
 
 

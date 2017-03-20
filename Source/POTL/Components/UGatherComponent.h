@@ -30,28 +30,19 @@ public:
 
 	TArray<UHexTile*> HexesInRange;
 
-
-
-	// Production storage. Storage on required resources x 1 ?
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
-	TMap<FString, int> MissingResources;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
-	TMap<FString, int> RequiredResources;
+	TArray<FString> GatherResources;
 
-	// Production Item and quantity
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
-	TMap<FString, int> Production;
+	int MaxGatheredPerCycle;
 
 	FTimerHandle GatherCheckTimer;
 
-	void CheckGather();
+	void ValidateRequirements();
 
 	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Production")
-	void OnProduction();
+	void OnGathered();
 
 
 
