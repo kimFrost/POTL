@@ -38,6 +38,7 @@ void UGatherComponent::ValidateRequirements()
 
 	if (ParentStructure && ParentStructure->AttachedTo)
 	{
+		/*
 		bool anyResourceInRange = false;
 		for (auto& Hex : HexesInRange)
 		{
@@ -47,6 +48,7 @@ void UGatherComponent::ValidateRequirements()
 			}
 		}
 		bIsWorking = anyResourceInRange;
+		*/
 		/*
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
@@ -69,62 +71,49 @@ void UGatherComponent::OnProgressComplete()
 
 	OnGathered();
 	
+	
 	if (ParentStructure)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
 		{
-			// Collect resource/resources from hex
-
+			bool AnyGathered = false;
 			for (auto& Hex : HexesInRange)
 			{
 				if (Hex)
 				{
-					if (MaxGatheredPerCycle <= 0)
+					//int RandIndex = FMath::RandRange(0, GatherResources.Num() - 1);
+					//FString ResourceId = GatherResources[RandIndex];
+
+					// Shuffle resources to gather
+					TArray<FString> GatherResourcesShuffled = GatherResources;
+					GatherResourcesShuffled.Sort([this](const int Item1, const int Item2) {
+						return FMath::FRand() < 0.5f;
+					});
+					for (auto& ResourceId : GatherResourcesShuffled)
 					{
-						break;
-					}
-					for (auto& ResourceId : GatherResources)
-					{
-						if (MaxGatheredPerCycle <= 0)
-						{
-							break;
-						}
 						if (Hex->Resources.Contains(ResourceId))
 						{
 							UResource* Resource = GameInstance->CreateResource(ResourceId);
 							if (Resource)
 							{
-
-								MaxGatheredPerCycle--;
+								ParentStructure->StoreResource(Resource);
+								AnyGathered = true;
+								break;
 							}
 						}
 					}
-					
-					/*
-					for (int i = 0; i < MaxGatheredPerCycle; i++)
+					if (AnyGathered)
 					{
-
+						break;
 					}
-					*/
 				}
 			}
-
-			//GatherResources
-
-			/*
-			for (auto& ProductionItem : Production)
+			if (!AnyGathered)
 			{
-				for (int i = 0; i < ProductionItem.Value; i++)
-				{
-					UResource* ProducedResource = GameInstance->CreateResource(ProductionItem.Key);
-					if (ProducedResource)
-					{
-						ParentStructure->StoreResource(ProducedResource);
-					}
-				}
+				// No resource found on hexes in range
+
 			}
-			*/
 		}
 	}
 }
@@ -139,7 +128,7 @@ void UGatherComponent::Init()
 		bIsOn = false;
 	}
 
-
+	// Store hexes in range
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 	if (GameInstance)
 	{
