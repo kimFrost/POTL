@@ -92,5 +92,57 @@
         "RotationDirection": 0,
         "BlockConstruction": true,
         "BlockPathing": true
+    },
+    {
+        "Name": "Woodcutter",
+        "Id": "Woodcutter",
+        "Title": "Woodcutter",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Woodcutter.BP_Woodcutter_C'",
+        "AttachTo": [
+            "House"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "Stonecutter",
+        "Id": "Stonecutter",
+        "Title": "Stonecutter",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Stonecutter.BP_Stonecutter_C'",
+        "AttachTo": [
+            "House"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
+    },
+    {
+        "Name": "Well",
+        "Id": "Well",
+        "Title": "Well",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Well.BP_Well_C'",
+        "AttachTo": [],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
     }
 ]

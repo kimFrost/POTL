@@ -38,6 +38,7 @@ void UGatherComponent::ValidateRequirements()
 
 	if (ParentStructure && ParentStructure->AttachedTo)
 	{
+		bIsWorking = true;
 		/*
 		bool anyResourceInRange = false;
 		for (auto& Hex : HexesInRange)
@@ -87,7 +88,7 @@ void UGatherComponent::OnProgressComplete()
 
 					// Shuffle resources to gather
 					TArray<FString> GatherResourcesShuffled = GatherResources;
-					GatherResourcesShuffled.Sort([this](const int Item1, const int Item2) {
+					GatherResourcesShuffled.Sort([this](const FString Item1, const FString Item2) {
 						return FMath::FRand() < 0.5f;
 					});
 					for (auto& ResourceId : GatherResourcesShuffled)
