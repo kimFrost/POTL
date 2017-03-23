@@ -127,6 +127,16 @@ bool UPOTLGameInstance::IsHexTerrainBuildable(const UHexTile* Hex)
 	}
 }
 
+FST_Structure* UPOTLGameInstance::GetStructureRowData(FString RowName)
+{
+	if (DATA_Structures)
+	{
+		static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
+		return DATA_Structures->FindRow<FST_Structure>(*RowName, ContextString);
+	}
+	return nullptr;
+}
+
 
 /******************** PlantPlaceholderStructure *************************/
 APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild)

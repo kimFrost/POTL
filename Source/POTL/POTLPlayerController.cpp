@@ -75,6 +75,7 @@ void APOTLPlayerController::RotateStructure()
 /******************** SetToolType *************************/
 void APOTLPlayerController::SetToolType(EToolType ToolType)
 {
+	// Unload previous tool
 	if (ActiveToolType == EToolType::PlantStructure)
 	{
 		if (BuilderStructure)
@@ -82,6 +83,40 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 			BuilderStructure->RemoveStructure();
 		}
 	}
+	// Load new tool
+	if (ToolType == EToolType::PlantStructure)
+	{
+		if (GameInstance)
+		{
+			if (BuildStructureData.AttachTo.Num() > 0)
+			{
+				// Get all structures of AttachTo ids
+				TArray<AActor*> AttachToStructures;
+				for (auto& StructureId : BuildStructureData.AttachTo)
+				{
+					FST_Structure* StructureData = GameInstance->GetStructureRowData(StructureId);
+					if (StructureData)
+					{
+						TArray<AActor*> FoundStructures;
+						UGameplayStatics::GetAllActorsOfClass(GetWorld(), StructureData->StructureClass, FoundStructures);
+						AttachToStructures.Append(FoundStructures);
+					}
+				}
+				for (auto& Structure : AttachToStructures)
+				{
+					// Get adjacent hexes along ridge of structure
+					// Use Util function get hexes with range 1
+				}
+
+				//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+			}
+			else
+			{
+				// Can be built everywhere
+			}
+		}
+	}
+
 	ActiveToolType = ToolType;
 }
 

@@ -93,7 +93,8 @@ UENUM(BlueprintType)
 enum class EDecalType : uint8
 {
 	ValidBuild UMETA(DisplayName = "ValidBuild"),
-	InvalidBuild UMETA(DisplayName = "InvalidBuild")
+	InvalidBuild UMETA(DisplayName = "InvalidBuild"),
+	AttachPoint UMETA(DisplayName = "AttachPoint")
 };
 
 

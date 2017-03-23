@@ -127,6 +127,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexTerrainBuildable(const UHexTile* Hex);
 
+	FST_Structure* GetStructureRowData(FString RowName);
+
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild);
 	
