@@ -1,9 +1,9 @@
 [
 	{
 		"Name": "Wood",
-		"Id": "",
+		"Id": "Wood",
 		"Title": "Wood",
-		"Tags": [],
+		"Tags": ["Construction", "Raw"],
 		"UnitMass": 10,
 		"Value": 0.05,
 		"Stackable": true,
@@ -15,9 +15,9 @@
 	},
 	{
 		"Name": "Stone",
-		"Id": "",
-		"Tags": [],
+		"Id": "Stone",
 		"Title": "Stone",
+		"Tags": ["Construction", "Raw"],
 		"UnitMass": 50,
 		"Value": 0.05,
 		"Stackable": true,
@@ -29,9 +29,9 @@
 	},
 	{
 		"Name": "Wheat",
-		"Id": "",
-		"Tags": [],
+		"Id": "Wheat",
 		"Title": "Wheat",
+		"Tags": [],
 		"UnitMass": 1,
 		"Value": 0.1,
 		"Stackable": true,
@@ -43,9 +43,9 @@
 	},
 	{
 		"Name": "Flour",
-		"Id": "",
-		"Tags": [],
+		"Id": "Flour",
 		"Title": "Flour",
+		"Tags": [],
 		"UnitMass": 2,
 		"Value": 0.2,
 		"Stackable": true,
@@ -57,9 +57,9 @@
 	},
 	{
 		"Name": "Bread",
-		"Id": "",
-		"Tags": ["Food"],
+		"Id": "Bread",
 		"Title": "Bread",
+		"Tags": ["Food"],
 		"UnitMass": 3,
 		"Value": 0.2,
 		"Stackable": true,
@@ -68,5 +68,19 @@
 		"Quantity": 0,
 		"MaxAge": 1,
 		"SortSequence": 5
-	}
+	},
+	{
+		"Name": "Plank",
+		"Id": "Plank",
+		"Title": "Plank",
+		"Tags": ["Construction"],
+		"UnitMass": 2,
+		"Value": 0.15,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1,
+		"SortSequence": 1
+	},
 ]
