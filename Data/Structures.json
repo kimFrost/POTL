@@ -144,5 +144,21 @@
         "RotationDirection": 0,
         "BlockConstruction": true,
         "BlockPathing": true
+    },
+    {
+        "Name": "Lumberyard",
+        "Id": "Lumberyard",
+        "Title": "Lumberyard",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Lumberyard.BP_Lumberyard_C'",
+        "AttachTo": [],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true
     }
 ]
