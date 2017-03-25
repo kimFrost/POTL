@@ -127,6 +127,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	bool IsHexTerrainBuildable(const UHexTile* Hex);
 
+	bool ValidatePlaceStructureOnHex(FString StructureId, UHexTile* Hex, int Rotation);
+
 	FST_Structure* GetStructureRowData(FString RowName);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")

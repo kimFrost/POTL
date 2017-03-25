@@ -227,7 +227,13 @@ void APOTLPlayerController::LeftClickPressed()
 			{
 				UHexTile* TracedHex = GameInstance->MouseToHex();
 				if (TracedHex)
-				{
+				{	
+					//GameInstance->ValidatePlaceStructureOnHex(BuildStructureData.Id, TracedHex, BaseRotation);
+					if (BuildValid)
+					{
+
+					}
+
 					if (ValidStructurePlaceHexes.Contains(TracedHex))
 					{
 						if (BuilderStructure)

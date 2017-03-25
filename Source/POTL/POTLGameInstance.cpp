@@ -127,6 +127,35 @@ bool UPOTLGameInstance::IsHexTerrainBuildable(const UHexTile* Hex)
 	}
 }
 
+bool UPOTLGameInstance::ValidatePlaceStructureOnHex(FString StructureId, UHexTile* Hex, int Rotation)
+{
+	bool Valid = false;
+	FST_Structure* StructureData = GetStructureRowData(StructureId);
+	if (StructureData && Hex)
+	{
+		Valid = true;
+		for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
+		{
+			FVector LocalCubeCoord = StructureData->CubeSizes[i] + Hex->HexCubeCoords;
+			LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, Rotation, Hex->HexCubeCoords);
+			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
+			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+			if (Hexes.IsValidIndex(HexIndex))
+			{
+				UHexTile* Hex = Hexes[HexIndex];
+				if (Hex)
+				{
+					if (Hex->AttachedBuilding)
+					{
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return Valid;
+}
+
 FST_Structure* UPOTLGameInstance::GetStructureRowData(FString RowName)
 {
 	if (DATA_Structures)
