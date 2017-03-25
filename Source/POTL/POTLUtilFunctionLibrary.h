@@ -80,6 +80,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static TArray<UHexTile*> IntersectHexes(const TArray<UHexTile*>& Hexes, const TArray<UHexTile*>& Intersection);
 
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static TArray<UHexTile*> GetAdjacentHexesToHex(const UHexTile* Hex);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	static TArray<UHexTile*> GetAdjacentHexesToHexes(const TArray<UHexTile*>& Hexes);
+
 
 	/** Map - Pathing */
 

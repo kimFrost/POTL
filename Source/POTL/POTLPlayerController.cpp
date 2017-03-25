@@ -82,6 +82,14 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 		{
 			BuilderStructure->RemoveStructure();
 		}
+		for (auto& Hex : ValidStructurePlaceHexes)
+		{
+			if (Hex)
+			{
+				Hex->HideDecal();
+			}
+		}
+		ValidStructurePlaceHexes.Empty();
 	}
 	// Load new tool
 	if (ToolType == EToolType::PlantStructure)
@@ -102,13 +110,29 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 						AttachToStructures.Append(FoundStructures);
 					}
 				}
-				for (auto& Structure : AttachToStructures)
+				for (auto& Actor : AttachToStructures)
 				{
-					// Get adjacent hexes along ridge of structure
-					// Use Util function get hexes with range 1
+					APOTLStructure* Structure = Cast<APOTLStructure>(Actor);
+					if (Structure)
+					{
+						TArray<UHexTile*> AdjacentHexes = UPOTLUtilFunctionLibrary::GetAdjacentHexesToHexes(Structure->OccupiedHexes);
+						AdjacentHexes = UPOTLUtilFunctionLibrary::SubtractHexes(AdjacentHexes, Structure->OccupiedHexes);
+						for (auto& Hex : AdjacentHexes)
+						{
+							if (Hex && !Hex->AttachedBuilding) // If no structure
+							{
+								ValidStructurePlaceHexes.AddUnique(Hex);
+							}
+						}
+					}
 				}
-
-				//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
+				for (auto& Hex : ValidStructurePlaceHexes)
+				{
+					if (Hex)
+					{
+						Hex->ShowDecal(EDecalType::ValidBuild);
+					}
+				}
 			}
 			else
 			{
@@ -201,27 +225,19 @@ void APOTLPlayerController::LeftClickPressed()
 		{
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
-				//if (BuildValid)
-				//{
-					UHexTile* TracedHex = GameInstance->MouseToHex();
-					if (IsValid(TracedHex))
+				UHexTile* TracedHex = GameInstance->MouseToHex();
+				if (TracedHex)
+				{
+					if (ValidStructurePlaceHexes.Contains(TracedHex))
 					{
-						//~~ If hex has a placeholder structure on it ~~//
-						//if (TracedHex->AttachedBuilding && TracedHex->AttachedBuilding->IsPlaceholder) {
-							//GameInstance->RemoveStructure(TracedHex->AttachedBuilding);
-							if (BuilderStructure)
-							{
-								BuilderStructure->RemoveStructure();
-							}
-							//?? Trace for attach To or make plantstructure handle it??
-
-							//~~ Plant structure on the avaiable hex ~~//
-							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, true, false);
-							//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-							ProcessConstructLocations();
-						//}
+						if (BuilderStructure)
+						{
+							BuilderStructure->RemoveStructure();
+						}
+						//~~ Plant structure on the avaiable hex ~~//
+						GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, true, false);
 					}
-				//}
+				}
 			}
 			else if (ActiveToolType == EToolType::Select)
 			{

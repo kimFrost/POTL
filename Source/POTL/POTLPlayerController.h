@@ -69,6 +69,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<UHexTile*> BuildStructureHexes;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<UHexTile*> ValidStructurePlaceHexes;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	TArray<AHexDecal*> ConstructDecals;
 

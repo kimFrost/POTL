@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UObjects/UHexTile.h"
 #include "POTLDataHolder.h"
 #include <string>
 #include "POTLUtilFunctionLibrary.h"
@@ -377,6 +378,45 @@ TArray<UHexTile*> UPOTLUtilFunctionLibrary::IntersectHexes(const TArray<UHexTile
 	}
 	return Result;
 }
+
+
+/******************** GetAdjacentHexesToHex *************************/
+TArray<UHexTile*> UPOTLUtilFunctionLibrary::GetAdjacentHexesToHex(const UHexTile* Hex)
+{
+	TArray<UHexTile*> AdjacentHexes;
+	if (Hex)
+	{
+		for (auto& HexNeighbor: Hex->HexNeighbors) 
+		{
+			if (HexNeighbor)
+			{
+				AdjacentHexes.Add(HexNeighbor);
+			}
+		}
+	}
+	return AdjacentHexes;
+}
+
+
+/******************** GetAdjacentHexesToHexes *************************/
+TArray<UHexTile*> UPOTLUtilFunctionLibrary::GetAdjacentHexesToHexes(const TArray<UHexTile*>& Hexes)
+{
+	TArray<UHexTile*> AdjacentHexes;
+	for (auto& Hex : Hexes)
+	{
+		if (Hex)
+		{
+			TArray<UHexTile*> NeighborHexes = GetAdjacentHexesToHex(Hex);
+			for (auto& NeighborHex : NeighborHexes)
+			{
+				AdjacentHexes.AddUnique(NeighborHex);
+			}
+		}
+	}
+	return AdjacentHexes;
+}
+
+
 
 
 
