@@ -228,20 +228,21 @@ void APOTLPlayerController::LeftClickPressed()
 				UHexTile* TracedHex = GameInstance->MouseToHex();
 				if (TracedHex)
 				{	
-					//GameInstance->ValidatePlaceStructureOnHex(BuildStructureData.Id, TracedHex, BaseRotation);
 					if (BuildValid)
 					{
 
 					}
-
 					if (ValidStructurePlaceHexes.Contains(TracedHex))
 					{
-						if (BuilderStructure)
+						if (GameInstance->ValidatePlaceStructureOnHex(BuildStructureData.Id, TracedHex, BaseRotation))
 						{
-							BuilderStructure->RemoveStructure();
+							if (BuilderStructure)
+							{
+								BuilderStructure->RemoveStructure();
+							}
+							//~~ Plant structure on the avaiable hex ~~//
+							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, true, false);
 						}
-						//~~ Plant structure on the avaiable hex ~~//
-						GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, true, false);
 					}
 				}
 			}

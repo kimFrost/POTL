@@ -134,6 +134,25 @@ bool UPOTLGameInstance::ValidatePlaceStructureOnHex(FString StructureId, UHexTil
 	if (StructureData && Hex)
 	{
 		Valid = true;
+
+		// Validate attachTo Structure is present
+		if (StructureData->AttachTo.Num() > 0)
+		{
+			UHexTile* AttachToHex = Hex->GetNeighbourHex(Rotation);
+			if (AttachToHex && AttachToHex->AttachedBuilding)
+			{
+				if (!StructureData->AttachTo.Contains(AttachToHex->AttachedBuilding->StructureBaseData.Id))
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		// Validate all hexes are free
 		for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
 		{
 			FVector LocalCubeCoord = StructureData->CubeSizes[i] + Hex->HexCubeCoords;
