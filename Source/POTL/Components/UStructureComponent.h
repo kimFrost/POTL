@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	bool bIsOn; 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
+	bool bRequireAttached;
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	//float Progress;
 

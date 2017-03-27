@@ -14,6 +14,7 @@ UStructureComponent::UStructureComponent()
 	ParentStructure = nullptr;
 	bCanToggle = true;
 	bIsOn = false;
+	bRequireAttached = true;
 }
 
 

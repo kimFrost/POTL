@@ -51,6 +51,9 @@ Backlog -----------------------------
  
  
 Ideas ----------------------
+ - Dwelling will "construct" structures attached to them.
+ - A workshop attached to a dwelling will provide build points in area/range
+ - Well -> Provide water in range/area
  - "The Rot". Plague sweaps the land.
  
  
