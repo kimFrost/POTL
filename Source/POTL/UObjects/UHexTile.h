@@ -10,6 +10,7 @@
 
 //~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
+class UProviderComponent;
 
 
 
@@ -81,6 +82,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	FST_HexResourceInfo HexResourceInfo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	TArray<UProviderComponent*> Providers;
 
 	TMap<FString, int> Resources;
 

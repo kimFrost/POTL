@@ -12,6 +12,7 @@ UStructureComponent::UStructureComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	ParentStructure = nullptr;
+	bIsWorking = false;
 	bCanToggle = true;
 	bIsOn = false;
 	bRequireAttached = true;

@@ -29,9 +29,6 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
-	bool bIsWorking; 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	float Progress;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")

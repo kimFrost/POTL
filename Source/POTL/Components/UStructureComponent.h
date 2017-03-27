@@ -30,8 +30,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Module")
 	bool bCanToggle;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
-	//bool bIsWorking; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
+	bool bIsWorking; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	bool bIsOn; 

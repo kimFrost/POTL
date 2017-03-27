@@ -37,13 +37,8 @@ public:
 
 	void ValidateRequirements();
 
-	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
-
-
 
 	virtual void Init() override;
-
-	virtual void OnProgressComplete() override;
 
 	virtual void BeginPlay() override;
 };
