@@ -10,11 +10,12 @@
 #include "POTLStructure.generated.h"
 
 
+//~~ DELEGATES ~~//
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConstructionComplete);
+
 //~~~~~ Forward Declarations ~~~~~
 
-
 //~~~~~ STRUCTS ~~~~~
-
  
 //~~~~~ ENUMS ~~~~~
 
@@ -69,10 +70,23 @@ public:
 	bool IsPlaceholder;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	bool BlockPathing;
+	bool IsUnderConstruction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	bool IsUnderConstruction;
+	bool bIsInitialized;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	bool BlockPathing;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	float ProcentConstructed;
+
+	float ConstructionTimeLeft;
+
+	//FTimerHandle ConstructionProgressCheckTimer;
+
+
+	//OnConstructionProgress(float ProcentConstructed)
 
 
 	/*********** FUNCTIONS **************/
@@ -114,6 +128,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void DetachFromStructure();
 
+	void CompleteConstruction();
+
+
+
+
 
 	/** Map */
 
@@ -121,11 +140,14 @@ public:
 	APOTLStructure* GetNearestStructure();
 
 
-	UFUNCTION(BlueprintCallable, Category = "Time")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Time")
 	void OnTimeUpdate(float Time, float TimeProgressed);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
 	void OnInit();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnConstructionComplete();
 
 
 	// Called when the game starts or when spawned

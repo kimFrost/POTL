@@ -26,8 +26,11 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	StructureBaseData = FST_Structure{};
 	StructureRowName = TEXT("");
 	IsPlaceholder = false;
+	bIsInitialized = false;
 	BlockPathing = true;
 	IsUnderConstruction = true;
+	ProcentConstructed = 0.f;
+	ConstructionTimeLeft = 0.f;
 
 	/*
 	#define    COLLISION_PLAYERMOVEMENT    ECollisionChannel::ECC_GameTraceChannel1
@@ -193,19 +196,31 @@ void APOTLStructure::UpdateConstrunction_Implementation()
 /******************** Init *************************/
 void APOTLStructure::Init()
 {
-	// Initialize all UStructureComponents
-	TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
-	for (auto& Component : StructureComponents)
+	//StructureBaseData.ConstructionTime
+
+	if (IsUnderConstruction)
 	{
-		UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
-		if (StructureComponent)
+		ConstructionTimeLeft = 5.f;
+		ProcentConstructed = 0.f;
+		//GetWorld()->GetTimerManager().SetTimer(ConstructionProgressCheckTimer, this, &APOTLStructure::ValidateRequirements, 1.f, true);
+		//GetWorld()->GetTimerManager().ClearTimer(ConstructionProgressCheckTimer);
+	}
+	else
+	{
+		ProcessBaseData();
+		// Initialize all UStructureComponents
+		TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
+		for (auto& Component : StructureComponents)
 		{
-			StructureComponent->Init();
+			UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
+			if (StructureComponent)
+			{
+				StructureComponent->Init();
+			}
 		}
 	}
 
-	ProcessBaseData();
-
+	bIsInitialized = true;
 	OnInit();
 }
 
@@ -225,6 +240,8 @@ void APOTLStructure::RemoveStructure()
 	{
 		Hex->AttachedBuilding = nullptr;
 	}
+	//~~ Clear all timers ~~//
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 	//~~ DESTROY ~~//
 	Destroy();
 }
@@ -265,6 +282,15 @@ void APOTLStructure::DetachFromStructure()
 }
 
 
+/******************** CompleteConstruction *************************/
+void APOTLStructure::CompleteConstruction()
+{
+	IsUnderConstruction = false;
+	OnConstructionComplete();
+	Init(); // Re-init structure
+};
+
+
 /*****************************************************************************************************/
 /********************************************** MAP **************************************************/
 /*****************************************************************************************************/
@@ -291,13 +317,36 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 
 
 
-void APOTLStructure::OnTimeUpdate(float Time, float TimeProgressed)
+void APOTLStructure::OnTimeUpdate_Implementation(float Time, float TimeProgressed)
 {
-	// Add to labor progress
+	if (!IsPlaceholder)
+	{
+		if (IsUnderConstruction)
+		{
+			// Should other "work" the construction? Like working on a station
+			ConstructionTimeLeft -= TimeProgressed;
+			ProcentConstructed = FMath::Abs(ConstructionTimeLeft - 5) / 5 * 100; // 5 is construction time from data
+			if (ConstructionTimeLeft <= 0)
+			{
+				ProcentConstructed = 100.f;
+				CompleteConstruction();
+			}
+		}
+	}
+
+	// If attached then progress construction
+
+	// Check Construction progress -> Complete construction()
 }
 
 
 void APOTLStructure::OnInit_Implementation()
+{
+
+}
+
+
+void APOTLStructure::OnConstructionComplete_Implementation()
 {
 
 }

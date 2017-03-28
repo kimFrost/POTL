@@ -241,7 +241,7 @@ void APOTLPlayerController::LeftClickPressed()
 								BuilderStructure->RemoveStructure();
 							}
 							//~~ Plant structure on the avaiable hex ~~//
-							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, true, false);
+							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false, false);
 						}
 					}
 				}
