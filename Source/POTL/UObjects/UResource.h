@@ -28,6 +28,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	float Value;
 
+	bool Locked;
+
 	float ExpirationTime;
 
 	float LuxucyRating; // 1-10 factor. The richer the more luxury resource people will require.
