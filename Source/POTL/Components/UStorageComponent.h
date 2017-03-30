@@ -63,6 +63,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Storage")
 	void OnStorageUpdated(UResource* Resource);
 
+	bool IncludeInStorageMap;
 
 	virtual void Init() override;
 

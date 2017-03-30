@@ -10,7 +10,7 @@
 // Sets default values for this component's properties
 UStructureTaskComponent::UStructureTaskComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 	bIsWorking = false;
 	Progress = 0.f;
 	TaskLength = 0.f;

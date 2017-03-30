@@ -108,10 +108,24 @@ public:
 		, Y(0)
 		, Z(0)
 	{}
-
 	int X;
 	int Y;
 	int Z;
+};
+
+USTRUCT(BlueprintType)
+struct FIdAmount
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FIdAmount()
+		: Id(TEXT(""))
+		, Amount(0)
+	{}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CustomType")
+	FString Id;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CustomType")
+	int Amount;
 };
 
  
@@ -468,6 +482,9 @@ struct FST_Gatherer : public FTableRowBase
 	}
 };
 
+/*** FST_ConstructionStage ***/
+
+
 
 /*** FST_Structure ***/
 USTRUCT(BlueprintType)
@@ -523,6 +540,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool BlockPathing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FIdAmount> ConstructionCost;
 
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")

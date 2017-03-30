@@ -21,8 +21,19 @@ public:
 	UStorageMap();
 	~UStorageMap();
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+
+private:
+
 	TMap<FVector, UStorageComponent*> Storages;
+
+	TArray<UResource*> Resources;
+
+	TMap<FVector, int> QuantityMapOfType;
+
+
+public:
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	//TArray<UStorageComponent*> Storage;
@@ -35,16 +46,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Storage")
 	TArray<UResource*> GetResourceList();
 
+
 	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
 
 	UResource* RequestResourceByTag(APOTLStructure* Requester, FString Tag);
 
+	bool HasResourceAvailable(TArray<FString> ResourceIds);
+
+	TArray<UResource*> RequestResources(APOTLStructure* Requester, TArray<FString> ResourceIds);
+
 	UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
 	FOnStorageMapUpdated OnStorageMapUpdated;
 
-private:
-
-	TMap<FVector, int> QuantityMapOfType;
 
 	//void OnStorageUpdate(UStorageComponent* StorageComp); // Bind to onstorageupdate and call this with storage and changes
 

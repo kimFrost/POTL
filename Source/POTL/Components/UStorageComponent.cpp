@@ -12,9 +12,10 @@ UStorageComponent::UStorageComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	StorageCapacity = 0;
+	IncludeInStorageMap = true;
 }
 
 
@@ -214,10 +215,13 @@ void UStorageComponent::Init()
 	Super::Init();
 
 	// Add self to UStorageMap in GameInstance
-	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-	if (GameInstance)
+	if (IncludeInStorageMap)
 	{
-		GameInstance->IncludeStorage(this);
+		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+		if (GameInstance)
+		{
+			GameInstance->IncludeStorage(this);
+		}
 	}
 }
 

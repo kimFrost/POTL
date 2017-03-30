@@ -20,6 +20,9 @@
 //~~~~~ ENUMS ~~~~~
 
 
+//~~~~~ Forward Declarations ~~~~~//
+class UConstructionComponent;
+
 
 UCLASS()
 class POTL_API APOTLStructure : public AActor
@@ -82,6 +85,8 @@ public:
 	float ProcentConstructed;
 
 	float ConstructionTimeLeft;
+
+	UConstructionComponent* ConstructionComponent;
 
 	//FTimerHandle ConstructionProgressCheckTimer;
 

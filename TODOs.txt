@@ -52,6 +52,8 @@ Backlog -----------------------------
  
 Ideas ----------------------
  - Dwelling will "construct" structures attached to them.
+ - Store resource in structure construction component and lock them. It means that construction site can be place without having all resources at the beginning of construction
+ - Construction cost is taking over time. Like space engineers
  - A workshop attached to a dwelling will provide build points in area/range
  - Well -> Provide water in range/area
  - "The Rot". Plague sweaps the land.

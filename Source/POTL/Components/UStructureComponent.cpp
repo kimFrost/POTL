@@ -10,7 +10,7 @@
 // Sets default values for this component's properties
 UStructureComponent::UStructureComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 	ParentStructure = nullptr;
 	bIsWorking = false;
 	bCanToggle = true;

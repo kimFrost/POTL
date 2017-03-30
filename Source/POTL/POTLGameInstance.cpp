@@ -11,6 +11,7 @@
 #include "POTLStructure.h"
 #include "Components/UStructureComponent.h"
 #include "Components/UStorageComponent.h"
+#include "Components/UConstructionComponent.h"
 #include "Kismet/GameplayStatics.h"
 //#include "Runtime/Foliage/Public/FoliageInstancedStaticMeshComponent.h"
 //#include "Components/InstancedStaticMeshComponent.h"
@@ -306,6 +307,14 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 									Structure->AttachedTo = AttachToHex->AttachedBuilding;
 								}
 							}
+						}
+
+						//~~ Process construction cost and store resources in structure construction component ~~//
+						if (Structure->ConstructionComponent)
+						{
+							//for (auto& CostEntry : StructureData.ConstructionCost)
+							//TransferResource();
+							//Structure->ConstructionComponent->
 						}
 
 						//~~ Process Structure Data internally ~~//

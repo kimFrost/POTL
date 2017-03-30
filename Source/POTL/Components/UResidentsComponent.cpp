@@ -11,7 +11,7 @@
 // Sets default values for this component's properties
 UResidentsComponent::UResidentsComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	ResidentDensity = 1.f;
 	NumOfHoseholds = 1;

@@ -49,7 +49,7 @@ TArray<UResource*> UStorageMap::GetResourceList()
 	return ResourceList;
 }
 
-
+/******************** RequestResource *************************/
 UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString ResourceId)
 {
 	//TODO: Sort storages by distance to requester
@@ -85,6 +85,7 @@ UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString Resou
 	return nullptr;
 }
 
+/******************** RequestResourceByTag *************************/
 UResource* UStorageMap::RequestResourceByTag(APOTLStructure * Requester, FString Tag)
 {
 	if (Requester)
@@ -116,9 +117,55 @@ UResource* UStorageMap::RequestResourceByTag(APOTLStructure * Requester, FString
 	return nullptr;
 }
 
+/******************** HasResourceAvailable *************************/
+bool UStorageMap::HasResourceAvailable(TArray<FString> ResourceIds)
+{
+	TArray<UResource*> ResourceList = GetResourceList();
+	for (auto& Resource : ResourceList)
+	{
+		if (Resource)
+		{
+			if (ResourceIds.Contains(Resource->ResourceId))
+			{
+				ResourceIds.RemoveSingle(Resource->ResourceId);
+				if (ResourceIds.Num() == 0)
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return (ResourceIds.Num() <= 0);
+}
+
+/******************** RequestResources *************************/
+TArray<UResource*> UStorageMap::RequestResources(APOTLStructure* Requester, TArray<FString> ResourceIds)
+{
+	TArray<UResource*> RequestedResources;
+	if (Requester)
+	{
+		// Check if total request can be met
+		if (HasResourceAvailable(ResourceIds))
+		{
+			// Get resoruces
+			for (auto& ResourceId : ResourceIds)
+			{
+				UResource* Resource = RequestResource(Requester, ResourceId);
+				if (Resource)
+				{
+					RequestedResources.Add(Resource);
+				}
+			}
+		}
+	}
+
+	return RequestedResources;
+}
+
 /******************** StorageMapUpdated *************************/
 void UStorageMap::StorageMapUpdated_Implementation(UStorageComponent* StorageComp, UResource* Resource)
 {
+	//TODO: Maintain complete resource list for fast overview
+	
 	OnStorageMapUpdated.Broadcast(StorageComp, Resource);
-
 }

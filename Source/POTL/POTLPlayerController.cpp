@@ -235,13 +235,13 @@ void APOTLPlayerController::LeftClickPressed()
 					if (ValidStructurePlaceHexes.Contains(TracedHex))
 					{
 						if (GameInstance->ValidatePlaceStructureOnHex(BuildStructureData.Id, TracedHex, BaseRotation))
-						{
+						{			
 							if (BuilderStructure)
 							{
 								BuilderStructure->RemoveStructure();
 							}
 							//~~ Plant structure on the avaiable hex ~~//
-							GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false, false);
+							APOTLStructure* Structure = GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false, false);
 						}
 					}
 				}

@@ -37,7 +37,8 @@
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
         "BlockConstruction": true,
-        "BlockPathing": true
+        "BlockPathing": true,
+		"ConstructionCost": []
     },
     {
         "Name": "Farm",
@@ -60,7 +61,10 @@
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
         "BlockConstruction": true,
-        "BlockPathing": true
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"ResourceId": "Wood", "Amount": 1}
+		]
     },
     {
         "Name": "Windmill",
@@ -78,7 +82,10 @@
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
         "BlockConstruction": true,
-        "BlockPathing": true
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"ResourceId": "Plank", "Amount": 1}
+		]
     },
     {
         "Name": "Bakery",
@@ -96,7 +103,10 @@
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
         "BlockConstruction": true,
-        "BlockPathing": true
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"ResourceId": "Plank", "Amount": 1}
+		]
     },
     {
         "Name": "Woodcutter",
@@ -114,7 +124,10 @@
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
         "BlockConstruction": true,
-        "BlockPathing": true
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"ResourceId": "Wood", "Amount": 1}
+		]
     },
     {
         "Name": "Stonecutter",
@@ -132,7 +145,10 @@
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
         "BlockConstruction": true,
-        "BlockPathing": true
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"ResourceId": "Wood", "Amount": 1}
+		]
     },
     {
         "Name": "Well",
@@ -148,7 +164,10 @@
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
         "BlockConstruction": true,
-        "BlockPathing": true
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"ResourceId": "Stone", "Amount": 2}
+		]
     },
     {
         "Name": "Lumberyard",
@@ -164,6 +183,9 @@
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
         "BlockConstruction": true,
-        "BlockPathing": true
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"ResourceId": "Plank", "Amount": 2}
+		]
     }
 ]

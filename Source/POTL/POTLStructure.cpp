@@ -6,6 +6,7 @@
 #include "POTLGameMode.h"
 #include "Components/UStorageComponent.h"
 #include "Components/UResidentsComponent.h"
+#include "Components/UConstructionComponent.h"
 #include "UObjects/UHexTile.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLStructure.h"
@@ -31,6 +32,12 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	IsUnderConstruction = true;
 	ProcentConstructed = 0.f;
 	ConstructionTimeLeft = 0.f;
+
+	ConstructionComponent = CreateDefaultSubobject<UConstructionComponent>(TEXT("ConstructionComponent"));
+	if (ConstructionComponent)
+	{
+		AddOwnedComponent(ConstructionComponent);
+	}
 
 	/*
 	#define    COLLISION_PLAYERMOVEMENT    ECollisionChannel::ECC_GameTraceChannel1
