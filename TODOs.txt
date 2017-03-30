@@ -35,6 +35,8 @@ x.2.17
 
  
 Backlog -----------------------------
+ - Include in storage for UStructureComponent doens't allow for trigger tranfer event on storagemap. Need a better solution. But it might trigger a transaction event.
+ - UStructureComponent doesn't transfer resources.
  - Request resource with wealth budget parameter
  - Storage visualization
  - Transaction visualization

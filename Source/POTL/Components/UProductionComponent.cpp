@@ -101,7 +101,6 @@ void UProductionComponent::OnProgressComplete()
 	//UE_LOG(LogTemp, Log, TEXT("ULaborComponent::OnProgressComplete"));
 	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("UProductionComponent::OnProgressComplete"));
 
-	
 	if (ParentStructure)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());

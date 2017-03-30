@@ -30,8 +30,6 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	bIsInitialized = false;
 	BlockPathing = true;
 	IsUnderConstruction = true;
-	ProcentConstructed = 0.f;
-	ConstructionTimeLeft = 0.f;
 
 	ConstructionComponent = CreateDefaultSubobject<UConstructionComponent>(TEXT("ConstructionComponent"));
 	if (ConstructionComponent)
@@ -121,7 +119,7 @@ bool APOTLStructure::StoreResource(UResource* Resource)
 		for (auto& Component : StorageComponents)
 		{
 			UStorageComponent* StorageComponent = Cast<UStorageComponent>(Component);
-			if (StorageComponent)
+			if (StorageComponent && StorageComponent->IncludeInStorageMap) // if not IncludeInStorageMap then it will not trigger update event. Like construction component
 			{
 				if (StorageComponent->StoreResource(Resource))
 				{
@@ -207,10 +205,11 @@ void APOTLStructure::Init()
 
 	if (IsUnderConstruction)
 	{
-		ConstructionTimeLeft = 5.f;
-		ProcentConstructed = 0.f;
-		//GetWorld()->GetTimerManager().SetTimer(ConstructionProgressCheckTimer, this, &APOTLStructure::ValidateRequirements, 1.f, true);
-		//GetWorld()->GetTimerManager().ClearTimer(ConstructionProgressCheckTimer);
+		if (ConstructionComponent)
+		{
+			ConstructionComponent->OnComplete.AddDynamic(this, &APOTLStructure::CompleteConstruction);
+			ConstructionComponent->Init();
+		}
 	}
 	else
 	{
@@ -225,9 +224,9 @@ void APOTLStructure::Init()
 				StructureComponent->Init();
 			}
 		}
+		bIsInitialized = true;
 	}
 
-	bIsInitialized = true;
 	OnInit();
 }
 
@@ -326,6 +325,7 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 
 void APOTLStructure::OnTimeUpdate_Implementation(float Time, float TimeProgressed)
 {
+	/*
 	if (!IsPlaceholder)
 	{
 		if (IsUnderConstruction)
@@ -340,6 +340,7 @@ void APOTLStructure::OnTimeUpdate_Implementation(float Time, float TimeProgresse
 			}
 		}
 	}
+	*/
 
 	// If attached then progress construction
 

@@ -10,7 +10,8 @@
 
 
 //~~ DELEGATES ~~//
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProduction, float, Amount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStageSwitch, int, StageIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComplete);
 
 
 
@@ -28,19 +29,36 @@ public:
 
 	// Stored resources for construction
 
-	// StructureData
+	// StructureDataOnComplete
 
 	// MissingResources
 
 	// StoredResources
 
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Construction")
+	float ProcentConstructed;
 
-	FTimerHandle ProvideCheckTimer;
+	float TotalConstructionTime;
+
+	float ConstructionTimeLeft;
+
+	TArray<UResource*> StoredConstructionResources;
+
+	TMap<FString, int> MissingResources;
+
+	FTimerHandle ValidateCheckTimer;
 
 	void ValidateRequirements();
+
+
+	UPROPERTY(BlueprintAssignable, Category = "Construction|Event")
+	FOnComplete OnComplete;
 
 
 	virtual void Init() override;
 
 	virtual void BeginPlay() override;
+
+	virtual void OnTimeUpdate(float Time, float TimeProgressed) override;
 };

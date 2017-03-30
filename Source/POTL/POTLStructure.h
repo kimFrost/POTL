@@ -82,10 +82,6 @@ public:
 	bool BlockPathing;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
-	float ProcentConstructed;
-
-	float ConstructionTimeLeft;
-
 	UConstructionComponent* ConstructionComponent;
 
 	//FTimerHandle ConstructionProgressCheckTimer;
@@ -133,6 +129,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void DetachFromStructure();
 
+	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void CompleteConstruction();
 
 

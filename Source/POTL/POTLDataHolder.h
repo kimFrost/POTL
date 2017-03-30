@@ -497,10 +497,12 @@ public:
 		FString Title = "",
 		bool Burnable = false,
 		TArray<FVector> CubeSizes = TArray<FVector>(),
-		FVector Entrance = { 0, 0, 0 }, 
-		int RotationDirection = 0, 
-		bool BlockConstruction = true, 
-		bool BlockPathing = true)
+		FVector Entrance = { 0, 0, 0 },
+		int RotationDirection = 0,
+		bool BlockConstruction = true,
+		bool BlockPathing = true,
+		float ConstructionTime = 10.f,
+		TArray<FIdAmount> ConstructionCost = TArray<FIdAmount>())
 		: Id(Id)
 		, Title(Title)
 		, Burnable(Burnable)
@@ -509,6 +511,8 @@ public:
 		, RotationDirection(RotationDirection)
 		, BlockConstruction(BlockConstruction)
 		, BlockPathing(BlockPathing)
+		, ConstructionTime(ConstructionTime)
+		, ConstructionCost(ConstructionCost)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -540,6 +544,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool BlockPathing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	float ConstructionTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FIdAmount> ConstructionCost;

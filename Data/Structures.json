@@ -38,6 +38,7 @@
         "RotationDirection": 0,
         "BlockConstruction": true,
         "BlockPathing": true,
+		"ConstructionTime": 0,
 		"ConstructionCost": []
     },
     {
@@ -62,9 +63,7 @@
         "RotationDirection": 0,
         "BlockConstruction": true,
         "BlockPathing": true,
-		"ConstructionCost": [
-			{"ResourceId": "Wood", "Amount": 1}
-		]
+		"ConstructionCost": []
     },
     {
         "Name": "Windmill",
@@ -83,8 +82,9 @@
         "RotationDirection": 0,
         "BlockConstruction": true,
         "BlockPathing": true,
+		"ConstructionTime": 15,
 		"ConstructionCost": [
-			{"ResourceId": "Plank", "Amount": 1}
+			{"ResourceId": "Wood", "Amount": 3}
 		]
     },
     {
@@ -125,9 +125,7 @@
         "RotationDirection": 0,
         "BlockConstruction": true,
         "BlockPathing": true,
-		"ConstructionCost": [
-			{"ResourceId": "Wood", "Amount": 1}
-		]
+		"ConstructionCost": []
     },
     {
         "Name": "Stonecutter",

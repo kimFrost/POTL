@@ -30,26 +30,30 @@ bool UStructureComponent::ToggleOn()
 /******************** Init *************************/
 void UStructureComponent::Init()
 {
-	APOTLStructure* Structure = Cast<APOTLStructure>(GetOwner());
-	if (Structure)
+	if (!bIsInitialized)
 	{
-		ParentStructure = Structure;
-		bIsOn = true;
-
-		// Bind to time update
-		APOTLGameMode* GameMode = Cast<APOTLGameMode>(GetWorld()->GetAuthGameMode());
-		if (GameMode)
+		APOTLStructure* Structure = Cast<APOTLStructure>(GetOwner());
+		if (Structure)
 		{
-			GameMode->OnTimeUpdated.AddDynamic(this, &UStructureComponent::OnTimeUpdate);
-		}
-	}
-	else
-	{
-		// Failed to find parent structure
-		bIsOn = false;
-	}
+			ParentStructure = Structure;
+			bIsOn = true;
 
-	OnInit();
+			// Bind to time update
+			APOTLGameMode* GameMode = Cast<APOTLGameMode>(GetWorld()->GetAuthGameMode());
+			if (GameMode)
+			{
+				GameMode->OnTimeUpdated.AddDynamic(this, &UStructureComponent::OnTimeUpdate);
+			}
+		}
+		else
+		{
+			// Failed to find parent structure
+			bIsOn = false;
+		}
+
+		bIsInitialized = true;
+		OnInit();
+	}
 }
 
 
