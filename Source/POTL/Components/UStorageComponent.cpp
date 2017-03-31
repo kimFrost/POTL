@@ -16,6 +16,8 @@ UStorageComponent::UStorageComponent()
 
 	StorageCapacity = 0;
 	IncludeInStorageMap = true;
+	bIsPrivate = false;
+	bAllowFlowIn = true;
 }
 
 

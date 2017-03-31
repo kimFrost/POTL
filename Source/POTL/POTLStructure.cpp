@@ -119,7 +119,7 @@ bool APOTLStructure::StoreResource(UResource* Resource)
 		for (auto& Component : StorageComponents)
 		{
 			UStorageComponent* StorageComponent = Cast<UStorageComponent>(Component);
-			if (StorageComponent && StorageComponent->IncludeInStorageMap) // if not IncludeInStorageMap then it will not trigger update event. Like construction component
+			if (StorageComponent && StorageComponent->bAllowFlowIn)
 			{
 				if (StorageComponent->StoreResource(Resource))
 				{

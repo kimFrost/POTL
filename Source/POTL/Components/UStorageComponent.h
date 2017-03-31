@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	int StorageCapacity;
 
+	bool bIsPrivate;
+	bool bAllowFlowIn;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	TArray<FString> AllowedResources;
 

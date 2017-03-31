@@ -66,7 +66,7 @@ UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString Resou
 				{
 					FVector WorldLocation = Entry.Key;
 					UStorageComponent* StorageComp = Entry.Value;
-					if (StorageComp)
+					if (StorageComp && !StorageComp->bIsPrivate)
 					{
 						UResource* Resource = StorageComp->RequestResource(Requester, ResourceId);
 						if (Resource)
