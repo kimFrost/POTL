@@ -33,6 +33,13 @@ APOTLStructure * UResource::GetOwner()
 
 void UResource::Consume()
 {
+	// Remove from storage in StoredIn
+	if (StoredIn)
+	{
+		StoredIn->RemoveResourceFromStorage(this);
+	}
+	StoredIn = nullptr;
+
 	// Get all with reference to this. For debugging
 	TArray<UObject*> ReferredToObjs;
 	UPOTLUtilFunctionLibrary::GetObjReferenceCount(this, &ReferredToObjs);
@@ -44,12 +51,6 @@ void UResource::Consume()
 		}
 	}
 
-	// Remove from storage in StoredIn
-	if (StoredIn)
-	{
-		StoredIn->RemoveResourceFromStorage(this);
-	}
-	StoredIn = nullptr;
 	// Destroy self
 	this->ConditionalBeginDestroy(); //instantly clears UObject out of memory
 }

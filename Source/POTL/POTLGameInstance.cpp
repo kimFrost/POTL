@@ -813,7 +813,7 @@ UResource* UPOTLGameInstance::CreateResource(FString ResourceId)
 			ResourceUniqueIdCounter++;
 			//Structure->StructureBaseData = *StructureData;
 			UResource* Resource = NewObject<UResource>();
-			//UResource* Resource = NewNamedObject<UResource>(this, FName(*("Resource_" + ResourceId + FString::FromInt(ResourceUniqueIdCounter))), RF_NoFlags, nullptr);
+			//UResource* Resource = NewNamedObject<UResource>(this, FName(*("Resource_" + ResourceId + FString::FromInt(ResourceUniqueIdCounter))), RF_NoFlags, nullptr); // Crashes on cleanup on PIE close
 
 			Resource->ResourceId = ResourceId;
 			Resource->Tags = ResourceData->Tags;

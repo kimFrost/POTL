@@ -27,7 +27,16 @@ void UStorageMap::IncludeStorage(UStorageComponent* StorageComp)
 		if (StorageComp->ParentStructure)
 		{
 			FVector WorldLocation = StorageComp->ParentStructure->GetActorLocation();
-			Storages.Add(WorldLocation, StorageComp);
+			if (Storages.Contains(WorldLocation))
+			{
+				Storages[WorldLocation] = StorageComp;
+			}
+			else
+			{
+				Storages.Add(WorldLocation, StorageComp);
+			}
+			//StorageComp->OnStorageUpdate.Clear();
+			StorageComp->OnStorageUpdate.RemoveDynamic(this, &UStorageMap::StorageMapUpdated);
 			StorageComp->OnStorageUpdate.AddDynamic(this, &UStorageMap::StorageMapUpdated);
 			//StorageComp->OnComponentDestroyed.AddDynamic(this, &UStorageMap::);
 			//StorageComp->OnComponentDeactivated.AddDynamic(this, &UStorageMap::);
