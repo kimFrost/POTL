@@ -28,6 +28,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	GridXCount = 200; // Temp. Needs to be calc in point creation.
 	GridYCount = 200; // Temp. Needs to be calc in point creation.
 	HexGridReady = false;
+	ResourceUniqueIdCounter = 0;
 
 	//~~ Table data ~~//
 	DATA_Recipes = nullptr;
@@ -809,12 +810,19 @@ UResource* UPOTLGameInstance::CreateResource(FString ResourceId)
 		FST_Resource* ResourceData = DATA_Resources->FindRow<FST_Resource>(*ResourceId, ContextString);
 		if (ResourceData)
 		{
+			ResourceUniqueIdCounter++;
 			//Structure->StructureBaseData = *StructureData;
 			UResource* Resource = NewObject<UResource>();
+			//UResource* Resource = NewNamedObject<UResource>(this, FName(*("Resource_" + ResourceId + FString::FromInt(ResourceUniqueIdCounter))), RF_NoFlags, nullptr);
+
 			Resource->ResourceId = ResourceId;
 			Resource->Tags = ResourceData->Tags;
 			Resource->Value = ResourceData->Value;
 			Resource->AddToRoot(); // Prevent Garbage collection
+
+			//const TCHAR* ResourceName = *(Resource->GetFName().ToString() + ResourceId);
+			//Resource->Rename(ResourceName, this, RF_NoFlags);
+
 			return Resource;
 		}
 	}

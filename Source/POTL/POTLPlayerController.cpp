@@ -232,17 +232,22 @@ void APOTLPlayerController::LeftClickPressed()
 					{
 
 					}
-					if (ValidStructurePlaceHexes.Contains(TracedHex))
+					//TODO: Better logic for placement than using AttachTo
+					if (BuildStructureData.AttachTo.Num() > 0)
 					{
-						if (GameInstance->ValidatePlaceStructureOnHex(BuildStructureData.Id, TracedHex, BaseRotation))
-						{			
-							if (BuilderStructure)
-							{
-								BuilderStructure->RemoveStructure();
-							}
-							//~~ Plant structure on the avaiable hex ~~//
-							APOTLStructure* Structure = GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false, false);
+						if (!ValidStructurePlaceHexes.Contains(TracedHex))
+						{
+							return;
 						}
+					}
+					if (GameInstance->ValidatePlaceStructureOnHex(BuildStructureData.Id, TracedHex, BaseRotation))
+					{
+						if (BuilderStructure)
+						{
+							BuilderStructure->RemoveStructure();
+						}
+						//~~ Plant structure on the avaiable hex ~~//
+						APOTLStructure* Structure = GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false, false);
 					}
 				}
 			}

@@ -18,8 +18,10 @@ UConstructionComponent::UConstructionComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	IncludeInStorageMap = true;
+	bIsCompleted = false;
 	bIsPrivate = true;
 	bAllowFlowIn = false;
+	bAllowFlowOut = false;
 	ProcentConstructed = 0.f;
 	ConstructionTimeLeft = 5.f;
 }
@@ -29,7 +31,7 @@ UConstructionComponent::UConstructionComponent()
 void UConstructionComponent::ValidateRequirements()
 {
 	// Check missing resources and request them
-	if (ParentStructure)
+	if (ParentStructure && !bIsCompleted)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
@@ -76,52 +78,84 @@ void UConstructionComponent::ValidateRequirements()
 }
 
 
-void UConstructionComponent::Init()
+void UConstructionComponent::CompleteConstruction()
 {
-	Super::Init();
-
-	TotalConstructionTime = ParentStructure->StructureBaseData.ConstructionTime;
-	ConstructionTimeLeft = TotalConstructionTime;
-
-	MissingResources.Empty();
-	if (ParentStructure)
-	{
-		for (auto& CostEntry : ParentStructure->StructureBaseData.ConstructionCost)
-		{
-			MissingResources.Add(CostEntry.Id, CostEntry.Amount);
-		}
-	}
-
-	//~~ Subtract StoredConstructionResources from missingResources ~~//
+	bIsCompleted = true;
+	ConstructionTimeLeft = 0;
+	ProcentConstructed = 100.f;
+	GetWorld()->GetTimerManager().ClearTimer(ValidateCheckTimer);
+	//~~ Consume all resources in StoredConstructionResources ~~//
 	for (auto& Resource : StoredConstructionResources)
 	{
 		if (Resource)
 		{
-			if (MissingResources.Contains(Resource->ResourceId))
+			Resource->Consume();
+		}
+	}
+	OnComplete.Broadcast();
+}
+
+
+void UConstructionComponent::Init()
+{
+	Super::Init();
+
+	if (ParentStructure && !bConstructionComponentInitialized)
+	{
+		TotalConstructionTime = ParentStructure->StructureBaseData.ConstructionTime;
+		ConstructionTimeLeft = TotalConstructionTime;
+
+		MissingResources.Empty();
+
+		for (auto& CostEntry : ParentStructure->StructureBaseData.ConstructionCost)
+		{
+			MissingResources.Add(CostEntry.Id, CostEntry.Amount);
+		}
+
+		//~~ Subtract StoredConstructionResources from missingResources ~~//
+		for (auto& Resource : StoredConstructionResources)
+		{
+			if (Resource)
 			{
-				MissingResources[Resource->ResourceId]--;
+				if (MissingResources.Contains(Resource->ResourceId))
+				{
+					MissingResources[Resource->ResourceId]--;
+				}
 			}
 		}
-	}
-	for (auto& Entry : MissingResources)
-	{
-		if (Entry.Value < 1)
+		for (auto& Entry : MissingResources)
 		{
-			MissingResources.Remove(Entry.Key);
+			if (Entry.Value < 1)
+			{
+				MissingResources.Remove(Entry.Key);
+			}
 		}
+		MissingResources.Compact(); // Remove invalid entries if any
+
+		bConstructionComponentInitialized = true; //!! Must come before CompleteConstruction() Else infinity loop !!//
+
+		if (ConstructionTimeLeft > 0)
+		{
+			// ValidateRequirements every second
+			UWorld* World = GetWorld();
+			if (World)
+			{
+				World->GetTimerManager().SetTimer(ValidateCheckTimer, this, &UConstructionComponent::ValidateRequirements, 1.f, true);
+			}
+		}
+		else
+		{
+			CompleteConstruction();
+		}
+
+		/*
+		if (!ParentStructure || (ParentStructure && !ParentStructure->AttachedTo))
+		{
+			bIsOn = false;
+		}
+		*/
+
 	}
-	MissingResources.Compact(); // Remove invalid entries if any
-
-
-	/*
-	if (!ParentStructure || (ParentStructure && !ParentStructure->AttachedTo))
-	{
-		bIsOn = false;
-	}
-	*/
-
-	// ValidateRequirements every second
-	GetWorld()->GetTimerManager().SetTimer(ValidateCheckTimer, this, &UConstructionComponent::ValidateRequirements, 1.f, true);
 }
 
 
@@ -129,14 +163,17 @@ void UConstructionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//Deactivate();
+	//Activate(false);
+	//bIsActive
 }
 
 
 void UConstructionComponent::OnTimeUpdate(float Time, float TimeProgressed)
 {
 	Super::OnTimeUpdate(Time, TimeProgressed);
-
-	if (ProcentConstructed < 100.f)
+	
+	if (!bIsCompleted)
 	{
 		if (bIsWorking && ParentStructure)
 		{
@@ -144,17 +181,7 @@ void UConstructionComponent::OnTimeUpdate(float Time, float TimeProgressed)
 			ProcentConstructed = FMath::Abs(ConstructionTimeLeft - TotalConstructionTime) / TotalConstructionTime * 100; // 5 is construction time from data
 			if (ConstructionTimeLeft <= 0)
 			{
-				ProcentConstructed = 100.f;
-				GetWorld()->GetTimerManager().ClearTimer(ValidateCheckTimer);
-				//~~ Consume all resources in StoredConstructionResources ~~//
-				for (auto& Resource : StoredConstructionResources)
-				{
-					if (Resource)
-					{
-						Resource->Consume();
-					}
-				}
-				OnComplete.Broadcast();
+				CompleteConstruction();				
 			}
 		}
 	}

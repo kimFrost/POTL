@@ -27,9 +27,7 @@
         "Title": "House",
         "Burnable": true,
         "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_House.BP_House_C'",
-        "AttachTo": [
-            "Townhall"
-        ],
+        "AttachTo": [],
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}
         ],
@@ -84,7 +82,7 @@
         "BlockPathing": true,
 		"ConstructionTime": 15,
 		"ConstructionCost": [
-			{"ResourceId": "Wood", "Amount": 3}
+			{"Id": "Wood", "Amount": 3}
 		]
     },
     {
@@ -105,7 +103,7 @@
         "BlockConstruction": true,
         "BlockPathing": true,
 		"ConstructionCost": [
-			{"ResourceId": "Plank", "Amount": 1}
+			{"Id": "Plank", "Amount": 1}
 		]
     },
     {
@@ -145,7 +143,7 @@
         "BlockConstruction": true,
         "BlockPathing": true,
 		"ConstructionCost": [
-			{"ResourceId": "Wood", "Amount": 1}
+			{"Id": "Wood", "Amount": 1}
 		]
     },
     {
@@ -164,7 +162,7 @@
         "BlockConstruction": true,
         "BlockPathing": true,
 		"ConstructionCost": [
-			{"ResourceId": "Stone", "Amount": 2}
+			{"Id": "Stone", "Amount": 2}
 		]
     },
     {
@@ -183,7 +181,7 @@
         "BlockConstruction": true,
         "BlockPathing": true,
 		"ConstructionCost": [
-			{"ResourceId": "Plank", "Amount": 2}
+			{"Id": "Plank", "Amount": 2}
 		]
     }
 ]

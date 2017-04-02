@@ -35,6 +35,9 @@ public:
 
 	// StoredResources
 
+	bool bConstructionComponentInitialized; 
+
+	bool bIsCompleted;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Construction")
 	float ProcentConstructed;
@@ -50,6 +53,8 @@ public:
 	FTimerHandle ValidateCheckTimer;
 
 	void ValidateRequirements();
+
+	void CompleteConstruction();
 
 
 	UPROPERTY(BlueprintAssignable, Category = "Construction|Event")

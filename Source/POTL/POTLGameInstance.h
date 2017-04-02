@@ -74,6 +74,8 @@ public:
 	AActor* Landscape;
 
 
+	int ResourceUniqueIdCounter;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource")
 	UResourceMap* ResourceMap;
 

@@ -29,6 +29,9 @@ void UStorageMap::IncludeStorage(UStorageComponent* StorageComp)
 			FVector WorldLocation = StorageComp->ParentStructure->GetActorLocation();
 			Storages.Add(WorldLocation, StorageComp);
 			StorageComp->OnStorageUpdate.AddDynamic(this, &UStorageMap::StorageMapUpdated);
+			//StorageComp->OnComponentDestroyed.AddDynamic(this, &UStorageMap::);
+			//StorageComp->OnComponentDeactivated.AddDynamic(this, &UStorageMap::);
+			//StorageComp->OnComponentActivated.AddDynamic(this, &UStorageMap::);
 			StorageMapUpdated(nullptr, nullptr);
 		}
 	}
@@ -66,7 +69,7 @@ UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString Resou
 				{
 					FVector WorldLocation = Entry.Key;
 					UStorageComponent* StorageComp = Entry.Value;
-					if (StorageComp && !StorageComp->bIsPrivate)
+					if (StorageComp && StorageComp->bAllowFlowOut)
 					{
 						UResource* Resource = StorageComp->RequestResource(Requester, ResourceId);
 						if (Resource)

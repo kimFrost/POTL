@@ -28,6 +28,7 @@ public:
 	int StorageCapacity;
 
 	bool bIsPrivate;
+	bool bAllowFlowOut;
 	bool bAllowFlowIn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
