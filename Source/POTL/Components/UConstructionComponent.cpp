@@ -85,13 +85,15 @@ void UConstructionComponent::CompleteConstruction()
 	ProcentConstructed = 100.f;
 	GetWorld()->GetTimerManager().ClearTimer(ValidateCheckTimer);
 	//~~ Consume all resources in StoredConstructionResources ~~//
-	for (auto& Resource : StoredConstructionResources)
+	//for (auto& Resource : StoredConstructionResources)
+	for (auto& Resource : StoredResources)
 	{
 		if (Resource)
 		{
 			Resource->Consume();
 		}
 	}
+	StoredResources.Empty();
 	OnComplete.Broadcast();
 }
 
@@ -113,7 +115,7 @@ void UConstructionComponent::Init()
 		}
 
 		//~~ Subtract StoredConstructionResources from missingResources ~~//
-		for (auto& Resource : StoredConstructionResources)
+		for (auto& Resource : StoredResources)
 		{
 			if (Resource)
 			{

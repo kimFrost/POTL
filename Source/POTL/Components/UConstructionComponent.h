@@ -46,7 +46,7 @@ public:
 
 	float ConstructionTimeLeft;
 
-	TArray<UResource*> StoredConstructionResources;
+	//TArray<UResource*> StoredConstructionResources; Using StoredResources instead
 
 	TMap<FString, int> MissingResources;
 
