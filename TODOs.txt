@@ -53,6 +53,7 @@ Backlog -----------------------------
  
  
 Ideas ----------------------
+ - "Gravhøj" - Early first stage of religion. Simple way of dealing with "death" debuff. The specialty of religion. Will alway provide religion in range. 
  - Dwelling will "construct" structures attached to them.
  - Store resource in structure construction component and lock them. It means that construction site can be place without having all resources at the beginning of construction
  - Construction cost is taking over time. Like space engineers

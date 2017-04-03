@@ -136,7 +136,9 @@ void UProductionComponent::Init()
 	if (!ParentStructure || (ParentStructure && !ParentStructure->AttachedTo))
 	{
 		bIsOn = false;
+		//Deactivate();
 	}
+	MissingResources = RequiredResources;
 	// CheckProduction every second
 	GetWorld()->GetTimerManager().SetTimer(ProductionCheckTimer, this, &UProductionComponent::CheckProduction, 1.f, true);
 }
