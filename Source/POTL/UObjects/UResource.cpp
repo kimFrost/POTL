@@ -22,7 +22,7 @@ UResource::~UResource()
 	
 }
 
-APOTLStructure * UResource::GetOwner()
+APOTLStructure* UResource::GetOwner()
 {
 	if (StoredIn)
 	{
@@ -31,14 +31,13 @@ APOTLStructure * UResource::GetOwner()
 	return nullptr;
 }
 
-void UResource::Consume()
+void UResource::Consume(bool bRemoveFromStorage)
 {
 	// Remove from storage in StoredIn
-	if (StoredIn)
+	if (bRemoveFromStorage)
 	{
-		StoredIn->RemoveResourceFromStorage(this);
+		RemoveFromStorage();
 	}
-	StoredIn = nullptr;
 
 	// Get all with reference to this. For debugging
 	TArray<UObject*> ReferredToObjs;
@@ -53,6 +52,16 @@ void UResource::Consume()
 
 	// Destroy self
 	this->ConditionalBeginDestroy(); //instantly clears UObject out of memory
+}
+
+
+void UResource::RemoveFromStorage()
+{
+	if (StoredIn)
+	{
+		StoredIn->RemoveResourceFromStorage(this);
+	}
+	StoredIn = nullptr;
 }
 
 

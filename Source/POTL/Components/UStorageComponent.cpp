@@ -66,7 +66,7 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 		// Check for room in storage
 		if (StorageCapacity > 0)
 		{
-			if (StoredResourceCompleteList.Num() == StorageCapacity)
+			if (StoredResources.Num() == StorageCapacity)
 			{
 				return false;
 			}
@@ -76,7 +76,7 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 		StoredResources.Add(Resource);
 		Stored = true;
 		OnStorageUpdated(Resource);
-		StoredResourceCompleteList.Add(Resource);
+		//StoredResourceCompleteList.Add(Resource);
 
 		/*
 		if (StoredResourcesMap.Contains(Resource->ResourceId))
@@ -109,7 +109,7 @@ void UStorageComponent::RemoveResourceFromStorage(UResource* Resource)
 		{
 			Resource->StoredIn = nullptr;
 		}
-		StoredResourceCompleteList.Remove(Resource);
+		//StoredResourceCompleteList.Remove(Resource);
 		
 		if (StoredResources.Contains(Resource))
 		{

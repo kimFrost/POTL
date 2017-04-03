@@ -34,15 +34,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	TArray<FString> AllowedResources;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
-	TArray<UResource*> StoredResourceCompleteList;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	//TArray<UResource*> StoredResourceCompleteList;
 
 
 	
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	//TMap<FString, TArray<UResource*>> StoredResourcesMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Storage")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Storage")
 	TArray<UResource*> StoredResources;
 
 	// ?? Locked for internal use ??

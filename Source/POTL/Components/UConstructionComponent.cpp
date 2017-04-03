@@ -90,7 +90,7 @@ void UConstructionComponent::CompleteConstruction()
 	{
 		if (Resource)
 		{
-			Resource->Consume();
+			Resource->Consume(false);
 		}
 	}
 	StoredResources.Empty();

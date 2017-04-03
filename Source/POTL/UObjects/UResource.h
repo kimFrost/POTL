@@ -39,7 +39,9 @@ public:
 
 	APOTLStructure* GetOwner();
 
-	void Consume();
+	void Consume(bool bRemoveFromStorage = true);
+
+	void RemoveFromStorage();
 
 	bool Transfer(UStorageComponent* Storage);
 
