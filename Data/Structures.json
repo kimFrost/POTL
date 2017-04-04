@@ -110,6 +110,7 @@
         "Name": "Woodcutter",
         "Id": "Woodcutter",
         "Title": "Woodcutter",
+        "Description": "Must be near forest to be built",
         "Burnable": true,
         "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Woodcutter.BP_Woodcutter_C'",
         "AttachTo": [

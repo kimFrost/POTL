@@ -495,6 +495,7 @@ public:
 	FST_Structure(
 		FString Id = "",
 		FString Title = "",
+		FString Description = "",
 		bool Burnable = false,
 		TArray<FVector> CubeSizes = TArray<FVector>(),
 		FVector Entrance = { 0, 0, 0 },
@@ -505,6 +506,7 @@ public:
 		TArray<FIdAmount> ConstructionCost = TArray<FIdAmount>())
 		: Id(Id)
 		, Title(Title)
+		, Description(Description)
 		, Burnable(Burnable)
 		, CubeSizes(CubeSizes)
 		, Entrance(Entrance)
@@ -520,6 +522,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FString Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	FString Description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	bool Burnable;
