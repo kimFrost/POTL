@@ -7,7 +7,6 @@
 #include "HexDecal.h"
 #include "UHexTile.generated.h"
 
-
 //~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
 class UProviderComponent;

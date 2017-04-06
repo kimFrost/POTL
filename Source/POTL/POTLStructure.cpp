@@ -22,7 +22,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	AttachedTo = nullptr;
 
 	HexIndex = -1;
-	Hex = nullptr;
+	BaseHex = nullptr;
 	CubeCoord = { -1, -1, -1 };
 	StructureBaseData = FST_Structure{};
 	StructureRowName = TEXT("");
@@ -58,12 +58,8 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 //AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);
 
 
-/*****************************************************************************************************/
-/******************************************* RESOURCES ***********************************************/
-/*****************************************************************************************************/
+/******************** RESOURCES *************************/
 
-
-/******************** AddResource *************************/
 int APOTLStructure::AddResource(FString ResourceId, int32 Quantity)
 {
 	int Leftovers = Quantity;
@@ -108,9 +104,6 @@ int APOTLStructure::AddResource(FString ResourceId, int32 Quantity)
 	}
 	return Leftovers;
 }
-
-
-/******************** StoreResource *************************/
 bool APOTLStructure::StoreResource(UResource* Resource)
 {
 	if (Resource)
@@ -138,9 +131,6 @@ bool APOTLStructure::StoreResource(UResource* Resource)
 	}
 	return false;
 }
-
-
-/******************** AddWealth *************************/
 void APOTLStructure::AddWealth(float Amount)
 {
 	UActorComponent* ChildComponent = GetComponentByClass(UResidentsComponent::StaticClass());
@@ -157,9 +147,6 @@ void APOTLStructure::AddWealth(float Amount)
 
 	}
 }
-
-
-/******************** SubtractWealth *************************/
 void APOTLStructure::SubtractWealth(float Amount)
 {
 	UActorComponent* ChildComponent = GetComponentByClass(UResidentsComponent::StaticClass());
@@ -177,63 +164,94 @@ void APOTLStructure::SubtractWealth(float Amount)
 	}
 }
 
+/******************** CONSTRUCTION *************************/
 
-
-/*****************************************************************************************************/
-/****************************************** CONSTRUCTION *********************************************/
-/*****************************************************************************************************/
-
-
-/******************** UpdateConstrunction *************************/
-void APOTLStructure::UpdateConstrunction_Implementation()
-{
-	if (IsUnderConstruction)
-	{
-
-	}
-	else
-	{
-
-	}
-}
-
-
-/******************** Init *************************/
 void APOTLStructure::Init()
 {
 	//StructureBaseData.ConstructionTime
 
-	if (IsUnderConstruction)
+	//~~ Get hexes in range ~~//
+	if (BaseHex)
 	{
-		if (ConstructionComponent)
+		GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+		if (GameInstance)
 		{
-			ConstructionComponent->OnComplete.AddDynamic(this, &APOTLStructure::CompleteConstruction);
-			ConstructionComponent->Init();
+			TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(CubeCoord, 5, false);
+			for (int32 i = 0; i < Cubes.Num(); i++)
+			{
+				FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cubes[i]);
+				int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
+				if (GameInstance->Hexes.IsValidIndex(HexIndex))
+				{
+					HexesInRange.Add(GameInstance->Hexes[HexIndex]);
+				}
+			}
 		}
+	}
+
+	if (IsPlaceholder)
+	{
+		// Show area resource information and new connections to other structures
+		for (auto& Hex : HexesInRange)
+		{
+			if (Hex)
+			{
+				Hex->ShowDecal(EDecalType::ValidBuild);
+
+				// Spawn AResourceSpot (Hex)
+
+				//Hex->ShowResourceInformation();
+
+				if (Hex->AttachedBuilding)
+				{
+					// Show new Connection information
+					// StructuresInRange.Add(Hex->AttachedBuilding)
+				}
+			}
+		}
+		// On Remove/Destroy clean up resource- and connection information.
+
 	}
 	else
 	{
-		ProcessBaseData();
-		// Initialize all UStructureComponents
-		TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
-		for (auto& Component : StructureComponents)
+		if (IsUnderConstruction)
 		{
-			UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
-			if (StructureComponent)
+			if (ConstructionComponent)
 			{
-				StructureComponent->Init();
+				ConstructionComponent->OnComplete.AddDynamic(this, &APOTLStructure::CompleteConstruction);
+				ConstructionComponent->Init();
 			}
 		}
-		bIsInitialized = true;
+		else
+		{
+			ProcessBaseData();
+			// Initialize all UStructureComponents
+			TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
+			for (auto& Component : StructureComponents)
+			{
+				UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
+				if (StructureComponent)
+				{
+					StructureComponent->Init();
+				}
+			}
+			bIsInitialized = true;
+		}
+		OnInit();
 	}
-
-	OnInit();
 }
-
-
-/******************** RemoveStructure *************************/
 void APOTLStructure::RemoveStructure()
 {
+	if (IsPlaceholder)
+	{
+		for (auto& Hex : HexesInRange)
+		{
+			if (Hex)
+			{
+				Hex->HideDecal();
+			}
+		}
+	}
 	//~~ Remove self from hexes ~~//
 	for (auto& OccupiedHex : OccupiedHexes)
 	{
@@ -242,18 +260,15 @@ void APOTLStructure::RemoveStructure()
 			OccupiedHex->AttachedBuilding = nullptr;
 		}
 	}
-	if (Hex)
+	if (BaseHex)
 	{
-		Hex->AttachedBuilding = nullptr;
+		BaseHex->AttachedBuilding = nullptr;
 	}
 	//~~ Clear all timers ~~//
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 	//~~ DESTROY ~~//
 	Destroy();
 }
-
-
-/******************** ProcessBaseData *************************/
 void APOTLStructure::ProcessBaseData()
 {
 	/*
@@ -268,7 +283,6 @@ void APOTLStructure::ProcessBaseData()
 	}
 	*/
 }
-
 void APOTLStructure::AttachToStructure(APOTLStructure* Structure)
 {
 	if (IsValid(Structure))
@@ -277,7 +291,6 @@ void APOTLStructure::AttachToStructure(APOTLStructure* Structure)
 		Structure->AttachedStructures.Add(this);
 	}
 }
-
 void APOTLStructure::DetachFromStructure()
 {
 	if (AttachedTo)
@@ -286,9 +299,6 @@ void APOTLStructure::DetachFromStructure()
 		AttachedTo = nullptr;
 	}
 }
-
-
-/******************** CompleteConstruction *************************/
 void APOTLStructure::CompleteConstruction()
 {
 	IsUnderConstruction = false;
@@ -296,14 +306,7 @@ void APOTLStructure::CompleteConstruction()
 	Init(); // Re-init structure
 };
 
-
-/*****************************************************************************************************/
-/********************************************** MAP **************************************************/
-/*****************************************************************************************************/
-
-
-
-/******************** GetNearestStructure *************************/
+/******************** MAP *************************/
 APOTLStructure* APOTLStructure::GetNearestStructure()
 {
 	APOTLStructure* NearestStructure = nullptr;
@@ -321,8 +324,17 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 	return NearestStructure;
 }
 
+void APOTLStructure::UpdateConstrunction_Implementation()
+{
+	if (IsUnderConstruction)
+	{
 
+	}
+	else
+	{
 
+	}
+}
 void APOTLStructure::OnTimeUpdate_Implementation(float Time, float TimeProgressed)
 {
 	/*
@@ -346,19 +358,14 @@ void APOTLStructure::OnTimeUpdate_Implementation(float Time, float TimeProgresse
 
 	// Check Construction progress -> Complete construction()
 }
-
-
 void APOTLStructure::OnInit_Implementation()
 {
 
 }
-
-
 void APOTLStructure::OnConstructionComplete_Implementation()
 {
 
 }
-
 
 //~~ Called when the game starts or when spawned ~~//
 void APOTLStructure::BeginPlay()

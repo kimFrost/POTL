@@ -36,8 +36,6 @@ int32 UPOTLUtilFunctionLibrary::GetObjReferenceCount(UObject* Obj, TArray<UObjec
 	return 0;
 }
 
-
-/******************** RotateCube *************************/
 FVector UPOTLUtilFunctionLibrary::RotateCube(FVector CubeCoord, int32 Direction, FVector CenterCube)
 {
 	Direction = Direction % 6;
@@ -77,8 +75,6 @@ FVector UPOTLUtilFunctionLibrary::RotateCube(FVector CubeCoord, int32 Direction,
 	}
 	return RotatedCube;
 }
-
-/******************** RotateCubes *************************/
 TArray<FVector> UPOTLUtilFunctionLibrary::RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube)
 {
 	Direction = Direction % 6;
@@ -128,9 +124,6 @@ TArray<FVector> UPOTLUtilFunctionLibrary::RotateCubes(TArray<FVector> CubeCoords
 	}
 	return RotatedCubes;
 }
-
-
-/******************** RoundCube *************************/
 FVector UPOTLUtilFunctionLibrary::RoundCube(FVector Cube)
 {	
 	FVector RoundedCube;
@@ -158,9 +151,6 @@ FVector UPOTLUtilFunctionLibrary::RoundCube(FVector Cube)
 	RoundedCube = FVector{ (float)(Rx), (float)(Ry), (float)(Rz) };
 	return RoundedCube;
 }
-
-
-/******************** LocationToCube *************************/
 FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidth, float HexHeight, FVector Location)
 {
 	Location = Location - FVector{ HexWidth / 2, HexHeight / 2, 0 };
@@ -177,9 +167,6 @@ FVector UPOTLUtilFunctionLibrary::LocationToCube(int32 GridXCount, float HexWidt
 	return RoundCube(AxialToCube(Q, R));
 	//return RoundCube(ConvertOffsetToCube(FVector2D{ Q, R }));
 }
-
-
-/******************** GetGridIndex *************************/
 int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap)
 {
 	int32 index;
@@ -189,9 +176,6 @@ int32 UPOTLUtilFunctionLibrary::GetGridIndex(int32 GridWidth, int32 Column, int3
 	index = ((Row * GridWidth) + Column + Row) * (1 + (2 * insideGrid));
 	return index;
 }
-
-
-/******************** GetHexIndex *************************/
 int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCount)
 {
 	int32 GridWidth = (GridXCount - (GridXCount % 2)) / 2 - 1;
@@ -199,9 +183,6 @@ int32 UPOTLUtilFunctionLibrary::GetHexIndex(FVector2D OffsetCoord, int32 GridXCo
 	Index = Index - (FMath::FloorToInt(OffsetCoord.Y) / 2 * ((GridXCount + 1) % 2));
 	return Index;
 }
-
-
-/******************** CubesToHexIndexes *************************/
 TArray<int32> UPOTLUtilFunctionLibrary::CubesToHexIndexes(TArray<FVector> Cubes, int32 GridXCount)
 {
 	TArray<int32> HexIndexes;
@@ -214,20 +195,12 @@ TArray<int32> UPOTLUtilFunctionLibrary::CubesToHexIndexes(TArray<FVector> Cubes,
 	}
 	return HexIndexes;
 }
-
-
-/******************** LogMsg *************************/
 void UPOTLUtilFunctionLibrary::LogMsg(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
 {
 	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);
 }
 
-
-
-/**--- AMIT ------------------------*/
-
-
-/******************** GetCubeDistance *************************/
+/******************** AMIT *************************/
 int32 UPOTLUtilFunctionLibrary::GetCubeDistance(FVector CubeCoordsFrom, FVector CubeCoordsTo)
 {
 	int32 Distance;
@@ -236,9 +209,6 @@ int32 UPOTLUtilFunctionLibrary::GetCubeDistance(FVector CubeCoordsFrom, FVector 
 	//float X = FMath::Max(DistanceVector.X);
 	return Distance;
 }
-
-
-/******************** GetCubesInRange *************************/
 TArray<FVector> UPOTLUtilFunctionLibrary::GetCubesInRange(FVector CubeCoordsFrom, int32 Range, bool IncludeFrom)
 {
 	TArray<FVector> Cubes;
@@ -263,9 +233,6 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetCubesInRange(FVector CubeCoordsFrom
 	}
 	return Cubes;
 }
-
-
-/******************** ConvertOffsetToCube *************************/
 FVector UPOTLUtilFunctionLibrary::ConvertOffsetToCube(FVector2D OffsetCoords)
 {
 	FVector CubeCoords;
@@ -277,9 +244,6 @@ FVector UPOTLUtilFunctionLibrary::ConvertOffsetToCube(FVector2D OffsetCoords)
 	CubeCoords.Z = OffsetCoords.Y;
 	return CubeCoords;
 }
-
-
-/******************** ConvertCubeToOffset *************************/
 FVector2D UPOTLUtilFunctionLibrary::ConvertCubeToOffset(FVector CubeCoords)
 {
 	int32 CubeCoordsZFloored = FMath::FloorToInt(CubeCoords.Z);
@@ -288,9 +252,6 @@ FVector2D UPOTLUtilFunctionLibrary::ConvertCubeToOffset(FVector CubeCoords)
 	OffsetCoords.Y = CubeCoords.Z;
 	return OffsetCoords;
 }
-
-
-/******************** AxialToCube *************************/
 FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
 {
 	FVector CubeCoords;
@@ -300,8 +261,6 @@ FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
 	return CubeCoords;
 }
 
-
-/******************** ActorExits *************************/
 void UPOTLUtilFunctionLibrary::ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEnum>& Branches)
 {
 	if (Actor)
@@ -313,9 +272,6 @@ void UPOTLUtilFunctionLibrary::ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEn
 		Branches = EBoolGateEnum::Null;
 	}
 }
-
-
-/******************** HexesToHexIndex *************************/
 TArray<int32> UPOTLUtilFunctionLibrary::HexesToHexIndexes(const TArray<UHexTile*>& Hexes)
 {
 	TArray<int32> HexIndexes;
@@ -329,9 +285,6 @@ TArray<int32> UPOTLUtilFunctionLibrary::HexesToHexIndexes(const TArray<UHexTile*
 	}
 	return HexIndexes;
 }
-
-
-/******************** SubtractHexes *************************/
 TArray<UHexTile*> UPOTLUtilFunctionLibrary::SubtractHexes(const TArray<UHexTile*>& Hexes, const TArray<UHexTile*>& Subtraction)
 {
 	TArray<UHexTile*> Result;
@@ -352,9 +305,6 @@ TArray<UHexTile*> UPOTLUtilFunctionLibrary::SubtractHexes(const TArray<UHexTile*
 	}
 	return Result;
 }
-
-
-/******************** IntersectHexes *************************/
 TArray<UHexTile*> UPOTLUtilFunctionLibrary::IntersectHexes(const TArray<UHexTile*>& Hexes, const TArray<UHexTile*>& Intersection)
 {
 	TArray<UHexTile*> Result;
@@ -378,9 +328,6 @@ TArray<UHexTile*> UPOTLUtilFunctionLibrary::IntersectHexes(const TArray<UHexTile
 	}
 	return Result;
 }
-
-
-/******************** GetAdjacentHexesToHex *************************/
 TArray<UHexTile*> UPOTLUtilFunctionLibrary::GetAdjacentHexesToHex(const UHexTile* Hex)
 {
 	TArray<UHexTile*> AdjacentHexes;
@@ -396,9 +343,6 @@ TArray<UHexTile*> UPOTLUtilFunctionLibrary::GetAdjacentHexesToHex(const UHexTile
 	}
 	return AdjacentHexes;
 }
-
-
-/******************** GetAdjacentHexesToHexes *************************/
 TArray<UHexTile*> UPOTLUtilFunctionLibrary::GetAdjacentHexesToHexes(const TArray<UHexTile*>& Hexes)
 {
 	TArray<UHexTile*> AdjacentHexes;

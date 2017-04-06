@@ -41,8 +41,8 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 
 }
 
+/******************** DATA *************************/
 
-/******************** ReadTables *************************/
 void UPOTLGameInstance::ReadTables()
 {
 	//auto cls = StaticLoadObject(UObject::StaticClass(), nullptr, TEXT("/Game/Wood_Table_Blueprint")); 
@@ -67,9 +67,8 @@ void UPOTLGameInstance::ReadTables()
 	}
 }
 
+/******************** MAP - CONSTRUCTION *************************/
 
-
-/******************** IsHexBlocked *************************/
 bool UPOTLGameInstance::IsHexBlocked(const UHexTile* Hex)
 {
 	bool Blocked = false;
@@ -89,9 +88,6 @@ bool UPOTLGameInstance::IsHexBlocked(const UHexTile* Hex)
 	}
 	return Blocked;
 }
-
-
-/******************** IsHexBuildable *************************/
 bool UPOTLGameInstance::IsHexBuildable(const UHexTile* Hex)
 {
 	bool Buildable = true;
@@ -111,9 +107,6 @@ bool UPOTLGameInstance::IsHexBuildable(const UHexTile* Hex)
 	}
 	return Buildable;
 }
-
-
-/******************** IsHexTerrainBuildable *************************/
 bool UPOTLGameInstance::IsHexTerrainBuildable(const UHexTile* Hex)
 {
 	if (IsValid(Hex))
@@ -128,7 +121,6 @@ bool UPOTLGameInstance::IsHexTerrainBuildable(const UHexTile* Hex)
 		return false;
 	}
 }
-
 bool UPOTLGameInstance::ValidatePlaceStructureOnHex(FString StructureId, UHexTile* Hex, int Rotation)
 {
 	bool Valid = false;
@@ -176,7 +168,6 @@ bool UPOTLGameInstance::ValidatePlaceStructureOnHex(FString StructureId, UHexTil
 	}
 	return Valid;
 }
-
 FST_Structure* UPOTLGameInstance::GetStructureRowData(FString RowName)
 {
 	if (DATA_Structures)
@@ -186,23 +177,16 @@ FST_Structure* UPOTLGameInstance::GetStructureRowData(FString RowName)
 	}
 	return nullptr;
 }
-
-
-/******************** PlantPlaceholderStructure *************************/
 APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild)
 {
 	APOTLStructure* Structure = nullptr;
 	Structure = PlantStructure(CubeCoord, RotationDirection, RowName, AttachTo, InstaBuild, true);
 	if (Structure)
 	{
-		Structure->IsPlaceholder = true;
 		PlaceholderStructures.Add(Structure);
 	}
 	return Structure;
 }
-
-
-/******************** PlantStructure *************************/
 APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild, bool IsPlaceholder)
 {
 	APOTLStructure* Structure = nullptr;
@@ -235,10 +219,30 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 
 					// Spawn the pickup
 					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
-					if (Structure && !IsPlaceholder)
+					if (Structure)
 					{
 						//~~ Store cubecoord in structure ~~//
 						Structure->CubeCoord = CubeCoord;
+
+						//~~ Store structure raw data ~~//
+						Structure->StructureRowName = RowName;
+						Structure->StructureBaseData = *StructureData;
+						Structure->StructureBaseData.RotationDirection = RotationDirection;
+						Structure->IsPlaceholder = IsPlaceholder;
+						if (Structure->IsPlaceholder)
+						{
+
+						}
+
+						//~~ Store hex in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
+						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
+						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+						if (Hexes.IsValidIndex(HexIndex))
+						{
+							UHexTile* Hex = Hexes[HexIndex];
+							Structure->BaseHex = Hex;
+							//Structure->HexIndex = HexIndex;
+						}
 
 						//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
 						FVector BroadcastCubeCoord = StructureData->Entrance + CubeCoord;
@@ -251,15 +255,6 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 							//Structure->Hex = Hex;
 						}
 
-						//~~ Store hex in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
-						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
-						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
-						if (Hexes.IsValidIndex(HexIndex))
-						{
-							UHexTile* Hex = Hexes[HexIndex];
-							Structure->Hex = Hex;
-							//Structure->HexIndex = HexIndex;
-						}
 
 						//~~ Set Structure on all hexes based on cube location and structure size ~~//
 						for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
@@ -273,21 +268,15 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 								UHexTile* Hex = Hexes[HexIndex];
 								if (IsValid(Hex))
 								{
-									Hex->AttachedBuilding = Structure;
+									if (!IsPlaceholder)
+									{
+										Hex->AttachedBuilding = Structure;
+									}
 									Structure->OccupiedHexes.Add(Hex);
 								}
 							}
 						}
 
-						//~~ Store structure raw data ~~//
-						Structure->StructureRowName = RowName;
-						Structure->StructureBaseData = *StructureData;
-						Structure->StructureBaseData.RotationDirection = RotationDirection;
-						Structure->IsPlaceholder = IsPlaceholder;
-						if (Structure->IsPlaceholder)
-						{
-
-						}
 						//~~ InstaBuild for debugging ~~//
 						if (InstaBuild)
 						{
@@ -328,9 +317,6 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 	OnStructurePlanted.Broadcast(Structure);
 	return Structure;
 }
-
-
-/******************** RemoveStructure *************************/
 void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 {
 	if (Structure)
@@ -342,7 +328,7 @@ void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 
 		for (int32 i = 0; i < StructureBaseData.CubeSizes.Num(); i++)
 		{
-			FVector LocalCubeCoord = StructureBaseData.CubeSizes[i] + Structure->CubeCoord; 
+			FVector LocalCubeCoord = StructureBaseData.CubeSizes[i] + Structure->CubeCoord;
 			LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, RotationDirection, Structure->CubeCoord);
 			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
 			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
@@ -360,13 +346,8 @@ void UPOTLGameInstance::RemoveStructure(APOTLStructure* Structure)
 	}
 }
 
+/******************** MAP - CREATION *************************/
 
-
-/*****************************************************************************************************/
-/**************************************** MAP - CREATION *********************************************/
-/*****************************************************************************************************/
-
-/******************** TraceLandscape *************************/
 void UPOTLGameInstance::TraceLandscape()
 {
 	StorageMap = NewObject<UStorageMap>();
@@ -421,9 +402,6 @@ void UPOTLGameInstance::TraceLandscape()
 		}
 	}
 }
-
-
-/******************** CreateHexes *************************/
 void UPOTLGameInstance::CreateHexes()
 {
 	if (Landscape != NULL) {
@@ -505,9 +483,6 @@ void UPOTLGameInstance::CreateHexes()
 		}
 	}
 }
-
-
-/******************** CleanHexes *************************/
 void UPOTLGameInstance::CleanHexes()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CleanHexes");
@@ -538,9 +513,6 @@ void UPOTLGameInstance::CleanHexes()
 
 	Hexes = ValidHexes;
 }
-
-
-/******************** EnrichHexes *************************/
 void UPOTLGameInstance::EnrichHexes()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "EnrichHexes");
@@ -577,9 +549,6 @@ void UPOTLGameInstance::EnrichHexes()
 		}
 	}
 }
-
-
-/******************** CalcHexesRot *************************/
 void UPOTLGameInstance::CalcHexesRot()
 {
 	float HexRealHeight = HexWidth / FMath::Sqrt(3) * 2;
@@ -610,9 +579,6 @@ void UPOTLGameInstance::CalcHexesRot()
 		}
 	}
 }
-
-
-/******************** AnalyseLandscape *************************/
 void UPOTLGameInstance::AnalyseLandscape()
 {
 	//UGameplayStatics::
@@ -708,9 +674,6 @@ void UPOTLGameInstance::AnalyseLandscape()
 		}
 	}
 }
-
-
-/******************** CalcHexResourceDensity *************************/
 void UPOTLGameInstance::CalcHexResourceDensity()
 {
 	int32 MaxForestDepth = 5;
@@ -784,14 +747,8 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 	}
 }
 
+/******************** MAP - Resources *************************/
 
-
-/*****************************************************************************************************/
-/************************************** Map - Resources **********************************************/
-/*****************************************************************************************************/
-
-
-/******************** IncludeStorage *************************/
 void UPOTLGameInstance::IncludeStorage(UStorageComponent* StorageComp)
 {
 	if (StorageMap)
@@ -799,9 +756,6 @@ void UPOTLGameInstance::IncludeStorage(UStorageComponent* StorageComp)
 		StorageMap->IncludeStorage(StorageComp);
 	}
 }
-
-
-/******************** CreateResource *************************/
 UResource* UPOTLGameInstance::CreateResource(FString ResourceId)
 {
 	if (DATA_Resources)
@@ -828,20 +782,15 @@ UResource* UPOTLGameInstance::CreateResource(FString ResourceId)
 	}
 	return nullptr;
 }
-
-
-/******************** RequestResource *************************/
 UResource* UPOTLGameInstance::RequestResource(APOTLStructure* Requester, FString ResourceId)
 {
 	if (StorageMap)
 	{
 		return StorageMap->RequestResource(Requester, ResourceId);
 	}
+
 	return nullptr;
 }
-
-
-/******************** RequestResourceByTag *************************/
 UResource * UPOTLGameInstance::RequestResourceByTag(APOTLStructure * Requester, FString Tag)
 {
 	if (StorageMap)
@@ -850,9 +799,6 @@ UResource * UPOTLGameInstance::RequestResourceByTag(APOTLStructure * Requester, 
 	}
 	return nullptr;
 }
-
-
-/******************** TransferResource *************************/
 void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponent* ToComp, bool Consume = false, bool IsFree = false)
 {
 	if (Resource)
@@ -912,12 +858,7 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 	}
 }
 
-
-/*****************************************************************************************************/
-/**************************************** UTIL - Hex *************************************************/
-/*****************************************************************************************************/
-
-/******************** MouseToHex *************************/
+/******************** UTIL - Hex *************************/
 UHexTile* UPOTLGameInstance::MouseToHex()
 {
 	UHexTile* Hex = nullptr;
@@ -961,9 +902,6 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 	}
 	return Hex;
 }
-
-
-/******************** LocationToHex *************************/
 UHexTile* UPOTLGameInstance::LocationToHex(FVector Location)
 {
 	UHexTile* Hex = nullptr;
@@ -978,12 +916,7 @@ UHexTile* UPOTLGameInstance::LocationToHex(FVector Location)
 	return Hex;
 }
 
-
-/*****************************************************************************************************/
-/**************************************** DEBUG - LOG ************************************************/
-/*****************************************************************************************************/
-
-/******************** Log *************************/
+/******************** DEBUG - LOG *************************/
 void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
 {
 	GEngine->AddOnScreenDebugMessage(GroupIndex, Duration, DebugColor, Msg);

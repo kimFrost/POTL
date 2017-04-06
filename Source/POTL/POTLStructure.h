@@ -46,7 +46,10 @@ public:
 	TArray<APOTLStructure*> AttachedStructures;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	UHexTile* Hex;
+	UHexTile* BaseHex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<UHexTile*> HexesInRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<UHexTile*> OccupiedHexes;

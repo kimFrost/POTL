@@ -27,15 +27,10 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 }
 
 
-
-/******************** ProcessConstructLocations *************************/
 void APOTLPlayerController::ProcessConstructLocations()
 {
 	
 }
-
-
-/******************** RotateStructure *************************/
 void APOTLPlayerController::RotateStructure()
 {
 	BaseRotation = (BaseRotation + 1) % 6;
@@ -70,9 +65,6 @@ void APOTLPlayerController::RotateStructure()
 		*/
 	}
 }
-
-
-/******************** SetToolType *************************/
 void APOTLPlayerController::SetToolType(EToolType ToolType)
 {
 	// Unload previous tool
@@ -90,6 +82,12 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 			}
 		}
 		ValidStructurePlaceHexes.Empty();
+		/*
+		if (GameInstance)
+		{
+			GameInstance->CleanupPlacementDetails();
+		}
+		*/
 	}
 	// Load new tool
 	if (ToolType == EToolType::PlantStructure)
@@ -144,10 +142,6 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 	ActiveToolType = ToolType;
 }
 
-
-
-/******************** BeginPlay *************************/
-//~~ Called when the game starts or when spawned ~~//
 void APOTLPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -155,9 +149,6 @@ void APOTLPlayerController::BeginPlay()
 	//GameInstance->OnMapReady.AddDynamic();
 
 }
-
-
-/******************** Tick *************************/
 void APOTLPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -169,6 +160,8 @@ void APOTLPlayerController::Tick(float DeltaTime)
 		{
 			CachedHex = TracedHex;
 			OnHexOver.Broadcast(CachedHex); //~~ Call hex over event dispatcher ~~//
+
+			//~~ Tool : PlantStructure ~~//
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
 				if (BuilderStructure)
@@ -177,11 +170,16 @@ void APOTLPlayerController::Tick(float DeltaTime)
 				}
 				if (!CachedHex->AttachedBuilding) {
 					BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
+					
+					// Highlight area with connection and available resources
+					//GameInstance->ShowPotentialPlacementDetails(CachedHex);
+
 					//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
 					ProcessConstructLocations();
 				}
 				
 			}
+			//~~ Tool : Select ~~//
 			else if (ActiveToolType == EToolType::Select)
 			{
 
@@ -189,9 +187,6 @@ void APOTLPlayerController::Tick(float DeltaTime)
 		}
 	}
 }
-
-
-/******************** SetupPlayerInputComponent *************************/
 void APOTLPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -213,9 +208,8 @@ void APOTLPlayerController::SetupInputComponent()
 	//InputComponent->BindTouch(IE_Pressed, this, &ATutorialCodeCharacter::TouchStarted);
 }
 
-//~~ Input functions ~~//
+/******************** Input functions *************************/
 
-/******************** LeftClickPressed *************************/
 void APOTLPlayerController::LeftClickPressed()
 {
 	LeftMouseButtonDown = true;
@@ -291,21 +285,15 @@ void APOTLPlayerController::LeftClickPressed()
 		}
 	}
 }
-
-/******************** LeftClickReleased *************************/
 void APOTLPlayerController::LeftClickReleased()
 {
 	LeftMouseButtonDown = false;
 }
-
-/******************** LeftClickPressed *************************/
 void APOTLPlayerController::RightClickPressed()
 {
 	RightMouseButtonDown = true;
 	SetToolType(EToolType::Select);
 }
-
-/******************** LeftClickReleased *************************/
 void APOTLPlayerController::RightClickReleased()
 {
 	RightMouseButtonDown = false;

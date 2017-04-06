@@ -32,9 +32,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStructurePlanted, APOTLStructure*, 
 
 
 
-/**
-*
-*/
 UCLASS()
 class POTL_API UPOTLGameInstance : public UGameInstance
 {
@@ -142,6 +139,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void RemoveStructure(APOTLStructure* Structure);
 
+	/*
+private:
+	TArray<UHexTile*> StoredPotentialDetailsHexes;
+public:
+	void ShowPotentialPlacementDetails(UHexTile* Hex);
+	void CleanupPlacementDetails();
+*/
 
 	//~~ Map - Creation ~~//
 
@@ -176,6 +180,7 @@ public:
 	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
 
 	UResource* RequestResourceByTag(APOTLStructure* Requester, FString Tag);
+
 
 	void TransferResource(UResource* Resource, UStructureComponent* ToComp, bool Consume, bool IsFree);
 
