@@ -209,8 +209,8 @@ void APOTLStructure::Init()
 				}
 			}
 		}
+		OnShowResourceInformation();
 		// On Remove/Destroy clean up resource- and connection information.
-
 	}
 	else
 	{
@@ -266,6 +266,7 @@ void APOTLStructure::RemoveStructure()
 	}
 	//~~ Clear all timers ~~//
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+	OnRemoveStructure();
 	//~~ DESTROY ~~//
 	Destroy();
 }
@@ -366,6 +367,15 @@ void APOTLStructure::OnConstructionComplete_Implementation()
 {
 
 }
+void APOTLStructure::OnRemoveStructure_Implementation()
+{
+
+}
+void APOTLStructure::OnShowResourceInformation_Implementation()
+{
+
+}
+
 
 //~~ Called when the game starts or when spawned ~~//
 void APOTLStructure::BeginPlay()

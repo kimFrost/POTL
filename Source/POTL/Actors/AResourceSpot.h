@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "UObjects/UResource.h"
+#include "../UObjects/UResource.h"
 #include "UObjects/UHexTile.h"
 #include "AResourceSpot.generated.h"
 
@@ -20,10 +20,14 @@ public:
 	// Sets default values for this actor's properties
 	AResourceSpot(const FObjectInitializer &ObjectInitializer);
 
-	// Resource ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "ResourceID", ExposeOnSpawn = true), Category = "Resource")
+	FString ResourceId;
 
-	// Hex
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true), Category = "Resource")
+	UHexTile* Hex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true), Category = "Resource")
+	TArray<UHexTile*> Hexes;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -154,6 +154,13 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
 	void OnConstructionComplete();
 
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnRemoveStructure();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnShowResourceInformation();
+
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

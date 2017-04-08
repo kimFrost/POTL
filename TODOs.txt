@@ -74,8 +74,8 @@ Temp Notes ----------------------
 
 R = 255 / 1.7 = 150 == 147
 
-!!RequestResource function only return a pointer to a avaiable resource. It does not consume or transfer the resource!!
 
+!!RequestResource function only return a pointer to a avaiable resource. It does not consume or transfer the resource!!
 
 // Transaction result benifit types?
 	- Wealth
@@ -84,6 +84,28 @@ R = 255 / 1.7 = 150 == 147
 	- 
 
 
+	
+	
+Hunting cabin
+	- Gathers food/meat from forest tiles
+	- Gathers pelts from forest tiles
+	- +10% from forest
+	- +2% from grassland
+	
+	
+HuntingCabing(require 1 labor?)
+	- ability to pick hunting tiles
+		- hunt (reg 1 labor, gives 1 meat every 10s, gives 1 pelt every 20s)
+	
+Farmhouse (required 1 labor?)
+	- ability to plot down farm land of types
+		- Wheatfield (reg 1 labor, gives 1 wheat every 15s)
+		- Cabagefield (reg 1 labor, gives 1 gabage every 15s)
+	
+	
+	
+	
+	
 UProductionComponent call Request resource on game instance to get a pointer to a resource of type.
 Then UProductionComponent call TransferResource on game instance with parameter for consume and/or free transaction
 	- TransferResource() - will call resource->Transfer and update all storages associated with the resource
