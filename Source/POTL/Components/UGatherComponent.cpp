@@ -36,7 +36,8 @@ void UGatherComponent::ValidateRequirements()
 {
 	//TODO: Better validation Logic for attachedTo
 
-	if (ParentStructure && ParentStructure->AttachedTo)
+	//if (ParentStructure && ParentStructure->AttachedTo)
+	if (ParentStructure)
 	{
 		bIsWorking = true;
 		/*
@@ -72,12 +73,16 @@ void UGatherComponent::OnProgressComplete()
 
 	OnGathered();
 	
-	
 	if (ParentStructure)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
 		{
+			// Gather from hexes
+			//ParentStructure->HexesInRange
+
+			// Or from allocated hexes with picker
+
 			bool AnyGathered = false;
 			for (auto& Hex : HexesInRange)
 			{

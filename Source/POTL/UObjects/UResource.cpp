@@ -31,7 +31,7 @@ APOTLStructure* UResource::GetOwner()
 	return nullptr;
 }
 
-void UResource::Consume(bool bRemoveFromStorage)
+void UResource::Consume(EConsumeType ConsumeType, bool bRemoveFromStorage)
 {
 	// Remove from storage in StoredIn
 	if (bRemoveFromStorage)

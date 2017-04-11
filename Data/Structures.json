@@ -22,11 +22,11 @@
         "BlockPathing": true
     },
     {
-        "Name": "House",
-        "Id": "House",
-        "Title": "House",
+        "Name": "BasicTenant",
+        "Id": "BasicTenant",
+        "Title": "Basic tenant",
         "Burnable": true,
-        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_House.BP_House_C'",
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_BasicTenant.BP_BasicTenant_C'",
         "AttachTo": [],
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}
@@ -46,7 +46,7 @@
         "Burnable": true,
         "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Farm.BP_Farm_C'",
         "AttachTo": [
-            "House"
+            "BasicTenant"
         ],
         "CubeSizes": [
 			{"X":0, "Y":0, "Z":0},
@@ -70,7 +70,7 @@
         "Burnable": true,
         "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Windmill.BP_Windmill_C'",
         "AttachTo": [
-            "House"
+            "BasicTenant"
         ],
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}
@@ -92,7 +92,7 @@
         "Burnable": true,
         "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Bakery.BP_Bakery_C'",
         "AttachTo": [
-            "House"
+            "BasicTenant"
         ],
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}
@@ -114,7 +114,7 @@
         "Burnable": true,
         "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Woodcutter.BP_Woodcutter_C'",
         "AttachTo": [
-            "House"
+            "BasicTenant"
         ],
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}
@@ -133,7 +133,7 @@
         "Burnable": true,
         "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Stonecutter.BP_Stonecutter_C'",
         "AttachTo": [
-            "House"
+            "BasicTenant"
         ],
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}

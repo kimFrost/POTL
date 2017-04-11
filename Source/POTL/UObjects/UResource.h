@@ -5,9 +5,20 @@
 #include "UObject/NoExportTypes.h"
 #include "UResource.generated.h"
 
+
 //~~~~~ Forward Declarations ~~~~~//
 class UStorageComponent;
 class APOTLStructure;
+
+//~~~~~ Enum ~~~~~//
+UENUM(BlueprintType)
+enum class EConsumeType : uint8
+{
+	Undefined UMETA(DisplayName = "Undefined"),
+	Need UMETA(DisplayName = "Need"),
+	Construction UMETA(DisplayName = "Construction")
+};
+
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -39,7 +50,7 @@ public:
 
 	APOTLStructure* GetOwner();
 
-	void Consume(bool bRemoveFromStorage = true);
+	void Consume(EConsumeType ConsumeType = EConsumeType::Undefined, bool bRemoveFromStorage = true);
 
 	void RemoveFromStorage();
 
