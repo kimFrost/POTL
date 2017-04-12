@@ -66,6 +66,11 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 		}
 		*/
 	}
+	if (ActiveToolType == EToolType::Select)
+	{
+		DeselectSelectedStructures();
+	}
+	
 	// Load new tool
 	if (ToolType == EToolType::PlantStructure)
 	{
@@ -121,6 +126,18 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 	}
 
 	ActiveToolType = ToolType;
+}
+
+void APOTLPlayerController::DeselectSelectedStructures()
+{
+	for (auto& Structure : SelectedStructures)
+	{
+		if (Structure)
+		{
+			Structure->Deselect();
+		}
+	}
+	SelectedStructures.Empty();
 }
 
 void APOTLPlayerController::BeginPlay()
@@ -221,6 +238,13 @@ void APOTLPlayerController::LeftClickPressed()
 			}
 			else if (ActiveToolType == EToolType::Select)
 			{
+				if (CachedHex->AttachedBuilding)
+				{
+					DeselectSelectedStructures();
+					CachedHex->AttachedBuilding->Select();
+					SelectedStructures.Add(CachedHex->AttachedBuilding);
+				}
+
 				const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhysicalSurface"), true);
 				if (EnumPtr)
 				{

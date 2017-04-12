@@ -95,6 +95,11 @@ public:
 
 	/*********** FUNCTIONS **************/
 
+	/** Util */
+
+	void Select();
+	void Deselect();
+
 	/** Resources */
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
@@ -160,6 +165,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
 	void OnShowResourceInformation();
 
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnSelected();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnDeselected();
 
 
 	// Called when the game starts or when spawned

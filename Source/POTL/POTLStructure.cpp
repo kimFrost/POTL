@@ -58,6 +58,19 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 //AVehicle(const class FPostConstructInitializeProperties& PCIP, FString Path, FString Name);
 
 
+/******************** UTIL *************************/
+
+void APOTLStructure::Select()
+{
+
+	OnSelected();
+}
+void APOTLStructure::Deselect()
+{
+
+	OnDeselected();
+}
+
 /******************** RESOURCES *************************/
 
 int APOTLStructure::AddResource(FString ResourceId, int32 Quantity)
@@ -375,7 +388,14 @@ void APOTLStructure::OnShowResourceInformation_Implementation()
 {
 
 }
+void APOTLStructure::OnSelected_Implementation()
+{
 
+}
+void APOTLStructure::OnDeselected_Implementation()
+{
+
+}
 
 //~~ Called when the game starts or when spawned ~~//
 void APOTLStructure::BeginPlay()
