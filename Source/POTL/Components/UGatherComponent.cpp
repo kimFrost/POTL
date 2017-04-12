@@ -84,9 +84,9 @@ void UGatherComponent::OnProgressComplete()
 			// Or from allocated hexes with picker
 
 			bool AnyGathered = false;
-			for (auto& Hex : HexesInRange)
+			for (auto& Hex : GatherFrom)
 			{
-				if (Hex)
+				if (Hex && Hex->Resources.Num() > 0)
 				{
 					//int RandIndex = FMath::RandRange(0, GatherResources.Num() - 1);
 					//FString ResourceId = GatherResources[RandIndex];
@@ -129,12 +129,22 @@ void UGatherComponent::Init()
 {
 	Super::Init();
 
-	if (!ParentStructure || (ParentStructure && !ParentStructure->AttachedTo))
+	//if (!ParentStructure || (ParentStructure && !ParentStructure->AttachedTo))
+	if (!ParentStructure)
 	{
 		bIsOn = false;
 	}
 
 	// Store hexes in range
+	if (ParentStructure)
+	{
+		HexesInRange = ParentStructure->HexesInRange;
+		if (bGatherFromAll)
+		{
+			GatherFrom = HexesInRange;
+		}
+	}
+	/*
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 	if (GameInstance)
 	{
@@ -147,11 +157,12 @@ void UGatherComponent::Init()
 				int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
 				if (GameInstance->Hexes.IsValidIndex(HexIndex))
 				{
-					HexesInRange.Add(GameInstance->Hexes[HexIndex]);
+					GatherFrom.Add(GameInstance->Hexes[HexIndex]);
 				}
 			}
 		}
 	}
+	*/
 
 	// ValidateRequirements every second
 	GetWorld()->GetTimerManager().SetTimer(GatherCheckTimer, this, &UGatherComponent::ValidateRequirements, 1.f, true);

@@ -26,9 +26,14 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
+	bool bGatherFromAll;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
 	int GatherRange;
 
 	TArray<UHexTile*> HexesInRange;
+
+	TArray<UHexTile*> GatherFrom;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
 	TArray<FString> GatherResources;

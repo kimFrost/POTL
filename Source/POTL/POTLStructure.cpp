@@ -255,12 +255,12 @@ void APOTLStructure::RemoveStructure()
 	//~~ Remove self from hexes ~~//
 	for (auto& OccupiedHex : OccupiedHexes)
 	{
-		if (OccupiedHex)
+		if (OccupiedHex && OccupiedHex->AttachedBuilding == this)
 		{
 			OccupiedHex->AttachedBuilding = nullptr;
 		}
 	}
-	if (BaseHex)
+	if (BaseHex && BaseHex->AttachedBuilding == this)
 	{
 		BaseHex->AttachedBuilding = nullptr;
 	}

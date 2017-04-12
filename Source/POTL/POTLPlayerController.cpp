@@ -27,10 +27,6 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 }
 
 
-void APOTLPlayerController::ProcessConstructLocations()
-{
-	
-}
 void APOTLPlayerController::RotateStructure()
 {
 	BaseRotation = (BaseRotation + 1) % 6;
@@ -41,28 +37,9 @@ void APOTLPlayerController::RotateStructure()
 		{
 			BuilderStructure->RemoveStructure();
 		}
-		BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
-		//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-		ProcessConstructLocations();
-
-		/*
-		if (!CachedHex->AttachedBuilding) { //!! Might not be right !!//
-			if (BuilderStructure && GameInstance)
-			{
-				GameInstance->RemoveStructure(BuilderStructure);
-			}
+		if (!CachedHex->AttachedBuilding) {
 			BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
-			//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-			ProcessConstructLocations();
 		}
-		else {
-			if (BuilderStructure && GameInstance)
-			{
-				//BuilderStructure->Destroy();
-				GameInstance->RemoveStructure(BuilderStructure);
-			}
-		}
-		*/
 	}
 }
 void APOTLPlayerController::SetToolType(EToolType ToolType)
@@ -138,6 +115,10 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 			}
 		}
 	}
+	else if (ToolType == EToolType::ToogleAllocateHex)
+	{
+
+	}
 
 	ActiveToolType = ToolType;
 }
@@ -170,14 +151,7 @@ void APOTLPlayerController::Tick(float DeltaTime)
 				}
 				if (!CachedHex->AttachedBuilding) {
 					BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
-					
-					// Highlight area with connection and available resources
-					//GameInstance->ShowPotentialPlacementDetails(CachedHex);
-
-					//CityConstructionLocations = GameInstance->GetConstructLocations(City, true);
-					ProcessConstructLocations();
 				}
-				
 			}
 			//~~ Tool : Select ~~//
 			else if (ActiveToolType == EToolType::Select)
@@ -282,6 +256,10 @@ void APOTLPlayerController::LeftClickPressed()
 				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 				*/
 			}	
+			else if (ActiveToolType == EToolType::ToogleAllocateHex)
+			{
+
+			}
 		}
 	}
 }

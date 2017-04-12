@@ -1,0 +1,14 @@
+[
+    {
+        "Name": "GrasslandGatherable",
+        "Id": "GrasslandGatherable",
+        "Title": "GrasslandGatherable",
+        "Resources": ["Honey", "Berries"]
+    },
+	{
+        "Name": "ForestGatherable",
+        "Id": "ForestGatherable",
+        "Title": "ForestGatherable",
+        "Resources": ["Wood", "Mushroom", "Berries"]
+    }
+]

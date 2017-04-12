@@ -234,6 +234,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 
 						}
 
+
 						//~~ Store hex in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
 						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
 						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
@@ -581,6 +582,7 @@ void UPOTLGameInstance::CalcHexesRot()
 }
 void UPOTLGameInstance::AnalyseLandscape()
 {
+	//!! NOT BEING USED. IS BEING TRACED IN BLUEPRINT AT THE MOMENT !!//
 	//UGameplayStatics::
 	if (Landscape)
 	{

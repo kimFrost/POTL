@@ -99,9 +99,6 @@ public:
 	//void Draw();
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	void ProcessConstructLocations();
-
-	UFUNCTION(BlueprintCallable, Category = "Input")
 	void RotateStructure();
 
 	UFUNCTION(BlueprintCallable, Category = "Tool")
