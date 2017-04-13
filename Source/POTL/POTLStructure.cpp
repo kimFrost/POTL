@@ -63,6 +63,8 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 void APOTLStructure::Select()
 {
 
+
+
 	OnSelected();
 }
 void APOTLStructure::Deselect()
@@ -186,17 +188,24 @@ void APOTLStructure::Init()
 	//~~ Get hexes in range ~~//
 	if (BaseHex)
 	{
-		GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
-		if (GameInstance)
+		if (AttachedTo)
 		{
-			TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(CubeCoord, 5, false);
-			for (int32 i = 0; i < Cubes.Num(); i++)
+			HexesInRange = AttachedTo->HexesInRange;
+		}
+		else
+		{
+			GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+			if (GameInstance)
 			{
-				FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cubes[i]);
-				int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
-				if (GameInstance->Hexes.IsValidIndex(HexIndex))
+				TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(CubeCoord, 5, false);
+				for (int32 i = 0; i < Cubes.Num(); i++)
 				{
-					HexesInRange.Add(GameInstance->Hexes[HexIndex]);
+					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cubes[i]);
+					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
+					if (GameInstance->Hexes.IsValidIndex(HexIndex))
+					{
+						HexesInRange.Add(GameInstance->Hexes[HexIndex]);
+					}
 				}
 			}
 		}

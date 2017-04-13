@@ -59,12 +59,6 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 			}
 		}
 		ValidStructurePlaceHexes.Empty();
-		/*
-		if (GameInstance)
-		{
-			GameInstance->CleanupPlacementDetails();
-		}
-		*/
 	}
 	if (ActiveToolType == EToolType::Select)
 	{
@@ -135,6 +129,7 @@ void APOTLPlayerController::DeselectSelectedStructures()
 		if (Structure)
 		{
 			Structure->Deselect();
+			OnStructureDeselected.Broadcast(Structure);
 		}
 	}
 	SelectedStructures.Empty();
@@ -243,6 +238,7 @@ void APOTLPlayerController::LeftClickPressed()
 					DeselectSelectedStructures();
 					CachedHex->AttachedBuilding->Select();
 					SelectedStructures.Add(CachedHex->AttachedBuilding);
+					OnStructureSelected.Broadcast(CachedHex->AttachedBuilding);
 				}
 
 				const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhysicalSurface"), true);
