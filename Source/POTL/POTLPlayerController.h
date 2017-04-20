@@ -81,6 +81,8 @@ public:
 	bool BuildValid;
 
 	TArray<APOTLStructure*> SelectedStructures;
+	APOTLStructure* ActiveStructure;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	FString BuildMsg;
@@ -108,7 +110,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tool")
 	void SetToolType(EToolType ToolType);
 
+	void SelectStructure(APOTLStructure* Structure);
 	void DeselectSelectedStructures();
+
+	void EditStructure(APOTLStructure* Structure);
 
 	//~~ BeginPlay ~~//
 	virtual void BeginPlay() override;

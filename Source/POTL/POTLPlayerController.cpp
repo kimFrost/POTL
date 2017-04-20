@@ -122,6 +122,17 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 	ActiveToolType = ToolType;
 }
 
+void APOTLPlayerController::SelectStructure(APOTLStructure* Structure)
+{
+	if (Structure)
+	{
+		DeselectSelectedStructures();
+		Structure->Select();
+		SelectedStructures.Add(Structure);
+		OnStructureSelected.Broadcast(CachedHex->AttachedBuilding);
+	}
+}
+
 void APOTLPlayerController::DeselectSelectedStructures()
 {
 	for (auto& Structure : SelectedStructures)
@@ -133,6 +144,16 @@ void APOTLPlayerController::DeselectSelectedStructures()
 		}
 	}
 	SelectedStructures.Empty();
+}
+
+void APOTLPlayerController::EditStructure(APOTLStructure* Structure)
+{
+	if (Structure)
+	{
+		ActiveStructure = Structure;
+		SetToolType(EToolType::ToogleAllocateHex);
+		SelectStructure(Structure);
+	}
 }
 
 void APOTLPlayerController::BeginPlay()
@@ -235,10 +256,7 @@ void APOTLPlayerController::LeftClickPressed()
 			{
 				if (CachedHex->AttachedBuilding)
 				{
-					DeselectSelectedStructures();
-					CachedHex->AttachedBuilding->Select();
-					SelectedStructures.Add(CachedHex->AttachedBuilding);
-					OnStructureSelected.Broadcast(CachedHex->AttachedBuilding);
+					SelectStructure(CachedHex->AttachedBuilding);
 				}
 
 				const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhysicalSurface"), true);
@@ -278,7 +296,10 @@ void APOTLPlayerController::LeftClickPressed()
 			}	
 			else if (ActiveToolType == EToolType::ToogleAllocateHex)
 			{
-
+				if (ActiveStructure)
+				{
+					//CachedHex
+				}
 			}
 		}
 	}

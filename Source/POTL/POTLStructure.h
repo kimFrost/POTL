@@ -99,6 +99,7 @@ public:
 
 	void Select();
 	void Deselect();
+	void EnterEditMode();
 
 	/** Resources */
 

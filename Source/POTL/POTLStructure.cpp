@@ -9,6 +9,7 @@
 #include "Components/UConstructionComponent.h"
 #include "UObjects/UHexTile.h"
 #include "Kismet/GameplayStatics.h"
+#include "POTLPlayerController.h"
 #include "POTLStructure.h"
 
 
@@ -71,6 +72,14 @@ void APOTLStructure::Deselect()
 {
 
 	OnDeselected();
+}
+void APOTLStructure::EnterEditMode()
+{
+	APOTLPlayerController* PlayerController = Cast<APOTLPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController)
+	{
+		PlayerController->EditStructure(this);
+	}
 }
 
 /******************** RESOURCES *************************/
