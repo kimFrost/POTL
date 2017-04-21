@@ -7,10 +7,14 @@
 #include "HexDecal.h"
 #include "UHexTile.generated.h"
 
+
 //~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
 class UProviderComponent;
 
+//~~~~~ Delegates ~~~~~//
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHexToggleAllocate);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStorageMapUpdated, UStorageComponent*, StorageComp, UResource*, Resource);
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -111,6 +115,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hex")
 	void Init();
 
+	FOnHexToggleAllocate OnHexToggleAllocate;
 
 
 	/*
