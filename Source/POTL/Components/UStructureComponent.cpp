@@ -4,6 +4,7 @@
 #include "POTLStructure.h"
 #include "POTLGameMode.h"
 #include "POTLGameInstance.h"
+#include "UObjects/UHexTile.h"
 #include "UStructureComponent.h"
 
 
@@ -26,6 +27,52 @@ bool UStructureComponent::ToggleOn()
 	return bIsOn;
 }
 
+void UStructureComponent::EnterEditMode()
+{
+	// Loop hexesInRange and bind to allocate delegate if not allocated to other than this
+	for (auto& Hex : HexesInRange)
+	{
+		if (Hex)
+		{
+			Hex->OnHexToggleAllocate.AddDynamic(this, &UStructureComponent::ToggleAllocateHex);
+		}
+	}
+}
+
+void UStructureComponent::LeaveEditMode()
+{
+	for (auto& Hex : HexesInRange)
+	{
+		if (Hex)
+		{
+			Hex->OnHexToggleAllocate.RemoveDynamic(this, &UStructureComponent::ToggleAllocateHex);
+		}
+	}
+}
+
+void UStructureComponent::ToggleAllocateHex(UHexTile* Hex)
+{
+	if (Hex)
+	{
+		if (AllocatedHexes.Contains(Hex))
+		{
+			//Hex->UnAllocateTo(this);
+			Hex->AllocatedTo = nullptr;
+			AllocatedHexes.Remove(Hex);
+		}
+		else
+		{
+			if (!Hex->AllocatedTo)
+			{
+				// Binding?
+				//Hex->AllocateTo(this);
+				Hex->AllocatedTo = this;
+				AllocatedHexes.Add(Hex);
+			}
+		}
+	}
+}
+
 
 /******************** Init *************************/
 void UStructureComponent::Init()
@@ -43,6 +90,12 @@ void UStructureComponent::Init()
 			if (GameMode)
 			{
 				GameMode->OnTimeUpdated.AddDynamic(this, &UStructureComponent::OnTimeUpdate);
+			}
+
+			// Store hexes in range
+			if (ParentStructure)
+			{
+				HexesInRange = ParentStructure->HexesInRange;
 			}
 		}
 		else

@@ -34,6 +34,8 @@ UHexTile::UHexTile()
 	HexNeighbors.Init(nullptr, 6);
 	//HighlightDecal = nullptr;
 	DebugMe = false;
+
+	AllocatedTo = nullptr;
 }
 
 

@@ -41,6 +41,9 @@ public:
 
 	bool bIsInitialized;
 
+	TArray<UHexTile*> HexesInRange;
+	TArray<UHexTile*> AllocatedHexes;
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	//float Progress;
 
@@ -49,6 +52,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	bool ToggleOn();
+
+	void EnterEditMode();
+	void LeaveEditMode();
+	void ToggleAllocateHex(UHexTile* Hex);
+	//void HighlightAllocatedHexes();
 
 
 	UFUNCTION(BlueprintCallable, Category = "Time")

@@ -134,15 +134,9 @@ void UGatherComponent::Init()
 	{
 		bIsOn = false;
 	}
-
-	// Store hexes in range
-	if (ParentStructure)
+	if (bGatherFromAll)
 	{
-		HexesInRange = ParentStructure->HexesInRange;
-		if (bGatherFromAll)
-		{
-			GatherFrom = HexesInRange;
-		}
+		GatherFrom = HexesInRange;
 	}
 	/*
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());

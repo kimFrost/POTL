@@ -10,10 +10,12 @@
 
 //~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
+class UStructureComponent;
 class UProviderComponent;
 
 //~~~~~ Delegates ~~~~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHexToggleAllocate);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHexToggleAllocate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHexToggleAllocate, UHexTile*, Hex);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStorageMapUpdated, UStorageComponent*, StorageComp, UResource*, Resource);
 
 
@@ -93,6 +95,9 @@ public:
 
 	// SupplyTo // GatheredBy // Timer??
 
+	UStructureComponent* AllocatedTo;
+	FOnHexToggleAllocate OnHexToggleAllocate;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	//TArray<FST_ConstructLocation> ConstructLocations;
@@ -115,7 +120,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hex")
 	void Init();
 
-	FOnHexToggleAllocate OnHexToggleAllocate;
 
 
 	/*

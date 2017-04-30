@@ -19,7 +19,7 @@ enum class EToolType : uint8
 	None UMETA(DisplayName = "None"),
 	Select UMETA(DisplayName = "Select"),
 	PlantStructure UMETA(DisplayName = "PlantStructure"),
-	ToogleAllocateHex UMETA(DisplayName = "ToogleAllocateHex"),
+	ToggleAllocateHex UMETA(DisplayName = "ToggleAllocateHex"),
 	DevTest UMETA(DisplayName = "DevTest")
 };
 

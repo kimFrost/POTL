@@ -114,7 +114,7 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 			}
 		}
 	}
-	else if (ToolType == EToolType::ToogleAllocateHex)
+	else if (ToolType == EToolType::ToggleAllocateHex)
 	{
 
 	}
@@ -151,7 +151,7 @@ void APOTLPlayerController::EditStructure(APOTLStructure* Structure)
 	if (Structure)
 	{
 		ActiveStructure = Structure;
-		SetToolType(EToolType::ToogleAllocateHex);
+		SetToolType(EToolType::ToggleAllocateHex);
 		SelectStructure(Structure);
 	}
 }
@@ -294,11 +294,11 @@ void APOTLPlayerController::LeftClickPressed()
 				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 				*/
 			}	
-			else if (ActiveToolType == EToolType::ToogleAllocateHex)
+			else if (ActiveToolType == EToolType::ToggleAllocateHex)
 			{
 				if (ActiveStructure)
 				{
-					//CachedHex
+					CachedHex->OnHexToggleAllocate.Broadcast(CachedHex);
 				}
 			}
 		}

@@ -75,6 +75,17 @@ void APOTLStructure::Deselect()
 }
 void APOTLStructure::EnterEditMode()
 {
+	//~~ EnterEditMode for all UStructureComponents ~~//
+	TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
+	for (auto& Component : StructureComponents)
+	{
+		UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
+		if (StructureComponent)
+		{
+			StructureComponent->EnterEditMode();
+		}
+	}
+	//~~ Set edit mode in player controller ~~//
 	APOTLPlayerController* PlayerController = Cast<APOTLPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController)
 	{
