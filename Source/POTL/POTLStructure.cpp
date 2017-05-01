@@ -90,9 +90,12 @@ void APOTLStructure::EnterEditMode()
 	{
 		if (Hex)
 		{
-			Hex->ShowDecal(EDecalType::ValidBuild);
-			Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
-			Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+			if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
+			{
+				Hex->ShowDecal(EDecalType::ValidBuild);
+				Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+				Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+			}
 		}
 	}
 	for (auto& Hex : AllocatedHexes)
@@ -149,8 +152,12 @@ void APOTLStructure::ToggleAllocateHex(UHexTile* Hex)
 		{
 			if (Hex)
 			{
-				Hex->ShowDecal(EDecalType::ValidBuild);
-				Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+				if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
+				{
+					Hex->ShowDecal(EDecalType::ValidBuild);
+					Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+					Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+				}
 			}
 		}
 		for (auto& Hex : AllocatedHexes)
