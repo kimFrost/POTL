@@ -11,6 +11,8 @@
 
 
 //~~ DELEGATES ~~//
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllocatedHexesChanged);
+
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConstructionComplete);
 
 //~~~~~ Forward Declarations ~~~~~
@@ -50,6 +52,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<UHexTile*> HexesInRange;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	TArray<UHexTile*> AllocatedHexes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<UHexTile*> OccupiedHexes;
@@ -99,7 +104,15 @@ public:
 
 	void Select();
 	void Deselect();
+
+	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void EnterEditMode();
+
+	void LeaveEditMode();
+
+	UFUNCTION(Category = "Structure")
+	void ToggleAllocateHex(UHexTile* Hex);
+
 
 	/** Resources */
 
@@ -150,6 +163,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	APOTLStructure* GetNearestStructure();
 
+
+	// Delegates
+	//UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
+	FOnAllocatedHexesChanged OnAllocatedHexesChanged;
+
+
+	// BlueprintNativeEvent
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Time")
 	void OnTimeUpdate(float Time, float TimeProgressed);

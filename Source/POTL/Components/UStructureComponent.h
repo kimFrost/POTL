@@ -53,9 +53,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	bool ToggleOn();
 
-	void EnterEditMode();
-	void LeaveEditMode();
-	void ToggleAllocateHex(UHexTile* Hex);
+	//void EnterEditMode();
+	//void LeaveEditMode();
+	//void ToggleAllocateHex(UHexTile* Hex);
 	//void HighlightAllocatedHexes();
 
 

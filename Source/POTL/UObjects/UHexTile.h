@@ -95,7 +95,8 @@ public:
 
 	// SupplyTo // GatheredBy // Timer??
 
-	UStructureComponent* AllocatedTo;
+	//UStructureComponent* AllocatedTo;
+	APOTLStructure* AllocatedTo;
 	FOnHexToggleAllocate OnHexToggleAllocate;
 
 

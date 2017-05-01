@@ -94,6 +94,7 @@ enum class EDecalType : uint8
 {
 	ValidBuild UMETA(DisplayName = "ValidBuild"),
 	InvalidBuild UMETA(DisplayName = "InvalidBuild"),
+	Allocated UMETA(DisplayName = "Allocated"),
 	AttachPoint UMETA(DisplayName = "AttachPoint")
 };
 

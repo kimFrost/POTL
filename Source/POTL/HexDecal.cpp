@@ -98,6 +98,16 @@ void AHexDecal::ChangeMaterial(EDecalType Type)
 		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor::Red);
 		SetActorHiddenInGame(false);
 	}
+	else if (Type == EDecalType::AttachPoint)
+	{
+		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor(153.f, 238.f, 209.f));
+		SetActorHiddenInGame(false);
+	}
+	else if (Type == EDecalType::Allocated)
+	{
+		DynamicMaterial->SetVectorParameterValue("ParamColor", FLinearColor(240.f, 180.f, 228.f));
+		SetActorHiddenInGame(false);
+	}
 }
 
 

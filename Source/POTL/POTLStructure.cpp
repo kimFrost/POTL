@@ -64,8 +64,6 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 void APOTLStructure::Select()
 {
 
-
-
 	OnSelected();
 }
 void APOTLStructure::Deselect()
@@ -76,6 +74,7 @@ void APOTLStructure::Deselect()
 void APOTLStructure::EnterEditMode()
 {
 	//~~ EnterEditMode for all UStructureComponents ~~//
+	/*
 	TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
 	for (auto& Component : StructureComponents)
 	{
@@ -85,11 +84,93 @@ void APOTLStructure::EnterEditMode()
 			StructureComponent->EnterEditMode();
 		}
 	}
+	*/
+	//TODO: Move allocated and in range decal handling to function
+	for (auto& Hex : HexesInRange)
+	{
+		if (Hex)
+		{
+			Hex->ShowDecal(EDecalType::ValidBuild);
+			Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+			Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+		}
+	}
+	for (auto& Hex : AllocatedHexes)
+	{
+		if (Hex)
+		{
+			Hex->ShowDecal(EDecalType::Allocated);
+		}
+	}
+
 	//~~ Set edit mode in player controller ~~//
 	APOTLPlayerController* PlayerController = Cast<APOTLPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController)
 	{
 		PlayerController->EditStructure(this);
+	}
+}
+void APOTLStructure::LeaveEditMode()
+{
+	for (auto& Hex : HexesInRange)
+	{
+		if (Hex)
+		{
+			Hex->HideDecal();
+			Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+		}
+	}
+}
+void APOTLStructure::ToggleAllocateHex(UHexTile* Hex)
+{
+	if (Hex)
+	{
+		if (AllocatedHexes.Contains(Hex))
+		{
+			//Hex->UnAllocateTo(this);
+			Hex->AllocatedTo = nullptr;
+			AllocatedHexes.Remove(Hex);
+		}
+		else
+		{
+			if (!Hex->AllocatedTo)
+			{
+				// Binding?
+				//Hex->AllocateTo(this);
+				Hex->AllocatedTo = this;
+				AllocatedHexes.Add(Hex);
+			}
+		}
+
+		OnAllocatedHexesChanged.Broadcast();
+		
+		//TODO: Move allocated and in range decal handling to function
+		for (auto& Hex : HexesInRange)
+		{
+			if (Hex)
+			{
+				Hex->ShowDecal(EDecalType::ValidBuild);
+				Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+			}
+		}
+		for (auto& Hex : AllocatedHexes)
+		{
+			if (Hex)
+			{
+				Hex->ShowDecal(EDecalType::Allocated);
+			}
+		}
+
+		//~~ Update AllocatedHexes in all structure components ~~//
+		TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
+		for (auto& Component : StructureComponents)
+		{
+			UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
+			if (StructureComponent)
+			{
+				StructureComponent->AllocatedHexes = AllocatedHexes;
+			}
+		}
 	}
 }
 

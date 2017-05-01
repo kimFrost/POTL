@@ -27,6 +27,7 @@ bool UStructureComponent::ToggleOn()
 	return bIsOn;
 }
 
+/*
 void UStructureComponent::EnterEditMode()
 {
 	// Loop hexesInRange and bind to allocate delegate if not allocated to other than this
@@ -72,7 +73,7 @@ void UStructureComponent::ToggleAllocateHex(UHexTile* Hex)
 		}
 	}
 }
-
+*/
 
 /******************** Init *************************/
 void UStructureComponent::Init()
@@ -92,10 +93,11 @@ void UStructureComponent::Init()
 				GameMode->OnTimeUpdated.AddDynamic(this, &UStructureComponent::OnTimeUpdate);
 			}
 
-			// Store hexes in range
+			// Store hexes in range and allocated hexes
 			if (ParentStructure)
 			{
 				HexesInRange = ParentStructure->HexesInRange;
+				AllocatedHexes = ParentStructure->AllocatedHexes;
 			}
 		}
 		else
