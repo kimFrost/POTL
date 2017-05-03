@@ -455,6 +455,59 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 	return NearestStructure;
 }
 
+
+
+FOnStructureClickedDelegate APOTLStructure::BindToOnStructureClicked(int Priority)
+{
+	FOnStructureClickedDelegate Delegate;
+	OnStrucureClickedDelegates.Add(Delegate);
+	return Delegate;
+}
+
+void APOTLStructure::ClickStructure()
+{
+	// Loop function array and execute. They must have a EHandleType response, which can break the loop. 
+	// Function to add function to list with prioty index,
+	// or  BindUFunction??
+	bool Handled = false;
+	for (auto& Delegate: OnStrucureClickedDelegates)
+	{
+		if (Delegate.IsBound())
+		{
+			EHandleType Response = Delegate.Execute();
+			if (Response == EHandleType::HandledBreak)
+			{
+				break;
+			}
+			else if (Response == EHandleType::Handled)
+			{
+				Handled = true;
+			}
+		}
+	}
+	if (!Handled)
+	{
+		Select();
+	}
+
+	/*
+	FOnStructureClickedDelegate Delegate = NearestStructure->BindToOnStructureClicked(0);
+	Delegate.BindRaw(this, &APOTLStructure::SomeFunctionThatReturnsEHandleType);
+	Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
+	*/
+
+	/*
+	if (OnStructureClickedDelegate.IsBound())
+	{
+		EHandleType Response = OnStructureClickedDelegate.Execute();
+		if (Response == EHandleType::Handled)
+		{
+			return;
+		}
+	}
+	*/
+}
+
 void APOTLStructure::UpdateConstrunction_Implementation()
 {
 	if (IsUnderConstruction)
@@ -465,6 +518,12 @@ void APOTLStructure::UpdateConstrunction_Implementation()
 	{
 
 	}
+}
+
+
+void APOTLStructure::OnStructureClicked_Implementation()
+{
+
 }
 void APOTLStructure::OnTimeUpdate_Implementation(float Time, float TimeProgressed)
 {

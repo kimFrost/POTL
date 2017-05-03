@@ -17,6 +17,7 @@ class UProviderComponent;
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHexToggleAllocate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHexToggleAllocate, UHexTile*, Hex);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStorageMapUpdated, UStorageComponent*, StorageComp, UResource*, Resource);
+DECLARE_DELEGATE_RetVal(EHandleType, FOnHexClickedDelegate);
 
 
 UCLASS(Blueprintable, BlueprintType)

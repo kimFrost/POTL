@@ -12,8 +12,11 @@
 
 //~~ DELEGATES ~~//
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllocatedHexesChanged);
-
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStructureClicked, AActor*, TouchedActor, FKey, ButtonPressed);
+//DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnStructureClickedDelegate, bool);
+DECLARE_DELEGATE_RetVal(EHandleType, FOnStructureClickedDelegate);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConstructionComplete);
+
 
 //~~~~~ Forward Declarations ~~~~~
 
@@ -164,12 +167,17 @@ public:
 	APOTLStructure* GetNearestStructure();
 
 
-	// Delegates
-	//UPROPERTY(BlueprintAssignable, Category = "Storage|Event")
+
 	FOnAllocatedHexesChanged OnAllocatedHexesChanged;
+	//FOnStructureClickedDelegate OnStructureClickedDelegate;
+	TArray<FOnStructureClickedDelegate> OnStrucureClickedDelegates;
 
+	FOnStructureClickedDelegate BindToOnStructureClicked(int Priority);
+	void ClickStructure();
 
-	// BlueprintNativeEvent
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnStructureClicked();
+
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Time")
 	void OnTimeUpdate(float Time, float TimeProgressed);

@@ -256,6 +256,8 @@ void APOTLPlayerController::LeftClickPressed()
 			{
 				if (CachedHex->AttachedBuilding)
 				{
+					//CachedHex->AttachedBuilding->ClickStructure();
+
 					SelectStructure(CachedHex->AttachedBuilding);
 				}
 

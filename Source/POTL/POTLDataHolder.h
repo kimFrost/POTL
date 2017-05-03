@@ -12,6 +12,8 @@ class UFactoryComponent;
 
 
 
+
+
 //~~~~~ ENUMS ~~~~~//
 UENUM(BlueprintType)
 enum class EToolType : uint8
@@ -96,6 +98,14 @@ enum class EDecalType : uint8
 	InvalidBuild UMETA(DisplayName = "InvalidBuild"),
 	Allocated UMETA(DisplayName = "Allocated"),
 	AttachPoint UMETA(DisplayName = "AttachPoint")
+};
+
+UENUM(BlueprintType)
+enum class EHandleType : uint8
+{
+	Handled UMETA(DisplayName = "Handled"),
+	HandledBreak UMETA(DisplayName = "HandledBreak"),
+	Unhandled UMETA(DisplayName = "Unhandled")
 };
 
 
@@ -919,6 +929,7 @@ struct FST_TMap
 		Value = 0.f;
 	}
 };
+
 
 
 
