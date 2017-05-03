@@ -13,10 +13,9 @@ class APOTLStructure;
 class UStructureComponent;
 class UProviderComponent;
 
+
 //~~~~~ Delegates ~~~~~//
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHexToggleAllocate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHexToggleAllocate, UHexTile*, Hex);
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStorageMapUpdated, UStorageComponent*, StorageComp, UResource*, Resource);
 DECLARE_DELEGATE_RetVal(EHandleType, FOnHexClickedDelegate);
 
 
@@ -99,6 +98,14 @@ public:
 	//UStructureComponent* AllocatedTo;
 	APOTLStructure* AllocatedTo;
 	FOnHexToggleAllocate OnHexToggleAllocate;
+
+	TArray<FOnHexClickedDelegate> OnHexClickedDelegates;
+
+	FOnHexClickedDelegate BindToOnHexClicked(int Priority);
+	void ClickHex();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Hex")
+	void OnHexClicked();
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")

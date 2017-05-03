@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
+#include "POTLDataHolder.h"
 #include "UObjects/UHexPoint.h"
 #include "HexDecal.h"
 #include "UHexTile.h"
@@ -44,6 +45,40 @@ UHexTile::~UHexTile()
 
 }
 
+
+FOnHexClickedDelegate UHexTile::BindToOnHexClicked(int Priority)
+{
+	FOnHexClickedDelegate Delegate = FOnHexClickedDelegate();
+	OnHexClickedDelegates.Add(Delegate);
+	return Delegate;
+}
+void UHexTile::ClickHex()
+{
+	bool Handled = false;
+	for (auto& Delegate : OnHexClickedDelegates)
+	{
+		if (Delegate.IsBound())
+		{
+			EHandleType Response = Delegate.Execute();
+			if (Response == EHandleType::HandledBreak)
+			{
+				break;
+			}
+			else if (Response == EHandleType::Handled)
+			{
+				Handled = true;
+			}
+		}
+	}
+	if (!Handled)
+	{
+		//Select();
+	}
+}
+void UHexTile::OnHexClicked_Implementation()
+{
+
+}
 
 /******************** GetNeighbourHex *************************/
 UHexTile* UHexTile::GetNeighbourHex(int Direction)

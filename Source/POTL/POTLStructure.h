@@ -108,6 +108,9 @@ public:
 	void Select();
 	void Deselect();
 
+	UFUNCTION(Category = "Structure")
+	EHandleType SomeFunctionThatReturnsEHandleType();
+
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void EnterEditMode();
 

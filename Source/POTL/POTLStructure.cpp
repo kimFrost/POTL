@@ -71,6 +71,12 @@ void APOTLStructure::Deselect()
 
 	OnDeselected();
 }
+EHandleType APOTLStructure::SomeFunctionThatReturnsEHandleType()
+{
+
+
+	return EHandleType();
+}
 void APOTLStructure::EnterEditMode()
 {
 	//~~ EnterEditMode for all UStructureComponents ~~//
@@ -93,6 +99,11 @@ void APOTLStructure::EnterEditMode()
 			if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
 			{
 				Hex->ShowDecal(EDecalType::ValidBuild);
+
+				FOnHexClickedDelegate Delegate = Hex->BindToOnHexClicked(0);
+				Delegate.BindUObject(this, &APOTLStructure::SomeFunctionThatReturnsEHandleType);
+				//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
+
 				Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
 				Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
 			}
@@ -459,7 +470,7 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 
 FOnStructureClickedDelegate APOTLStructure::BindToOnStructureClicked(int Priority)
 {
-	FOnStructureClickedDelegate Delegate;
+	FOnStructureClickedDelegate Delegate = FOnStructureClickedDelegate();
 	OnStrucureClickedDelegates.Add(Delegate);
 	return Delegate;
 }
