@@ -474,13 +474,30 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 
 
 
-FOnStructureClickedDelegate APOTLStructure::BindToOnStructureClicked(int Priority)
+FOnStructureClickedDelegate* APOTLStructure::BindToOnStructureClicked(UObject* Listener, int Priority)
 {
-	FOnStructureClickedDelegate Delegate = FOnStructureClickedDelegate();
-	OnStrucureClickedDelegates.Add(Delegate);
-	return Delegate;
+	if (Listener)
+	{
+		UnbindToStructureClicked(Listener);
+		FOnStructureClickedDelegate* Delegate = new FOnStructureClickedDelegate();
+		OnStrucureClickedDelegates.Add(Listener, Delegate);
+		return Delegate;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
-
+void APOTLStructure::UnbindToStructureClicked(UObject* Listener)
+{
+	if (Listener && OnStrucureClickedDelegates.Contains(Listener))
+	{
+		FOnStructureClickedDelegate* Delegate = OnStrucureClickedDelegates[Listener];
+		Delegate->Unbind();
+		delete Delegate;
+		OnStrucureClickedDelegates.Remove(Listener);
+	}
+}
 void APOTLStructure::ClickStructure()
 {
 	// Loop function array and execute. They must have a EHandleType response, which can break the loop. 
@@ -489,9 +506,9 @@ void APOTLStructure::ClickStructure()
 	bool Handled = false;
 	for (auto& Delegate: OnStrucureClickedDelegates)
 	{
-		if (Delegate.IsBound())
+		if (Delegate.Key && Delegate.Value && Delegate.Value->IsBound())
 		{
-			EHandleType Response = Delegate.Execute();
+			EHandleType Response = Delegate.Value->Execute(this);
 			if (Response == EHandleType::HandledBreak)
 			{
 				break;

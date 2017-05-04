@@ -106,7 +106,7 @@ public:
 	void UnbindToHexClicked(UObject* Listener);
 
 
-	void ListenForClick(UObject* Listener, FHandleDelegate Delegate);
+	//void ListenForClick(UObject* Listener, FHandleDelegate Delegate);
 
 	void ClickHex();
 

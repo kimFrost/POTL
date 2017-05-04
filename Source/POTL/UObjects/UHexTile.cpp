@@ -70,10 +70,6 @@ void UHexTile::UnbindToHexClicked(UObject* Listener)
 		OnHexClickedDelegates.Remove(Listener);
 	}
 }
-void UHexTile::ListenForClick(UObject* Listener, FHandleDelegate Delegate)
-{
-
-}
 void UHexTile::ClickHex()
 {
 	bool Handled = false;

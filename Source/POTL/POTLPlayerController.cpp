@@ -224,8 +224,6 @@ void APOTLPlayerController::LeftClickPressed()
 	{
 		if (IsValid(CachedHex))
 		{
-			CachedHex->ClickHex();
-
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
 				UHexTile* TracedHex = GameInstance->MouseToHex();
@@ -258,9 +256,12 @@ void APOTLPlayerController::LeftClickPressed()
 			{
 				if (CachedHex->AttachedBuilding)
 				{
-					//CachedHex->AttachedBuilding->ClickStructure();
-
-					SelectStructure(CachedHex->AttachedBuilding);
+					//SelectStructure(CachedHex->AttachedBuilding);
+					CachedHex->AttachedBuilding->ClickStructure();
+				}
+				else
+				{
+					CachedHex->ClickHex();
 				}
 
 				const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhysicalSurface"), true);
@@ -298,6 +299,7 @@ void APOTLPlayerController::LeftClickPressed()
 				PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 				*/
 			}	
+			/*
 			else if (ActiveToolType == EToolType::ToggleAllocateHex)
 			{
 				if (ActiveStructure)
@@ -305,6 +307,7 @@ void APOTLPlayerController::LeftClickPressed()
 					CachedHex->OnHexToggleAllocate.Broadcast(CachedHex);
 				}
 			}
+			*/
 		}
 	}
 }

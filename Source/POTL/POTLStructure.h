@@ -14,7 +14,9 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllocatedHexesChanged);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStructureClicked, AActor*, TouchedActor, FKey, ButtonPressed);
 //DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnStructureClickedDelegate, bool);
-DECLARE_DELEGATE_RetVal(EHandleType, FOnStructureClickedDelegate);
+//DECLARE_DELEGATE_RetVal(EHandleType, FOnStructureClickedDelegate);
+DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnStructureClickedDelegate, APOTLStructure*);
+
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConstructionComplete);
 
 
@@ -169,10 +171,12 @@ public:
 
 
 	FOnAllocatedHexesChanged OnAllocatedHexesChanged;
-	//FOnStructureClickedDelegate OnStructureClickedDelegate;
-	TArray<FOnStructureClickedDelegate> OnStrucureClickedDelegates;
 
-	FOnStructureClickedDelegate BindToOnStructureClicked(int Priority);
+	//TArray<FOnStructureClickedDelegate> OnStrucureClickedDelegates;
+	TMap<UObject*, FOnStructureClickedDelegate*> OnStrucureClickedDelegates;
+
+	FOnStructureClickedDelegate* BindToOnStructureClicked(UObject* Listener, int Priority);
+	void UnbindToStructureClicked(UObject* Listener);
 	void ClickStructure();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
