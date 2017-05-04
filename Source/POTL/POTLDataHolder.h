@@ -931,7 +931,7 @@ struct FST_TMap
 };
 
 
-
+DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FHandleDelegate, UObject*);
 
 
 

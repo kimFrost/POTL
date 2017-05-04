@@ -99,13 +99,19 @@ public:
 	APOTLStructure* AllocatedTo;
 	FOnHexToggleAllocate OnHexToggleAllocate;
 
-	TArray<FOnHexClickedDelegate*> OnHexClickedDelegates;
+	//TArray<FOnHexClickedDelegate*> OnHexClickedDelegates;
+	TMap<UObject*, FOnHexClickedDelegate*> OnHexClickedDelegates;
 
-	FOnHexClickedDelegate* BindToOnHexClicked(int Priority);
+	FOnHexClickedDelegate* BindToOnHexClicked(UObject* Listener, int Priority);
+	void UnbindToHexClicked(UObject* Listener);
+
+
+	void ListenForClick(UObject* Listener, FHandleDelegate Delegate);
+
 	void ClickHex();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Hex")
-	void OnHexClicked();
+	void OnHexClicked();	
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")

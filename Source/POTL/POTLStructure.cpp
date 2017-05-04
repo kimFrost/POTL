@@ -94,7 +94,7 @@ void APOTLStructure::EnterEditMode()
 			{
 				Hex->ShowDecal(EDecalType::ValidBuild);
 
-				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(0);
+				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
 				if (Delegate)
 				{
 					Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
@@ -134,6 +134,7 @@ void APOTLStructure::LeaveEditMode()
 		if (Hex)
 		{
 			Hex->HideDecal();
+			Hex->UnbindToHexClicked(this);
 			//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
 		}
 	}

@@ -46,21 +46,42 @@ UHexTile::~UHexTile()
 }
 
 
-FOnHexClickedDelegate* UHexTile::BindToOnHexClicked(int Priority)
+FOnHexClickedDelegate* UHexTile::BindToOnHexClicked(UObject* Listener, int Priority)
 {
-	FOnHexClickedDelegate* Delegate = new FOnHexClickedDelegate();
-	OnHexClickedDelegates.Add(Delegate);
-	//delete Delegate;
-	return Delegate;
+	if (Listener)
+	{
+		UnbindToHexClicked(Listener);
+		FOnHexClickedDelegate* Delegate = new FOnHexClickedDelegate();
+		OnHexClickedDelegates.Add(Listener, Delegate);
+		return Delegate;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+void UHexTile::UnbindToHexClicked(UObject* Listener)
+{
+	if (Listener && OnHexClickedDelegates.Contains(Listener))
+	{
+		FOnHexClickedDelegate* Delegate = OnHexClickedDelegates[Listener];
+		Delegate->Unbind();
+		delete Delegate;
+		OnHexClickedDelegates.Remove(Listener);
+	}
+}
+void UHexTile::ListenForClick(UObject* Listener, FHandleDelegate Delegate)
+{
+
 }
 void UHexTile::ClickHex()
 {
 	bool Handled = false;
 	for (auto& Delegate : OnHexClickedDelegates)
 	{
-		if (Delegate && Delegate->IsBound())
+		if (Delegate.Key && Delegate.Value && Delegate.Value->IsBound())
 		{
-			EHandleType Response = Delegate->Execute(this);
+			EHandleType Response = Delegate.Value->Execute(this);
 			if (Response == EHandleType::HandledBreak)
 			{
 				break;
