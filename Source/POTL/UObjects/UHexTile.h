@@ -16,8 +16,8 @@ class UProviderComponent;
 
 //~~~~~ Delegates ~~~~~//
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHexToggleAllocate, UHexTile*, Hex);
-DECLARE_DELEGATE_RetVal(EHandleType, FOnHexClickedDelegate);
-
+DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnHexClickedDelegate, UHexTile*);
+//DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam
 
 UCLASS(Blueprintable, BlueprintType)
 class POTL_API UHexTile : public UObject
@@ -99,9 +99,9 @@ public:
 	APOTLStructure* AllocatedTo;
 	FOnHexToggleAllocate OnHexToggleAllocate;
 
-	TArray<FOnHexClickedDelegate> OnHexClickedDelegates;
+	TArray<FOnHexClickedDelegate*> OnHexClickedDelegates;
 
-	FOnHexClickedDelegate BindToOnHexClicked(int Priority);
+	FOnHexClickedDelegate* BindToOnHexClicked(int Priority);
 	void ClickHex();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Hex")

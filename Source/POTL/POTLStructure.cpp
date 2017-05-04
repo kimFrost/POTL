@@ -71,12 +71,6 @@ void APOTLStructure::Deselect()
 
 	OnDeselected();
 }
-EHandleType APOTLStructure::SomeFunctionThatReturnsEHandleType()
-{
-
-
-	return EHandleType();
-}
 void APOTLStructure::EnterEditMode()
 {
 	//~~ EnterEditMode for all UStructureComponents ~~//
@@ -100,12 +94,21 @@ void APOTLStructure::EnterEditMode()
 			{
 				Hex->ShowDecal(EDecalType::ValidBuild);
 
-				FOnHexClickedDelegate Delegate = Hex->BindToOnHexClicked(0);
-				Delegate.BindUObject(this, &APOTLStructure::SomeFunctionThatReturnsEHandleType);
-				//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
+				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(0);
+				if (Delegate)
+				{
+					Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
+				}
+				//Hex->BindToOnHexClicked(0, &APOTLStructure::ToggleAllocateHex);
 
-				Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
-				Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
+				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex);
+				//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
+				//Delegate.IsBoundToObject(this)
+
+				
+				//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+				//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
 			}
 		}
 	}
@@ -131,11 +134,11 @@ void APOTLStructure::LeaveEditMode()
 		if (Hex)
 		{
 			Hex->HideDecal();
-			Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+			//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
 		}
 	}
 }
-void APOTLStructure::ToggleAllocateHex(UHexTile* Hex)
+EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 {
 	if (Hex)
 	{
@@ -166,8 +169,8 @@ void APOTLStructure::ToggleAllocateHex(UHexTile* Hex)
 				if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
 				{
 					Hex->ShowDecal(EDecalType::ValidBuild);
-					Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
-					Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+					//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+					//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
 				}
 			}
 		}
@@ -190,6 +193,8 @@ void APOTLStructure::ToggleAllocateHex(UHexTile* Hex)
 			}
 		}
 	}
+
+	return EHandleType::Unhandled;
 }
 
 /******************** RESOURCES *************************/

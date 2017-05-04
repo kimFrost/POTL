@@ -108,16 +108,13 @@ public:
 	void Select();
 	void Deselect();
 
-	UFUNCTION(Category = "Structure")
-	EHandleType SomeFunctionThatReturnsEHandleType();
-
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void EnterEditMode();
 
 	void LeaveEditMode();
 
 	UFUNCTION(Category = "Structure")
-	void ToggleAllocateHex(UHexTile* Hex);
+	EHandleType ToggleAllocateHex(UHexTile* Hex, bool bUpdate);
 
 
 	/** Resources */

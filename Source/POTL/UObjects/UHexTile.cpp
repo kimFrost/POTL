@@ -46,10 +46,11 @@ UHexTile::~UHexTile()
 }
 
 
-FOnHexClickedDelegate UHexTile::BindToOnHexClicked(int Priority)
+FOnHexClickedDelegate* UHexTile::BindToOnHexClicked(int Priority)
 {
-	FOnHexClickedDelegate Delegate = FOnHexClickedDelegate();
+	FOnHexClickedDelegate* Delegate = new FOnHexClickedDelegate();
 	OnHexClickedDelegates.Add(Delegate);
+	//delete Delegate;
 	return Delegate;
 }
 void UHexTile::ClickHex()
@@ -57,9 +58,9 @@ void UHexTile::ClickHex()
 	bool Handled = false;
 	for (auto& Delegate : OnHexClickedDelegates)
 	{
-		if (Delegate.IsBound())
+		if (Delegate && Delegate->IsBound())
 		{
-			EHandleType Response = Delegate.Execute();
+			EHandleType Response = Delegate->Execute(this);
 			if (Response == EHandleType::HandledBreak)
 			{
 				break;

@@ -224,6 +224,8 @@ void APOTLPlayerController::LeftClickPressed()
 	{
 		if (IsValid(CachedHex))
 		{
+			CachedHex->ClickHex();
+
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
 				UHexTile* TracedHex = GameInstance->MouseToHex();
