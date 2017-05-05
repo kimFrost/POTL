@@ -20,9 +20,9 @@
 
 //~~~~~ Delegates/Event dispatcher ~~~~~//
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexOver, UHexTile*, Hex);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexSelected, UHexTile*, Hex);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureSelected, APOTLStructure*, Structure);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureDeselected, APOTLStructure*, Structure);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHexSelected, UHexTile*, Hex);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureSelected, APOTLStructure*, Structure);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureDeselected, APOTLStructure*, Structure);
 
 
 
@@ -112,6 +112,7 @@ public:
 
 	void SelectStructure(APOTLStructure* Structure);
 	void DeselectSelectedStructures();
+	void DeselectAllStructures();
 
 	void EditStructure(APOTLStructure* Structure);
 
@@ -127,14 +128,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Tool")
 	FHexOver OnHexOver;
 
-	UPROPERTY(BlueprintAssignable, Category = "Tool")
-	FHexSelected OnHexSelected;
-
-	UPROPERTY(BlueprintAssignable, Category = "Turn")
-	FOnStructureSelected OnStructureSelected;
-
-	UPROPERTY(BlueprintAssignable, Category = "Turn")
-	FOnStructureDeselected OnStructureDeselected;
+	//UPROPERTY(BlueprintAssignable, Category = "Tool")
+	//FHexSelected OnHexSelected;
 
 
 protected:

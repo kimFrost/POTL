@@ -62,7 +62,8 @@ void APOTLPlayerController::SetToolType(EToolType ToolType)
 	}
 	if (ActiveToolType == EToolType::Select)
 	{
-		DeselectSelectedStructures();
+		//DeselectSelectedStructures();
+		DeselectAllStructures();
 	}
 	
 	// Load new tool
@@ -126,10 +127,14 @@ void APOTLPlayerController::SelectStructure(APOTLStructure* Structure)
 {
 	if (Structure)
 	{
+		DeselectAllStructures();
+		Structure->Select();
+		/*
 		DeselectSelectedStructures();
 		Structure->Select();
 		SelectedStructures.Add(Structure);
 		OnStructureSelected.Broadcast(CachedHex->AttachedBuilding);
+		*/
 	}
 }
 
@@ -140,19 +145,26 @@ void APOTLPlayerController::DeselectSelectedStructures()
 		if (Structure)
 		{
 			Structure->Deselect();
-			OnStructureDeselected.Broadcast(Structure);
 		}
 	}
 	SelectedStructures.Empty();
 }
-
+void APOTLPlayerController::DeselectAllStructures()
+{
+	for (TActorIterator<APOTLStructure> StructureItr(GetWorld()); StructureItr; ++StructureItr)
+	{
+		StructureItr->Deselect();
+	}
+}
 void APOTLPlayerController::EditStructure(APOTLStructure* Structure)
 {
 	if (Structure)
 	{
+		/*
 		ActiveStructure = Structure;
 		SetToolType(EToolType::ToggleAllocateHex);
 		SelectStructure(Structure);
+		*/
 	}
 }
 
@@ -257,6 +269,7 @@ void APOTLPlayerController::LeftClickPressed()
 				if (CachedHex->AttachedBuilding)
 				{
 					//SelectStructure(CachedHex->AttachedBuilding);
+					DeselectAllStructures();
 					CachedHex->AttachedBuilding->ClickStructure();
 				}
 				else
@@ -270,7 +283,7 @@ void APOTLPlayerController::LeftClickPressed()
 					FText SurfaceString = EnumPtr->GetEnumText(CachedHex->HexResourceInfo.SurfaceType);
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "trace surface type: " + SurfaceString.ToString());
 				}
-				OnHexSelected.Broadcast(CachedHex);
+				//OnHexSelected.Broadcast(CachedHex);
 				if (CachedHex->HexResourceInfo.SurfaceType == EPhysicalSurface::SurfaceType1) //?? Is this Grass ??//
 				{
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "Grass");

@@ -325,8 +325,8 @@ struct FST_HexResourceInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
-	APOTLStructure* ProvideTo;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	//APOTLStructure* ProvideTo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	bool HasTrees;
@@ -352,7 +352,7 @@ struct FST_HexResourceInfo
 
 	FST_HexResourceInfo()
 	{
-		ProvideTo = nullptr;
+		//ProvideTo = nullptr;
 		HasTrees = false;
 		HasRiver = false;
 		HasLake = false;

@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "POTLDataHolder.h"
+#include "POTLGameInstance.h"
 #include "UObjects/UHexPoint.h"
 #include "HexDecal.h"
 #include "UHexTile.h"
@@ -68,6 +69,35 @@ void UHexTile::UnbindToHexClicked(UObject* Listener)
 		Delegate->Unbind();
 		delete Delegate;
 		OnHexClickedDelegates.Remove(Listener);
+	}
+}
+void UHexTile::Select()
+{
+	if (!bSelected)
+	{
+		bSelected = true;
+		//OnSelected();
+		if (WorldRef)
+		{
+			UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(WorldRef->GetGameInstance());
+			if (GameInstance)
+			{
+				//GameInstance->OnStructureSelectedDelegate.Broadcast(this);
+			}
+		}
+	}
+}
+void UHexTile::Deselect()
+{
+	if (bSelected)
+	{
+		bSelected = false;
+		//OnDeselected();
+		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(WorldRef->GetGameInstance());
+		if (GameInstance)
+		{
+			//GameInstance->OnStructureDeselectedDelegate.Broadcast(this);
+		}
 	}
 }
 void UHexTile::ClickHex()

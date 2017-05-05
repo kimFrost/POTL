@@ -83,8 +83,8 @@ void UGatherComponent::OnProgressComplete()
 
 			// Or from allocated hexes with picker
 
-			bool AnyGathered = false;
-			for (auto& Hex : GatherFrom)
+			bool AnyGathered = false; 
+			for (auto& Hex : AllocatedHexes) //GatherFrom
 			{
 				if (Hex && Hex->Resources.Num() > 0)
 				{
@@ -137,6 +137,10 @@ void UGatherComponent::Init()
 	if (bGatherFromAll)
 	{
 		GatherFrom = HexesInRange;
+	}
+	else
+	{
+		GatherFrom = AllocatedHexes;
 	}
 	/*
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());

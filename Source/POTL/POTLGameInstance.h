@@ -27,6 +27,9 @@ class UStorageComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMapReady);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTransaction, UTransaction*, Transaction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStructurePlanted, APOTLStructure*, Structure);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureSelectedDelegate, APOTLStructure*, Structure);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureDeselectedDelegate, APOTLStructure*, Structure);
+
 //DECLARE_EVENT(FTurnSwitched);
 
 
@@ -196,6 +199,13 @@ public:
 	UHexTile* LocationToHex(FVector Location);
 
 
+	//~~ Global dispatchers ~~//
+
+	// Structure selected
+
+	// Hex selected
+
+
 	//~~ Debug - Log ~~//
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")
@@ -212,5 +222,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Structure")
 	FOnTransaction OnTransaction;
+
+	UPROPERTY(BlueprintAssignable, Category = "Structure")
+	FOnStructureSelectedDelegate OnStructureSelectedDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Structure")
+	FOnStructureDeselectedDelegate OnStructureDeselectedDelegate;
 
 };

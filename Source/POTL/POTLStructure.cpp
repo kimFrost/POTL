@@ -63,80 +63,106 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 
 void APOTLStructure::Select()
 {
-
-	OnSelected();
+	if (!bSelected)
+	{
+		bSelected = true;
+		OnSelected();
+		GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+		if (GameInstance)
+		{
+			GameInstance->OnStructureSelectedDelegate.Broadcast(this);
+		}
+	}
 }
 void APOTLStructure::Deselect()
 {
-
-	OnDeselected();
+	if (bSelected)
+	{
+		LeaveEditMode();
+		bSelected = false;
+		OnDeselected();
+		GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+		if (GameInstance)
+		{
+			GameInstance->OnStructureDeselectedDelegate.Broadcast(this);
+		}
+	}
 }
 void APOTLStructure::EnterEditMode()
 {
-	//~~ EnterEditMode for all UStructureComponents ~~//
-	/*
-	TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
-	for (auto& Component : StructureComponents)
+	if (!bInEditMode)
 	{
-		UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
-		if (StructureComponent)
+		//~~ EnterEditMode for all UStructureComponents ~~//
+		/*
+		TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
+		for (auto& Component : StructureComponents)
 		{
-			StructureComponent->EnterEditMode();
-		}
-	}
-	*/
-	//TODO: Move allocated and in range decal handling to function
-	for (auto& Hex : HexesInRange)
-	{
-		if (Hex)
-		{
-			if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
+			UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
+			if (StructureComponent)
 			{
-				Hex->ShowDecal(EDecalType::ValidBuild);
-
-				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
-				if (Delegate)
-				{
-					Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
-				}
-				//Hex->BindToOnHexClicked(0, &APOTLStructure::ToggleAllocateHex);
-
-				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
-				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex);
-				//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
-				//Delegate.IsBoundToObject(this)
-
-				
-				//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
-				//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+				StructureComponent->EnterEditMode();
 			}
 		}
-	}
-	for (auto& Hex : AllocatedHexes)
-	{
-		if (Hex)
+		*/
+		//TODO: Move allocated and in range decal handling to function
+		for (auto& Hex : HexesInRange)
 		{
-			Hex->ShowDecal(EDecalType::Allocated);
-		}
-	}
+			if (Hex)
+			{
+				if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
+				{
+					Hex->ShowDecal(EDecalType::ValidBuild);
 
-	//~~ Set edit mode in player controller ~~//
-	APOTLPlayerController* PlayerController = Cast<APOTLPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController)
-	{
-		PlayerController->EditStructure(this);
+					FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
+					if (Delegate)
+					{
+						Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
+					}
+					//Hex->BindToOnHexClicked(0, &APOTLStructure::ToggleAllocateHex);
+
+					//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
+					//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex);
+					//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
+					//Delegate.IsBoundToObject(this)
+
+				
+					//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+					//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+				}
+			}
+		}
+		for (auto& Hex : AllocatedHexes)
+		{
+			if (Hex)
+			{
+				Hex->ShowDecal(EDecalType::Allocated);
+			}
+		}
+		/*
+		//~~ Set edit mode in player controller ~~//
+		APOTLPlayerController* PlayerController = Cast<APOTLPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		if (PlayerController)
+		{
+			PlayerController->EditStructure(this);
+		}
+		*/
+		bInEditMode = true;
 	}
 }
 void APOTLStructure::LeaveEditMode()
 {
-	for (auto& Hex : HexesInRange)
+	if (bInEditMode)
 	{
-		if (Hex)
+		for (auto& Hex : HexesInRange)
 		{
-			Hex->HideDecal();
-			Hex->UnbindToHexClicked(this);
-			//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+			if (Hex)
+			{
+				Hex->HideDecal();
+				Hex->UnbindToHexClicked(this);
+				//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+			}
 		}
+		bInEditMode = false;
 	}
 }
 EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)

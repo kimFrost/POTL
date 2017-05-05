@@ -85,13 +85,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	TArray<UHexTile*> HexNeighbors;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
 	FST_HexResourceInfo HexResourceInfo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	TArray<UProviderComponent*> Providers;
 
 	TMap<FString, int> Resources;
+	bool bSelected;
 
 	// SupplyTo // GatheredBy // Timer??
 
@@ -108,6 +109,8 @@ public:
 
 	//void ListenForClick(UObject* Listener, FHandleDelegate Delegate);
 
+	void Select();
+	void Deselect();
 	void ClickHex();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Hex")

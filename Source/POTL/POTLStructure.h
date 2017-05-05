@@ -97,6 +97,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
 	UConstructionComponent* ConstructionComponent;
 
+	bool bSelected;
+	bool bInEditMode;
+
 	//FTimerHandle ConstructionProgressCheckTimer;
 
 
