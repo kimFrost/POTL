@@ -185,6 +185,24 @@ public:
 
 
 USTRUCT(BlueprintType)
+struct FST_TileConversion
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FST_TileConversion(
+		FString TileTypeId = "",
+		TMap<FString, int> PetalsOutput = TMap<FString, int>())
+		: TileTypeId(TileTypeId)
+		, PetalsOutput(PetalsOutput)
+	{}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	FString TileTypeId;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	TMap<FString, int> PetalsOutput;
+};
+
+
+USTRUCT(BlueprintType)
 struct FST_Ingredient
 {
 	GENERATED_USTRUCT_BODY()

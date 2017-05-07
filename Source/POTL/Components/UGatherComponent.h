@@ -33,7 +33,7 @@ public:
 
 	TArray<UHexTile*> GatherFrom;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
 	TArray<FString> GatherResources;
 
 	int MaxGatheredPerCycle;
@@ -41,6 +41,20 @@ public:
 	FTimerHandle GatherCheckTimer;
 
 	void ValidateRequirements();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
+	TArray<FST_TileConversion> TileConversions;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
+	TMap<FString, int> PetalProduction;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
+	TMap<FString, int> StoredPetals;
+
+	void CalcPetalProduction();
+	void AddPetal(FString PetalId, int Quantity);
+	void CollectPetals();
+	void ConvertPetals();
 
 	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
 

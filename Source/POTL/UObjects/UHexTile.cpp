@@ -37,6 +37,8 @@ UHexTile::UHexTile()
 	//HighlightDecal = nullptr;
 	DebugMe = false;
 
+	HexTileType = "Grassland";
+
 	AllocatedTo = nullptr;
 }
 

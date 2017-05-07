@@ -85,8 +85,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	TArray<UHexTile*> HexNeighbors;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	FST_HexResourceInfo HexResourceInfo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
+	FString HexTileType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hex")
 	TArray<UProviderComponent*> Providers;

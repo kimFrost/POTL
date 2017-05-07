@@ -29,9 +29,8 @@ void UGatherComponent::OnGathered_Implementation()
 {
 	//MissingResources = RequiredResources;
 	ValidateRequirements();
+	CalcPetalProduction();
 }
-
-
 void UGatherComponent::ValidateRequirements()
 {
 	//TODO: Better validation Logic for attachedTo
@@ -64,6 +63,79 @@ void UGatherComponent::ValidateRequirements()
 		bIsWorking = false;
 	}
 }
+void UGatherComponent::CalcPetalProduction()
+{
+	PetalProduction.Empty();
+	for (auto& Hex : AllocatedHexes)
+	{
+		if (Hex)
+		{
+			for (auto& TileConversion : TileConversions)
+			{
+				if (Hex->HexTileType == TileConversion.TileTypeId)
+				{
+					PetalProduction.Append(TileConversion.PetalsOutput);
+				}
+			}
+		}
+	}
+}
+void UGatherComponent::AddPetal(FString PetalId, int Quantity)
+{
+	if (StoredPetals.Contains(PetalId))
+	{
+		StoredPetals[PetalId] += Quantity;
+	}
+	else
+	{
+		StoredPetals.Add(PetalId, Quantity);
+	}
+}
+void UGatherComponent::CollectPetals()
+{
+	bool AnyCollected = false;
+
+	for (auto& Entry : PetalProduction)
+	{
+		AddPetal(Entry.Key, Entry.Value);
+	}
+}
+void UGatherComponent::ConvertPetals()
+{
+	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+	if (GameInstance && ParentStructure)
+	{
+		for (auto& Entry : StoredPetals)
+		{
+			//TODO: Lookup conversion rates for Entry.Key
+			int ConversionRate = 3;
+			if (Entry.Value >= ConversionRate)
+			{
+				int NumOfCombined = FPlatformMath::FloorToInt(Entry.Value / ConversionRate);
+				if (NumOfCombined > 0)
+				{
+					Entry.Value = Entry.Value - (NumOfCombined * ConversionRate);
+					for (int i = 0; i < NumOfCombined; i++)
+					{
+						UResource* Resource = GameInstance->CreateResource(Entry.Key);
+						if (Resource)
+						{
+							ParentStructure->StoreResource(Resource);
+						}
+					}
+				}
+			}
+		}
+		// Clean tmap
+		for (auto& Entry : StoredPetals)
+		{
+			if (Entry.Value == 0)
+			{
+				StoredPetals.Remove(Entry.Key);
+			}
+		}
+	}
+}
 
 
 /******************** OnProgressComplete *************************/
@@ -73,16 +145,15 @@ void UGatherComponent::OnProgressComplete()
 
 	OnGathered();
 	
+	CollectPetals();
+	ConvertPetals();
+
+	/*
 	if (ParentStructure)
 	{
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 		if (GameInstance)
 		{
-			// Gather from hexes
-			//ParentStructure->HexesInRange
-
-			// Or from allocated hexes with picker
-
 			bool AnyGathered = false; 
 			for (auto& Hex : AllocatedHexes) //GatherFrom
 			{
@@ -122,6 +193,7 @@ void UGatherComponent::OnProgressComplete()
 			}
 		}
 	}
+	*/
 }
 
 
@@ -142,6 +214,9 @@ void UGatherComponent::Init()
 	{
 		GatherFrom = AllocatedHexes;
 	}
+
+	CalcPetalProduction();
+
 	/*
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 	if (GameInstance)
