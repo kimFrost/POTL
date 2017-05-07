@@ -74,7 +74,17 @@ void UGatherComponent::CalcPetalProduction()
 			{
 				if (Hex->HexTileType == TileConversion.TileTypeId)
 				{
-					PetalProduction.Append(TileConversion.PetalsOutput);
+					for (auto& Output : TileConversion.PetalsOutput)
+					{
+						if (PetalProduction.Contains(Output.Key))
+						{
+							PetalProduction[Output.Key] += Output.Value;
+						}
+						else
+						{
+							PetalProduction.Add(Output.Key, Output.Value);
+						}
+					}
 				}
 			}
 		}
