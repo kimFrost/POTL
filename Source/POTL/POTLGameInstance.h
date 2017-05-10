@@ -92,6 +92,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	UDataTable* DATA_Resources;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
+	UDataTable* DATA_Collections;
+
 
 	FTimerHandle TurnTimerHandle;
 
@@ -179,9 +182,8 @@ public:
 	void IncludeStorage(UStorageComponent* StorageComp);
 
 	UResource* CreateResource(FString ResourceId);
-
+	UResource* CreateResourceByTag(FString TagId);
 	UResource* RequestResource(APOTLStructure* Requester, FString ResourceId);
-
 	UResource* RequestResourceByTag(APOTLStructure* Requester, FString Tag);
 
 

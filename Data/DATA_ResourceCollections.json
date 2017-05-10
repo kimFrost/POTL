@@ -3,12 +3,28 @@
         "Name": "GrasslandGatherable",
         "Id": "GrasslandGatherable",
         "Title": "GrasslandGatherable",
+		"PetalsRequired": 5,
         "Resources": ["Honey", "Berries"]
     },
 	{
         "Name": "ForestGatherable",
         "Id": "ForestGatherable",
         "Title": "ForestGatherable",
+		"PetalsRequired": 5,
         "Resources": ["Wood", "Mushroom", "Berries"]
+    },
+	{
+        "Name": "ForestFoodGatherable",
+        "Id": "ForestFoodGatherable",
+        "Title": "ForestFoodGatherable",
+		"PetalsRequired": 5,
+        "Resources": ["Roots", "Mushroom", "Berries"]
+    },
+	{
+        "Name": "Roots",
+        "Id": "Roots",
+        "Title": "Roots",
+		"PetalsRequired": 5,
+        "Resources": ["Carrot"]
     }
 ]

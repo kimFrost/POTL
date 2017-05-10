@@ -760,6 +760,9 @@ struct FST_Resource : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	int32 SortSequence;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int PetalsRequired;
+
 	FST_Resource()
 	{
 		Id = TEXT("");
@@ -772,6 +775,7 @@ struct FST_Resource : public FTableRowBase
 		Quantity = 0;
 		MaxAge = -1;
 		SortSequence = 9999;
+		PetalsRequired = 5;
 	}
 };
 
@@ -789,6 +793,34 @@ struct FST_Consumable : public FST_Resource
 	{
 		Something = TEXT("");
 	}
+};
+
+
+
+/*** FST_Collection ***/
+USTRUCT(BlueprintType)
+struct FST_Collection : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FST_Collection(
+		FString Id = "",
+		FString Title = "",
+		TArray<FString> Resources = TArray<FString>(),
+		int PetalsRequired = 5)
+		: Id(Id)
+		, Title(Title)
+		, Resources(Resources)
+		, PetalsRequired(PetalsRequired)
+	{}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Id;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	FString Title;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	TArray<FString> Resources;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int PetalsRequired;
 };
 
 

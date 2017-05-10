@@ -34,6 +34,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	DATA_Recipes = nullptr;
 	DATA_Structures = nullptr;
 	DATA_Resources = nullptr;
+	DATA_Collections = nullptr;
 
 	//~~ For setting custom channels from blueprint ~~//
 	ChannelLandscape = ECollisionChannel::ECC_WorldStatic;
@@ -64,6 +65,12 @@ void UPOTLGameInstance::ReadTables()
 	if (ResourceTable)
 	{
 		DATA_Resources = ResourceTable;
+	}
+	//~~ Collections ~~//
+	UDataTable* CollectionsTable = (UDataTable*)StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/DATA_ResourceCollections.DATA_ResourceCollections'"));
+	if (CollectionsTable)
+	{
+		DATA_Collections = CollectionsTable;
 	}
 }
 
@@ -758,12 +765,13 @@ void UPOTLGameInstance::IncludeStorage(UStorageComponent* StorageComp)
 		StorageMap->IncludeStorage(StorageComp);
 	}
 }
-UResource* UPOTLGameInstance::CreateResource(FString ResourceId)
+UResource* UPOTLGameInstance::CreateResource(FString Id)
 {
 	if (DATA_Resources)
 	{
 		static const FString ContextString(TEXT("ResourceLookup")); //~~ Key value for each column of values ~~//
-		FST_Resource* ResourceData = DATA_Resources->FindRow<FST_Resource>(*ResourceId, ContextString);
+		// Resource lookup
+		FST_Resource* ResourceData = DATA_Resources->FindRow<FST_Resource>(*Id, ContextString, false);
 		if (ResourceData)
 		{
 			ResourceUniqueIdCounter++;
@@ -771,7 +779,7 @@ UResource* UPOTLGameInstance::CreateResource(FString ResourceId)
 			UResource* Resource = NewObject<UResource>();
 			//UResource* Resource = NewNamedObject<UResource>(this, FName(*("Resource_" + ResourceId + FString::FromInt(ResourceUniqueIdCounter))), RF_NoFlags, nullptr); // Crashes on cleanup on PIE close
 
-			Resource->ResourceId = ResourceId;
+			Resource->ResourceId = Id;
 			Resource->Tags = ResourceData->Tags;
 			Resource->Value = ResourceData->Value;
 			Resource->AddToRoot(); // Prevent Garbage collection
@@ -780,6 +788,45 @@ UResource* UPOTLGameInstance::CreateResource(FString ResourceId)
 			//Resource->Rename(ResourceName, this, RF_NoFlags);
 
 			return Resource;
+		}
+		// Resource Collection lookup
+		if (DATA_Collections)
+		{
+			FST_Collection* CollectionData = DATA_Resources->FindRow<FST_Collection>(*Id, ContextString, false);
+			if (CollectionData)
+			{
+				int Min = 0;
+				int Max = CollectionData->Resources.Num() - 1;
+				int RandIndex = Min + (rand() % (int)(Max - Min + 1));
+				FString RandId = CollectionData->Resources[RandIndex];
+				return CreateResource(RandId);
+			}
+		}
+		//~~ Search by tag ~~//
+		return CreateResourceByTag(Id);
+	}
+	return nullptr;
+}
+UResource* UPOTLGameInstance::CreateResourceByTag(FString TagId)
+{
+	if (DATA_Resources)
+	{
+		static const FString ContextString(TEXT("ResourceTagLookup"));
+		TArray<FST_Resource*> ResourceRows;
+		DATA_Resources->GetAllRows(ContextString, ResourceRows);
+		//~~ Shuffle rows ~~//
+		ResourceRows.Sort([this](const FST_Resource Item1, const FST_Resource Item2) {
+			return FMath::FRand() < 0.5f;
+		});
+		for (auto& Row : ResourceRows)
+		{
+			if (Row)
+			{
+				if (Row->Tags.Contains(TagId))
+				{
+					return CreateResource(Row->Id);
+				}
+			}
 		}
 	}
 	return nullptr;
