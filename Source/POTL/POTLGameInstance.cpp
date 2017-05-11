@@ -53,6 +53,12 @@ void UPOTLGameInstance::ReadTables()
 	if (StructureTable)
 	{
 		DATA_Structures = StructureTable;
+		TArray<FName> RowNames;
+		RowNames = DATA_Structures->GetRowNames();
+		for (auto& Name : RowNames)
+		{
+			CachedStructureIds.Add(Name.ToString());
+		}
 	}
 	//~~ Recipes ~~//
 	UDataTable* RecipeTable = (UDataTable*)StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/ResourceRecipies.ResourceRecipies'"));
@@ -65,12 +71,24 @@ void UPOTLGameInstance::ReadTables()
 	if (ResourceTable)
 	{
 		DATA_Resources = ResourceTable;
+		TArray<FName> RowNames;
+		RowNames = DATA_Resources->GetRowNames();
+		for (auto& Name : RowNames)
+		{
+			CachedResourceIds.Add(Name.ToString());
+		}
 	}
 	//~~ Collections ~~//
 	UDataTable* CollectionsTable = (UDataTable*)StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Resources/DATA_ResourceCollections.DATA_ResourceCollections'"));
 	if (CollectionsTable)
 	{
 		DATA_Collections = CollectionsTable;
+		TArray<FName> RowNames;
+		RowNames = DATA_Collections->GetRowNames();
+		for (auto& Name : RowNames)
+		{
+			CachedCollectionIds.Add(Name.ToString());
+		}
 	}
 }
 
@@ -769,29 +787,32 @@ UResource* UPOTLGameInstance::CreateResource(FString Id)
 {
 	if (DATA_Resources)
 	{
-		static const FString ContextString(TEXT("ResourceLookup")); //~~ Key value for each column of values ~~//
-		// Resource lookup
-		FST_Resource* ResourceData = DATA_Resources->FindRow<FST_Resource>(*Id, ContextString, false);
-		if (ResourceData)
+		if (CachedResourceIds.Contains(Id))
 		{
-			ResourceUniqueIdCounter++;
-			//Structure->StructureBaseData = *StructureData;
-			UResource* Resource = NewObject<UResource>();
-			//UResource* Resource = NewNamedObject<UResource>(this, FName(*("Resource_" + ResourceId + FString::FromInt(ResourceUniqueIdCounter))), RF_NoFlags, nullptr); // Crashes on cleanup on PIE close
+			static const FString ContextString(TEXT("ResourceLookup")); //~~ Key value for each column of values ~~//
+			FST_Resource* ResourceData = DATA_Resources->FindRow<FST_Resource>(*Id, ContextString, false);
+			if (ResourceData)
+			{
+				ResourceUniqueIdCounter++;
+				//Structure->StructureBaseData = *StructureData;
+				UResource* Resource = NewObject<UResource>();
+				//UResource* Resource = NewNamedObject<UResource>(this, FName(*("Resource_" + ResourceId + FString::FromInt(ResourceUniqueIdCounter))), RF_NoFlags, nullptr); // Crashes on cleanup on PIE close
 
-			Resource->ResourceId = Id;
-			Resource->Tags = ResourceData->Tags;
-			Resource->Value = ResourceData->Value;
-			Resource->AddToRoot(); // Prevent Garbage collection
+				Resource->ResourceId = Id;
+				Resource->Tags = ResourceData->Tags;
+				Resource->Value = ResourceData->Value;
+				Resource->AddToRoot(); // Prevent Garbage collection
 
-			//const TCHAR* ResourceName = *(Resource->GetFName().ToString() + ResourceId);
-			//Resource->Rename(ResourceName, this, RF_NoFlags);
+				//const TCHAR* ResourceName = *(Resource->GetFName().ToString() + ResourceId);
+				//Resource->Rename(ResourceName, this, RF_NoFlags);
 
-			return Resource;
+				return Resource;
+			}
 		}
 		// Resource Collection lookup
-		if (DATA_Collections)
+		if (DATA_Collections && CachedCollectionIds.Contains(Id))
 		{
+			static const FString ContextString(TEXT("CollectionLookup")); //~~ Key value for each column of values ~~//
 			FST_Collection* CollectionData = DATA_Resources->FindRow<FST_Collection>(*Id, ContextString, false);
 			if (CollectionData)
 			{

@@ -82,6 +82,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource")
 	UStorageMap* StorageMap;
 
+	TArray<FString> CachedStructureIds;
+	TArray<FString> CachedResourceIds;
+	TArray<FString> CachedCollectionIds;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	UDataTable* DATA_Recipes;
