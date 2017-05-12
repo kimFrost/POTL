@@ -201,6 +201,23 @@ public:
 	TMap<FString, int> PetalsOutput;
 };
 
+USTRUCT(BlueprintType)
+struct FST_ResourceQuantity
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FST_ResourceQuantity(
+		FString ResourceId = "",
+		int Quantity = 1)
+		: ResourceId(ResourceId)
+		, Quantity(Quantity)
+	{}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	FString ResourceId;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	int Quantity;
+};
+
 
 USTRUCT(BlueprintType)
 struct FST_Ingredient

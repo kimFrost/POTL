@@ -147,6 +147,7 @@ void APOTLStructure::EnterEditMode()
 		}
 		*/
 		bInEditMode = true;
+		OnEnterEditMode();
 	}
 }
 void APOTLStructure::LeaveEditMode()
@@ -163,6 +164,7 @@ void APOTLStructure::LeaveEditMode()
 			}
 		}
 		bInEditMode = false;
+		OnLeaveEditMode();
 	}
 }
 EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
@@ -186,7 +188,8 @@ EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 			}
 		}
 
-		OnAllocatedHexesChanged.Broadcast();
+		OnAllocatedHexesChangedDelegate.Broadcast();
+		OnAllocatedHexesChanged();
 		
 		//TODO: Move allocated and in range decal handling to function
 		for (auto& Hex : HexesInRange)
@@ -632,6 +635,20 @@ void APOTLStructure::OnDeselected_Implementation()
 {
 
 }
+void APOTLStructure::OnEnterEditMode_Implementation()
+{
+
+}
+void APOTLStructure::OnLeaveEditMode_Implementation()
+{
+
+}
+void APOTLStructure::OnAllocatedHexesChanged_Implementation()
+{
+
+}
+
+
 
 //~~ Called when the game starts or when spawned ~~//
 void APOTLStructure::BeginPlay()

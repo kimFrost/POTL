@@ -173,7 +173,7 @@ public:
 
 
 
-	FOnAllocatedHexesChanged OnAllocatedHexesChanged;
+	FOnAllocatedHexesChanged OnAllocatedHexesChangedDelegate;
 
 	//TArray<FOnStructureClickedDelegate> OnStrucureClickedDelegates;
 	TMap<UObject*, FOnStructureClickedDelegate*> OnStrucureClickedDelegates;
@@ -207,6 +207,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
 	void OnDeselected();
 
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnEnterEditMode();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnLeaveEditMode();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnAllocatedHexesChanged();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

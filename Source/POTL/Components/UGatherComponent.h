@@ -51,6 +51,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
 	TMap<FString, int> StoredPetals;
 
+	UFUNCTION(BlueprintCallable, Category = "Gather")
+	TArray<FST_ResourceQuantity> GetTotalPetalProduction();
+
+	UFUNCTION(BlueprintCallable, Category = "Gather")
+	TArray<FST_ResourceQuantity> GetTileResourceOutput(UHexTile* Hex);
+	//void GetConversion(UHexTile* Hex, UPARAM(ref) TArray<FST_TileConversion>& Conversions);
+
 	void CalcPetalProduction();
 	void AddPetal(FString PetalId, int Quantity);
 	void CollectPetals();

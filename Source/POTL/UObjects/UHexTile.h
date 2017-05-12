@@ -100,7 +100,9 @@ public:
 	// SupplyTo // GatheredBy // Timer??
 
 	//UStructureComponent* AllocatedTo;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
 	APOTLStructure* AllocatedTo;
+
 	FOnHexToggleAllocate OnHexToggleAllocate;
 
 	//TArray<FOnHexClickedDelegate*> OnHexClickedDelegates;

@@ -63,6 +63,33 @@ void UGatherComponent::ValidateRequirements()
 		bIsWorking = false;
 	}
 }
+TArray<FST_ResourceQuantity> UGatherComponent::GetTotalPetalProduction()
+{
+	TArray<FST_ResourceQuantity> TotalPetalProduction;
+	for (auto& Entry : PetalProduction)
+	{
+		TotalPetalProduction.Add(FST_ResourceQuantity(Entry.Key, Entry.Value));
+	}
+	return TotalPetalProduction;
+}
+TArray<FST_ResourceQuantity> UGatherComponent::GetTileResourceOutput(UHexTile* Hex)
+{
+	TArray<FST_ResourceQuantity> TileResourceOutput;
+	if (Hex)
+	{
+		for (auto& TileConversion : TileConversions)
+		{
+			if (Hex->HexTileType == TileConversion.TileTypeId)
+			{
+				for (auto& Output : TileConversion.PetalsOutput)
+				{
+					TileResourceOutput.Add(FST_ResourceQuantity(Output.Key, Output.Value));
+				}
+			}
+		}
+	}
+	return TileResourceOutput;
+}
 void UGatherComponent::CalcPetalProduction()
 {
 	PetalProduction.Empty();
