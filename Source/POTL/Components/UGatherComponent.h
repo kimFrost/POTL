@@ -10,7 +10,9 @@
 
 
 //~~ DELEGATES ~~//
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProduction, float, Amount);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProductionChangedDelegate, TMap<FString, int>, Production);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProductionChangedDelegate, const TArray<FST_ResourceQuantity>&, TotalProduction);
+
 
 
 
@@ -64,6 +66,9 @@ public:
 	void ConvertPetals();
 
 	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
+
+	UPROPERTY(BlueprintAssignable, Category = "Gather|Event")
+	FOnProductionChangedDelegate OnProductionChangedDelegate;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Production")
 	void OnGathered();

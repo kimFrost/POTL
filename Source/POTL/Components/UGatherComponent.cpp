@@ -116,6 +116,7 @@ void UGatherComponent::CalcPetalProduction()
 			}
 		}
 	}
+	OnProductionChangedDelegate.Broadcast(GetTotalPetalProduction());
 }
 void UGatherComponent::AddPetal(FString PetalId, int Quantity)
 {
