@@ -16,6 +16,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllocatedHexesChanged);
 //DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnStructureClickedDelegate, bool);
 //DECLARE_DELEGATE_RetVal(EHandleType, FOnStructureClickedDelegate);
 DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnStructureClickedDelegate, APOTLStructure*);
+DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnHexAllocateDelegate, UHexTile*);
+DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnHexUnallocateDelegate, UHexTile*);
+
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConstructionComplete);
 
@@ -118,9 +121,21 @@ public:
 
 	void LeaveEditMode();
 
+
+	TMap<UObject*, FOnHexAllocateDelegate*> OnHexAllocateDelegates;
+	FOnHexAllocateDelegate* BindToOnHexAllocate(UObject* Listener, int Priority);
+	void UnbindToOnHexAllocate(UObject* Listener);
+
+	TMap<UObject*, FOnHexUnallocateDelegate*> OnHexUnallocateDelegates;
+	FOnHexUnallocateDelegate* BindToOnHexUnallocate(UObject* Listener, int Priority);
+	void UnbindToOnHexUnallocate(UObject* Listener);
+
+
 	UFUNCTION(Category = "Structure")
 	EHandleType ToggleAllocateHex(UHexTile* Hex, bool bUpdate);
 
+	bool AllocateHex(UHexTile* Hex);
+	bool UnallocateHex(UHexTile* Hex);
 
 	/** Resources */
 
@@ -175,6 +190,7 @@ public:
 
 	FOnAllocatedHexesChanged OnAllocatedHexesChangedDelegate;
 
+
 	//TArray<FOnStructureClickedDelegate> OnStrucureClickedDelegates;
 	TMap<UObject*, FOnStructureClickedDelegate*> OnStrucureClickedDelegates;
 
@@ -215,6 +231,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
 	void OnAllocatedHexesChanged();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnHexAllocated(UHexTile* Hex);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Structure")
+	void OnHexUnallocated(UHexTile* Hex);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

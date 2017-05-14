@@ -109,7 +109,7 @@ void APOTLStructure::EnterEditMode()
 		{
 			if (Hex)
 			{
-				if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
+				if (!Hex->AttachedBuilding || !Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
 				{
 					Hex->ShowDecal(EDecalType::ValidBuild);
 
@@ -167,64 +167,154 @@ void APOTLStructure::LeaveEditMode()
 		OnLeaveEditMode();
 	}
 }
+FOnHexAllocateDelegate* APOTLStructure::BindToOnHexAllocate(UObject* Listener, int Priority)
+{
+	if (Listener)
+	{
+		UnbindToOnHexAllocate(Listener);
+		FOnHexAllocateDelegate* Delegate = new FOnHexAllocateDelegate();
+		OnHexAllocateDelegates.Add(Listener, Delegate);
+		return Delegate;
+	}
+	return nullptr;
+}
+void APOTLStructure::UnbindToOnHexAllocate(UObject* Listener)
+{
+	if (Listener && OnHexAllocateDelegates.Contains(Listener))
+	{
+		FOnHexAllocateDelegate* Delegate = OnHexAllocateDelegates[Listener];
+		Delegate->Unbind();
+		delete Delegate;
+		OnHexAllocateDelegates.Remove(Listener);
+	}
+}
+FOnHexUnallocateDelegate* APOTLStructure::BindToOnHexUnallocate(UObject* Listener, int Priority)
+{
+	if (Listener)
+	{
+		UnbindToOnHexUnallocate(Listener);
+		FOnHexUnallocateDelegate* Delegate = new FOnHexUnallocateDelegate();
+		OnHexUnallocateDelegates.Add(Listener, Delegate);
+		return Delegate;
+	}
+	return nullptr;
+}
+void APOTLStructure::UnbindToOnHexUnallocate(UObject* Listener)
+{
+	if (Listener && OnHexUnallocateDelegates.Contains(Listener))
+	{
+		FOnHexUnallocateDelegate* Delegate = OnHexUnallocateDelegates[Listener];
+		Delegate->Unbind();
+		delete Delegate;
+		OnHexUnallocateDelegates.Remove(Listener);
+	}
+}
 EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 {
 	if (Hex)
 	{
-		if (AllocatedHexes.Contains(Hex))
+		bool bChanged = false;
+		if (Hex->AllocatedTo == this)
 		{
-			//Hex->UnAllocateTo(this);
-			Hex->AllocatedTo = nullptr;
-			AllocatedHexes.Remove(Hex);
+			bChanged = UnallocateHex(Hex);
 		}
 		else
 		{
-			if (!Hex->AllocatedTo)
-			{
-				// Binding?
-				//Hex->AllocateTo(this);
-				Hex->AllocatedTo = this;
-				AllocatedHexes.Add(Hex);
-			}
+			bChanged = AllocateHex(Hex);
 		}
-
-		OnAllocatedHexesChangedDelegate.Broadcast();
-		OnAllocatedHexesChanged();
 		
-		//TODO: Move allocated and in range decal handling to function
-		for (auto& Hex : HexesInRange)
+		if (bChanged)
 		{
-			if (Hex)
+			OnAllocatedHexesChangedDelegate.Broadcast();
+			OnAllocatedHexesChanged();
+
+			//TODO: Move allocated and in range decal handling to function
+			for (auto& Hex : HexesInRange)
 			{
-				if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
+				if (Hex)
 				{
-					Hex->ShowDecal(EDecalType::ValidBuild);
-					//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
-					//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+					if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
+					{
+						Hex->ShowDecal(EDecalType::ValidBuild);
+						//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+						//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
+					}
 				}
 			}
-		}
-		for (auto& Hex : AllocatedHexes)
-		{
-			if (Hex)
+			for (auto& Hex : AllocatedHexes)
 			{
-				Hex->ShowDecal(EDecalType::Allocated);
+				if (Hex)
+				{
+					Hex->ShowDecal(EDecalType::Allocated);
+				}
 			}
-		}
 
-		//~~ Update AllocatedHexes in all structure components ~~//
-		TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
-		for (auto& Component : StructureComponents)
-		{
-			UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
-			if (StructureComponent)
+			//~~ Update AllocatedHexes in all structure components ~~//
+			TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
+			for (auto& Component : StructureComponents)
 			{
-				StructureComponent->AllocatedHexes = AllocatedHexes;
+				UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
+				if (StructureComponent)
+				{
+					StructureComponent->AllocatedHexes = AllocatedHexes;
+				}
 			}
 		}
 	}
 
 	return EHandleType::Unhandled;
+}
+
+bool APOTLStructure::AllocateHex(UHexTile* Hex)
+{
+	if (!AllocatedHexes.Contains(Hex))
+	{
+		if (Hex->AllocatedTo)
+		{
+			Hex->AllocatedTo->UnallocateHex(Hex);
+		}
+		for (auto& Delegate : OnHexAllocateDelegates)
+		{
+			if (Delegate.Key && Delegate.Value && Delegate.Value->IsBound())
+			{
+				EHandleType Response = Delegate.Value->Execute(Hex);
+				if (Response == EHandleType::HandledBreak)
+				{
+					return false;
+				}
+			}
+		}
+
+		Hex->AllocatedTo = this;
+		AllocatedHexes.Add(Hex);
+		OnHexAllocated(Hex);
+		return true;
+	}
+	return false;
+}
+
+bool APOTLStructure::UnallocateHex(UHexTile* Hex)
+{
+	if (AllocatedHexes.Contains(Hex))
+	{
+		for (auto& Delegate : OnHexUnallocateDelegates)
+		{
+			if (Delegate.Key && Delegate.Value && Delegate.Value->IsBound())
+			{
+				EHandleType Response = Delegate.Value->Execute(Hex);
+				if (Response == EHandleType::HandledBreak)
+				{
+					return false;
+				}
+			}
+		}
+
+		Hex->AllocatedTo = nullptr;
+		AllocatedHexes.Remove(Hex);
+		OnHexUnallocated(Hex);
+		return true;
+	}
+	return false;
 }
 
 /******************** RESOURCES *************************/
@@ -647,7 +737,14 @@ void APOTLStructure::OnAllocatedHexesChanged_Implementation()
 {
 
 }
+void APOTLStructure::OnHexAllocated_Implementation(UHexTile* Hex)
+{
 
+}
+void APOTLStructure::OnHexUnallocated_Implementation(UHexTile* Hex)
+{
+
+}
 
 
 //~~ Called when the game starts or when spawned ~~//

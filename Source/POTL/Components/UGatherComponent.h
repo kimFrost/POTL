@@ -67,6 +67,12 @@ public:
 
 	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
 
+	UFUNCTION(Category = "Structure")
+	EHandleType ParseAllocateHex(UHexTile* Hex);
+
+	UFUNCTION(Category = "Structure")
+	EHandleType ParseUnallocateHex(UHexTile* Hex);
+
 	UPROPERTY(BlueprintAssignable, Category = "Gather|Event")
 	FOnProductionChangedDelegate OnProductionChangedDelegate;
 

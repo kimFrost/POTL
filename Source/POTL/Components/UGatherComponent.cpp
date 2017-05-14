@@ -174,6 +174,19 @@ void UGatherComponent::ConvertPetals()
 		}
 	}
 }
+EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
+{
+	// Get Required labor or other static resources
+
+
+	return EHandleType();
+}
+EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
+{
+	// Return allocated labor or other static resources
+
+	return EHandleType();
+}
 
 
 /******************** OnProgressComplete *************************/
@@ -251,6 +264,22 @@ void UGatherComponent::Init()
 	else
 	{
 		GatherFrom = AllocatedHexes;
+	}
+
+	if (ParentStructure)
+	{
+		//~~ Bind to allocate hex in parent structure ~~//
+		FOnHexAllocateDelegate* AllocateDelegate = ParentStructure->BindToOnHexAllocate(this, 0);
+		if (AllocateDelegate)
+		{
+			AllocateDelegate->BindUObject(this, &UGatherComponent::ParseAllocateHex);
+		}
+		//~~ Bind to unallocate hex in parent structure ~~//
+		FOnHexUnallocateDelegate* UnallocateDelegate = ParentStructure->BindToOnHexUnallocate(this, 0);
+		if (UnallocateDelegate)
+		{
+			UnallocateDelegate->BindUObject(this, &UGatherComponent::ParseUnallocateHex);
+		}
 	}
 
 	CalcPetalProduction();
