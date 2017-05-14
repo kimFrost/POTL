@@ -21,6 +21,7 @@ UGatherComponent::UGatherComponent()
 	GatherRange = 3;
 	TaskLength = 5.f;
 	MaxGatheredPerCycle = 1;
+	TileConversions = TArray<FST_TileConversion>();
 }
 
 
@@ -177,13 +178,37 @@ void UGatherComponent::ConvertPetals()
 EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 {
 	// Get Required labor or other static resources
-
-
-	return EHandleType();
+	if (Hex && ParentStructure)
+	{
+		// Request Labor
+		for (auto& TileConversion : TileConversions)
+		{
+			if (Hex->HexTileType == TileConversion.TileTypeId)
+			{
+				if (ParentStructure->RequestLabor(TileConversion.LaborRequired))
+				{
+					return EHandleType::Handled;
+				}
+				else
+				{
+					// Add feedback message to player
+					UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+					if (GameInstance)
+					{
+						GameInstance->ShowFeedbackMsg(TEXT("Not enough labor points"), EMessageType::Common, Hex->Location);
+					}
+					return EHandleType::HandledBreak;
+				}
+			}
+		}
+	}
+	return EHandleType::Unhandled;
 }
 EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
 {
 	// Return allocated labor or other static resources
+
+	//TODO: Write function
 
 	return EHandleType();
 }

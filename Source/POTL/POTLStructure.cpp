@@ -571,7 +571,28 @@ void APOTLStructure::CompleteConstruction()
 	IsUnderConstruction = false;
 	OnConstructionComplete();
 	Init(); // Re-init structure
-};
+}
+bool APOTLStructure::RequestLabor(int Amount)
+{
+	TArray<UActorComponent*> ChildComponents = GetComponentsByClass(UResidentsComponent::StaticClass());
+	for (auto& Component : ChildComponents)
+	{
+		UResidentsComponent* ResidentsComponent = Cast<UResidentsComponent>(Component);
+		if (ResidentsComponent)
+		{
+			if (ResidentsComponent->RequestLabor(Amount))
+			{
+				return true;
+			}
+		}
+	}
+	if (AttachedTo)
+	{
+		return AttachedTo->RequestLabor(Amount);
+	}
+	return false;
+}
+
 
 /******************** MAP *************************/
 APOTLStructure* APOTLStructure::GetNearestStructure()

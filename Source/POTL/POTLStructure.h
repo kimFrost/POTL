@@ -178,14 +178,13 @@ public:
 	void CompleteConstruction();
 
 
-
+	bool RequestLabor(int Amount);
 
 
 	/** Map */
 
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	APOTLStructure* GetNearestStructure();
-
 
 
 	FOnAllocatedHexesChanged OnAllocatedHexesChangedDelegate;

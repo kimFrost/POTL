@@ -41,7 +41,12 @@ public:
 
 	FTimerHandle NeedsCheckTimer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
+	int AvailableLabor;
+
 	void CheckNeeds();
+
+	bool RequestLabor(int Amount);
 
 
 	virtual void Init() override;

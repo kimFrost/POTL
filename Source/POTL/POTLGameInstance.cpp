@@ -990,6 +990,11 @@ UHexTile* UPOTLGameInstance::LocationToHex(FVector Location)
 	return Hex;
 }
 
+void UPOTLGameInstance::ShowFeedbackMsg(FString Message, EMessageType Type = EMessageType::Common, FVector WorldLocation = FVector(0))
+{
+	OnMessageDelegate.Broadcast(Message, Type, WorldLocation);
+}
+
 /******************** DEBUG - LOG *************************/
 void UPOTLGameInstance::Log(FString Msg = "", float Duration = 5.0f, FColor DebugColor = FColor::Green, int32 GroupIndex = -1)
 {

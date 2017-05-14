@@ -29,6 +29,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTransaction, UTransaction*, Trans
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStructurePlanted, APOTLStructure*, Structure);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureSelectedDelegate, APOTLStructure*, Structure);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureDeselectedDelegate, APOTLStructure*, Structure);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnMessageDelegate, FString, Message, EMessageType, Type, FVector, WorldLocation);
+
 
 //DECLARE_EVENT(FTurnSwitched);
 
@@ -203,6 +205,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	UHexTile* LocationToHex(FVector Location);
 
+
+	//~~ Util - Feedback ~~//
+	UPROPERTY(BlueprintAssignable, Category = "Util")
+	FOnMessageDelegate OnMessageDelegate;
+
+	void ShowFeedbackMsg(FString Message, EMessageType Type, FVector WorldLocation);
 
 	//~~ Global dispatchers ~~//
 

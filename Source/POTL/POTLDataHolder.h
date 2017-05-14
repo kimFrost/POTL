@@ -107,6 +107,13 @@ enum class EHandleType : uint8
 	HandledBreak UMETA(DisplayName = "HandledBreak"),
 	Unhandled UMETA(DisplayName = "Unhandled")
 };
+UENUM(BlueprintType)
+enum class EMessageType : uint8
+{
+	Common UMETA(DisplayName = "Common"),
+	Warning UMETA(DisplayName = "Warning"),
+	Error UMETA(DisplayName = "Error")
+};
 
 
 //~~~~~ Custom types ~~~~~//
@@ -191,12 +198,20 @@ struct FST_TileConversion
 public:
 	FST_TileConversion(
 		FString TileTypeId = "",
+		int LaborRequired = 1,
+		TMap<FString, int> PetalsInput = TMap<FString, int>(),
 		TMap<FString, int> PetalsOutput = TMap<FString, int>())
 		: TileTypeId(TileTypeId)
+		, LaborRequired(LaborRequired)
+		, PetalsInput(PetalsInput)
 		, PetalsOutput(PetalsOutput)
 	{}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	FString TileTypeId;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	int LaborRequired;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	TMap<FString, int> PetalsInput;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	TMap<FString, int> PetalsOutput;
 };

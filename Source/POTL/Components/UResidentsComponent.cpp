@@ -18,6 +18,7 @@ UResidentsComponent::UResidentsComponent()
 	Wealth = 0.f;
 	Food = 20.f;
 	ConsumptionRate = 1.f;
+	AvailableLabor = 0.f;
 }
 
 
@@ -44,6 +45,16 @@ void UResidentsComponent::CheckNeeds()
 			}
 		}
 	}
+}
+
+bool UResidentsComponent::RequestLabor(int Amount)
+{
+	if (AvailableLabor >= Amount)
+	{
+		AvailableLabor = AvailableLabor - Amount;
+		return true;
+	}
+	return false;
 }
 
 
