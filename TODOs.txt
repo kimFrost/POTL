@@ -35,6 +35,9 @@ x.2.17
 
  
 Backlog -----------------------------
+ - Structures in range update on place structure
+ - Make structure only request resources from structures in range.
+ - Plant forest by code
  - Include in storage for UStructureComponent doens't allow for trigger tranfer event on storagemap. Need a better solution. But it might trigger a transaction event.
  - UStructureComponent doesn't transfer resources.
  - Request resource with wealth budget parameter
