@@ -179,6 +179,7 @@ public:
 
 
 	bool RequestLabor(int Amount);
+	bool StoreLabor(int Amount);
 
 
 	/** Map */

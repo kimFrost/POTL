@@ -57,6 +57,12 @@ bool UResidentsComponent::RequestLabor(int Amount)
 	return false;
 }
 
+bool UResidentsComponent::StoreLabor(int Amount)
+{
+	AvailableLabor = AvailableLabor + Amount;
+	return true;
+}
+
 
 /******************** Init *************************/
 void UResidentsComponent::Init()

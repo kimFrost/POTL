@@ -191,7 +191,6 @@ EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 				}
 				else
 				{
-					// Add feedback message to player
 					UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 					if (GameInstance)
 					{
@@ -206,10 +205,28 @@ EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 }
 EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
 {
-	// Return allocated labor or other static resources
-
-	//TODO: Write function
-
+	if (Hex && ParentStructure)
+	{
+		for (auto& TileConversion : TileConversions)
+		{
+			if (Hex->HexTileType == TileConversion.TileTypeId)
+			{
+				if (ParentStructure->StoreLabor(TileConversion.LaborRequired))
+				{
+					return EHandleType::Handled;
+				}
+				else
+				{
+					UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+					if (GameInstance)
+					{
+						GameInstance->ShowFeedbackMsg(TEXT("Unable to return labor points"), EMessageType::Warning, Hex->Location);
+					}
+					return EHandleType::HandledBreak;
+				}
+			}
+		}
+	}
 	return EHandleType();
 }
 

@@ -593,6 +593,27 @@ bool APOTLStructure::RequestLabor(int Amount)
 	return false;
 }
 
+bool APOTLStructure::StoreLabor(int Amount)
+{
+	TArray<UActorComponent*> ChildComponents = GetComponentsByClass(UResidentsComponent::StaticClass());
+	for (auto& Component : ChildComponents)
+	{
+		UResidentsComponent* ResidentsComponent = Cast<UResidentsComponent>(Component);
+		if (ResidentsComponent)
+		{
+			if (ResidentsComponent->StoreLabor(Amount))
+			{
+				return true;
+			}
+		}
+	}
+	if (AttachedTo)
+	{
+		return AttachedTo->StoreLabor(Amount);
+	}
+	return false;
+}
+
 
 /******************** MAP *************************/
 APOTLStructure* APOTLStructure::GetNearestStructure()

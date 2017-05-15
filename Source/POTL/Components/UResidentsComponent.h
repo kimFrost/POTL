@@ -47,6 +47,7 @@ public:
 	void CheckNeeds();
 
 	bool RequestLabor(int Amount);
+	bool StoreLabor(int Amount);
 
 
 	virtual void Init() override;
