@@ -31,12 +31,13 @@ x.2.17
  x Request resource by tag
  x StructureComponent - Production loop & bIsWorking
  
-11.3.17
-
+16.5.17
+ - Structures in range update on place structure
+ - Make structure only request resources from structures in range. 
+ 
+ 
  
 Backlog -----------------------------
- - Structures in range update on place structure
- - Make structure only request resources from structures in range.
  - Plant forest by code
  - Include in storage for UStructureComponent doens't allow for trigger tranfer event on storagemap. Need a better solution. But it might trigger a transaction event.
  - UStructureComponent doesn't transfer resources.

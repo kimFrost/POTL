@@ -441,9 +441,11 @@ void UPOTLGameInstance::CreateHexes()
 			RV_TraceParams.bTraceAsyncScene = true;
 			RV_TraceParams.bReturnPhysicalMaterial = false;
 
+			/*
 			const FName TraceTag("TracePointHeight");
 			PlayerController->GetWorld()->DebugDrawTraceTag = TraceTag;
 			RV_TraceParams.TraceTag = TraceTag;
+			*/
 
 			// Reset hexes
 			Hexes.Empty();

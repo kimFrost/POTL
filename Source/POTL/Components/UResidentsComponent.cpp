@@ -37,7 +37,8 @@ void UResidentsComponent::CheckNeeds()
 		if (Food < 10.f)
 		{
 			// Request food of quality matching 1/10 of wealth
-			UResource* Resource = GameInstance->RequestResourceByTag(ParentStructure, TEXT("Food"));
+			//UResource* Resource = GameInstance->RequestResourceByTag(ParentStructure, TEXT("Food"));
+			UResource* Resource = ParentStructure->RequestResourceByTag("Food", true);
 			if (Resource)
 			{
 				GameInstance->TransferResource(Resource, this, true, false); // Consume and pay

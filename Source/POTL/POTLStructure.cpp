@@ -173,11 +173,14 @@ void APOTLStructure::UpdateInRangeLists(bool bUpdateOthers)
 	RootStructuresInRange.Empty();
 	for (auto& Hex : HexesInRange)
 	{
-		if (Hex && Hex->AttachedBuilding)
+		if (Hex && Hex->AttachedBuilding && Hex->AttachedBuilding != this)
 		{
 			APOTLStructure* Structure = Hex->AttachedBuilding;
-			StructuresInRange.Add(Structure);
-			if (!Structure->AttachedTo)
+			if (!StructuresInRange.Contains(Structure))
+			{
+				StructuresInRange.Add(Structure);
+			}
+			if (!Structure->AttachedTo && !RootStructuresInRange.Contains(Structure))
 			{
 				RootStructuresInRange.Add(Structure);
 			}
