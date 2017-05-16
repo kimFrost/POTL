@@ -61,6 +61,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<UHexTile*> HexesInRange;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<APOTLStructure*> RootStructuresInRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<APOTLStructure*> StructuresInRange;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
 	TArray<UHexTile*> AllocatedHexes;
 
@@ -121,6 +127,8 @@ public:
 
 	void LeaveEditMode();
 
+	void UpdateInRangeLists(bool bUpdateOthers);
+
 
 	TMap<UObject*, FOnHexAllocateDelegate*> OnHexAllocateDelegates;
 	FOnHexAllocateDelegate* BindToOnHexAllocate(UObject* Listener, int Priority);
@@ -177,6 +185,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Construction")
 	void CompleteConstruction();
 
+
+	UResource* RequestResource(FString ResourceId, bool bBubble);
+	UResource* RequestResourceByTag(FString TagId, bool bBubble);
 
 	bool RequestLabor(int Amount);
 	bool StoreLabor(int Amount);

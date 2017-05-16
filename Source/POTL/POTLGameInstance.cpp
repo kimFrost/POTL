@@ -865,7 +865,7 @@ UResource* UPOTLGameInstance::RequestResource(APOTLStructure* Requester, FString
 
 	return nullptr;
 }
-UResource * UPOTLGameInstance::RequestResourceByTag(APOTLStructure * Requester, FString Tag)
+UResource* UPOTLGameInstance::RequestResourceByTag(APOTLStructure* Requester, FString Tag)
 {
 	if (StorageMap)
 	{

@@ -53,7 +53,8 @@ void UProductionComponent::CheckProduction()
 				int NumOfResourcesFound = 0;
 				for (int i = 0; i < Entry.Value; i++)
 				{
-					UResource* Resource = GameInstance->RequestResource(ParentStructure, Entry.Key);
+					//UResource* Resource = GameInstance->RequestResource(ParentStructure, Entry.Key);
+					UResource* Resource = ParentStructure->RequestResource(Entry.Key, true);
 					if (Resource)
 					{
 						NumOfResourcesFound++;

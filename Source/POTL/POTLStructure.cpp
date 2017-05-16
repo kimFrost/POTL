@@ -167,6 +167,34 @@ void APOTLStructure::LeaveEditMode()
 		OnLeaveEditMode();
 	}
 }
+void APOTLStructure::UpdateInRangeLists(bool bUpdateOthers)
+{
+	StructuresInRange.Empty();
+	RootStructuresInRange.Empty();
+	for (auto& Hex : HexesInRange)
+	{
+		if (Hex && Hex->AttachedBuilding)
+		{
+			APOTLStructure* Structure = Hex->AttachedBuilding;
+			StructuresInRange.Add(Structure);
+			if (!Structure->AttachedTo)
+			{
+				RootStructuresInRange.Add(Structure);
+			}
+			if (bUpdateOthers)
+			{
+				Structure->UpdateInRangeLists(false);
+			}
+		}
+	}
+	//~~ Sort in range structure lists by distance ~~//
+	StructuresInRange.Sort([this](const APOTLStructure& Structure1, const APOTLStructure& Structure2) {
+		return (Structure1.GetActorLocation() - this->GetActorLocation()).Size() < (Structure2.GetActorLocation() - this->GetActorLocation()).Size();
+	});
+	RootStructuresInRange.Sort([this](const APOTLStructure& Structure1, const APOTLStructure& Structure2) {
+		return (Structure1.GetActorLocation() - this->GetActorLocation()).Size() < (Structure2.GetActorLocation() - this->GetActorLocation()).Size();
+	});
+}
 FOnHexAllocateDelegate* APOTLStructure::BindToOnHexAllocate(UObject* Listener, int Priority)
 {
 	if (Listener)
@@ -503,6 +531,7 @@ void APOTLStructure::Init()
 			}
 			bIsInitialized = true;
 		}
+		UpdateInRangeLists(true);
 		OnInit();
 	}
 }
@@ -571,6 +600,72 @@ void APOTLStructure::CompleteConstruction()
 	IsUnderConstruction = false;
 	OnConstructionComplete();
 	Init(); // Re-init structure
+}
+UResource* APOTLStructure::RequestResource(FString ResourceId, bool bBubble = true)
+{
+	// Search self
+	TArray<UActorComponent*> StorageComponents = GetComponentsByClass(UStorageComponent::StaticClass());
+	for (auto& Component : StorageComponents)
+	{
+		UStorageComponent* StorageComponent = Cast<UStorageComponent>(Component);
+		if (StorageComponent)
+		{
+			UResource* Resource = StorageComponent->RequestResource(this, ResourceId);
+			if (Resource)
+			{
+				return Resource;
+			}
+		}
+	}
+	if (bBubble)
+	{
+		// Search others in range
+		for (auto& Structure : RootStructuresInRange)
+		{
+			if (Structure)
+			{
+				UResource* Resource = Structure->RequestResource(ResourceId, false);
+				if (Resource)
+				{
+					return Resource;
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+UResource* APOTLStructure::RequestResourceByTag(FString TagId, bool bBubble = true)
+{
+	// Search self
+	TArray<UActorComponent*> StorageComponents = GetComponentsByClass(UStorageComponent::StaticClass());
+	for (auto& Component : StorageComponents)
+	{
+		UStorageComponent* StorageComponent = Cast<UStorageComponent>(Component);
+		if (StorageComponent)
+		{
+			UResource* Resource = StorageComponent->RequestResourceByTag(this, TagId);
+			if (Resource)
+			{
+				return Resource;
+			}
+		}
+	}
+	if (bBubble)
+	{
+		// Search others in range
+		for (auto& Structure : RootStructuresInRange)
+		{
+			if (Structure)
+			{
+				UResource* Resource = Structure->RequestResourceByTag(TagId, false);
+				if (Resource)
+				{
+					return Resource;
+				}
+			}
+		}
+	}
+	return nullptr;
 }
 bool APOTLStructure::RequestLabor(int Amount)
 {

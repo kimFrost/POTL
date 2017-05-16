@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "POTL.h"
+#include "POTLGameInstance.h"
 #include "UObjects/UResource.h"
 #include "Components/UStorageComponent.h"
 #include "UStorageMap.h"
@@ -90,6 +91,11 @@ UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString Resou
 				else
 				{
 					// Trigger Warning
+					UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(Requester->GetWorld(), 0)->GetGameInstance());
+					if (GameInstance)
+					{
+						GameInstance->ShowFeedbackMsg(TEXT("Storage was not IsValidLowLevel in StorageMap"), EMessageType::Error, FVector(0.f));
+					}
 				}
 			}
 		}
@@ -98,7 +104,7 @@ UResource* UStorageMap::RequestResource(APOTLStructure* Requester, FString Resou
 }
 
 /******************** RequestResourceByTag *************************/
-UResource* UStorageMap::RequestResourceByTag(APOTLStructure * Requester, FString Tag)
+UResource* UStorageMap::RequestResourceByTag(APOTLStructure* Requester, FString Tag)
 {
 	if (Requester)
 	{
