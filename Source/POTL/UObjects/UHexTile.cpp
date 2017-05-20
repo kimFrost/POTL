@@ -161,6 +161,59 @@ void UHexTile::ShowDecal(EDecalType Type)
 	}
 }
 
+bool UHexTile::IsBuildable() //const FST_BuildInfo& BuildInfo
+{
+	//FST_BuildInfo, (FST_Structure, RotationDirection)
+
+	// Structure check and allocate check
+	if (AllocatedTo || AttachedBuilding)
+	{
+		return false;
+	}
+	// Terrain type check
+	if (HexTileType != "Grassland")
+	{
+		return false;
+	}
+	/*
+	// Check for attachto on neighbours (Don't let hex make this validation)
+	if (BuildInfo.StructureInfo.AttachTo.Num() > 0)
+	{
+		bool AttachToValid = true;
+		UHexTile* NeighbourHex = HexNeighbors[BuildInfo.RotationDirection];
+		if (NeighbourHex)
+		{
+			if (NeighbourHex->AttachedBuilding)
+			{
+				FString NeighbourStructureId = NeighbourHex->AttachedBuilding->StructureBaseData.Id;
+				if (!BuildInfo.StructureInfo.AttachTo.Contains(NeighbourStructureId))
+				{
+					AttachToValid = false;
+				}
+			}
+			else
+			{
+				AttachToValid = false;
+			}
+		}
+		else
+		{
+			AttachToValid = false;
+		}
+		if (!AttachToValid)
+		{
+			return false;
+		}
+	}
+	*/
+	
+
+	// slope check
+
+
+	return true;
+}
+
 
 /******************** Init *************************/
 void UHexTile::Init_Implementation()

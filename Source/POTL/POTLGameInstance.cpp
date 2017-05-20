@@ -146,10 +146,10 @@ bool UPOTLGameInstance::IsHexTerrainBuildable(const UHexTile* Hex)
 		return false;
 	}
 }
-bool UPOTLGameInstance::ValidatePlaceStructureOnHex(FString StructureId, UHexTile* Hex, int Rotation)
+bool UPOTLGameInstance::ValidatePlaceStructureOnHex(UHexTile* Hex, const FST_BuildInfo& BuildInfo)
 {
 	bool Valid = false;
-	FST_Structure* StructureData = GetStructureRowData(StructureId);
+	FST_Structure* StructureData = GetStructureRowData(BuildInfo.StructureInfo.Id);
 	if (StructureData && Hex)
 	{
 		Valid = true;
@@ -157,7 +157,7 @@ bool UPOTLGameInstance::ValidatePlaceStructureOnHex(FString StructureId, UHexTil
 		// Validate attachTo Structure is present
 		if (StructureData->AttachTo.Num() > 0)
 		{
-			UHexTile* AttachToHex = Hex->GetNeighbourHex(Rotation);
+			UHexTile* AttachToHex = Hex->GetNeighbourHex(BuildInfo.RotationDirection);
 			if (AttachToHex && AttachToHex->AttachedBuilding)
 			{
 				if (!StructureData->AttachTo.Contains(AttachToHex->AttachedBuilding->StructureBaseData.Id))
@@ -175,15 +175,15 @@ bool UPOTLGameInstance::ValidatePlaceStructureOnHex(FString StructureId, UHexTil
 		for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
 		{
 			FVector LocalCubeCoord = StructureData->CubeSizes[i] + Hex->HexCubeCoords;
-			LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, Rotation, Hex->HexCubeCoords);
+			LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, BuildInfo.RotationDirection, Hex->HexCubeCoords);
 			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
 			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 			if (Hexes.IsValidIndex(HexIndex))
 			{
 				UHexTile* Hex = Hexes[HexIndex];
 				if (Hex)
-				{
-					if (Hex->AttachedBuilding)
+				{	
+					if (!Hex->IsBuildable())
 					{
 						return false;
 					}

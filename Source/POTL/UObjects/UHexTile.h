@@ -143,6 +143,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hex")
 	void Init();
 
+	bool IsBuildable(); //const FST_BuildInfo& BuildInfo
+
 
 
 	/*

@@ -635,6 +635,22 @@ public:
 	*/
 };
 
+USTRUCT(BlueprintType)
+struct FST_BuildInfo
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FST_BuildInfo(
+		FST_Structure StructureInfo = FST_Structure(),
+		int RotationDirection = 0)
+		: StructureInfo(StructureInfo)
+		, RotationDirection(RotationDirection)
+	{}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	FST_Structure StructureInfo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	int RotationDirection;
+};
 
 /*** FST_StructureBlock ***/
 USTRUCT(BlueprintType)

@@ -253,7 +253,18 @@ void APOTLPlayerController::LeftClickPressed()
 							return;
 						}
 					}
-					if (GameInstance->ValidatePlaceStructureOnHex(BuildStructureData.Id, TracedHex, BaseRotation))
+					FST_BuildInfo BuildInfo = FST_BuildInfo();
+					BuildInfo.RotationDirection = BaseRotation;
+					BuildInfo.StructureInfo = BuildStructureData;
+
+					/*
+					if (TracedHex->IsBuildable(BuildInfo))
+					{
+
+					}
+					*/
+
+					if (GameInstance->ValidatePlaceStructureOnHex(TracedHex, BuildInfo))
 					{
 						if (BuilderStructure)
 						{
