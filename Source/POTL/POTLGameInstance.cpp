@@ -40,6 +40,11 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	ChannelLandscape = ECollisionChannel::ECC_WorldStatic;
 	ChannelFoliage = ECollisionChannel::ECC_WorldStatic;
 
+
+	//StaticMesh'/Game/Meshes/Foliage/_SM_Tree01._SM_Tree01'
+	//Material'/Game/Materials/Folliage/BirchTreeBark/Birch_Tree__Bark_MAT.Birch_Tree__Bark_MAT'
+	//Material'/Game/Materials/Folliage/LargeLeafShrub/Large_Leaf_Shrub_MAT.Large_Leaf_Shrub_MAT'
+
 }
 
 /******************** DATA *************************/
