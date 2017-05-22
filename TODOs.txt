@@ -38,6 +38,7 @@ x.2.17
  
  
 Backlog -----------------------------
+ - Grid zero based. Intersect at z 0 even if trace wasn't blocked
  - Plant forest by code
  - Include in storage for UStructureComponent doens't allow for trigger tranfer event on storagemap. Need a better solution. But it might trigger a transaction event.
  - UStructureComponent doesn't transfer resources.
