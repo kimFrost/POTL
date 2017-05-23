@@ -383,6 +383,11 @@ void UPOTLGameInstance::TraceLandscape()
 	StorageMap = NewObject<UStorageMap>();
 	ResourceMap = NewObject<UResourceMap>();
 
+	if (WorldActor)
+	{
+		CurrentWorld = WorldActor->GetWorld();
+	}
+
 	if (CurrentWorld)
 	{
 		//FVector ActorLocation = Landscape->GetActorLocation();
@@ -417,16 +422,17 @@ void UPOTLGameInstance::TraceLandscape()
 					FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
 					FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
 
+					UHexPoint* Point = NewObject<UHexPoint>();
+					Point->Location = FVector(X, Y, 0.f);
+					Point->Row = Row;
+					Point->Column = Column;
+					Point->Exits = true;
+					Points.Add(Point);
+
 					CurrentWorld->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
-					//if (RV_Hit.GetActor() != NULL)
 					if (RV_Hit.bBlockingHit)
 					{
-						UHexPoint* Point = NewObject<UHexPoint>();
 						Point->Location = RV_Hit.Location;
-						Point->Row = Row;
-						Point->Column = Column;
-						Point->Exits = true;
-						Points.Add(Point);
 					}
 				}
 			}
@@ -472,49 +478,52 @@ void UPOTLGameInstance::CreateHexes()
 				{
 					Point->IsCreator = true;
 					CurrentWorld->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
+					
+					UHexTile* Hex = NewObject<UHexTile>();
+					Hex->Location = FVector(LineTraceFrom.X, LineTraceFrom.Y, 0.f);
+					Hex->HexOffsetCoords = FVector2D{ (float)FMath::FloorToInt((float)Point->Column / 2), (float)FMath::FloorToInt((float)Point->Row) };
+					Hex->HexCubeCoords = UPOTLUtilFunctionLibrary::ConvertOffsetToCube(Hex->HexOffsetCoords);
+
 					if (RV_Hit.bBlockingHit)
 					{
-						UHexTile* Hex = NewObject<UHexTile>();
 						Hex->Location = RV_Hit.Location;
-						Hex->HexOffsetCoords = FVector2D{ (float)FMath::FloorToInt((float)Point->Column / 2), (float)FMath::FloorToInt((float)Point->Row) };
-						Hex->HexCubeCoords = UPOTLUtilFunctionLibrary::ConvertOffsetToCube(Hex->HexOffsetCoords);
-
-						// Points Ref
-						int32 PointIndex = -1;
-						Hex->Point0 = Point;
-						
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 1, Point->Row, true);
-						
-						if (Points.IsValidIndex(PointIndex))
-						{
-							Hex->Point1 = Points[PointIndex];
-						}
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 2, Point->Row, true);
-						if (Points.IsValidIndex(PointIndex))
-						{
-							Hex->Point2 = Points[PointIndex];
-						}
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 2, Point->Row + 1, true);
-						if (Points.IsValidIndex(PointIndex))
-						{
-							Hex->Point3 = Points[PointIndex];
-						}
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 1, Point->Row + 1, true);
-						if (Points.IsValidIndex(PointIndex))
-						{
-							Hex->Point4 = Points[PointIndex];
-						}
-						PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column, Point->Row + 1, true);
-						if (Points.IsValidIndex(PointIndex))
-						{
-							Hex->Point5 = Points[PointIndex];
-						}
-
-						Hex->WorldRef = CurrentWorld;
-						Hex->Init();
-
-						Hexes.Add(Hex);
 					}
+
+					// Points Ref
+					int32 PointIndex = -1;
+					Hex->Point0 = Point;
+						
+					PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 1, Point->Row, true);
+						
+					if (Points.IsValidIndex(PointIndex))
+					{
+						Hex->Point1 = Points[PointIndex];
+					}
+					PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 2, Point->Row, true);
+					if (Points.IsValidIndex(PointIndex))
+					{
+						Hex->Point2 = Points[PointIndex];
+					}
+					PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 2, Point->Row + 1, true);
+					if (Points.IsValidIndex(PointIndex))
+					{
+						Hex->Point3 = Points[PointIndex];
+					}
+					PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column + 1, Point->Row + 1, true);
+					if (Points.IsValidIndex(PointIndex))
+					{
+						Hex->Point4 = Points[PointIndex];
+					}
+					PointIndex = UPOTLUtilFunctionLibrary::GetGridIndex(GridXCount, Point->Column, Point->Row + 1, true);
+					if (Points.IsValidIndex(PointIndex))
+					{
+						Hex->Point5 = Points[PointIndex];
+					}
+
+					Hex->WorldRef = CurrentWorld;
+					Hex->Init();
+
+					Hexes.Add(Hex);
 				}
 			}
 		}
@@ -545,6 +554,7 @@ void UPOTLGameInstance::CleanHexes()
 			}
 		}
 	}
+
 	FString CountMsg = FString::FromInt(Count);
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, CountMsg);
 
@@ -993,7 +1003,9 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 
 				}
 				*/
-				FVector IntersectionLocation = FMath::LinePlaneIntersection(LineTraceFrom, LineTraceTo, FVector(0, 0, 0), FVector(1, 1, 0));
+				FVector Normal = FVector(1, 1, 0);
+				FPlane Plane = FPlane(Normal, Normal);
+				FVector IntersectionLocation = FMath::LinePlaneIntersection(WorldDirection, FVector::ZeroVector, Plane);
 				Hex = LocationToHex(IntersectionLocation);
 			}
 		}

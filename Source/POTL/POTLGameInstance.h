@@ -76,6 +76,9 @@ public:
 	//AActor* Landscape;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
+	AActor* WorldActor;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	UWorld* CurrentWorld;
 
 	int ResourceUniqueIdCounter;
