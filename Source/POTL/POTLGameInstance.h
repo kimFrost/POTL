@@ -72,9 +72,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	bool HexGridReady;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
-	AActor* Landscape;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
+	//AActor* Landscape;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
+	UWorld* CurrentWorld;
 
 	int ResourceUniqueIdCounter;
 

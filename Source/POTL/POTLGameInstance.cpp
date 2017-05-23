@@ -13,6 +13,7 @@
 #include "Components/UStorageComponent.h"
 #include "Components/UConstructionComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 //#include "Runtime/Foliage/Public/FoliageInstancedStaticMeshComponent.h"
 //#include "Components/InstancedStaticMeshComponent.h"
 #include "POTLGameInstance.h"
@@ -24,7 +25,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 {
 	HexWidth = 255.0f;
 	HexHeight = HexWidth / FMath::Sqrt(3) * 2.f;
-	Landscape = nullptr;
+	//Landscape = nullptr;
 	GridXCount = 200; // Temp. Needs to be calc in point creation.
 	GridYCount = 200; // Temp. Needs to be calc in point creation.
 	HexGridReady = false;
@@ -40,6 +41,7 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	ChannelLandscape = ECollisionChannel::ECC_WorldStatic;
 	ChannelFoliage = ECollisionChannel::ECC_WorldStatic;
 
+	CurrentWorld = nullptr;
 
 	//StaticMesh'/Game/Meshes/Foliage/_SM_Tree01._SM_Tree01'
 	//Material'/Game/Materials/Folliage/BirchTreeBark/Birch_Tree__Bark_MAT.Birch_Tree__Bark_MAT'
@@ -220,7 +222,7 @@ APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, 
 APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild, bool IsPlaceholder)
 {
 	APOTLStructure* Structure = nullptr;
-	if (Landscape && DATA_Structures)
+	if (CurrentWorld && DATA_Structures)
 	{
 		static const FString ContextString(TEXT("GENERAL")); //~~ Key value for each column of values ~~//
 		FST_Structure* StructureData = DATA_Structures->FindRow<FST_Structure>(*RowName, ContextString);
@@ -234,113 +236,110 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 				if (!IsValid(Hex)) {
 					return nullptr;
 				}
-				UWorld* World = Landscape->GetWorld();
-				if (World)
+
+				//~~ Set the spawn parameters ~~//
+				FActorSpawnParameters SpawnParams;
+				//SpawnParams.Owner = this;
+				//SpawnParams.Instigator = Instigator;
+				//SpawnParams.bNoCollisionFail = true; //~~ Spawn event if collision ~~//
+				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+				FVector SpawnLocation = Hex->Location;
+				FRotator SpawnRotation = Hex->Rotation + FRotator(0, RotationDirection * (360 / 6), 0);
+				//FRotator SpawnRotation = Hex->Rotation;
+
+				// Spawn the pickup
+				Structure = CurrentWorld->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
+				if (Structure)
 				{
-					//~~ Set the spawn parameters ~~//
-					FActorSpawnParameters SpawnParams;
-					//SpawnParams.Owner = this;
-					//SpawnParams.Instigator = Instigator;
-					//SpawnParams.bNoCollisionFail = true; //~~ Spawn event if collision ~~//
-					SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-					FVector SpawnLocation = Hex->Location;
-					FRotator SpawnRotation = Hex->Rotation + FRotator(0, RotationDirection * (360 / 6), 0);
-					//FRotator SpawnRotation = Hex->Rotation;
+					//~~ Store cubecoord in structure ~~//
+					Structure->CubeCoord = CubeCoord;
 
-					// Spawn the pickup
-					Structure = World->SpawnActor<APOTLStructure>(StructureData->StructureClass, SpawnLocation, SpawnRotation, SpawnParams);
-					if (Structure)
+					//~~ Store structure raw data ~~//
+					Structure->StructureRowName = RowName;
+					Structure->StructureBaseData = *StructureData;
+					Structure->StructureBaseData.RotationDirection = RotationDirection;
+					Structure->IsPlaceholder = IsPlaceholder;
+					if (Structure->IsPlaceholder)
 					{
-						//~~ Store cubecoord in structure ~~//
-						Structure->CubeCoord = CubeCoord;
 
-						//~~ Store structure raw data ~~//
-						Structure->StructureRowName = RowName;
-						Structure->StructureBaseData = *StructureData;
-						Structure->StructureBaseData.RotationDirection = RotationDirection;
-						Structure->IsPlaceholder = IsPlaceholder;
-						if (Structure->IsPlaceholder)
-						{
-
-						}
+					}
 
 
-						//~~ Store hex in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
-						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
+					//~~ Store hex in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
+					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
+					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+					if (Hexes.IsValidIndex(HexIndex))
+					{
+						UHexTile* Hex = Hexes[HexIndex];
+						Structure->BaseHex = Hex;
+						//Structure->HexIndex = HexIndex;
+					}
+
+					//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
+					FVector BroadcastCubeCoord = StructureData->Entrance + CubeCoord;
+					BroadcastCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(BroadcastCubeCoord, RotationDirection, CubeCoord);
+					FVector2D BroadcastOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(BroadcastCubeCoord);
+					int32 BroadcastHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(BroadcastOffsetCoords, GridXCount);
+					if (Hexes.IsValidIndex(BroadcastHexIndex))
+					{
+						//UHexTile* Hex = Hexes[BroadcastHexIndex];
+						//Structure->Hex = Hex;
+					}
+
+
+					//~~ Set Structure on all hexes based on cube location and structure size ~~//
+					for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
+					{
+						FVector LocalCubeCoord = StructureData->CubeSizes[i] + CubeCoord;
+						LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, RotationDirection, CubeCoord);
+						FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
 						int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 						if (Hexes.IsValidIndex(HexIndex))
 						{
 							UHexTile* Hex = Hexes[HexIndex];
-							Structure->BaseHex = Hex;
-							//Structure->HexIndex = HexIndex;
-						}
-
-						//~~ Set Structure broadcast root hexindex on structure ~~// //!! Rotate logic is missing, I think ?
-						FVector BroadcastCubeCoord = StructureData->Entrance + CubeCoord;
-						BroadcastCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(BroadcastCubeCoord, RotationDirection, CubeCoord);
-						FVector2D BroadcastOffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(BroadcastCubeCoord);
-						int32 BroadcastHexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(BroadcastOffsetCoords, GridXCount);
-						if (Hexes.IsValidIndex(BroadcastHexIndex))
-						{
-							//UHexTile* Hex = Hexes[BroadcastHexIndex];
-							//Structure->Hex = Hex;
-						}
-
-
-						//~~ Set Structure on all hexes based on cube location and structure size ~~//
-						for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
-						{
-							FVector LocalCubeCoord = StructureData->CubeSizes[i] + CubeCoord;
-							LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, RotationDirection, CubeCoord);
-							FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
-							int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
-							if (Hexes.IsValidIndex(HexIndex))
+							if (IsValid(Hex))
 							{
-								UHexTile* Hex = Hexes[HexIndex];
-								if (IsValid(Hex))
+								if (!IsPlaceholder)
 								{
-									if (!IsPlaceholder)
-									{
-										Hex->AttachedBuilding = Structure;
-									}
-									Structure->OccupiedHexes.Add(Hex);
+									Hex->AttachedBuilding = Structure;
 								}
+								Structure->OccupiedHexes.Add(Hex);
 							}
 						}
-
-						//~~ InstaBuild for debugging ~~//
-						if (InstaBuild)
-						{
-							Structure->IsUnderConstruction = false;
-						}
-
-						if (AttachTo)
-						{
-							Structure->AttachedTo = AttachTo;
-						}
-						else
-						{
-							UHexTile* AttachToHex = Hex->GetNeighbourHex(RotationDirection);
-							if (AttachToHex && AttachToHex->AttachedBuilding)
-							{
-								if (AttachToHex->AttachedBuilding != Structure)
-								{
-									Structure->AttachedTo = AttachToHex->AttachedBuilding;
-								}
-							}
-						}
-
-						//~~ Process construction cost and store resources in structure construction component ~~//
-						if (Structure->ConstructionComponent)
-						{
-							//for (auto& CostEntry : StructureData.ConstructionCost)
-							//TransferResource();
-							//Structure->ConstructionComponent->
-						}
-
-						//~~ Process Structure Data internally ~~//
-						Structure->Init();
 					}
+
+					//~~ InstaBuild for debugging ~~//
+					if (InstaBuild)
+					{
+						Structure->IsUnderConstruction = false;
+					}
+
+					if (AttachTo)
+					{
+						Structure->AttachedTo = AttachTo;
+					}
+					else
+					{
+						UHexTile* AttachToHex = Hex->GetNeighbourHex(RotationDirection);
+						if (AttachToHex && AttachToHex->AttachedBuilding)
+						{
+							if (AttachToHex->AttachedBuilding != Structure)
+							{
+								Structure->AttachedTo = AttachToHex->AttachedBuilding;
+							}
+						}
+					}
+
+					//~~ Process construction cost and store resources in structure construction component ~~//
+					if (Structure->ConstructionComponent)
+					{
+						//for (auto& CostEntry : StructureData.ConstructionCost)
+						//TransferResource();
+						//Structure->ConstructionComponent->
+					}
+
+					//~~ Process Structure Data internally ~~//
+					Structure->Init();
 				}
 			}
 		}
@@ -384,11 +383,12 @@ void UPOTLGameInstance::TraceLandscape()
 	StorageMap = NewObject<UStorageMap>();
 	ResourceMap = NewObject<UResourceMap>();
 
-	if (Landscape)
+	if (CurrentWorld)
 	{
-		FVector ActorLocation = Landscape->GetActorLocation();
+		//FVector ActorLocation = Landscape->GetActorLocation();
+		FVector ActorLocation = FVector(0.f, 0.f, 0.f);
 		// Get player controller at index 0
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(CurrentWorld, 0);
 		if (PlayerController)
 		{
 			//UWorld *World = Landscape->GetWorld();
@@ -417,7 +417,7 @@ void UPOTLGameInstance::TraceLandscape()
 					FVector LineTraceFrom = ActorLocation + FVector{ X, Y, 3000 } +FVector{ 1.f, 1.f, 0.f };
 					FVector LineTraceTo = ActorLocation + FVector{ X, Y, -3000 } +FVector{ 1.f, 1.f, 0.f };
 
-					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
+					CurrentWorld->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 					//if (RV_Hit.GetActor() != NULL)
 					if (RV_Hit.bBlockingHit)
 					{
@@ -435,9 +435,9 @@ void UPOTLGameInstance::TraceLandscape()
 }
 void UPOTLGameInstance::CreateHexes()
 {
-	if (Landscape != NULL) {
+	if (CurrentWorld) {
 		// Get player controller at index 0
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(CurrentWorld, 0);
 
 		if (PlayerController)
 		{
@@ -471,7 +471,7 @@ void UPOTLGameInstance::CreateHexes()
 				if (Creator == 1)
 				{
 					Point->IsCreator = true;
-					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
+					CurrentWorld->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 					if (RV_Hit.bBlockingHit)
 					{
 						UHexTile* Hex = NewObject<UHexTile>();
@@ -510,7 +510,7 @@ void UPOTLGameInstance::CreateHexes()
 							Hex->Point5 = Points[PointIndex];
 						}
 
-						Hex->WorldRef = Landscape->GetWorld();
+						Hex->WorldRef = CurrentWorld;
 						Hex->Init();
 
 						Hexes.Add(Hex);
@@ -620,11 +620,12 @@ void UPOTLGameInstance::AnalyseLandscape()
 {
 	//!! NOT BEING USED. IS BEING TRACED IN BLUEPRINT AT THE MOMENT !!//
 	//UGameplayStatics::
-	if (Landscape)
+	if (CurrentWorld)
 	{
-		FVector ActorLocation = Landscape->GetActorLocation();
+		//FVector ActorLocation = Landscape->GetActorLocation();
+		FVector ActorLocation = FVector(0.f, 0.f, 0.f);
 		// Get player controller at index 0
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(CurrentWorld, 0);
 		if (PlayerController)
 		{
 			//~~ Sphere trace for foliage analyse ~~//
@@ -650,7 +651,7 @@ void UPOTLGameInstance::AnalyseLandscape()
 					//TArray<FHitResult> OutHits;
 					TArray<FOverlapResult> OutHits;
 
-					PlayerController->GetWorld()->OverlapMultiByChannel(OutHits, Hex->Location, FQuat::Identity, ChannelFoliage, FCollisionShape::MakeSphere(666), RV_TraceParams);
+					CurrentWorld->OverlapMultiByChannel(OutHits, Hex->Location, FQuat::Identity, ChannelFoliage, FCollisionShape::MakeSphere(666), RV_TraceParams);
 					for (int32 ii = 0; ii < OutHits.Num(); ii++)
 					{
 						FOverlapResult& OutHit = OutHits[ii];
@@ -699,7 +700,7 @@ void UPOTLGameInstance::AnalyseLandscape()
 					//Re-initialize hit info
 					FHitResult RV_Hit(ForceInit);
 
-					PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
+					CurrentWorld->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 
 					//PlayerController->GetWorld()->SweepMultiByChannel(RV_Hit, LineTraceFrom, LineTraceTo, CollisionChannel, RV_TraceParams);
 					//if (RV_Hit.GetActor() != NULL)
@@ -943,11 +944,12 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 UHexTile* UPOTLGameInstance::MouseToHex()
 {
 	UHexTile* Hex = nullptr;
-	if (Landscape)
+	if (CurrentWorld)
 	{
-		FVector LandscapeLocation = Landscape->GetActorLocation();
+		//FVector LandscapeLocation = Landscape->GetActorLocation();
+		FVector LandscapeLocation = FVector(0.f, 0.f, 0.f);
 		// Get player controller at index 0
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(Landscape->GetWorld(), 0);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(CurrentWorld, 0);
 		if (PlayerController)
 		{
 			//const FName TraceTag("MyTraceTag");
@@ -974,10 +976,25 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 			FVector LineTraceFrom = WorldLocation + FVector{ 1.f, 1.f, 0.f };
 			FVector LineTraceTo = WorldDirection * 50000 + WorldLocation + FVector{ 1.f, 1.f, 0.f };
 
-			PlayerController->GetWorld()->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
+			CurrentWorld->LineTraceSingleByChannel(RV_Hit, LineTraceFrom, LineTraceTo, ChannelLandscape, RV_TraceParams);
 			if (RV_Hit.bBlockingHit)
 			{
 				Hex = LocationToHex(RV_Hit.Location);
+			}
+			else
+			{
+				// Intersect at Z=0 plane
+				/*
+				float T;
+				FVector Intersection;
+				FPlane IntersectPlane = FPlane(FVector(), FVector());
+				if (UKismetMathLibrary::LinePlaneIntersection(LineTraceFrom, LineTraceTo, IntersectPlane, T, Intersection))
+				{
+
+				}
+				*/
+				FVector IntersectionLocation = FMath::LinePlaneIntersection(LineTraceFrom, LineTraceTo, FVector(0, 0, 0), FVector(1, 1, 0));
+				Hex = LocationToHex(IntersectionLocation);
 			}
 		}
 	}
@@ -986,14 +1003,14 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 UHexTile* UPOTLGameInstance::LocationToHex(FVector Location)
 {
 	UHexTile* Hex = nullptr;
-	if (Landscape)
-	{
-		FVector Cube = UPOTLUtilFunctionLibrary::LocationToCube(GridXCount, HexWidth, HexHeight, Location - Landscape->GetActorLocation());
-		int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cube), GridXCount);
-		if (Hexes.IsValidIndex(HexIndex)) {
-			Hex = Hexes[HexIndex];
-		}
+
+	//FVector Cube = UPOTLUtilFunctionLibrary::LocationToCube(GridXCount, HexWidth, HexHeight, Location - Landscape->GetActorLocation());
+	FVector Cube = UPOTLUtilFunctionLibrary::LocationToCube(GridXCount, HexWidth, HexHeight, Location - FVector(0.f, 0.f, 0.f));
+	int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cube), GridXCount);
+	if (Hexes.IsValidIndex(HexIndex)) {
+		Hex = Hexes[HexIndex];
 	}
+
 	return Hex;
 }
 
