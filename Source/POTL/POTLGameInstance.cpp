@@ -1005,7 +1005,6 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 				*/
 				FVector Normal = FVector(0, 0, 1);
 				FPlane Plane = FPlane(Normal, Normal);
-				//FVector IntersectionLocation = FMath::LinePlaneIntersection(WorldDirection, FVector::ZeroVector, Plane);
 				FVector IntersectionLocation = FMath::LinePlaneIntersection(LineTraceFrom, LineTraceTo, FVector::ZeroVector, Normal);
 				Hex = LocationToHex(IntersectionLocation);
 			}
