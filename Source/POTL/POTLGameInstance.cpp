@@ -995,7 +995,7 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 			{
 				// Intersect at Z=0 plane
 				/*
-				float T;
+				float T; // It appears to be the distance from the start point to the point of intersection, as a fraction of the total line length. If you multiply this by the total length of the line passed to the Line Plane Intersection function, it give the actual distance between the points.
 				FVector Intersection;
 				FPlane IntersectPlane = FPlane(FVector(), FVector());
 				if (UKismetMathLibrary::LinePlaneIntersection(LineTraceFrom, LineTraceTo, IntersectPlane, T, Intersection))
@@ -1003,9 +1003,10 @@ UHexTile* UPOTLGameInstance::MouseToHex()
 
 				}
 				*/
-				FVector Normal = FVector(1, 1, 0);
+				FVector Normal = FVector(0, 0, 1);
 				FPlane Plane = FPlane(Normal, Normal);
-				FVector IntersectionLocation = FMath::LinePlaneIntersection(WorldDirection, FVector::ZeroVector, Plane);
+				//FVector IntersectionLocation = FMath::LinePlaneIntersection(WorldDirection, FVector::ZeroVector, Plane);
+				FVector IntersectionLocation = FMath::LinePlaneIntersection(LineTraceFrom, LineTraceTo, FVector::ZeroVector, Normal);
 				Hex = LocationToHex(IntersectionLocation);
 			}
 		}
