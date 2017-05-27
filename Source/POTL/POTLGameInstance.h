@@ -17,7 +17,7 @@
 class APOTLStructure;
 class UStructureComponent;
 class UStorageComponent;
-
+class AIsland;
 
 
 
@@ -76,7 +76,7 @@ public:
 	//AActor* Landscape;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
-	AActor* WorldActor;
+	AIsland* WorldActor;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	UWorld* CurrentWorld;
@@ -128,6 +128,8 @@ public:
 
 	//~~ Data ~~//
 
+	void InitializeWorld();
+
 	UFUNCTION(BlueprintCallable, Category = "Data")
 	void ReadTables();
 
@@ -145,6 +147,14 @@ public:
 	bool ValidatePlaceStructureOnHex(UHexTile* Hex, const FST_BuildInfo& BuildInfo); // FString StructureId, , int Rotation
 
 	FST_Structure* GetStructureRowData(FString RowName);
+
+	//class TreeMeshClass;
+	TSubclassOf<UStaticMesh> TreeMeshClass;
+	//UStaticMesh* TreeStaticMesh;
+	UStaticMeshComponent* TreeStaticMesh;
+
+	UFUNCTION(BlueprintCallable, Category = "World")
+	void PlantForest(UHexTile* OnHex, int Density);
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	APOTLStructure* PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild);

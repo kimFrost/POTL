@@ -8,6 +8,7 @@
 #include "UObjects/UStorageMap.h"
 #include "UObjects/UTransaction.h"
 #include "POTLUtilFunctionLibrary.h"
+#include "Actors/AIsland.h"
 #include "POTLStructure.h"
 #include "Components/UStructureComponent.h"
 #include "Components/UStorageComponent.h"
@@ -47,9 +48,42 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	//Material'/Game/Materials/Folliage/BirchTreeBark/Birch_Tree__Bark_MAT.Birch_Tree__Bark_MAT'
 	//Material'/Game/Materials/Folliage/LargeLeafShrub/Large_Leaf_Shrub_MAT.Large_Leaf_Shrub_MAT'
 
+	/*
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> CMesh(TEXT("StaticMesh'/Game/sm/box.box'"));
+	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("container")); // text("") can be just about anything.
+	Mesh->SetStaticMesh(CMesh.Object);
+	Mesh->AttachParent = RootComponent;
+	*/
+
 }
 
 /******************** DATA *************************/
+
+void UPOTLGameInstance::InitializeWorld()
+{
+	// Read tables
+	ReadTables();
+	// set channels
+
+	// trace landscape
+	TraceLandscape();
+	// create hexes
+	CreateHexes();
+	// clean hexes
+	CleanHexes();
+	// enrich hexes
+	EnrichHexes();
+	// Calc hexes rot
+	CalcHexesRot();
+	//! trace landscape data (BP)
+
+	// Calc resources density
+	CalcHexResourceDensity();
+	// Set hex grid ready
+	HexGridReady = true;
+	// Call OnMapReady
+	OnMapReady.Broadcast();
+}
 
 void UPOTLGameInstance::ReadTables()
 {
@@ -208,6 +242,43 @@ FST_Structure* UPOTLGameInstance::GetStructureRowData(FString RowName)
 		return DATA_Structures->FindRow<FST_Structure>(*RowName, ContextString);
 	}
 	return nullptr;
+}
+void UPOTLGameInstance::PlantForest(UHexTile* OnHex, int Density)
+{
+
+	OnHex = Hexes[FMath::RandRange(0, Hexes.Num() - 1)];
+
+	if (OnHex)
+	{
+		if (WorldActor)
+		{
+			WorldActor->SpawnForest(OnHex, Density);
+		}
+
+		//AIsland* IslandWorld = nullptr;
+		/*
+		if (WorldActor && WorldActor->TreeStaticMesh)
+		{
+			UInstancedStaticMeshComponent* InstTreeMesh = NewObject<UInstancedStaticMeshComponent>(WorldActor);
+			InstTreeMesh->RegisterComponent();
+			InstTreeMesh->SetStaticMesh(WorldActor->TreeStaticMesh);
+			InstTreeMesh->SetFlags(RF_Transactional);
+			WorldActor->AddInstanceComponent(InstTreeMesh);
+
+			//InstTreeMesh->SetWorldLocation(OnHex->Location);
+
+
+			InstTreeMesh->AddInstance(FTransform(OnHex->Location));
+		}
+		*/
+
+		/*
+		TArray<UActorComponent*> currentICs = this->GetInstanceComponents();
+		for (UActorComponent* ic : currentICs)
+			ic->DestroyComponent();
+		*/
+
+	}
 }
 APOTLStructure* UPOTLGameInstance::PlantPlaceholderStructure(FVector CubeCoord, int32 RotationDirection, FString RowName, APOTLStructure* AttachTo, bool InstaBuild)
 {
