@@ -57,6 +57,18 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 				FMath::RandRange(-20, 0)
 			);
 
+
+
+
+			FQuat Rotation = FQuat();
+			//Rotation.X = FMath::RandRange(-20.f, 20.f);
+			Rotation.X = 180.f;
+			//Rotation.Y = FMath::RandRange(-20.f, 20.f);
+			Rotation.Y = 180.f;
+			Rotation.Z = 180.f;
+			//Rotation.Z = FMath::RandRange(0.f, 360.f);
+			Rotation.Normalize();
+
 			/*
 			FQuat Rotation = FQuat(
 				FMath::RandRange(-20, 20),
@@ -66,12 +78,16 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 			);
 			*/
 
+			Rotation = FRotator(20.f, 5.f, 0.f).Quaternion();
+			Rotation.Normalize();
+
 			FTransform ForestTransform;
 			ForestTransform.SetLocation(HexLocation + Offset);
-			//ForestTransform.SetRotation(Rotation);
+			ForestTransform.SetRotation(Rotation);
 			//ForestTransform.SetScale3D(FVector(1, 1, 1));
+			int _InstanceId = InstTreeMesh->AddInstance(ForestTransform);
 
-			InstTreeMesh->AddInstance(ForestTransform);
+
 		}
 	}
 }
