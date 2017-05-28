@@ -47,7 +47,32 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 {
 	if (OnHex && InstTreeMesh)
 	{
-		InstTreeMesh->AddInstance(FTransform(OnHex->Location));
+		float MaxOffsetDistance = 100.f;
+		for (int i = 0; i < Density; i++)
+		{
+			FVector HexLocation = OnHex->Location;
+			FVector Offset = FVector(
+				FMath::RandRange(-MaxOffsetDistance, MaxOffsetDistance), 
+				FMath::RandRange(-MaxOffsetDistance, MaxOffsetDistance), 
+				FMath::RandRange(-20, 0)
+			);
+
+			/*
+			FQuat Rotation = FQuat(
+				FMath::RandRange(-20, 20),
+				FMath::RandRange(-20, 20),
+				FMath::RandRange(0, 360),
+				0
+			);
+			*/
+
+			FTransform ForestTransform;
+			ForestTransform.SetLocation(HexLocation + Offset);
+			//ForestTransform.SetRotation(Rotation);
+			//ForestTransform.SetScale3D(FVector(1, 1, 1));
+
+			InstTreeMesh->AddInstance(ForestTransform);
+		}
 	}
 }
 
