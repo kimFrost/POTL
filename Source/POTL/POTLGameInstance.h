@@ -196,6 +196,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Grid")
 	void CalcHexResourceDensity();
 
+	void InjectTestValuesToHexes();
 
 	//~~ Map - Resources ~~//
 

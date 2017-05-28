@@ -48,6 +48,8 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 	if (OnHex && InstTreeMesh)
 	{
 		float MaxOffsetDistance = 100.f;
+		Density = Density * Density;
+		if (Density == 1) return;
 		for (int i = 0; i < Density; i++)
 		{
 			FVector HexLocation = OnHex->Location;
@@ -57,28 +59,12 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 				FMath::RandRange(-20, 0)
 			);
 
-
-
-
-			FQuat Rotation = FQuat();
-			//Rotation.X = FMath::RandRange(-20.f, 20.f);
-			Rotation.X = 180.f;
-			//Rotation.Y = FMath::RandRange(-20.f, 20.f);
-			Rotation.Y = 180.f;
-			Rotation.Z = 180.f;
-			//Rotation.Z = FMath::RandRange(0.f, 360.f);
-			Rotation.Normalize();
-
-			/*
-			FQuat Rotation = FQuat(
-				FMath::RandRange(-20, 20),
+			//  Y, Z, X
+			FQuat Rotation = FRotator(
 				FMath::RandRange(-20, 20),
 				FMath::RandRange(0, 360),
-				0
-			);
-			*/
-
-			Rotation = FRotator(20.f, 5.f, 0.f).Quaternion();
+				FMath::RandRange(-20, 20)
+			).Quaternion();
 			Rotation.Normalize();
 
 			FTransform ForestTransform;
@@ -86,8 +72,21 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 			ForestTransform.SetRotation(Rotation);
 			//ForestTransform.SetScale3D(FVector(1, 1, 1));
 			int _InstanceId = InstTreeMesh->AddInstance(ForestTransform);
+		}
+	}
+}
 
-
+void AIsland::InitializeIsland()
+{
+	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+	if (GameInstance)
+	{
+		for (auto& Hex : GameInstance->Hexes)
+		{
+			if (Hex && Hex->HexResourceInfo.HasTrees)
+			{
+				SpawnForest(Hex, Hex->HexResourceInfo.ForestDepth);
+			}
 		}
 	}
 }
@@ -105,7 +104,10 @@ void AIsland::BeginPlay()
 		GameInstance->ChannelLandscape = ChannelLandscape;
 		GameInstance->ChannelFoliage = ChannelFoliage;
 
+		GameInstance->OnMapReady.AddDynamic(this, &AIsland::InitializeIsland);
+
 		GameInstance->InitializeWorld();
+
 	}
 }
 

@@ -35,11 +35,16 @@ x.2.17
  - Structures in range update on place structure
  - Make structure only request resources from structures in range. 
  
+28.5.17
+ - Plant forest by code
+ - Set hexes random forest on create. Rand function for it.
+ - Tree spawn random rotation for instanced mesh
+ - Grid zero based. Intersect at z 0 even if trace wasn't blocked
+ 
  
  
 Backlog -----------------------------
- - Grid zero based. Intersect at z 0 even if trace wasn't blocked
- - Plant forest by code
+ - Farm - onAllocate Spawn wheat field. On deallocate despawn wheat field
  - Include in storage for UStructureComponent doens't allow for trigger tranfer event on storagemap. Need a better solution. But it might trigger a transaction event.
  - UStructureComponent doesn't transfer resources.
  - Request resource with wealth budget parameter

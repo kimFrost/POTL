@@ -77,6 +77,8 @@ void UPOTLGameInstance::InitializeWorld()
 	CalcHexesRot();
 	//! trace landscape data (BP)
 
+	InjectTestValuesToHexes();
+
 	// Calc resources density
 	CalcHexResourceDensity();
 	// Set hex grid ready
@@ -862,6 +864,22 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 				{
 					Hex->HexResourceInfo.LakeDepth++;
 				}
+			}
+		}
+	}
+}
+
+void UPOTLGameInstance::InjectTestValuesToHexes()
+{
+	for (auto& Hex : Hexes)
+	{
+		if (Hex)
+		{
+			if (FMath::FRand() > 0.2f)
+			{
+				Hex->HexResourceInfo.HasTrees = true;
+				Hex->HexResourceInfo.ForestDepth = 1;
+				Hex->HexTileType = "Woodland";
 			}
 		}
 	}

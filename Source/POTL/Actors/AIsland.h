@@ -43,6 +43,9 @@ public:
 
 	void SpawnForest(UHexTile* OnHex, int Density);
 
+	UFUNCTION(Category = "World")
+	void InitializeIsland();
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
