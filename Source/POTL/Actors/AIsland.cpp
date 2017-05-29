@@ -48,8 +48,9 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 	if (OnHex && InstTreeMesh)
 	{
 		float MaxOffsetDistance = 100.f;
+
 		Density = Density * Density;
-		if (Density == 1) return;
+
 		for (int i = 0; i < Density; i++)
 		{
 			FVector HexLocation = OnHex->Location;

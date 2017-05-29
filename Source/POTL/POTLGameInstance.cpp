@@ -867,6 +867,23 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 			}
 		}
 	}
+	// Clean hexes with forest depth of 1
+	for (auto& Hex : Hexes)
+	{
+		if (Hex)
+		{
+			if (Hex->HexResourceInfo.ForestDepth == 1)
+			{
+				Hex->HexResourceInfo.ForestDepth = 0;
+				Hex->HexResourceInfo.HasTrees = false;
+				Hex->HexTileType = "Grassland";
+			}
+			if (Hex->HexResourceInfo.ForestDepth > 1)
+			{
+				Hex->HexTileType = "Woodland";
+			}
+		}
+	}
 }
 
 void UPOTLGameInstance::InjectTestValuesToHexes()
@@ -879,7 +896,7 @@ void UPOTLGameInstance::InjectTestValuesToHexes()
 			{
 				Hex->HexResourceInfo.HasTrees = true;
 				Hex->HexResourceInfo.ForestDepth = 1;
-				Hex->HexTileType = "Woodland";
+				//Hex->HexTileType = "Woodland";
 			}
 		}
 	}
