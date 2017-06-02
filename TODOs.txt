@@ -1,4 +1,4 @@
-
+﻿
 17.2.17: 
  x Make solution work with 4.14
  x Fix BP_Hexdecal broken
@@ -179,7 +179,20 @@ UProductionComponent -> Produce UResource
 	
 	
 	
+	HuntingCabin(require 1 labor?)
+	- ability to pick hunting tiles
+		- hunt (reg 1 labor, gives 1 meat every 10s, gives 1 pelt every 20s)
 	
+Farmhouse (required 1 labor?)
+	- ability to plot down farm land of types
+		- Wheatfield (reg 1 labor, gives 1 wheat every 15s)
+		- Cabagefield (reg 1 labor, gives 1 gabage every 15s)
+	
+FishingHut
+	- ability to pick fishing tiles
+		- Fishing (req 1 labor, gives 1 fish every 10s)
+		
+sacrificial alter (Nordic or Demonic)
 	
 	
 	
