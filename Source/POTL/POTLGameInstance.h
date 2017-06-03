@@ -25,7 +25,7 @@ class AIsland;
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTurnSwitched);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams();
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMapReady);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTransaction, UTransaction*, Transaction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTransaction, UResourceTransaction*, Transaction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStructurePlanted, APOTLStructure*, Structure);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureSelectedDelegate, APOTLStructure*, Structure);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStructureDeselectedDelegate, APOTLStructure*, Structure);

@@ -13,7 +13,7 @@ class UResource;
 
 
 UCLASS(Blueprintable, BlueprintType)
-class POTL_API UTransaction : public UObject
+class POTL_API UResourceTransaction : public UObject
 {
 	GENERATED_BODY()
 

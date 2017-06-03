@@ -1011,7 +1011,7 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 					ToComp->ParentStructure->SubtractWealth(1.f);
 					ResourceOwner->AddWealth(1.f);
 				}
-				UTransaction* Transaction = NewObject<UTransaction>();
+				UResourceTransaction* Transaction = NewObject<UResourceTransaction>();
 				if (Transaction)
 				{
 					Transaction->Seller = Resource->GetOwner();
@@ -1033,7 +1033,7 @@ void UPOTLGameInstance::TransferResource(UResource* Resource, UStructureComponen
 						ToComp->ParentStructure->SubtractWealth(1.f);
 						ResourceOwner->AddWealth(1.f);
 					}
-					UTransaction* Transaction = NewObject<UTransaction>();
+					UResourceTransaction* Transaction = NewObject<UResourceTransaction>();
 					if (Transaction)
 					{
 						Transaction->Seller = Resource->GetOwner();
