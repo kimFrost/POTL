@@ -184,5 +184,27 @@
 		"ConstructionCost": [
 			{"Id": "Plank", "Amount": 2}
 		]
+    },
+    {
+        "Name": "HuntingCabin",
+        "Id": "HuntingCabin",
+        "Title": "Hunting cabin",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_HuntingCabin.BP_HuntingCabin_C'",
+        "AttachTo": [
+            "BasicTenant"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"Id": "Wood", "Amount": 2}
+		]
     }
 ]
+
