@@ -123,10 +123,10 @@ void APOTLStructure::EnterEditMode()
 				}
 
 				// If tile is workable with current components
-				TArray<UActorComponent*> Components = GetComponentsByClass(UGatherComponent::StaticClass());
-				for (auto& Component : Components)
+				UActorComponent* ChildComponent = GetComponentByClass(UGatherComponent::StaticClass());
+				if (ChildComponent)
 				{
-					UGatherComponent* GatherComponent = Cast<UGatherComponent>(Component);
+					UGatherComponent* GatherComponent = Cast<UGatherComponent>(ChildComponent);
 					if (GatherComponent)
 					{
 						if (!GatherComponent->IsHexWorkable(Hex)) {
@@ -134,7 +134,6 @@ void APOTLStructure::EnterEditMode()
 						}
 					}
 				}
-
 
 				Hex->ShowDecal(EDecalType::ValidBuild);
 
@@ -283,7 +282,9 @@ EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 			OnAllocatedHexesChangedDelegate.Broadcast();
 			OnAllocatedHexesChanged();
 
+
 			//TODO: Move allocated and in range decal handling to function
+			/*
 			for (auto& Hex : HexesInRange)
 			{
 				if (Hex)
@@ -303,6 +304,7 @@ EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 					Hex->ShowDecal(EDecalType::Allocated);
 				}
 			}
+			*/
 
 			//~~ Update AllocatedHexes in all structure components ~~//
 			TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
@@ -343,6 +345,8 @@ bool APOTLStructure::AllocateHex(UHexTile* Hex)
 				}
 			}
 
+			Hex->ShowDecal(EDecalType::Allocated);
+
 			Hex->AllocatedTo = this;
 			AllocatedHexes.Add(Hex);
 			OnHexAllocated(Hex);
@@ -367,6 +371,8 @@ bool APOTLStructure::UnallocateHex(UHexTile* Hex)
 				}
 			}
 		}
+
+		Hex->ShowDecal(EDecalType::ValidBuild);
 
 		Hex->AllocatedTo = nullptr;
 		AllocatedHexes.Remove(Hex);
