@@ -109,26 +109,35 @@ void APOTLStructure::EnterEditMode()
 		{
 			if (Hex)
 			{
-				if (!Hex->AttachedBuilding || !Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
+				if (Hex->AllocatedTo)
 				{
-					Hex->ShowDecal(EDecalType::ValidBuild);
-
-					FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
-					if (Delegate)
+					if (Hex->AllocatedTo != this)
 					{
-						Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
+						continue;
 					}
-					//Hex->BindToOnHexClicked(0, &APOTLStructure::ToggleAllocateHex);
+				}
+				if (Hex->AttachedBuilding)
+				{
+					continue;
+				}
 
-					//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
-					//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex);
-					//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
-					//Delegate.IsBoundToObject(this)
+				Hex->ShowDecal(EDecalType::ValidBuild);
+
+				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
+				if (Delegate)
+				{
+					Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
+				}
+				//Hex->BindToOnHexClicked(0, &APOTLStructure::ToggleAllocateHex);
+
+				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
+				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex);
+				//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
+				//Delegate.IsBoundToObject(this)
 
 				
-					//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
-					//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
-				}
+				//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
+				//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
 			}
 		}
 		for (auto& Hex : AllocatedHexes)
@@ -300,26 +309,30 @@ bool APOTLStructure::AllocateHex(UHexTile* Hex)
 {
 	if (!AllocatedHexes.Contains(Hex))
 	{
+		bool bSuccesfullyUnallocated = true;
 		if (Hex->AllocatedTo)
 		{
-			Hex->AllocatedTo->UnallocateHex(Hex);
+			bSuccesfullyUnallocated = Hex->AllocatedTo->UnallocateHex(Hex);
 		}
-		for (auto& Delegate : OnHexAllocateDelegates)
+		if (bSuccesfullyUnallocated)
 		{
-			if (Delegate.Key && Delegate.Value && Delegate.Value->IsBound())
+			for (auto& Delegate : OnHexAllocateDelegates)
 			{
-				EHandleType Response = Delegate.Value->Execute(Hex);
-				if (Response == EHandleType::HandledBreak)
+				if (Delegate.Key && Delegate.Value && Delegate.Value->IsBound())
 				{
-					return false;
+					EHandleType Response = Delegate.Value->Execute(Hex);
+					if (Response == EHandleType::HandledBreak)
+					{
+						return false;
+					}
 				}
 			}
-		}
 
-		Hex->AllocatedTo = this;
-		AllocatedHexes.Add(Hex);
-		OnHexAllocated(Hex);
-		return true;
+			Hex->AllocatedTo = this;
+			AllocatedHexes.Add(Hex);
+			OnHexAllocated(Hex);
+			return true;
+		}
 	}
 	return false;
 }
