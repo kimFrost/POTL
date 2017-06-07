@@ -64,6 +64,7 @@ public:
 	void AddPetal(FString PetalId, int Quantity);
 	void CollectPetals();
 	void ConvertPetals();
+	bool IsHexWorkable(UHexTile* Hex);
 
 	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
 

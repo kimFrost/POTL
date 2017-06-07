@@ -7,6 +7,7 @@
 #include "Components/UStorageComponent.h"
 #include "Components/UResidentsComponent.h"
 #include "Components/UConstructionComponent.h"
+#include "Components/UGatherComponent.h"
 #include "UObjects/UHexTile.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLPlayerController.h"
@@ -120,6 +121,20 @@ void APOTLStructure::EnterEditMode()
 				{
 					continue;
 				}
+
+				// If tile is workable with current components
+				TArray<UActorComponent*> Components = GetComponentsByClass(UGatherComponent::StaticClass());
+				for (auto& Component : Components)
+				{
+					UGatherComponent* GatherComponent = Cast<UGatherComponent>(Component);
+					if (GatherComponent)
+					{
+						if (!GatherComponent->IsHexWorkable(Hex)) {
+							continue;
+						}
+					}
+				}
+
 
 				Hex->ShowDecal(EDecalType::ValidBuild);
 

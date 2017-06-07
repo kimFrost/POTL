@@ -175,6 +175,20 @@ void UGatherComponent::ConvertPetals()
 		}
 	}
 }
+bool UGatherComponent::IsHexWorkable(UHexTile* Hex)
+{
+	if (Hex)
+	{
+		for (auto& TileConversion : TileConversions)
+		{
+			if (Hex->HexTileType == TileConversion.TileTypeId)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
 EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 {
 	// Get Required labor or other static resources
