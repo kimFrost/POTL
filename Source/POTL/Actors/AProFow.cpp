@@ -27,7 +27,7 @@ AProFow::AProFow()
 
 	// Load the base material from your created material
 	{
-		static ConstructorHelpers::FObjectFinder<UMaterial> asset(TEXT("Material'/Game/Fow/FowMat.FowMat'"));
+		static ConstructorHelpers::FObjectFinder<UMaterial> asset(TEXT("Material'/Game/Materials/M_FowMat.FowMat'"));
 		m_dynamicMaterial = asset.Object;
 	}
 
@@ -120,7 +120,7 @@ void AProFow::revealSmoothCircle(const FVector2D &pos, float radius)
 
 void AProFow::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions, FUpdateTextureRegion2D* Regions, uint32 SrcPitch, uint32 SrcBpp, uint8* SrcData, bool bFreeData)
 {
-	if (Texture->Resource)
+	if (Texture && Texture->Resource)
 	{
 		struct FUpdateTextureRegionsData
 		{

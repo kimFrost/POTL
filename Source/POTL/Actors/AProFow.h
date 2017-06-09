@@ -21,6 +21,7 @@ public:
 	void setSize(float);
 
 	// Reveal a portion of the fow
+	//UFUNCTION(BlueprintCallable)
 	void revealSmoothCircle(const FVector2D &pos, float radius);
 
 private:

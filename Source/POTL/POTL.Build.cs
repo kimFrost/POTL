@@ -7,7 +7,7 @@ public class POTL : ModuleRules
     public POTL(ReadOnlyTargetRules Target) : base(Target)
     {
         //PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        //PCHUsage = PCHUsageMode.NoSharedPCHs;
+        PCHUsage = PCHUsageMode.NoSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
         //PrivateDependencyModuleNames.AddRange(new string[] { });

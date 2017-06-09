@@ -4,6 +4,7 @@
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
+#include "Actors/AProFow.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLHUD.h"
 #include "POTLUtilFunctionLibrary.h"
@@ -173,6 +174,12 @@ void APOTLPlayerController::BeginPlay()
 	Super::BeginPlay();
 	
 	//GameInstance->OnMapReady.AddDynamic();
+
+	AProFow* FogOfWar = GetWorld()->SpawnActor<AProFow>(AProFow::StaticClass());
+	if (FogOfWar)
+	{
+		FogOfWar->revealSmoothCircle(FVector2D(700, 300), 800);
+	}
 
 }
 void APOTLPlayerController::Tick(float DeltaTime)
