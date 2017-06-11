@@ -35,6 +35,9 @@ void AIsland::CreateAssets()
 	if (TreeStaticMesh)
 	{
 		InstTreeMesh = NewObject<UInstancedStaticMeshComponent>(this);
+		InstTreeMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+		//InstTreeMesh->SetCollisionResponseToChannel()
+		//InstTreeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		InstTreeMesh->RegisterComponent();
 		InstTreeMesh->SetStaticMesh(TreeStaticMesh);
 		InstTreeMesh->SetFlags(RF_Transactional);

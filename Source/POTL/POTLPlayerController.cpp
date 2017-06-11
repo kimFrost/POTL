@@ -175,11 +175,13 @@ void APOTLPlayerController::BeginPlay()
 	
 	//GameInstance->OnMapReady.AddDynamic();
 
+	/*
 	AProFow* FogOfWar = GetWorld()->SpawnActor<AProFow>(AProFow::StaticClass());
 	if (FogOfWar)
 	{
 		FogOfWar->revealSmoothCircle(FVector2D(700, 300), 800);
 	}
+	*/
 
 }
 void APOTLPlayerController::Tick(float DeltaTime)

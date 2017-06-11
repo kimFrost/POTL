@@ -12,7 +12,7 @@
 		"Quantity": 0,
 		"MaxAge": -1,
 		"SortSequence": 1,
-		"PetalsRequired": 5
+		"PetalsRequired": 10
 	},
 	{
 		"Name": "Stone",
@@ -27,7 +27,7 @@
 		"Quantity": 0,
 		"MaxAge": -1,
 		"SortSequence": 2,
-		"PetalsRequired": 5
+		"PetalsRequired": 10
 	},
 	{
 		"Name": "Wheat",
@@ -42,7 +42,7 @@
 		"Quantity": 0,
 		"MaxAge": 1,
 		"SortSequence": 3,
-		"PetalsRequired": 5
+		"PetalsRequired": 10
 	},
 	{
 		"Name": "Flour",
@@ -57,7 +57,7 @@
 		"Quantity": 0,
 		"MaxAge": 5,
 		"SortSequence": 4,
-		"PetalsRequired": 5
+		"PetalsRequired": 10
 	},
 	{
 		"Name": "Bread",
@@ -72,7 +72,7 @@
 		"Quantity": 0,
 		"MaxAge": 1,
 		"SortSequence": 5,
-		"PetalsRequired": 5
+		"PetalsRequired": 10
 	},
 	{
 		"Name": "Plank",
@@ -87,6 +87,51 @@
 		"Quantity": 0,
 		"MaxAge": -1,
 		"SortSequence": 1,
-		"PetalsRequired": 5
+		"PetalsRequired": 10
+	},
+	{
+		"Name": "Pelt",
+		"Id": "Pelt",
+		"Title": "Pelt",
+		"Tags": [""],
+		"UnitMass": 2,
+		"Value": 0.3,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1,
+		"SortSequence": 1,
+		"PetalsRequired": 10
+	},
+	{
+		"Name": "Aples",
+		"Id": "Aples",
+		"Title": "Aples",
+		"Tags": ["Food"],
+		"UnitMass": 2,
+		"Value": 0.1,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1,
+		"SortSequence": 1,
+		"PetalsRequired": 10
+	},
+	{
+		"Name": "Aple",
+		"Id": "Aple",
+		"Title": "Aple",
+		"Tags": ["Food"],
+		"UnitMass": 2,
+		"Value": 0.01,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1,
+		"SortSequence": 1,
+		"PetalsRequired": 10
 	},
 ]
