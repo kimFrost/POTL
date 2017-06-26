@@ -104,6 +104,9 @@ void APOTLStructure::EnterEditMode()
 				StructureComponent->EnterEditMode();
 			}
 		}
+
+		// Spawn range decal
+
 		*/
 		//TODO: Move allocated and in range decal handling to function
 		for (auto& Hex : HexesInRange)
