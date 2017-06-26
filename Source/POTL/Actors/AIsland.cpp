@@ -79,7 +79,10 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 		}
 	}
 }
-
+void AIsland::SpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes)
+{
+	OnSpawnHexRange(Location, Hexes);
+}
 void AIsland::InitializeIsland()
 {
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
@@ -94,7 +97,6 @@ void AIsland::InitializeIsland()
 		}
 	}
 }
-
 void AIsland::BeginPlay()
 {
 	Super::BeginPlay();
@@ -111,13 +113,18 @@ void AIsland::BeginPlay()
 		GameInstance->OnMapReady.AddDynamic(this, &AIsland::InitializeIsland);
 
 		GameInstance->InitializeWorld();
-
 	}
 }
-
 void AIsland::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+}
+
+// Native events
+
+void AIsland::OnSpawnHexRange_Implementation(FVector Location, const TArray<UHexTile*>& Hexes)
+{
 
 }
 

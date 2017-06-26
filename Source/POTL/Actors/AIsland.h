@@ -43,8 +43,15 @@ public:
 
 	void SpawnForest(UHexTile* OnHex, int Density);
 
+	void SpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes);
+
 	UFUNCTION(Category = "World")
 	void InitializeIsland();
+
+
+	UFUNCTION(BlueprintNativeEvent, Category = "World")
+	void OnSpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes);
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

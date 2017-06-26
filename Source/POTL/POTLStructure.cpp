@@ -8,6 +8,7 @@
 #include "Components/UResidentsComponent.h"
 #include "Components/UConstructionComponent.h"
 #include "Components/UGatherComponent.h"
+#include "Actors/AIsland.h"
 #include "UObjects/UHexTile.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLPlayerController.h"
@@ -105,7 +106,6 @@ void APOTLStructure::EnterEditMode()
 			}
 		}
 
-		// Spawn range decal
 
 		*/
 		//TODO: Move allocated and in range decal handling to function
@@ -172,6 +172,15 @@ void APOTLStructure::EnterEditMode()
 			PlayerController->EditStructure(this);
 		}
 		*/
+
+		for (TActorIterator<AIsland> IslandItr(GetWorld()); IslandItr; ++IslandItr)
+		{
+			if (IslandItr)
+			{
+				IslandItr->SpawnHexRange(this->GetActorLocation(), HexesInRange);
+			}
+		}
+
 		bInEditMode = true;
 		OnEnterEditMode();
 	}
