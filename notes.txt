@@ -1,0 +1,37 @@
+
+
+- Household lv.1 (only gather from hexes in range)
+
+
+
+- Household lv.2
+	- Hunting cabin lv.1
+	- Storefront lv.1 vs trade of stored goods
+	- Farm lv.1
+	- Woodcutter lv.1
+
+
+- Household lv.3
+	
+
+
+- Household lv.4
+
+
+
+
+
+
+- Trade items vs Dispatch stored goods.
+
+	- Goods emit need satisfaction
+	- Something require an entire goods and not a need
+	
+	- Food need will siphon off goods over time
+	- Building req wood will require x of goods, not siphoned.
+	
+	- Household will siphon off own goods as well.
+	
+	- Stored goods will be available to all tiles in range for other to siphon off.
+	
+	- Goods can be in two states. Active and passive. Active has been started siphoning off. Passive is an untouched  complete resource.
