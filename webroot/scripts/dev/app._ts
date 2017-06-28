@@ -1,0 +1,41 @@
+'use strict';
+
+import { POTLModule } 	from './modules/potl/potl.module';
+
+module POTLApp {
+	var app = angular.module('POTLApp', [
+		// Modules
+		POTLModule.moduleId
+	])
+}
+
+
+/*
+
+@type {angular.Module}
+
+module MindApp {
+
+	angular.module("asdsadasdApp", [
+		"ui.router",
+		"ngSanitize",
+		"ngMessages",
+		"LocalStorageModule",
+
+		// Modules
+		"templates",
+		MindModule.moduleId
+	])
+		.controller('AppCtrl', (
+				$scope, 
+				$rootScope, 
+				//statesService: UtilsModule.StatesService
+				$location) => {
+
+			$scope.resetPosition = true;
+			$scope.history = [];
+		})
+		//.run(MainApp.appRun)
+		//.config(MainApp.appConfig);
+}
+*/

@@ -1,0 +1,38 @@
+{
+  "name": "Mind",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Kim Frost",
+  "private": true,
+  "engines": {
+    "node": "*"
+  },
+  "devDependencies": {
+    "@types/angular": "^1.6.17",
+    "browser-sync": "*",
+    "del": "*",
+    "gulp": "*",
+    "gulp-angular-templatecache": "^2.0.0",
+    "gulp-autoprefixer": "*",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "*",
+    "gulp-imagemin": "*",
+    "gulp-jade": "*",
+    "gulp-jshint": "*",
+    "gulp-load-plugins": "*",
+    "gulp-ng-annotate": "*",
+    "gulp-sass": "*",
+    "gulp-scss-lint": "*",
+    "gulp-size": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-tslint": "*",
+    "gulp-typescript": "*",
+    "gulp-uglify": "*",
+    "gulp-usemin": "*",
+    "jshint-stylish": "*",
+    "run-sequence": "*",
+    "tslint": "*",
+    "typescript": "*",
+    "wiredep": "*"
+  }
+}

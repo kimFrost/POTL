@@ -1,0 +1,72 @@
+///<reference path="../../../../references/references.ts"/>
+
+namespace LessonsFilterModule {
+
+	type LessonsFilterService = LessonsFilterModule.LessonsFilterService;
+
+	const maxFacetsBeforeExpand:Number = 5;
+
+    class LessonsFilterFacetlistController {
+
+		public data:ILessonsFilterFacetList;
+		public onFilterChange:Function;
+		public maxFacetsShown:Number = maxFacetsBeforeExpand;
+		public bExpanded:boolean = false;
+
+		constructor(private lessonsFilterService:LessonsFilterService) {
+          
+		}
+
+		$onInit() {
+			let counter = 0;
+			for (let facet of this.data.Values) {
+				counter++;
+				if (facet.Selected && counter > maxFacetsBeforeExpand) {
+					this.toggleExpand(true);
+					break;
+				}
+			}
+		}
+
+		public toggleExpand(bState:boolean = !this.bExpanded) 
+		{
+			this.bExpanded = bState;
+			if (this.bExpanded)
+			{
+				this.maxFacetsShown = 1000;
+			}
+			else 
+			{
+				this.maxFacetsShown = maxFacetsBeforeExpand;				
+			}
+		}
+
+		public updateFilterList(facet:ILessonsFilterFacet) 
+		{
+			this.onFilterChange();
+		}
+	}
+
+	class LessonsFilterFacetlistComponent implements ng.IComponentOptions {
+
+		public bindings: any;
+		public controller: any;
+		public templateUrl: string;
+
+		constructor() {
+			this.bindings = {
+				data: '<',
+				onFilterChange: '&'
+			};
+			this.controller = LessonsFilterFacetlistController;
+			this.templateUrl = 'lessons.filter.facetlist.html';
+		}
+	}
+
+    define(["bootstrap"], function () {
+        return function (app) {
+            app.component("lessonsFilterFacetlist", new LessonsFilterFacetlistComponent());
+        }
+    });
+
+}

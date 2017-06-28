@@ -1,0 +1,124 @@
+{
+	"Needs": [
+		{
+			"Id": "NEED_Food",
+			"Title": "Food",
+			"Importance": 5,
+			"Segments": [
+				{
+					"Min": 10,
+					"Max": 30,
+					"Multiplier": 1
+				},
+				{
+					"Min": 30,
+					"Max": 60,
+					"Multiplier": 2
+				}
+			],
+			"0": {
+				"Min": 10,
+				"Max": 30
+			},
+			"Wants": [
+				{
+					"Id": "WANT_Consume",
+					"Target": "Food"
+				}
+			]
+		},
+		{
+			"Id": "NEED_Oil",
+			"Title": "Oil",
+			"Importance": 5,
+			"Wants": [
+				{
+					"Id": "WANT_Consume",
+					"Target": "TAG_Oil"
+				}
+			]
+		},	
+		{
+			"Id": "NEED_Water",
+			"Title": "Water",
+			"Importance": 5,
+			"Wants": [
+				{
+					"Id": "WANT_Consume",
+					"Target": "TAG_Water"
+				}
+			]
+		},
+		{
+			"Id": "NEED_Rest",
+			"Title": "Rest",
+			"Importance": 5,
+			"Wants": [
+				{
+					"Id": "WANT_Sleep",
+					"Target": "Bed"
+				},
+				{
+					"Id": "WANT_Rest",
+					"Target": "Bed"
+				},
+				{
+					"Id": "Rest",
+					"Target": "Bed"
+				}
+			]
+		},
+		{
+			"Id": "NEED_Warmth",
+			"Title": "Warmth",
+			"Importance": 5,
+			"Wants": []
+		},
+		{
+			"Id": "NEED_Safety",
+			"Title": "Safety",
+			"Importance": 4,
+			"Wants": []
+		},
+		{
+			"Id": "NEED_Friends",
+			"Title": "Friends",
+			"Importance": 3,
+			"Wants": []
+		},
+		{
+			"Id": "NEED_Accomplishment",
+			"Title": "Accomplishment",
+			"Importance": 2,
+			"Wants": []
+		},
+		{
+			"Id": "NEED_Actualization",
+			"Title": "Actualization",
+			"Importance": 1,
+			"Wants": []
+		}
+	],
+	"Feelings": [
+		{
+			"Id": "FEELING_Anger",
+			"Title": "Anger",
+			"ValueAddition": 2,
+			"Affections": [],
+			"Convertions": []
+		},
+		{
+			"Id": "FEELING_Joy",
+			"Title": "Joy",
+			"ValueAddition": 1,
+			"Affections": [],
+			"Convertions": []
+		}
+	],
+	"Actions": [
+		{
+			"Id": "ACTION_Consume",
+			"Title": "Consume"
+		}
+	]
+}
