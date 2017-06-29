@@ -1,0 +1,176 @@
+﻿@import "../config/mixins"; //Import this in all partials to allow autocomplete for variables and mixins
+
+$lessonGridGutter:                  20px !default;
+$lessonGridTabletGutter:            15px !default;
+$lessonGridMobileGutter:            15px !default;
+$lessonGridCellMinHeight:           375px !default;
+$lessonGridCellsInRow:              3 !default;
+$lessonGridTabletCellsInRow:        2 !default;
+$lessonGridMobileCellsInRow:        1 !default;
+
+
+.lesson-grid {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    align-items: stretch;
+    margin: -#{$lessonGridGutter} 0 0 -#{$lessonGridGutter};
+    clear: both;
+    & + & {
+        margin-top: 0;
+    }
+    .ie9 & {
+        display: inline-block;
+        &>* {
+            display: inline-block;
+        } 
+    }
+}
+
+
+/************** ELEMENTS *****************/
+
+.lesson-grid__cell {
+    padding: #{$lessonGridGutter} 0 0 #{$lessonGridGutter};
+    flex-basis: (100% / $lessonGridCellsInRow);
+    max-width: (100% / $lessonGridCellsInRow);
+    position: relative;
+	display: flex;
+	min-height: 480px;
+}
+
+.lesson-grid__content {
+	flex: 1;
+	background-color: $colorWhite;
+	min-height: $lessonGridCellMinHeight; 
+	display: flex;
+    flex-direction: column;
+	transition: box-shadow .2s ease;
+	&:hover{
+		box-shadow: 0 7px 30px 4px rgba(204,204,204,.6);
+	}
+}
+
+.lesson-grid__content-image {
+    &,
+    img {
+        display: block;
+        width: 100%;
+        margin: 0;
+        flex-shrink: 0; //Reset to prevent ie stretch image
+    }
+}
+
+.lesson-grid__content-text {
+    padding: 30px;
+    position: relative;
+	flex-grow: 1;
+	display: flex;
+    flex-direction: column;
+    //~~ Show arrow if an element comes before ~~//
+    &:not(:first-child) {
+        &::before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: calc(50% - 12px);
+            top: -12px;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 12px solid $colorWhite;
+        }
+    }
+}
+
+
+/************** MODIFIERS *****************/
+
+.lesson-grid_list {
+    .lesson-grid__cell {
+         flex-basis: 100%;
+         max-width: 100%;
+         min-height: 0;
+    }
+    .lesson-grid__content { 
+        flex-direction: row;
+        min-height: 0;
+    }
+    .lesson-grid__content-image {
+        width: auto;
+        flex-basis: 30%;
+        display: flex;
+        align-items: center;
+    }
+    .lesson-grid__content-text {
+         &::before {
+             display: none;
+         }
+    }
+}
+
+.lesson-grid_ratio {
+    .lesson-grid__cell {
+        &:before {
+            display: block;
+            content: "";
+            width: 100%;
+            padding-top: 150%;
+        }
+        &>* {
+            position: absolute;
+            height: auto;
+            top: $lessonGridGutter;
+            left: $lessonGridGutter;
+            right: 0;
+            bottom: 0;
+        }
+    }
+}
+
+
+/************** MEDIA QUERIES *****************/
+
+@include media($targetTablet) {
+    .lesson-grid__cell {
+        flex-basis: (100% / $lessonGridTabletCellsInRow);
+        max-width: (100% / $lessonGridTabletCellsInRow);
+		padding: #{$lessonGridTabletGutter} 0 0 #{$lessonGridTabletGutter};
+    }
+	.lesson-grid {
+        margin: -#{$lessonGridTabletGutter} 0 0 -#{$lessonGridTabletGutter};
+        & + & {
+            margin-top: 0;
+        }
+	}
+}
+
+@include media($targetMobile) {
+    .lesson-grid__cell {
+        flex-basis: (100% / $lessonGridMobileCellsInRow);
+        max-width: (100% / $lessonGridMobileCellsInRow);
+		padding: #{$lessonGridMobileGutter} 0 0 #{$lessonGridMobileGutter};
+    }
+	.lesson-grid {
+        margin: -#{$lessonGridMobileGutter} 0 0 -#{$lessonGridMobileGutter};
+        & + & {
+            margin-top: 0;
+        }
+	}
+}
+
+@include media($targetMobileSmall) {
+    .lesson-grid__cell {
+        flex-basis: (100% / $lessonGridMobileCellsInRow);
+        max-width: (100% / $lessonGridMobileCellsInRow);
+		padding: #{$lessonGridMobileGutter} 0 0 #{$lessonGridMobileGutter};
+    }
+	.lesson-grid {
+        margin: -#{$lessonGridMobileGutter} 0 0 -#{$lessonGridMobileGutter};
+        & + & {
+            margin-top: 0;
+        }
+	}
+}
+

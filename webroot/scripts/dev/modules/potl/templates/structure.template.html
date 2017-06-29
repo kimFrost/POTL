@@ -1,0 +1,28 @@
+<div>
+    <div>structure actor</div>
+    <div>time: {{$ctrl.time}}</div>
+    <div>location: {{$ctrl.location}}</div>
+
+    <div>
+        Needs:
+        <div ng-repeat="need in $ctrl.needs">
+            <div>{{need.Id}}</div>
+            <div>{{need.Value}}</div>
+            <div>{{need.Percentage}}%</div>
+        </div>
+    </div>
+    <div>
+        Wants:
+        <div ng-repeat="want in $ctrl.wants">{{.want.Title}}</div>
+    </div>
+
+    
+    <div>
+        Resources:
+        <div ng-repeat="resource in $ctrl.resources">
+            <div>{{resource.Id}}</div>
+            <div>{{resource.Value}}</div>
+            <div>{{resource.Percentage}}%</div>
+        </div>
+    </div>
+</div>
