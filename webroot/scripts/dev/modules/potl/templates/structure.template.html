@@ -4,6 +4,12 @@
     <div>location: {{$ctrl.location}}</div>
 
     <div>
+        <div>{{$ctrl.wealth.Id}}:</div>
+        <div>{{$ctrl.wealth.Value | number:0}}</div>
+        <progress ng-value="$ctrl.wealth.Percentage" max="100"></progress>
+    </div>
+
+    <div>
         Needs:
         <div ng-repeat="need in $ctrl.needs">
             <div>{{need.Id}}</div>
@@ -25,4 +31,11 @@
             <progress ng-value="resource.Percentage" max="100"></progress>
         </div>
     </div>
+
+    <!--
+    <div ng-transclude="components"></div>
+    -->
+
+    <ng-transclude></ng-transclude>
+
 </div>

@@ -2,6 +2,7 @@
 ///<reference path="../services/gamemode.service.ts"/>
 ///<reference path="../classes/resource.ts"/>
 ///<reference path="../classes/need.ts"/>
+///<reference path="../classes/stat.ts"/>
 
 
 namespace POTLModule {
@@ -24,6 +25,8 @@ namespace POTLModule {
 		public needs: Array<Need>;
 		public wants: Array<IWant>;
 		public resources: Array<Resource>;
+
+		public wealth: Stat;
 
 		public needPreferences = [
 			{
@@ -50,12 +53,15 @@ namespace POTLModule {
 		constructor(
 			$rootScope: ng.IRootScopeService,
 			$scope: ng.IScope,
+			private $timeout: ng.ITimeoutService,
+			private $interval: ng.IIntervalService,
 			private $element: any, //IAugmentedJQuery
 			private gamemodeService: GamemodeService
 		) {
 			this.needs = [];
 			this.wants = [];
 			this.resources = [];
+			this.wealth = new Stat('wealth');
 
 			$scope.$on('timeUpdate', (e: any, arg: any) => {
 				//this.onTimeUpdate(arg...);
@@ -77,10 +83,12 @@ namespace POTLModule {
 
 			this.gamemodeService.registerStructure(this);
 
+			/*
 			if (this.id.toString() === '1') {
 				let resource = new Resource('Apples', 'Apples', ['Food']);
 				this.resources.push(resource);
 			}
+			*/
 
 			/*
 			let need = {
@@ -95,6 +103,15 @@ namespace POTLModule {
 			*/
 			let need = new Need('NEED_Food', 'Food');
 			this.needs.push(need);
+
+/*
+			this.$interval(() => {
+				if (this.id.toString() === '1') {
+					let resource = new Resource('Apples', 'Apples', ['Food']);
+					this.resources.push(resource);
+				}
+			}, 35000);
+			*/
 
 			//this.mindService.bindToTimeUpdate(this, this.onTimeUpdate);
 
@@ -121,7 +138,8 @@ namespace POTLModule {
 						needDegradation = 0;
 					}
 					else {
-
+						needDegradation -= resource.Value;
+						resource.subtract(resource.Value);
 					}
 				}
 				else {
@@ -131,10 +149,15 @@ namespace POTLModule {
 							if (resource) {
 								if (resource.Value > needDegradation) {
 									resource.subtract(needDegradation);
+									structure.wealth.add(needDegradation * resource.PricePerUnit);
+									this.wealth.subtract(needDegradation * resource.PricePerUnit);
 									needDegradation = 0;
 								}
 								else {
-
+									needDegradation -= resource.Value;
+									structure.wealth.add(resource.Value * resource.PricePerUnit);
+									this.wealth.subtract(resource.Value * resource.PricePerUnit);
+									resource.subtract(resource.Value);
 								}
 							}
 						}
@@ -144,21 +167,6 @@ namespace POTLModule {
 					}
 				}
 
-				/*
-				for (let structure of this.structuresInRange) {
-					for (let resource of structure.resources) {
-						if (resource.Tags.indexOf('Food') !== -1) {
-							if (resource.Value > needDegradation) {
-								resource.subtract(needDegradation);
-								needDegradation = 0;
-							}
-							else {
-
-							}
-						}
-					}
-				}
-				*/
 				// If not anything in area to meet need, then subtract 
 				if (needDegradation > 0) {
 					need.subtract(timeProgressed);
@@ -171,7 +179,7 @@ namespace POTLModule {
 
 		public requestResourceByTag(tag: string, amount?: number): Resource {
 			for (let resource of this.resources) {
-				if (resource.Tags.indexOf('Food') !== -1) {
+				if (resource.Tags.indexOf('Food') !== -1 && resource.Value > 0) {
 					return resource;
 				}
 			}
@@ -205,6 +213,7 @@ namespace POTLModule {
 		public controller: any;
 		//public template: string;
 		public templateUrl: string;
+		public transclude: any;
 
 		constructor() {
 			this.bindings = {
@@ -213,6 +222,14 @@ namespace POTLModule {
 				id: '<'
 				//onFacetChange: '&'
 			};
+			
+			this.transclude = true;
+			/*
+			this.transclude = {
+				components: 'components'
+			};
+			*/
+			
 			this.controller = StructureController;
 			this.templateUrl = 'modules/potl/templates/structure.template.html';
 			//this.template = '<div>fdgfdg</div>';

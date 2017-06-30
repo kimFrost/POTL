@@ -45,6 +45,7 @@ structure {
 
 progress {
     position: relative;
+    width: 150px;
     &::before {
         content: attr(value)'%';
         position: absolute;

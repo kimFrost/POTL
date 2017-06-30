@@ -12,5 +12,12 @@ html(ng-app="POTLModule")
         
     body.world
         structure(location="{x:50,y:300}", id="1")
+            producer(produce-id="'Apples'", produce-time="35000", produce-tags="['Food']") producer
         structure(location="{x:400,y:300}", id="2")
+            provider provider
+            producer(produce-id="'Wood'", produce-time="35000", produce-tags="[]") producer
         structure(location="{x:700,y:500}", id="3")
+            producer(produce-id="'Apples'", produce-time="35000", produce-tags="['Food']") producer
+            producer(produce-id="'Planks'", produce-req="'Wood'", produce-time="20000", produce-tags="['Construction']") producer
+
+        

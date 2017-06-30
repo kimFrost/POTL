@@ -1,45 +1,20 @@
 namespace POTLModule {
-    export class Resource {
+    export class Stat {
         public Id: string = '';
         public Title: string = '';
         public Percentage: number = 100;
-        public Value: number = 0;
-        public Tags: Array<string> = [];
         public MaxValue: number = 50000;
-        public PricePerUnit: number = 1;
-        public Locked: boolean = false;
-        public StoredIn: any
+        public ConsumeMultiplier: number = 1;
+        public Value: number = 50000;
+        public Wants: Array<any> = [];
+        public Importance: number = 1;
         constructor(
-            Id:string,
-            Title?:string,
-            Tags?:Array<string>,
-            MaxValue?:number,
+            Id: string,
+            Title?: string,
         ) {
             this.Id = Id;
             this.Title = Title || Id;
-            this.Tags = Tags || this.Tags ;
-            this.MaxValue = MaxValue || this.MaxValue;
-            this.Value = this.MaxValue;
         }
-
-        public GetOwner(): void {
-
-        }
-        public Consume(): void {
-            //void Consume(EConsumeType ConsumeType = EConsumeType::Undefined, bool bRemoveFromStorage = true);
-
-        }
-        public RemoveFromStorage(): void {
-
-        }
-        public Transfer(): void {
-            //bool Transfer(UStorageComponent* Storage);
-
-        }
-        public Init(): void {
-
-        }
-
         public add(amount: number): void {
             this.Value += amount;
             this.clampValue();
@@ -65,3 +40,4 @@ namespace POTLModule {
         }
     }
 }
+
