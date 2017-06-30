@@ -49,20 +49,18 @@ var POTLModule;
 var POTLModule;
 (function (POTLModule) {
     var Need = (function () {
-        function Need(Id, Title, Importance, Wants, Value) {
+        function Need(Id, Title, Importance) {
             if (Id === void 0) { Id = ''; }
             if (Title === void 0) { Title = ''; }
             if (Importance === void 0) { Importance = 0; }
-            if (Wants === void 0) { Wants = []; }
-            if (Value === void 0) { Value = 50000; }
             this.Id = Id;
             this.Title = Title;
             this.Importance = Importance;
-            this.Wants = Wants;
-            this.Value = Value;
             this.Percentage = 100;
             this.MaxValue = 50000;
-            this.Multiplier = 1;
+            this.ConsumeMultiplier = 1;
+            this.Value = 50000;
+            this.Wants = [];
         }
         Need.prototype.add = function (amount) {
             this.Value += amount;
@@ -94,14 +92,16 @@ var POTLModule;
 var POTLModule;
 (function (POTLModule) {
     var Resource = (function () {
-        function Resource(Id, Tags, MaxValue) {
+        function Resource(Id, Title, Tags, MaxValue) {
             this.Id = '';
+            this.Title = '';
             this.Percentage = 100;
             this.Value = 0;
             this.Tags = [];
             this.MaxValue = 50000;
             this.Locked = false;
-            this.Id = Id;
+            this.Id = Title || this.Title;
+            this.Title = Id;
             this.Tags = Tags || this.Tags;
             this.MaxValue = MaxValue || this.MaxValue;
             this.Value = this.MaxValue;
@@ -117,6 +117,29 @@ var POTLModule;
             //bool Transfer(UStorageComponent* Storage);
         };
         Resource.prototype.Init = function () {
+        };
+        Resource.prototype.add = function (amount) {
+            this.Value += amount;
+            this.clampValue();
+            this.updatePercentage();
+        };
+        Resource.prototype.subtract = function (amount) {
+            this.Value -= amount;
+            this.clampValue();
+            this.updatePercentage();
+        };
+        Resource.prototype.clampValue = function () {
+            if (this.Value < 0) {
+                this.Value = 0;
+            }
+            else if (this.Value > this.MaxValue) {
+                this.Value = this.MaxValue;
+            }
+            this.Value = Math.ceil(this.Value);
+        };
+        Resource.prototype.updatePercentage = function () {
+            this.Percentage = Math.ceil(this.Value / this.MaxValue * 100);
+            return this.Percentage;
         };
         return Resource;
     }());
@@ -233,7 +256,7 @@ var POTLModule;
             this.$element[0].style.top = this.location.y + 'px';
             this.gamemodeService.registerStructure(this);
             if (this.id.toString() === '1') {
-                var resource = new POTLModule.Resource('Apples', ['Food']);
+                var resource = new POTLModule.Resource('Apples', 'Apples', ['Food']);
                 this.resources.push(resource);
             }
             /*
@@ -247,7 +270,7 @@ var POTLModule;
                 ]
             }
             */
-            var need = new POTLModule.Need('NEED_Food');
+            var need = new POTLModule.Need('NEED_Food', 'Food');
             this.needs.push(need);
             //this.mindService.bindToTimeUpdate(this, this.onTimeUpdate);
             // Strive for emotional balance.
@@ -261,10 +284,67 @@ var POTLModule;
             for (var _i = 0, _a = this.needs; _i < _a.length; _i++) {
                 var need = _a[_i];
                 //need.Wants
-                need.subtract(timeProgressed);
-                //need.Value += timeProgressed;
+                var needDegradation = timeProgressed;
+                var resource = this.requestResourceByTag('Food', needDegradation);
+                if (resource) {
+                    if (resource.Value > needDegradation) {
+                        resource.subtract(needDegradation);
+                        needDegradation = 0;
+                    }
+                    else {
+                    }
+                }
+                else {
+                    for (var _b = 0, _c = this.structuresInRange; _b < _c.length; _b++) {
+                        var structure = _c[_b];
+                        if (needDegradation > 0) {
+                            var resource_1 = structure.requestResourceByTag('Food');
+                            if (resource_1) {
+                                if (resource_1.Value > needDegradation) {
+                                    resource_1.subtract(needDegradation);
+                                    needDegradation = 0;
+                                }
+                                else {
+                                }
+                            }
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+                /*
+                for (let structure of this.structuresInRange) {
+                    for (let resource of structure.resources) {
+                        if (resource.Tags.indexOf('Food') !== -1) {
+                            if (resource.Value > needDegradation) {
+                                resource.subtract(needDegradation);
+                                needDegradation = 0;
+                            }
+                            else {
+
+                            }
+                        }
+                    }
+                }
+                */
                 // If not anything in area to meet need, then subtract 
+                if (needDegradation > 0) {
+                    need.subtract(timeProgressed);
+                }
+                else if (needDegradation < 0) {
+                    need.subtract(timeProgressed);
+                }
             }
+        };
+        StructureController.prototype.requestResourceByTag = function (tag, amount) {
+            for (var _i = 0, _a = this.resources; _i < _a.length; _i++) {
+                var resource = _a[_i];
+                if (resource.Tags.indexOf('Food') !== -1) {
+                    return resource;
+                }
+            }
+            return null;
         };
         StructureController.prototype.checkStructureInRange = function (structure) {
             if (structure) {

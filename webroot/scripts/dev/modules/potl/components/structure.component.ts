@@ -19,7 +19,7 @@ namespace POTLModule {
 			x: 0,
 			y: 0
 		};
-		public id:string = '';
+		public id: string = '';
 
 		public needs: Array<Need>;
 		public wants: Array<IWant>;
@@ -78,7 +78,7 @@ namespace POTLModule {
 			this.gamemodeService.registerStructure(this);
 
 			if (this.id.toString() === '1') {
-				let resource = new Resource('Apples', ['Food']);
+				let resource = new Resource('Apples', 'Apples', ['Food']);
 				this.resources.push(resource);
 			}
 
@@ -93,7 +93,7 @@ namespace POTLModule {
 				]
 			}
 			*/
-			let need = new Need('NEED_Food');
+			let need = new Need('NEED_Food', 'Food');
 			this.needs.push(need);
 
 			//this.mindService.bindToTimeUpdate(this, this.onTimeUpdate);
@@ -111,17 +111,74 @@ namespace POTLModule {
 		public progressNeeds(timeProgressed: number): void {
 			for (let need of this.needs) {
 				//need.Wants
-				need.subtract(timeProgressed);
-				//need.Value += timeProgressed;
 
+				let needDegradation: number = timeProgressed;
+
+				let resource = this.requestResourceByTag('Food', needDegradation);
+				if (resource) {
+					if (resource.Value > needDegradation) {
+						resource.subtract(needDegradation);
+						needDegradation = 0;
+					}
+					else {
+
+					}
+				}
+				else {
+					for (let structure of this.structuresInRange) {
+						if (needDegradation > 0) {
+							let resource = structure.requestResourceByTag('Food');
+							if (resource) {
+								if (resource.Value > needDegradation) {
+									resource.subtract(needDegradation);
+									needDegradation = 0;
+								}
+								else {
+
+								}
+							}
+						}
+						else {
+							break;
+						}
+					}
+				}
+
+				/*
+				for (let structure of this.structuresInRange) {
+					for (let resource of structure.resources) {
+						if (resource.Tags.indexOf('Food') !== -1) {
+							if (resource.Value > needDegradation) {
+								resource.subtract(needDegradation);
+								needDegradation = 0;
+							}
+							else {
+
+							}
+						}
+					}
+				}
+				*/
 				// If not anything in area to meet need, then subtract 
-
+				if (needDegradation > 0) {
+					need.subtract(timeProgressed);
+				}
+				else if (needDegradation < 0) {
+					need.subtract(timeProgressed);
+				}
 			}
-
-			
 		}
 
-		private checkStructureInRange(structure:StructureController):void {
+		public requestResourceByTag(tag: string, amount?: number): Resource {
+			for (let resource of this.resources) {
+				if (resource.Tags.indexOf('Food') !== -1) {
+					return resource;
+				}
+			}
+			return null;
+		}
+
+		private checkStructureInRange(structure: StructureController): void {
 			if (structure) {
 				let distanceX = Math.abs(this.location.x - structure.location.x);
 				let distanceY = Math.abs(this.location.y - structure.location.y);
@@ -133,7 +190,7 @@ namespace POTLModule {
 			}
 		}
 
-		public connectToStructure(structure:StructureController):void {
+		public connectToStructure(structure: StructureController): void {
 			console.log(this.structuresInRange.indexOf(structure));
 			if (structure && this.structuresInRange.indexOf(structure) === -1) {
 				this.structuresInRange.push(structure);

@@ -1,14 +1,14 @@
 <div>
     <div>structure actor</div>
-    <div>time: {{$ctrl.time}}</div>
+    <div>time: {{$ctrl.time | number:0}}</div>
     <div>location: {{$ctrl.location}}</div>
 
     <div>
         Needs:
         <div ng-repeat="need in $ctrl.needs">
             <div>{{need.Id}}</div>
-            <div>{{need.Value}}</div>
-            <div>{{need.Percentage}}%</div>
+            <div>{{need.Value | number:0}}</div>
+            <progress ng-value="need.Percentage" max="100"></progress>
         </div>
     </div>
     <div>
@@ -21,8 +21,8 @@
         Resources:
         <div ng-repeat="resource in $ctrl.resources">
             <div>{{resource.Id}}</div>
-            <div>{{resource.Value}}</div>
-            <div>{{resource.Percentage}}%</div>
+            <div>{{resource.Value | number:0}}</div>
+            <progress ng-value="resource.Percentage" max="100"></progress>
         </div>
     </div>
 </div>
