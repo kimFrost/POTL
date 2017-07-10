@@ -1,5 +1,60 @@
 
 
+
+
+
+Idea:
+	- No goods, just chains of professions
+	- Guilds!
+
+Static rules:
+
++ 1 food to each household in range
++ 1 wealth for each household in range
+
+
+
+
+
+	Ruler
+	- Gov. officials/Reeve/Steward 
+	- Scribe
+	- Watchman
+	- Merchants
+	- Priest/Monk
+	- Physician
+	- Squire
+	- Artisan (Apothecary, Herbalist, Artist, Blacksmith, Barber, Dyer, Candlemaker, Goldsmith, Hatter, Potter, Ropemaker, Saddler, Shoemaker, Stonemason, Tailor, Tanner, Weaver, Locksmith, Furrier, Cooper, Carpenter, Builder, Baker, Clothier, Gardener, Miller, MetalSmith, Draper, Fisher,)
+	- Peasant/Farmer/Woodcutter
+	- Slave
+	
+	
+	
+	Failure:
+		- Natural disaster
+		- Decease
+		- Famine
+		- Invasion/War
+		- Revolt
+	
+	
+	
+	- Low (Food, safety)
+	- Mid ()
+	- High (Museum, Opera, )
+	
+	
+	
+http://medieval.stormthecastle.com/medieval-jobs.htm
+
+
+
+
+
+
+
+
+
 - Household lv.1 (only gather from hexes in range)
 
 
