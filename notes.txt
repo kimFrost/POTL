@@ -1,10 +1,35 @@
 
 
+- Tower defense, where merchant want to move their goods to market. Some legal. Some not. Design the route though the city.
+- Light security.
+- Heavy security. Slow passage. High cost.
+- Smugglers hut
+- Mercernary (increase intimidation to caravan/merchant)
+- Tavern (increase smart routing)
 
+- Some goods have effect. Weapons and alcohol raises instability of the city.
+- Caught illegal
+- Bribes
+
+
+- Household
+	- Attach lumberjack hut lv1. => provide 1 x lumberjack (lumberjack convert forest tile to wood petals)
+	
+	
+	
+	
+- H (50% cabbage satisfaction)
+	- F (1 x cabbage)
+- H (50% cabbage satisfaction)
+	
 
 
 Idea:
+	- Consume resource at constant rate at large scale
 	- No goods, just chains of professions
+	- Legan and Illegal goods. Banned goods. Illegal cheese. 
+
+	- Struggle to control your people, who have a mind of their own. Add rules to effect the people.
 	- Guilds!
 
 Static rules:
