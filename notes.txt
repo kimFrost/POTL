@@ -9,6 +9,7 @@
 
 - Some goods have effect. Weapons and alcohol raises instability of the city.
 - Caught illegal
+- Import taxes. Merchant will try to avoid paying import taxes.
 - Bribes
 
 
