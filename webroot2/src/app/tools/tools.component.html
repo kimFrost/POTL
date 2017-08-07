@@ -1,0 +1,8 @@
+<div class="tools__item" *ngFor="let tool of tools">
+    {{tool.id}}
+    <div class="tools__subitems">
+      <div class="tools__item tools__item_sub" *ngFor="let option of tool.options">
+        {{option}}
+      </div>
+    </div>
+</div>
