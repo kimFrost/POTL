@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+import { StructureComponent } from '../structure/structure.component';
 
 @Component({
   selector: 'provider',
@@ -6,6 +8,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./provider.component.css']
 })
 export class ProviderComponent implements OnInit {
+
+  @Input()
+  structure: StructureComponent;
 
   constructor() { }
 
