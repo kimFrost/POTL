@@ -20,3 +20,37 @@
 :host(.first) {
     clear: left;
 }
+
+.tile__overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tile__overlay_lumber {
+    background: brown;
+}
+
+.tile__overlay_wheat {
+    background: goldenrod;
+}
+
+.tile__overlay_grass {
+    background: greenyellow;
+}
+
+.tile__overlay_lv-1 {
+    opacity: 0.2;
+}
+
+.tile__overlay_lv-2 {
+    opacity: 0.4;
+}
+
+.tile__overlay_lv-3 {
+    opacity: 0.6;
+}

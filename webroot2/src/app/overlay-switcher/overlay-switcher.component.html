@@ -1,0 +1,7 @@
+
+
+
+<div class="overlay-swicther__item" 
+*ngFor="let option of options" 
+(click)="setOption(option)"
+[ngClass]="{'overlay-swicther__item_active': currentOption === option}">{{option.id}}</div>

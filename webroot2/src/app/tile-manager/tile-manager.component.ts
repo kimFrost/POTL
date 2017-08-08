@@ -8,7 +8,6 @@ import { Tile } from '../tile';
   selector: 'tile-manager',
   templateUrl: './tile-manager.component.html',
   styleUrls: ['./tile-manager.component.css']
-  //providers: [HeroSearchService]
 })
 export class TileManagerComponent implements OnInit {
 
@@ -26,14 +25,28 @@ export class TileManagerComponent implements OnInit {
         this.tiles.push(tile);
       }
     }
+    this._enrichTiles();
   }
 
   ngOnInit() {
-    //let tile = this.getTile(5, 5);
+    for (let tile of this.tiles) {
+      if (tile) {
+        let neighbours = [
+          this.getTile(tile.x, tile.y - 1),
+          this.getTile(tile.x + 1, tile.y),
+          this.getTile(tile.x, tile.y + 1),
+          this.getTile(tile.x - 1, tile.y)
+        ];
+        tile.neighbours = neighbours;
+      }
+    }
+  }
+
+  private _enrichTiles() {
 
   }
 
-  getTile(x:number, y:number):Tile {
+  public getTile(x: number, y: number): Tile {
     let index = y * this.numOfColumns + x;
     return this.tiles[index];
   }
