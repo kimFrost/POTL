@@ -12,10 +12,10 @@ import { Provider } from '../provider';
 })
 export class TileManagerComponent implements OnInit {
 
-  public tileSize = 50;
+  public tileSize = 30;
   public tiles: Tile[];
-  private numOfRows = 15;
-  private numOfColumns = 20;
+  private numOfRows = 30;
+  private numOfColumns = 30;
   //private searchTerms = new Subject<string>();
 
   constructor() {
@@ -27,16 +27,16 @@ export class TileManagerComponent implements OnInit {
       }
     }
     this._enrichTiles();
-    let tiles = this.getTilesInRange(this.tiles[33], 5);
+    let tiles = this.getTilesInRange(this.tiles[90], 5);
     for (let tile of tiles) {
       if (tile) {
-        tile.providers.push(new Provider('wheat', 1))
+        tile.providers.push(new Provider('wheat', 1));
       }
     }
-    tiles = this.getTilesInRange(this.tiles[47], 5);
+    tiles = this.getTilesInRange(this.tiles[97], 5);
     for (let tile of tiles) {
       if (tile) {
-        tile.providers.push(new Provider('wheat', 1))
+        tile.providers.push(new Provider('wheat', 1));
       }
     }
   }

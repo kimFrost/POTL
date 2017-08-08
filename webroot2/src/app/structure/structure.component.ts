@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'structure',
@@ -6,6 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./structure.component.css']
 })
 export class StructureComponent implements OnInit {
+
+  @Input()
+  y: number;
+
+  @Input()
+  x: number;
 
   //transclude = true;
 
