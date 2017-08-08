@@ -34,7 +34,7 @@ export class TileComponent implements OnInit {
         }
       }
       else {
-        this.tile.providers.push(new Provider('wheat', 1));
+        //this.tile.providers.push(new Provider('wheat', 1));
       }
     }
 

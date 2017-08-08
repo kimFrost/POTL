@@ -18,6 +18,8 @@ export class OverlaySwitcherComponent implements OnInit {
     this.options.push(new Provider('none', 0));
     this.options.push(new Provider('lumber', 0));
     this.options.push(new Provider('wheat', 0));
+    this.options.push(new Provider('flour', 0));
+    this.options.push(new Provider('bread', 0));
   }
 
   ngOnInit() {

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 //import { HeroSearchService } from './hero-search.service';
 import { Tile } from '../tile';
+import { Provider } from '../provider';
 
 @Component({
   selector: 'tile-manager',
@@ -26,9 +27,23 @@ export class TileManagerComponent implements OnInit {
       }
     }
     this._enrichTiles();
+    let tiles = this.getTilesInRange(this.tiles[33], 5);
+    for (let tile of tiles) {
+      if (tile) {
+        tile.providers.push(new Provider('wheat', 1))
+      }
+    }
+    tiles = this.getTilesInRange(this.tiles[47], 5);
+    for (let tile of tiles) {
+      if (tile) {
+        tile.providers.push(new Provider('wheat', 1))
+      }
+    }
   }
 
-  ngOnInit() {
+  ngOnInit() { }
+
+  private _enrichTiles() {
     for (let tile of this.tiles) {
       if (tile) {
         let neighbours = [
@@ -42,13 +57,32 @@ export class TileManagerComponent implements OnInit {
     }
   }
 
-  private _enrichTiles() {
-
-  }
-
   public getTile(x: number, y: number): Tile {
     let index = y * this.numOfColumns + x;
     return this.tiles[index];
+  }
+
+  public getTilesInRange(startTile: Tile, range: number): Tile[] {
+    let visited: Tile[] = [startTile];
+    if (startTile) {
+      //let frontiers:Tile[][] = [];
+      let frontiers: Array<Array<Tile>> = [[startTile]];
+      for (let k = 1; k <= range; k++) {
+        frontiers.push([]);
+        let frontier: Tile[] = frontiers[k - 1];
+        for (let tile of frontier) {
+          if (tile) {
+            for (let neighbour of tile.neighbours) {
+              if (neighbour && visited.indexOf(neighbour) === -1) {
+                visited.push(neighbour);
+                frontiers[k].push(neighbour);
+              }
+            }
+          }
+        }
+      }
+    }
+    return visited;
   }
 
 }
