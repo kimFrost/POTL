@@ -24,6 +24,7 @@ export class TileComponent implements OnInit {
   constructor(private overlayService: OverlayService) {}
 
   ngOnInit() {
+    /*
     if (this.tile) {
       if (Math.random() > 0.5) {
         this.tile.providers.push(new Provider('lumber', 1));
@@ -34,6 +35,7 @@ export class TileComponent implements OnInit {
         }
       }
     }
+    */
 
     this.subscription = this.overlayService.getProviderProfile().subscribe(provider => {
       this.activeProvider = provider;

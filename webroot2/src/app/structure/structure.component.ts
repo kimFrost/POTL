@@ -26,7 +26,7 @@ export class StructureComponent implements OnInit {
 
   //transclude = true;
 
-  constructor(private tileManagerService: TileManagerService) { 
+  constructor(private tileManagerService: TileManagerService) {
     this.tilesInRange = [];
   }
 
@@ -34,9 +34,13 @@ export class StructureComponent implements OnInit {
     this.tile = this.tileManagerService.getTile(this.x, this.y);
     if (this.tile) {
       this.tilesInRange = this.tileManagerService.getTilesInRange(this.tile, 5);
-      for (let tile of this.tilesInRange) {
-        if (tile) {
-          tile.providers.push(new Provider('wheat', 1));
+      if (this.structure) {
+        for (let provider of this.structure.providers) {
+          for (let tile of this.tilesInRange) {
+            if (tile) {
+              tile.providers.push(provider);
+            }
+          }
         }
       }
     }

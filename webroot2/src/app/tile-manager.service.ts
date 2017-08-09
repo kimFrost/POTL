@@ -23,9 +23,11 @@ export class TileManagerService {
     }
     this._enrichTiles();
 
-    this.getTile(10, 10).structure = new Structure();
-    this.getTile(14, 12).structure = new Structure();
-    this.getTile(11, 17).structure = new Structure();
+    this.getTile(10, 10).structure = new Structure([new Provider('wheat', 1)]);
+    this.getTile(14, 12).structure = new Structure([new Provider('wheat', 1)]);
+    this.getTile(11, 17).structure = new Structure([new Provider('wheat', 1)]);
+
+    this.getTile(19, 22).structure = new Structure([new Provider('lumber', 1)]);
     
   
     /*
