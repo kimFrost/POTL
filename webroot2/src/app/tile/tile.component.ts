@@ -4,19 +4,19 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { Tile } from '../tile';
 import { Provider } from '../provider';
+import { Structure } from '../structure';
 import { OverlayService } from '../overlay.service';
 
 @Component({
   selector: 'tile',
   templateUrl: './tile.component.html',
-  styleUrls: ['./tile.component.css']
+  styleUrls: ['./tile.component.scss']
 })
 export class TileComponent implements OnInit {
 
   @Input()
   tile: Tile;
 
-  public structure: any;
   public activeProvider: Provider;
 
   private subscription: Subscription;
@@ -32,9 +32,6 @@ export class TileComponent implements OnInit {
             neighbour.providers.push(new Provider('lumber', 1));
           }
         }
-      }
-      else {
-        //this.tile.providers.push(new Provider('wheat', 1));
       }
     }
 

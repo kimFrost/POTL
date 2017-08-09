@@ -6,7 +6,7 @@ import { OverlayService } from '../overlay.service';
 @Component({
   selector: 'overlay-switcher',
   templateUrl: './overlay-switcher.component.html',
-  styleUrls: ['./overlay-switcher.component.css']
+  styleUrls: ['./overlay-switcher.component.scss']
 })
 export class OverlaySwitcherComponent implements OnInit {
 

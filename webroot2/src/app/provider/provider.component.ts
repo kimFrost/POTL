@@ -5,7 +5,7 @@ import { StructureComponent } from '../structure/structure.component';
 @Component({
   selector: 'provider',
   templateUrl: './provider.component.html',
-  styleUrls: ['./provider.component.css']
+  styleUrls: ['./provider.component.scss']
 })
 export class ProviderComponent implements OnInit {
 
