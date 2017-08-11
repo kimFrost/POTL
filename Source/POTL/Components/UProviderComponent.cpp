@@ -18,27 +18,69 @@ UProviderComponent::UProviderComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	ProviderRange = 3;
+	ProviderRange = 5;
 }
 
 
+
+void UProviderComponent::ToggleProvider()
+{
+	if (bIsWorking)
+	{
+		DeactivateProvider();
+	}
+	else
+	{
+		ActivateProvider();
+	}
+}
+
+void UProviderComponent::ActivateProvider()
+{
+	if (!bIsWorking)
+	{
+		for (auto& Hex : HexesInRange)
+		{
+			if (Hex) {
+				Hex->AddProvider(this);
+			}
+		}
+		bIsWorking = true;
+	}
+}
+
+void UProviderComponent::DeactivateProvider()
+{
+	if (bIsWorking)
+	{
+		for (auto& Hex : HexesInRange)
+		{
+			if (Hex) {
+				Hex->RemoveProvider(this);
+			}
+		}
+		bIsWorking = false;
+	}
+}
 
 void UProviderComponent::ValidateRequirements()
 {
 	//TODO: Better validation Logic for attachedTo
 	if (!ParentStructure)
 	{
-		bIsWorking = false;
+		DeactivateProvider();
 	}
 	else if (bRequireAttached)
 	{
 		if (ParentStructure && ParentStructure->AttachedTo)
 		{
-			bIsWorking = true;
+			//?? Validate tile on for required resource??
+
+			ActivateProvider();
 		}
 		else
 		{
-			bIsWorking = false;
+			DeactivateProvider();
 		}
 	}
 }
@@ -55,6 +97,7 @@ void UProviderComponent::Init()
 	}
 
 	// Store hexes in range
+	HexesInRange.Empty();
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
 	if (GameInstance)
 	{
@@ -73,6 +116,8 @@ void UProviderComponent::Init()
 		}
 	}
 
+	// ValidateRequirements on initialization
+	ValidateRequirements();
 	// ValidateRequirements every second
 	GetWorld()->GetTimerManager().SetTimer(ProvideCheckTimer, this, &UProviderComponent::ValidateRequirements, 1.f, true);
 }

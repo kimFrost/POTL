@@ -30,10 +30,17 @@ public:
 
 	TArray<UHexTile*> HexesInRange;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Provider")
+	//TArray<FString> Resources;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Provider")
-	TArray<FString> Provides;
+	TMap<FString, int> Provides;
 
 	FTimerHandle ProvideCheckTimer;
+
+	void ToggleProvider();
+	void ActivateProvider();
+	void DeactivateProvider();
 
 	void ValidateRequirements();
 

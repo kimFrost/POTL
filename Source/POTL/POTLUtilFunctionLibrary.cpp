@@ -426,4 +426,26 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 	return VisitedCubeCoords;
 }
 
+void UPOTLUtilFunctionLibrary::MergeResourceLists(const TMap<FString, int>& From, TMap<FString, int>& To)
+{
+	for (auto & Line : From)
+	{
+		if (To.Contains(Line.Key))
+		{
+			To[Line.Key] += Line.Value;
+		}
+		else
+		{
+			To.Add(Line.Key, Line.Value);
+		}
+	}
+}
 
+//static void ParseRecordSetForState(const FP4RecordSet& InRecords, TMap<FString, EPerforceState::Type>& OutResults)
+
+//const TMap & TargetMap
+// typedef TMap<const UTexture*, const UTexture*> FPaperRenderSceneProxyTextureOverrideMap;
+
+
+// NOT WORKING
+//UPARAM(ref) TMap<FString, int> From, UPARAM(ref) TMap<FString, int> To

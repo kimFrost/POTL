@@ -5,6 +5,8 @@
 #include "POTLGameInstance.h"
 #include "UObjects/UHexPoint.h"
 #include "HexDecal.h"
+#include "Components/UProviderComponent.h"
+#include "POTLUtilFunctionLibrary.h"
 #include "UHexTile.h"
 
 
@@ -123,6 +125,33 @@ void UHexTile::ClickHex()
 	if (!Handled)
 	{
 		//Select();
+	}
+}
+void UHexTile::AddProvider(UProviderComponent* Provider)
+{
+	if (Provider)
+	{
+		Providers.Add(Provider);
+		UpdateResources();
+	}
+}
+void UHexTile::RemoveProvider(UProviderComponent* Provider)
+{
+	if (Provider)
+	{
+		Providers.Remove(Provider);
+		UpdateResources();
+	}
+}
+void UHexTile::UpdateResources()
+{
+	Resources.Empty();
+	for (auto& Provider : Providers)
+	{
+		if (Provider)
+		{
+			UPOTLUtilFunctionLibrary::MergeResourceLists(Provider->Provides, Resources);
+		}
 	}
 }
 void UHexTile::OnHexClicked_Implementation()

@@ -23,11 +23,11 @@ DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnHexUnallocateDelegate, UHexTile
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConstructionComplete);
 
 
-//~~~~~ Forward Declarations ~~~~~
+//~~~~~ Forward Declarations ~~~~~//
 
-//~~~~~ STRUCTS ~~~~~
+//~~~~~ STRUCTS ~~~~~//
  
-//~~~~~ ENUMS ~~~~~
+//~~~~~ ENUMS ~~~~~//
 
 
 //~~~~~ Forward Declarations ~~~~~//

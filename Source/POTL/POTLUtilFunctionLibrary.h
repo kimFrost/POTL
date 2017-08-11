@@ -9,6 +9,7 @@
 
 
 
+
 UENUM(BlueprintType)
 enum EBoolGateEnum
 {
@@ -93,6 +94,10 @@ public:
 	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, const TArray<FVector>& Obstacles, int32 Range);
 
 
+
+	/** TMap -  */
+	//UFUNCTION(BlueprintCallable, Category = "Util")
+	static void MergeResourceLists(const TMap<FString, int>& From, TMap<FString, int>& To);
 
 
 
