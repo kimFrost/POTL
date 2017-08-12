@@ -71,6 +71,8 @@ DerivedDataCache/*
 
 ipch/*
 
+.vs/POTL
+
 #Coherent UI
 Plugins/Runtime/Coherent/CoherentUIPlugin/Intermediate/*
 Plugins/Runtime/Coherent/CoherentUIPlugin/Binaries/*

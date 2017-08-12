@@ -250,6 +250,7 @@ void UHexTile::Init_Implementation()
 	if (WorldRef)
 	{
 		// Create module placeholder
+		/*
 		FActorSpawnParameters SpawnParameters;
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
@@ -260,5 +261,6 @@ void UHexTile::Init_Implementation()
 			//PlaceholderModule->SpawnOrder = this;
 			//PlaceholderModule->InitModule(); // InitModule is implemented in blueprint with _implemented
 		}
+		*/
 	}
 }

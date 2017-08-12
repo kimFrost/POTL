@@ -137,7 +137,7 @@ void APOTLHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnDecals();
+	//SpawnDecals();
 }
 
 

@@ -178,6 +178,7 @@ void APOTLStructure::EnterEditMode()
 			if (IslandItr)
 			{
 				IslandItr->SpawnHexRange(this->GetActorLocation(), HexesInRange);
+				break;
 			}
 		}
 
@@ -535,16 +536,21 @@ void APOTLStructure::Init()
 	if (IsPlaceholder)
 	{
 		// Show area resource information and new connections to other structures
+		for (TActorIterator<AIsland> IslandItr(GetWorld()); IslandItr; ++IslandItr)
+		{
+			if (IslandItr)
+			{
+				IslandItr->SpawnHexRange(this->GetActorLocation(), HexesInRange);
+				break;
+			}
+		}
+
 		for (auto& Hex : HexesInRange)
 		{
 			if (Hex)
 			{
-				Hex->ShowDecal(EDecalType::ValidBuild);
-
-				// Spawn AResourceSpot (Hex)
-
-				//Hex->ShowResourceInformation();
-
+				//Hex->ShowDecal(EDecalType::ValidBuild);
+				
 				if (Hex->AttachedBuilding)
 				{
 					// Show new Connection information
