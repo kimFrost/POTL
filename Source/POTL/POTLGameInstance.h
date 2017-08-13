@@ -69,6 +69,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	TArray<UHexTile*> Hexes;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
+	TMap<FString, TArray<UHexTile*>> ResourceHexMap;
+
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Grid")
 	bool HexGridReady;
 	

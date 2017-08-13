@@ -432,18 +432,14 @@ void UPOTLUtilFunctionLibrary::FilterTileArrayByResources(const TArray<UHexTile*
 
 	for (auto& Hex : TargetArray)
 	{
-		bool IsValid = true;
 		for (auto& Entry : Resources)
 		{
 			if (!Hex->Resources.Contains(Entry.Key) || Hex->Resources[Entry.Key] < Entry.Value)
 			{
-				IsValid = false;
+				break;
 			}
 		}
-		if (IsValid)
-		{
-			FilteredArray.Add(Hex);
-		}
+		FilteredArray.Add(Hex);
 	}
 
 	//TSubclassOf<class AActor> FilterClass
