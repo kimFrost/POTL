@@ -127,4 +127,8 @@ void AIsland::OnSpawnHexRange_Implementation(FVector Location, const TArray<UHex
 {
 
 }
+void AIsland::OnDrawProviders_Implementation(const TArray<UHexTile*>& Hexes)
+{
+
+}
 

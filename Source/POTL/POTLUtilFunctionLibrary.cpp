@@ -426,6 +426,42 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 	return VisitedCubeCoords;
 }
 
+void UPOTLUtilFunctionLibrary::FilterTileArrayByResources(const TArray<UHexTile*>& TargetArray, const TMap<FString, int>& Resources, TArray<UHexTile*>& FilteredArray)
+{
+	FilteredArray.Empty();
+
+	for (auto& Hex : TargetArray)
+	{
+		bool IsValid = true;
+		for (auto& Entry : Resources)
+		{
+			if (!Hex->Resources.Contains(Entry.Key) || Hex->Resources[Entry.Key] < Entry.Value)
+			{
+				IsValid = false;
+			}
+		}
+		if (IsValid)
+		{
+			FilteredArray.Add(Hex);
+		}
+	}
+
+	//TSubclassOf<class AActor> FilterClass
+	//TargetArray.FilterByPredicate
+
+	/*
+	for (auto It = TargetArray.CreateConstIterator(); It; It++)
+	{
+		AActor* TargetElement = (*It);
+		if (TargetElement && TargetElement->IsA(FilterClass))
+		{
+			FilteredArray.Add(TargetElement);
+		}
+	}
+	*/
+}
+
+
 void UPOTLUtilFunctionLibrary::MergeResourceLists(const TMap<FString, int>& From, TMap<FString, int>& To)
 {
 	for (auto & Line : From)

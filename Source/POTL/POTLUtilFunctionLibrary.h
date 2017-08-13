@@ -90,9 +90,11 @@ public:
 
 	/** Map - Pathing */
 
-	UFUNCTION(BlueprintCallable, Category = "Hex")
+	UFUNCTION(BlueprintCallable, Category = "Util|Hex")
 	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, const TArray<FVector>& Obstacles, int32 Range);
 
+	//UFUNCTION(BlueprintCallable, Category = "Util|Hex") //TMap not allowed
+	static void FilterTileArrayByResources(const TArray<UHexTile*>& TargetArray, const TMap<FString, int>& Resources, TArray<UHexTile*>& FilteredArray);
 
 
 	/** TMap -  */

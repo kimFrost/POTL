@@ -52,6 +52,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "World")
 	void OnSpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes);
 
+	UFUNCTION(BlueprintNativeEvent, Category = "World")
+	void OnDrawProviders(const TArray<UHexTile*>& Hexes);
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
