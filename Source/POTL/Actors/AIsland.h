@@ -8,7 +8,8 @@
 
 
 //~~~~~ Forward Declarations ~~~~~//
-
+class UTileManager;
+class UOverlayManager;
 
 
 UCLASS()
@@ -38,6 +39,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World")
 	TEnumAsByte<ECollisionChannel> ChannelFoliage;
+
+
+	UTileManager* TileManager;
+
+	UOverlayManager* OverlayManager;
+
 
 	void CreateAssets();
 
