@@ -7,13 +7,19 @@
 
 
 
-
-UTileManager::UTileManager()
+// Constructor
+UTileManager::UTileManager(AIsland* Island)
 {
-	
+	HexWidth = 255.0f;
+	HexHeight = HexWidth / FMath::Sqrt(3) * 2.f;
+	GridXCount = 200; // Temp. Needs to be calc in point creation.
+	GridYCount = 200; // Temp. Needs to be calc in point creation.
+	HexGridReady = false;
+
+	WorldActor = Island;
 }
 
-
+// Deconstructor
 UTileManager::~UTileManager()
 {
 
