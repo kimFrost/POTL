@@ -2,6 +2,8 @@
 
 #include "POTL.h"
 #include "POTLGameInstance.h"
+#include "UObjects/TileManager/UTileManager.h"
+#include "UObjects/OverlayManager/UOverlayManager.h"
 #include "AIsland.h"
 
 
@@ -31,6 +33,17 @@ AIsland::AIsland(const FObjectInitializer &ObjectInitializer) : Super(ObjectInit
 
 void AIsland::CreateAssets()
 {
+	TileManager = NewObject<UTileManager>(this);
+	if (TileManager)
+	{
+		TileManager->Setup(this);
+	}
+	OverlayManager = NewObject<UOverlayManager>(this);
+	if (OverlayManager)
+	{
+		OverlayManager->Setup(this);
+	}
+
 	//AIsland* IslandWorld = nullptr;
 	if (TreeStaticMesh)
 	{

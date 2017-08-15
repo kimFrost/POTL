@@ -11,7 +11,7 @@
 class AIsland;
 
 //~~~~~ Delegates/Event dispatcher ~~~~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMapReady);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTileManagerOnGridReady);
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -20,9 +20,10 @@ class POTL_API UTileManager : public UObject
 	GENERATED_BODY()
 
 public:
-	UTileManager(AIsland* Island);
+	UTileManager();
 	~UTileManager();
 
+	void Setup(AIsland* Island);
 
 private:
 
@@ -37,6 +38,8 @@ private:
 	AIsland* WorldActor;
 	UWorld* CurrentWorld;
 
+
+	/*
 	void InitializeWorld();
 
 	void TraceLandscape();
@@ -47,6 +50,7 @@ private:
 	void AnalyseLandscape();
 	void CalcHexResourceDensity();
 	void InjectTestValuesToHexes();
+	*/
 
 
 public:
@@ -54,6 +58,6 @@ public:
 	/*********** Delegates **************/
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Grid")
-	FOnMapReady OnMapReady;
+	FTileManagerOnGridReady OnMapReady;
 	
 };

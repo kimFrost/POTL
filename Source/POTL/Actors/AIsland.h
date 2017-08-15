@@ -42,7 +42,6 @@ public:
 
 
 	UTileManager* TileManager;
-
 	UOverlayManager* OverlayManager;
 
 

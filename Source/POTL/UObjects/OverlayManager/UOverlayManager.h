@@ -21,6 +21,11 @@ public:
 	UOverlayManager();
 	~UOverlayManager();
 
+	void Setup(AIsland* Island);
+
+	bool ActivateResourceOverlay(FString ID, int MinLevel);
+	//bool ActivateResourceOverlay(TMap<FString, int> ResourceList);
+
 
 private:
 
@@ -31,5 +36,7 @@ private:
 
 public:
 
+
+	// OnResourceLayerActivate
 	
 };
