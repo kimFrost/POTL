@@ -17,10 +17,12 @@ UOverlayManager::~UOverlayManager()
 
 }
 
-void UOverlayManager::Setup(AIsland* Island)
+void UOverlayManager::Setup(AIsland* Island, AOverlayDrawer* Drawer)
 {
 
 	// Create Decal drawer
+
+	OverlayDrawer = Drawer;
 }
 
 bool UOverlayManager::ActivateResourceOverlay(FString ID, int MinLevel)

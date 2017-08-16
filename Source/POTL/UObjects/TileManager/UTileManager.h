@@ -39,6 +39,8 @@ private:
 	UWorld* CurrentWorld;
 
 
+	// DecalDrawer
+
 	/*
 	void InitializeWorld();
 

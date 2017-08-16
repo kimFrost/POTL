@@ -6,3 +6,7 @@
 
 
 
+void AOverlayDrawer::OnDrawOverlay_Implementation(const TArray<UHexTile*>& Hexes)
+{
+
+}

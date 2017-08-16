@@ -15,6 +15,11 @@ class POTL_API AOverlayDrawer : public ADecalActor
 	GENERATED_BODY()
 	
 	
-	
+
+public:
+
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Overlay")
+	void OnDrawOverlay(const TArray<UHexTile*>& Hexes);
 	
 };

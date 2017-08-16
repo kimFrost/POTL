@@ -21,15 +21,18 @@ public:
 	UOverlayManager();
 	~UOverlayManager();
 
-	void Setup(AIsland* Island);
+	UFUNCTION(BlueprintCallable, Category = "Overlay")
+	void Setup(AIsland* Island, AOverlayDrawer* Drawer);
 
 	bool ActivateResourceOverlay(FString ID, int MinLevel);
 	//bool ActivateResourceOverlay(TMap<FString, int> ResourceList);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Overlay")
+	AOverlayDrawer* OverlayDrawer;
+
 
 private:
 
-	AOverlayDrawer* OverlayDrawer;
 
 	//TArray<UHexTile*> Overlays;
 

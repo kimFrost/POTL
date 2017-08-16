@@ -40,8 +40,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World")
 	TEnumAsByte<ECollisionChannel> ChannelFoliage;
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "World")
 	UTileManager* TileManager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World")
 	UOverlayManager* OverlayManager;
 
 

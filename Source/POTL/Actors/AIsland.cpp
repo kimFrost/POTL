@@ -38,11 +38,15 @@ void AIsland::CreateAssets()
 	{
 		TileManager->Setup(this);
 	}
+	
 	OverlayManager = NewObject<UOverlayManager>(this);
+	/*
+	**Setup in blueprint instead. Need blueprint decal drawer for now.
 	if (OverlayManager)
 	{
-		OverlayManager->Setup(this);
+		//OverlayManager->Setup(this);  
 	}
+	*/
 
 	//AIsland* IslandWorld = nullptr;
 	if (TreeStaticMesh)
