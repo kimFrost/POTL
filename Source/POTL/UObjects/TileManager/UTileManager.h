@@ -35,7 +35,9 @@ private:
 	TArray<UHexTile*> Hexes;
 	bool HexGridReady;
 
+	UPROPERTY() //VisibleAnywhere, BlueprintReadOnly
 	AIsland* WorldActor;
+
 	UWorld* CurrentWorld;
 
 

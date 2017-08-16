@@ -24,6 +24,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Overlay")
 	void Setup(AIsland* Island, AOverlayDrawer* Drawer);
 
+	UFUNCTION(BlueprintCallable, Category = "Overlay")
 	bool ActivateResourceOverlay(FString ID, int MinLevel);
 	//bool ActivateResourceOverlay(TMap<FString, int> ResourceList);
 
