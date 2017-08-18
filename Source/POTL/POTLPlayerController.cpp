@@ -20,7 +20,7 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 	GameInstance = nullptr;
 	ActiveToolType = EToolType::Select;
 	BuildingAllowed = false;
-	BuilderStructure = nullptr;
+	StructureBuilder = nullptr;
 	BaseRotation = 0;
 	BuildBroadcastRootHex = nullptr;
 	BuildValid = false;
@@ -34,6 +34,11 @@ void APOTLPlayerController::RotateStructure()
 	//!! Is a copy of the logic from tick !!//
 	if (ActiveToolType == EToolType::PlantStructure)
 	{
+		if (StructureBuilder)
+		{
+			StructureBuilder->Rotate(1);
+		}
+		
 		if (BuilderStructure && GameInstance)
 		{
 			BuilderStructure->RemoveStructure();
@@ -41,6 +46,7 @@ void APOTLPlayerController::RotateStructure()
 		if (!CachedHex->AttachedBuilding) {
 			BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
 		}
+
 	}
 }
 void APOTLPlayerController::SetToolType(EToolType ToolType)

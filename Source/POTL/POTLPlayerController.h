@@ -7,6 +7,7 @@
 #include "POTLGameInstance.h"
 #include "UObjects/UHexTile.h"
 #include "POTLStructure.h"
+#include "Actors/StructureBuilder/AStructureBuilder.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLHUD.h"
 #include "POTLPlayerController.generated.h"
@@ -51,7 +52,8 @@ public:
 	bool BuildingAllowed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	APOTLStructure* BuilderStructure;
+	AStructureBuilder* StructureBuilder;
+	//APOTLStructure* BuilderStructure;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FST_Structure BuildStructureData;
