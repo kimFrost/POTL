@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "UObjects/OverlayManager/AOverlayDrawer.h"
+#include "Actors/AIsland.h"
 #include "UOverlayManager.h"
 
 

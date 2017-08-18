@@ -592,6 +592,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TSubclassOf<APOTLStructure> StructureClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TAssetPtr<UStaticMesh> PreviewMesh;
+	//TSubclassOf<class UStaticMesh> PreviewMesh;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FString> AttachTo;

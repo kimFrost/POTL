@@ -27,6 +27,7 @@
         "Title": "Basic tenant",
         "Burnable": true,
         "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_BasicTenant.BP_BasicTenant_C'",
+		"PreviewMesh" : "StaticMesh'/Game/Meshes/SM_Tent.SM_Tent'",
         "AttachTo": [],
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}

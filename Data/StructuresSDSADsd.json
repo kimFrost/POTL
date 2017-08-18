@@ -1,0 +1,379 @@
+[
+	{
+		"Name": "Townhall",
+		"Id": "Townhall",
+		"Title": "Townhall",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_TownHall.BP_TownHall_C'",
+		"PreviewMesh": "None",
+		"AttachTo": [],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			},
+			{
+				"X": 1,
+				"Y": 0,
+				"Z": -1
+			},
+			{
+				"X": 1,
+				"Y": -1,
+				"Z": 0
+			},
+			{
+				"X": 0,
+				"Y": -1,
+				"Z": 1
+			},
+			{
+				"X": -1,
+				"Y": 0,
+				"Z": 1
+			},
+			{
+				"X": -1,
+				"Y": 1,
+				"Z": 0
+			},
+			{
+				"X": 0,
+				"Y": 1,
+				"Z": -1
+			}
+		],
+		"Entrance":
+		{
+			"X": -1,
+			"Y": 0,
+			"Z": 1
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 10,
+		"ConstructionCost": []
+	},
+	{
+		"Name": "BasicTenant",
+		"Id": "BasicTenant",
+		"Title": "Basic tenant",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_BasicTenant.BP_BasicTenant_C'",
+		"PreviewMesh": "/Game/Meshes/SM_Tent.SM_Tent",
+		"AttachTo": [],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 0,
+		"ConstructionCost": []
+	},
+	{
+		"Name": "Farm",
+		"Id": "Farm",
+		"Title": "Farm",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Farm.BP_Farm_C'",
+		"PreviewMesh": "None",
+		"AttachTo": [
+			"BasicTenant"
+		],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			},
+			{
+				"X": -1,
+				"Y": 0,
+				"Z": 1
+			},
+			{
+				"X": 0,
+				"Y": -1,
+				"Z": 1
+			},
+			{
+				"X": -2,
+				"Y": 0,
+				"Z": 2
+			},
+			{
+				"X": -1,
+				"Y": -1,
+				"Z": 2
+			},
+			{
+				"X": 0,
+				"Y": -2,
+				"Z": 2
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 10,
+		"ConstructionCost": []
+	},
+	{
+		"Name": "Windmill",
+		"Id": "Windmill",
+		"Title": "Windmill",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Windmill.BP_Windmill_C'",
+		"PreviewMesh": "None",
+		"AttachTo": [
+			"BasicTenant"
+		],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 15,
+		"ConstructionCost": [
+			{
+				"Id": "Wood",
+				"Amount": 3
+			}
+		]
+	},
+	{
+		"Name": "Bakery",
+		"Id": "Bakery",
+		"Title": "Bakery",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Bakery.BP_Bakery_C'",
+		"PreviewMesh": "None",
+		"AttachTo": [
+			"BasicTenant"
+		],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 10,
+		"ConstructionCost": [
+			{
+				"Id": "Plank",
+				"Amount": 1
+			}
+		]
+	},
+	{
+		"Name": "Woodcutter",
+		"Id": "Woodcutter",
+		"Title": "Woodcutter",
+		"Description": "Must be near forest to be built",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Woodcutter.BP_Woodcutter_C'",
+		"PreviewMesh": "None",
+		"AttachTo": [
+			"BasicTenant"
+		],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 10,
+		"ConstructionCost": []
+	},
+	{
+		"Name": "Stonecutter",
+		"Id": "Stonecutter",
+		"Title": "Stonecutter",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Stonecutter.BP_Stonecutter_C'",
+		"PreviewMesh": "None",
+		"AttachTo": [
+			"BasicTenant"
+		],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 10,
+		"ConstructionCost": [
+			{
+				"Id": "Wood",
+				"Amount": 1
+			}
+		]
+	},
+	{
+		"Name": "Well",
+		"Id": "Well",
+		"Title": "Well",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_Well.BP_Well_C'",
+		"PreviewMesh": "None",
+		"AttachTo": [],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 10,
+		"ConstructionCost": [
+			{
+				"Id": "Stone",
+				"Amount": 2
+			}
+		]
+	},
+	{
+		"Name": "Lumberyard",
+		"Id": "Lumberyard",
+		"Title": "Lumberyard",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "None",
+		"PreviewMesh": "None",
+		"AttachTo": [],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 10,
+		"ConstructionCost": [
+			{
+				"Id": "Plank",
+				"Amount": 2
+			}
+		]
+	},
+	{
+		"Name": "HuntingCabin",
+		"Id": "HuntingCabin",
+		"Title": "Hunting cabin",
+		"Description": "",
+		"Burnable": true,
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/Buildings/BP_HuntingCabin.BP_HuntingCabin_C'",
+		"PreviewMesh": "None",
+		"AttachTo": [
+			"BasicTenant"
+		],
+		"CubeSizes": [
+			{
+				"X": 0,
+				"Y": 0,
+				"Z": 0
+			}
+		],
+		"Entrance":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 0
+		},
+		"RotationDirection": 0,
+		"BlockConstruction": true,
+		"BlockPathing": true,
+		"ConstructionTime": 10,
+		"ConstructionCost": [
+			{
+				"Id": "Wood",
+				"Amount": 2
+			}
+		]
+	}
+]
