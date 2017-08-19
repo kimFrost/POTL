@@ -51,7 +51,8 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 {
 	if (Hex)
 	{
-		SetActorLocation(Hex->Location);
+		FHitResult* HitResult;
+		SetActorLocation(Hex->Location, false, HitResult, ETeleportType::TeleportPhysics);
 		RootHex = Hex;
 		// Set attachTo Hex
 		if (StructureBaseData.AttachTo.Num() > 0)
@@ -80,11 +81,11 @@ void AStructureBuilder::Build()
 
 void AStructureBuilder::Show()
 {
-
+	SetActorHiddenInGame(false);
 }
 void AStructureBuilder::Hide()
 {
-
+	SetActorHiddenInGame(true);
 }
 
 bool AStructureBuilder::ValidatePlacement()
