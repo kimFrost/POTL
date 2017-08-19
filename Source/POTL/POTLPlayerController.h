@@ -51,7 +51,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	bool BuildingAllowed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
 	AStructureBuilder* StructureBuilder;
 	//APOTLStructure* BuilderStructure;
 

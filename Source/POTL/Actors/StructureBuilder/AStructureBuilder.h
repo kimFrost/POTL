@@ -19,19 +19,27 @@ public:
 	// Sets default values for this actor's properties
 	AStructureBuilder();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Builder")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Builder") //EditDefaultsOnly 
 	TAssetPtr<UStaticMesh> DefaultMesh;
 
 	UFUNCTION(BlueprintCallable, Category = "Builder")
 	int Rotate(int Direction);
 	 
+	UFUNCTION(BlueprintCallable, Category = "Builder")
 	void SetData(FST_Structure Data);
+
 	void SetRootHex(UHexTile* Hex);
 	//void SetLocation();
 	void Build();
 
+	void Hide();
+	void Show();
+
+	bool ValidatePlacement();
+
 private:
 	UHexTile* RootHex;
+	UHexTile* AttachToHex;
 	int Rotation;
 	bool bIsBuildValid;
 	FST_Structure StructureBaseData;

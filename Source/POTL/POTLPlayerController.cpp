@@ -4,6 +4,7 @@
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
+#include "Actors/StructureBuilder/AStructureBuilder.h"
 #include "Actors/AProFow.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLHUD.h"
@@ -30,7 +31,7 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 
 void APOTLPlayerController::RotateStructure()
 {
-	BaseRotation = (BaseRotation + 1) % 6;
+	//BaseRotation = (BaseRotation + 1) % 6;
 	//!! Is a copy of the logic from tick !!//
 	if (ActiveToolType == EToolType::PlantStructure)
 	{
@@ -38,7 +39,7 @@ void APOTLPlayerController::RotateStructure()
 		{
 			StructureBuilder->Rotate(1);
 		}
-		
+		/*
 		if (BuilderStructure && GameInstance)
 		{
 			BuilderStructure->RemoveStructure();
@@ -46,88 +47,105 @@ void APOTLPlayerController::RotateStructure()
 		if (!CachedHex->AttachedBuilding) {
 			BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
 		}
-
+		*/
 	}
 }
 void APOTLPlayerController::SetToolType(EToolType ToolType)
 {
-	// Unload previous tool
-	if (ActiveToolType == EToolType::PlantStructure)
+	if (ActiveToolType != ToolType) 
 	{
-		if (BuilderStructure)
+		// Unload previous tool
+		if (ActiveToolType == EToolType::PlantStructure)
 		{
-			BuilderStructure->RemoveStructure();
-		}
-		for (auto& Hex : ValidStructurePlaceHexes)
-		{
-			if (Hex)
+			if (StructureBuilder)
 			{
-				Hex->HideDecal();
+				StructureBuilder->Hide();
 			}
-		}
-		ValidStructurePlaceHexes.Empty();
-	}
-	if (ActiveToolType == EToolType::Select)
-	{
-		//DeselectSelectedStructures();
-		DeselectAllStructures();
-	}
-	
-	// Load new tool
-	if (ToolType == EToolType::PlantStructure)
-	{
-		if (GameInstance)
-		{
-			if (BuildStructureData.AttachTo.Num() > 0)
+
+			/*
+			if (BuilderStructure)
 			{
-				// Get all structures of AttachTo ids
-				TArray<AActor*> AttachToStructures;
-				for (auto& StructureId : BuildStructureData.AttachTo)
+				BuilderStructure->RemoveStructure();
+			}
+			for (auto& Hex : ValidStructurePlaceHexes)
+			{
+				if (Hex)
 				{
-					FST_Structure* StructureData = GameInstance->GetStructureRowData(StructureId);
-					if (StructureData)
-					{
-						TArray<AActor*> FoundStructures;
-						UGameplayStatics::GetAllActorsOfClass(GetWorld(), StructureData->StructureClass, FoundStructures);
-						AttachToStructures.Append(FoundStructures);
-					}
+					Hex->HideDecal();
 				}
-				for (auto& Actor : AttachToStructures)
+			}
+			ValidStructurePlaceHexes.Empty();
+			*/
+		}
+		if (ActiveToolType == EToolType::Select)
+		{
+			//DeselectSelectedStructures();
+			DeselectAllStructures();
+		}
+
+		// Load new tool
+		if (ToolType == EToolType::PlantStructure)
+		{
+			if (StructureBuilder)
+			{
+				StructureBuilder->Show();
+			}
+
+			/*
+			if (GameInstance)
+			{
+				if (BuildStructureData.AttachTo.Num() > 0)
 				{
-					APOTLStructure* Structure = Cast<APOTLStructure>(Actor);
-					if (Structure)
+					// Get all structures of AttachTo ids
+					TArray<AActor*> AttachToStructures;
+					for (auto& StructureId : BuildStructureData.AttachTo)
 					{
-						TArray<UHexTile*> AdjacentHexes = UPOTLUtilFunctionLibrary::GetAdjacentHexesToHexes(Structure->OccupiedHexes);
-						AdjacentHexes = UPOTLUtilFunctionLibrary::SubtractHexes(AdjacentHexes, Structure->OccupiedHexes);
-						for (auto& Hex : AdjacentHexes)
+						FST_Structure* StructureData = GameInstance->GetStructureRowData(StructureId);
+						if (StructureData)
 						{
-							if (Hex && !Hex->AttachedBuilding) // If no structure
+							TArray<AActor*> FoundStructures;
+							UGameplayStatics::GetAllActorsOfClass(GetWorld(), StructureData->StructureClass, FoundStructures);
+							AttachToStructures.Append(FoundStructures);
+						}
+					}
+					for (auto& Actor : AttachToStructures)
+					{
+						APOTLStructure* Structure = Cast<APOTLStructure>(Actor);
+						if (Structure)
+						{
+							TArray<UHexTile*> AdjacentHexes = UPOTLUtilFunctionLibrary::GetAdjacentHexesToHexes(Structure->OccupiedHexes);
+							AdjacentHexes = UPOTLUtilFunctionLibrary::SubtractHexes(AdjacentHexes, Structure->OccupiedHexes);
+							for (auto& Hex : AdjacentHexes)
 							{
-								ValidStructurePlaceHexes.AddUnique(Hex);
+								if (Hex && !Hex->AttachedBuilding) // If no structure
+								{
+									ValidStructurePlaceHexes.AddUnique(Hex);
+								}
 							}
 						}
 					}
-				}
-				for (auto& Hex : ValidStructurePlaceHexes)
-				{
-					if (Hex)
+					for (auto& Hex : ValidStructurePlaceHexes)
 					{
-						Hex->ShowDecal(EDecalType::ValidBuild);
+						if (Hex)
+						{
+							Hex->ShowDecal(EDecalType::ValidBuild);
+						}
 					}
 				}
+				else
+				{
+					// Can be built everywhere
+				}
 			}
-			else
-			{
-				// Can be built everywhere
-			}
+			*/
 		}
-	}
-	else if (ToolType == EToolType::ToggleAllocateHex)
-	{
+		else if (ToolType == EToolType::ToggleAllocateHex)
+		{
 
-	}
+		}
 
-	ActiveToolType = ToolType;
+		ActiveToolType = ToolType;
+	}
 }
 
 void APOTLPlayerController::SelectStructure(APOTLStructure* Structure)
@@ -181,6 +199,9 @@ void APOTLPlayerController::BeginPlay()
 	
 	//GameInstance->OnMapReady.AddDynamic();
 
+	StructureBuilder = GetWorld()->SpawnActor<AStructureBuilder>(AStructureBuilder::StaticClass());
+
+
 	/*
 	AProFow* FogOfWar = GetWorld()->SpawnActor<AProFow>(AProFow::StaticClass());
 	if (FogOfWar)
@@ -205,6 +226,11 @@ void APOTLPlayerController::Tick(float DeltaTime)
 			//~~ Tool : PlantStructure ~~//
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
+				if (StructureBuilder)
+				{
+					StructureBuilder->SetRootHex(CachedHex);
+				}
+				/*
 				if (BuilderStructure)
 				{
 					BuilderStructure->RemoveStructure();
@@ -212,6 +238,7 @@ void APOTLPlayerController::Tick(float DeltaTime)
 				if (!CachedHex->AttachedBuilding) {
 					BuilderStructure = GameInstance->PlantPlaceholderStructure(CachedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false);
 				}
+				*/
 			}
 			//~~ Tool : Select ~~//
 			else if (ActiveToolType == EToolType::Select)
@@ -253,6 +280,12 @@ void APOTLPlayerController::LeftClickPressed()
 		{
 			if (ActiveToolType == EToolType::PlantStructure)
 			{
+				if (StructureBuilder)
+				{
+					StructureBuilder->Build();
+				}
+
+				/*
 				UHexTile* TracedHex = GameInstance->MouseToHex();
 				if (TracedHex)
 				{	
@@ -272,12 +305,10 @@ void APOTLPlayerController::LeftClickPressed()
 					BuildInfo.RotationDirection = BaseRotation;
 					BuildInfo.StructureInfo = BuildStructureData;
 
-					/*
 					if (TracedHex->IsBuildable(BuildInfo))
 					{
 
 					}
-					*/
 
 					if (GameInstance->ValidatePlaceStructureOnHex(TracedHex, BuildInfo))
 					{
@@ -289,6 +320,7 @@ void APOTLPlayerController::LeftClickPressed()
 						APOTLStructure* Structure = GameInstance->PlantStructure(TracedHex->HexCubeCoords, BaseRotation, BuildStructureData.Id, nullptr, false, false);
 					}
 				}
+				*/
 			}
 			else if (ActiveToolType == EToolType::Select)
 			{
