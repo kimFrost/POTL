@@ -169,6 +169,13 @@ UHexTile* UHexTile::GetNeighbourHex(int Direction)
 	}
 	return nullptr;
 }
+/******************** GetNeighbourByOffset *************************/
+UHexTile* UHexTile::GetNeighbourByOffset(FVector CubeCoord)
+{
+	
+
+	return nullptr;
+}
 
 
 /******************** Init *************************/

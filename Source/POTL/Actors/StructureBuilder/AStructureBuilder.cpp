@@ -5,6 +5,7 @@
 #include "UObjects/UHexTile.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
+#include "POTLUtilFunctionLibrary.h"
 #include "AStructureBuilder.h"
 
 
@@ -61,6 +62,22 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 		}
 
 
+		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
+		if (GameInstance)
+		{
+
+		}
+
+		// Rotate cubecoords around 
+		for (int32 i = 0; i < StructureBaseData.CubeSizes.Num(); i++)
+		{
+			FVector CubeCoord = StructureBaseData.CubeSizes[i] + RootHex->HexCubeCoords;
+			//FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, Hex->HexCubeCoords);
+			FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, Hex->HexCubeCoords);
+			UHexTile* OffsetHex = RootHex->GetNeighbourByOffset(RotatedCubeCoord);
+
+		}
+
 		/*
 		//~~ Set Structure on all hexes based on cube location and structure size ~~//
 		for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
@@ -96,7 +113,7 @@ void AStructureBuilder::Build()
 		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
 		if (GameInstance)
 		{
-			GameInstance->PlantStructure(RootHex->HexCubeCoords, Rotation, StructureBaseData.Id, nullptr, true, false); //!! Might not be correct !!//
+			GameInstance->PlantStructure(RootHex->HexCubeCoords, Rotation, StructureBaseData.Id, nullptr, true, false); //!! Might not be correct way to do it !!//
 		}
 	}
 	else

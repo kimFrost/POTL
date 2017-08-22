@@ -1132,6 +1132,29 @@ UHexTile* UPOTLGameInstance::LocationToHex(FVector Location)
 	return Hex;
 }
 
+TArray<UHexTile*> UPOTLGameInstance::RelativeCubeCoordsToHexes(UHexTile* Hex, TArray<FVector> CubeCoords)
+{
+
+	for (int32 i = 0; i < CubeCoords.Num(); i++)
+	{
+		FVector LocalCubeCoord = CubeCoords[i] + Hex->HexCubeCoords;
+		LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, BuildInfo.RotationDirection, Hex->HexCubeCoords);
+		FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
+		int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+		if (Hexes.IsValidIndex(HexIndex))
+		{
+			UHexTile* Hex = Hexes[HexIndex];
+			if (Hex)
+			{
+
+			}
+		}
+	}
+
+
+	return TArray<UHexTile*>();
+}
+
 void UPOTLGameInstance::ShowFeedbackMsg(FString Message, EMessageType Type = EMessageType::Common, FVector WorldLocation = FVector(0))
 {
 	OnMessageDelegate.Broadcast(Message, Type, WorldLocation);

@@ -225,6 +225,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	UHexTile* LocationToHex(FVector Location);
 
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	TArray<UHexTile*> RelativeCubeCoordsToHexes(UHexTile* Hex, TArray<FVector> CubeCoords);
+
 
 	//~~ Util - Feedback ~~//
 	UPROPERTY(BlueprintAssignable, Category = "Util")

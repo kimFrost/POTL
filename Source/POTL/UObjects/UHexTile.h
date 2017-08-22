@@ -102,6 +102,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
 	bool bSelected;
 
+	//UTileManager* TileManager;
+
 	// SupplyTo // GatheredBy // Timer??
 
 	//UStructureComponent* AllocatedTo;
@@ -143,6 +145,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Hex")
 	UHexTile* GetNeighbourHex(int Direction);
+
+	UFUNCTION(BlueprintCallable, Category = "Hex")
+	UHexTile* GetNeighbourByOffset(FVector CubeCoord);
 
 	UFUNCTION(BlueprintCallable, Category = "Decal")
 	void HideDecal();
