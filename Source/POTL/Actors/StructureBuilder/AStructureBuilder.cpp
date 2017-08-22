@@ -59,6 +59,32 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 		{
 
 		}
+
+
+		/*
+		//~~ Set Structure on all hexes based on cube location and structure size ~~//
+		for (int32 i = 0; i < StructureData->CubeSizes.Num(); i++)
+		{
+			FVector LocalCubeCoord = StructureData->CubeSizes[i] + CubeCoord;
+			LocalCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(LocalCubeCoord, RotationDirection, CubeCoord);
+			FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(LocalCubeCoord);
+			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
+			if (Hexes.IsValidIndex(HexIndex))
+			{
+				UHexTile* Hex = Hexes[HexIndex];
+				if (IsValid(Hex))
+				{
+					if (!IsPlaceholder)
+					{
+						Hex->AttachedBuilding = Structure;
+					}
+					Structure->OccupiedHexes.Add(Hex);
+				}
+			}
+		}
+		*/
+
+
 		bIsBuildValid = ValidatePlacement();
 	}
 }
