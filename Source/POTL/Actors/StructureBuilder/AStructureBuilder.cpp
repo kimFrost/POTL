@@ -56,25 +56,16 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 		FHitResult HitResult(ForceInit);
 		SetActorLocation(Hex->Location, false, &HitResult, ETeleportType::TeleportPhysics);
 		RootHex = Hex;
+
 		// Set attachTo Hex
-		if (StructureBaseData.AttachTo.Num() > 0)
-		{
-
-		}
-
-
-		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
-		if (GameInstance)
-		{
-
-		}
-
+		FVector RotatedEntranceCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(StructureBaseData.Entrance + , Rotation, FVector(0, 0, 0));
+		AttachToHex = RootHex->GetNeighbourByOffset(RotatedEntranceCubeCoord);
+		
+		// Get all tiles on
 		TilesOn.Empty();
-		// Rotate cubecoords around 
 		for (int32 i = 0; i < StructureBaseData.CubeSizes.Num(); i++)
 		{
-			FVector CubeCoord = StructureBaseData.CubeSizes[i];// +RootHex->HexCubeCoords;
-			//FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, Hex->HexCubeCoords);
+			FVector CubeCoord = StructureBaseData.CubeSizes[i];
 			FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, FVector(0, 0, 0));
 			UHexTile* OffsetHex = RootHex->GetNeighbourByOffset(RotatedCubeCoord);
 			TilesOn.Add(OffsetHex);
@@ -144,16 +135,35 @@ bool AStructureBuilder::ValidatePlacement()
 		// Validate AttachTo
 		if (StructureBaseData.AttachTo.Num() > 0)
 		{
-
-
+			if (AttachToHex && AttachToHex->AttachedBuilding)
+			{
+				if (!StructureBaseData.AttachTo.Contains(AttachToHex->AttachedBuilding->StructureBaseData.Id))
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
 		}
-		// Validate require Resource on roothex / or all hexes??
+		// Validate require Resource on all tiles on
 		if (StructureBaseData.ConstructionCost.Num() > 0)
 		{
-
+			for (auto& Entry : StructureBaseData.ConstructionCost)
+			{
+				for (auto& Hex : TilesOn)
+				{
+					if (!Hex || !Hex->Resources.Contains(Entry.Id) || Hex->Resources[Entry.Id] < Entry.Amount)
+					{
+						return false;
+					}
+				}
+			}
 		}
+		return true;
 	}
-	return true;
+	return false;
 }
 
 // Called when the game starts or when spawned

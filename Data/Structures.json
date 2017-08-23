@@ -183,7 +183,7 @@
         "BlockConstruction": true,
         "BlockPathing": true,
 		"ConstructionCost": [
-			{"Id": "Plank", "Amount": 2}
+			{"Id": "Lumber", "Amount": 2}
 		]
     },
     {
@@ -204,7 +204,7 @@
         "BlockConstruction": true,
         "BlockPathing": true,
 		"ConstructionCost": [
-			{"Id": "Wood", "Amount": 2}
+			{"Id": "Lumber", "Amount": 1}
 		]
     }
 ]
