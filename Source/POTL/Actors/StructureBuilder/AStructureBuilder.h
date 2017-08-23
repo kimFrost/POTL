@@ -40,6 +40,7 @@ public:
 private:
 	UHexTile* RootHex;
 	UHexTile* AttachToHex;
+	TArray<UHexTile*> TilesOn;
 	int Rotation;
 	bool bIsBuildValid;
 	FST_Structure StructureBaseData;

@@ -170,10 +170,13 @@ UHexTile* UHexTile::GetNeighbourHex(int Direction)
 	return nullptr;
 }
 /******************** GetNeighbourByOffset *************************/
-UHexTile* UHexTile::GetNeighbourByOffset(FVector CubeCoord)
+UHexTile* UHexTile::GetNeighbourByOffset(FVector CubeCoordOffset)
 {
-	
-
+	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(WorldRef->GetGameInstance());
+	if (GameInstance)
+	{
+		return GameInstance->CubeCoordToHex(HexCubeCoords + CubeCoordOffset);
+	}
 	return nullptr;
 }
 

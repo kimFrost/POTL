@@ -52,8 +52,9 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 {
 	if (Hex)
 	{
-		FHitResult* HitResult;
-		SetActorLocation(Hex->Location, false, HitResult, ETeleportType::TeleportPhysics);
+		//FHitResult* HitResult = FHitResult();
+		FHitResult HitResult(ForceInit);
+		SetActorLocation(Hex->Location, false, &HitResult, ETeleportType::TeleportPhysics);
 		RootHex = Hex;
 		// Set attachTo Hex
 		if (StructureBaseData.AttachTo.Num() > 0)
@@ -68,14 +69,19 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 
 		}
 
+		TilesOn.Empty();
 		// Rotate cubecoords around 
 		for (int32 i = 0; i < StructureBaseData.CubeSizes.Num(); i++)
 		{
-			FVector CubeCoord = StructureBaseData.CubeSizes[i] + RootHex->HexCubeCoords;
+			FVector CubeCoord = StructureBaseData.CubeSizes[i];// +RootHex->HexCubeCoords;
 			//FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, Hex->HexCubeCoords);
-			FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, Hex->HexCubeCoords);
+			FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, FVector(0, 0, 0));
 			UHexTile* OffsetHex = RootHex->GetNeighbourByOffset(RotatedCubeCoord);
-
+			TilesOn.Add(OffsetHex);
+			if (OffsetHex)
+			{
+				DrawDebugString(GetWorld(), OffsetHex->Location, "Tile", nullptr, FColor::Blue, 0.5, true);
+			}
 		}
 
 		/*
