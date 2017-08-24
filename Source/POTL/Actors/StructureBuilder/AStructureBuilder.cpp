@@ -58,7 +58,7 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 		RootHex = Hex;
 
 		// Set attachTo Hex
-		FVector RotatedEntranceCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(StructureBaseData.Entrance + , Rotation, FVector(0, 0, 0));
+		FVector RotatedEntranceCubeCoord = StructureBaseData.Entrance + UPOTLUtilFunctionLibrary::DirectionToCube(Rotation);
 		AttachToHex = RootHex->GetNeighbourByOffset(RotatedEntranceCubeCoord);
 		
 		// Get all tiles on

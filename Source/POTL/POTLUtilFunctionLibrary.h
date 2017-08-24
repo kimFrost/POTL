@@ -37,6 +37,9 @@ public:
 	static FVector RotateCube(FVector CubeCoord, int32 Direction, FVector CenterCube);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
+	static FVector DirectionToCube(int32 Direction);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
 	static TArray<FVector> RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")

@@ -75,6 +75,37 @@ FVector UPOTLUtilFunctionLibrary::RotateCube(FVector CubeCoord, int32 Direction,
 	}
 	return RotatedCube;
 }
+FVector UPOTLUtilFunctionLibrary::DirectionToCube(int32 Direction)
+{
+	switch (Direction)
+	{
+		case 0:
+		{
+			return FVector{ 1,0,-1 };
+		}
+		case 1:
+		{
+			return FVector{ 1,-1,0 };
+		}
+		case 2:
+		{
+			return FVector{ 0,-1,1 };
+		}
+		case 3:
+		{
+			return FVector{ -1,0,1 };
+		}
+		case 4:
+		{
+			return FVector{ -1,1,0 };
+		}
+		case 5:
+		{
+			return FVector{ 0,1,-1 };
+		}
+	}
+	return FVector();
+}
 TArray<FVector> UPOTLUtilFunctionLibrary::RotateCubes(TArray<FVector> CubeCoords, int32 Direction, FVector CenterCube)
 {
 	Direction = Direction % 6;
