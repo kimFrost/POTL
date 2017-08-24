@@ -9,6 +9,7 @@
 5: 0,1,-1
 
 
+https://www.youtube.com/watch?v=WZfaVOHhiRc
 
 https://wiki.unrealengine.com/Procedural_Materials
 https://forums.unrealengine.com/development-discussion/rendering/101264-feeding-material-with-world-position-offset-data?128723-Feeding-material-with-world-position-offset-data=&styleid=2
