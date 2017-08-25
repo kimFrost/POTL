@@ -45,6 +45,7 @@ private:
 	bool bIsBuildValid;
 	FST_Structure StructureBaseData;
 	UStaticMeshComponent* Mesh;
+	UMaterialInstanceDynamic* DynamicMaterial;
 	// Build validation parameters
 	// bIsRequiredResourcesPresent
 	// bIsAttachmentValid

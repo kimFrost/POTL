@@ -32,6 +32,18 @@ AStructureBuilder::AStructureBuilder()
 
 		}
 	}
+	
+	// Builder material
+	static ConstructorHelpers::FObjectFinder<UMaterial>MaterialObj(TEXT("Material'/Game/Materials/StructureBuilder/M_StructureBuilder.M_StructureBuilder'"));
+	if (MaterialObj.Succeeded())
+	{
+		if (Mesh)
+		{
+			DynamicMaterial = UMaterialInstanceDynamic::Create(MaterialObj.Object, nullptr);
+			Mesh->SetMaterial(0, DynamicMaterial);
+		}
+	}
+	
 }
 
 
@@ -100,6 +112,19 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 
 
 		bIsBuildValid = ValidatePlacement();
+
+		if (bIsBuildValid)
+		{
+			if (DynamicMaterial) {
+				DynamicMaterial->SetVectorParameterValue("Color", FLinearColor::Green);
+			}
+		}
+		else
+		{
+			if (DynamicMaterial) {
+				DynamicMaterial->SetVectorParameterValue("Color", FLinearColor::Red);
+			}
+		}
 	}
 }
 
