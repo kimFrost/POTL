@@ -19,28 +19,24 @@ AStructureBuilder::AStructureBuilder()
 	Rotation = 0;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh>BaseMeshObj(TEXT("StaticMesh'/Game/Meshes/SM_Building_House.SM_Building_House'")); 
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>BaseMeshObj(TEXT("StaticMesh'/Game/Meshes/SM_HexCylinder.SM_HexCylinder'")); 
 	if (BaseMeshObj.Succeeded())
 	{
+		//DefaultMesh = &BaseMeshObj;
 		Mesh->SetStaticMesh(BaseMeshObj.Object);
 		Mesh->SetupAttachment(RootComponent);
 		Mesh->SetCastShadow(false);
-		static ConstructorHelpers::FObjectFinder<UMaterial>MaterialObj(TEXT("Material'/Game/Island/Materials/Indicator/M_Indicator.M_Indicator'"));
+		Mesh->SetMobility(EComponentMobility::Movable);
+
+		// Builder material
+		static ConstructorHelpers::FObjectFinder<UMaterial>MaterialObj(TEXT("Material'/Game/Materials/StructureBuilder/M_StructureBuilder.M_StructureBuilder'"));
 		if (MaterialObj.Succeeded())
 		{
-			Mesh->SetMaterial(0, MaterialObj.Object);
-
-		}
-	}
-	
-	// Builder material
-	static ConstructorHelpers::FObjectFinder<UMaterial>MaterialObj(TEXT("Material'/Game/Materials/StructureBuilder/M_StructureBuilder.M_StructureBuilder'"));
-	if (MaterialObj.Succeeded())
-	{
-		if (Mesh)
-		{
-			DynamicMaterial = UMaterialInstanceDynamic::Create(MaterialObj.Object, nullptr);
-			Mesh->SetMaterial(0, DynamicMaterial);
+			if (Mesh)
+			{
+				DynamicMaterial = UMaterialInstanceDynamic::Create(MaterialObj.Object, nullptr);
+				Mesh->SetMaterial(0, DynamicMaterial);
+			}
 		}
 	}
 	
@@ -50,6 +46,10 @@ AStructureBuilder::AStructureBuilder()
 int AStructureBuilder::Rotate(int Direction)
 {
 	Rotation = (Rotation + 1) % 6;
+
+	SetActorRotation(FRotator(0, Rotation * (360 / 6), 0));
+
+	TraceHexes();
 
 	return Rotation;
 }
@@ -69,23 +69,7 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 		SetActorLocation(Hex->Location, false, &HitResult, ETeleportType::TeleportPhysics);
 		RootHex = Hex;
 
-		// Set attachTo Hex
-		FVector RotatedEntranceCubeCoord = StructureBaseData.Entrance + UPOTLUtilFunctionLibrary::DirectionToCube(Rotation);
-		AttachToHex = RootHex->GetNeighbourByOffset(RotatedEntranceCubeCoord);
-		
-		// Get all tiles on
-		TilesOn.Empty();
-		for (int32 i = 0; i < StructureBaseData.CubeSizes.Num(); i++)
-		{
-			FVector CubeCoord = StructureBaseData.CubeSizes[i];
-			FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, FVector(0, 0, 0));
-			UHexTile* OffsetHex = RootHex->GetNeighbourByOffset(RotatedCubeCoord);
-			TilesOn.Add(OffsetHex);
-			if (OffsetHex)
-			{
-				DrawDebugString(GetWorld(), OffsetHex->Location, "Tile", nullptr, FColor::Blue, 0.5, true);
-			}
-		}
+		TraceHexes();
 
 		/*
 		//~~ Set Structure on all hexes based on cube location and structure size ~~//
@@ -111,23 +95,8 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 		*/
 
 
-		bIsBuildValid = ValidatePlacement();
-
-		if (bIsBuildValid)
-		{
-			if (DynamicMaterial) {
-				DynamicMaterial->SetVectorParameterValue("Color", FLinearColor::Green);
-			}
-		}
-		else
-		{
-			if (DynamicMaterial) {
-				DynamicMaterial->SetVectorParameterValue("Color", FLinearColor::Red);
-			}
-		}
 	}
 }
-
 void AStructureBuilder::Build()
 {
 	if (bIsBuildValid && RootHex)
@@ -143,16 +112,41 @@ void AStructureBuilder::Build()
 		// Send return message. Build not valid (EReason/ReasonTranslation(NoValidAttach/NoRequiredResources))
 	}
 }
-
-void AStructureBuilder::Show()
+void AStructureBuilder::TraceHexes()
 {
-	SetActorHiddenInGame(false);
-}
-void AStructureBuilder::Hide()
-{
-	SetActorHiddenInGame(true);
-}
+	// Set attachTo Hex
+	FVector RotatedEntranceCubeCoord = StructureBaseData.Entrance + UPOTLUtilFunctionLibrary::DirectionToCube(Rotation);
+	AttachToHex = RootHex->GetNeighbourByOffset(RotatedEntranceCubeCoord);
 
+	// Get all tiles on
+	TilesOn.Empty();
+	for (int32 i = 0; i < StructureBaseData.CubeSizes.Num(); i++)
+	{
+		FVector CubeCoord = StructureBaseData.CubeSizes[i];
+		FVector RotatedCubeCoord = UPOTLUtilFunctionLibrary::RotateCube(CubeCoord, Rotation, FVector(0, 0, 0));
+		UHexTile* OffsetHex = RootHex->GetNeighbourByOffset(RotatedCubeCoord);
+		TilesOn.Add(OffsetHex);
+		if (OffsetHex)
+		{
+			DrawDebugString(GetWorld(), OffsetHex->Location, "Tile", nullptr, FColor::Blue, 0.2, true);
+		}
+	}
+
+	bIsBuildValid = ValidatePlacement();
+
+	if (bIsBuildValid)
+	{
+		if (DynamicMaterial) {
+			DynamicMaterial->SetVectorParameterValue("Color", FLinearColor::Green);
+		}
+	}
+	else
+	{
+		if (DynamicMaterial) {
+			DynamicMaterial->SetVectorParameterValue("Color", FLinearColor::Red);
+		}
+	}
+}
 bool AStructureBuilder::ValidatePlacement()
 {
 	if (RootHex)
@@ -189,6 +183,14 @@ bool AStructureBuilder::ValidatePlacement()
 		return true;
 	}
 	return false;
+}
+void AStructureBuilder::Show()
+{
+	SetActorHiddenInGame(false);
+}
+void AStructureBuilder::Hide()
+{
+	SetActorHiddenInGame(true);
 }
 
 // Called when the game starts or when spawned

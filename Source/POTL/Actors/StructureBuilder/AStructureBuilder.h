@@ -32,10 +32,11 @@ public:
 	//void SetLocation();
 	void Build();
 
+	void TraceHexes();
+	bool ValidatePlacement();
+
 	void Hide();
 	void Show();
-
-	bool ValidatePlacement();
 
 private:
 	UHexTile* RootHex;
