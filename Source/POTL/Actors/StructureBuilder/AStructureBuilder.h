@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "POTLDataHolder.h"
 #include "UObjects/UHexTile.h"
+#include "Engine/StreamableManager.h"
 #include "AStructureBuilder.generated.h"
 
 
@@ -20,7 +21,8 @@ public:
 	AStructureBuilder();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Builder") //EditDefaultsOnly 
-	TAssetPtr<UStaticMesh> DefaultMesh;
+	UStaticMesh* DefaultMesh;
+	//TAssetPtr<UStaticMesh> DefaultMesh;
 
 	UFUNCTION(BlueprintCallable, Category = "Builder")
 	int Rotate(int Direction);
@@ -47,10 +49,13 @@ private:
 	FST_Structure StructureBaseData;
 	UStaticMeshComponent* Mesh;
 	UMaterialInstanceDynamic* DynamicMaterial;
+	FStreamableManager AssetLoader;
+
 	// Build validation parameters
 	// bIsRequiredResourcesPresent
 	// bIsAttachmentValid
 
+	UStaticMesh* LoadMesh(TAssetPtr<UStaticMesh> MeshAssetID);
 
 protected:
 	// Called when the game starts or when spawned

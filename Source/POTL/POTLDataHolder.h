@@ -595,6 +595,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TAssetPtr<UStaticMesh> PreviewMesh;
+	//TAssetPtr<UStaticMesh> PreviewMesh;
 	//TSubclassOf<class UStaticMesh> PreviewMesh;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")

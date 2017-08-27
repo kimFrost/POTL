@@ -6,6 +6,7 @@
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
 #include "POTLUtilFunctionLibrary.h"
+#include "Engine/StreamableManager.h"
 #include "AStructureBuilder.h"
 
 
@@ -22,8 +23,8 @@ AStructureBuilder::AStructureBuilder()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>BaseMeshObj(TEXT("StaticMesh'/Game/Meshes/SM_HexCylinder.SM_HexCylinder'")); 
 	if (BaseMeshObj.Succeeded())
 	{
-		//DefaultMesh = &BaseMeshObj;
-		Mesh->SetStaticMesh(BaseMeshObj.Object);
+		DefaultMesh = BaseMeshObj.Object;
+		Mesh->SetStaticMesh(DefaultMesh);
 		Mesh->SetupAttachment(RootComponent);
 		Mesh->SetCastShadow(false);
 		Mesh->SetMobility(EComponentMobility::Movable);
@@ -57,7 +58,38 @@ int AStructureBuilder::Rotate(int Direction)
 void AStructureBuilder::SetData(FST_Structure Data)
 {
 	StructureBaseData = Data;
-	Mesh->SetStaticMesh(StructureBaseData.PreviewMesh.Get());
+
+
+	//https://docs.unrealengine.com/latest/INT/Programming/Assets/ReferencingAssets/
+	// I think i'm not loading mesh correctly
+	//TAssetPtr
+
+	/*
+	if (StructureBaseData.PreviewMesh.IsPending())
+	{
+	const FStringAssetReference& AssetRef = StructureBaseData.PreviewMesh.ToStringReference();
+	//AssetLoader.SimpleAsyncLoad(AssetRef);
+	//UStaticMesh* PreviewMesh = Cast< UStaticMesh>(AssetLoader.SynchronousLoad(AssetRef));
+	TAssetPtr<UStaticMesh> PreviewMesh = Cast<UStaticMesh>(AssetLoader.SynchronousLoad(AssetRef));
+	if (PreviewMesh)
+	{
+
+	//PreviewMesh->Get();
+	Mesh->SetStaticMesh(PreviewMesh);
+	return;
+	}
+	}
+	*/
+
+	UStaticMesh* PreviewMesh = LoadMesh(StructureBaseData.PreviewMesh);
+	if (PreviewMesh)
+	{
+		Mesh->SetStaticMesh(PreviewMesh);
+	}
+	else if (DefaultMesh)
+	{
+		Mesh->SetStaticMesh(DefaultMesh);
+	}
 }
 
 void AStructureBuilder::SetRootHex(UHexTile* Hex)
@@ -191,6 +223,16 @@ void AStructureBuilder::Show()
 void AStructureBuilder::Hide()
 {
 	SetActorHiddenInGame(true);
+}
+
+UStaticMesh* AStructureBuilder::LoadMesh(TAssetPtr<UStaticMesh> MeshAssetID)
+{
+	if (MeshAssetID.IsPending())
+	{
+		const FStringAssetReference& AssetRef = MeshAssetID.ToStringReference();
+		MeshAssetID = Cast<UStaticMesh>(AssetLoader.LoadSynchronous(AssetRef, true));
+	}
+	return MeshAssetID.Get();
 }
 
 // Called when the game starts or when spawned
