@@ -1,0 +1,39 @@
+/////// SPHERE LOCATION TO WORLD OFFSET
+
+float3 sphereloc= Texture2DSampleLevel(Tex,TexSampler,float2(0.01+0.005,0.5),0.0).xyz;
+float3 offset=float3(0,0,0);
+float numstep=100;
+
+for(int i = 0; i < numstep; i++) {        
+	sphereloc = Texture2DSampleLevel(Tex,TexSampler,float2(float(i)*0.01+0.005,0.5),0.0).xyz;
+	offset += lerp(float3(0,0,-500), float3(0,0,0), clamp(distance(sphereloc,wpos)/500, 0,1));
+}
+
+return offset;
+
+
+
+
+/////// METABALLS SIMPLE
+
+float3 CamVec = normalize(WorldPos-ViewOrigin);
+float3 curpos = WorldPos;
+float normal = 0;
+
+int maxsteps = 16;
+float curdist, accum = 0;
+float minstepsize = 0.01;
+
+int i = 0;
+while(i < maxsteps)
+{
+	curdist = CustomExpression0(Parameters, curpos, k, Sphere1, Sphere2, Sphere3, t);
+	if (curdist < thresh)
+	{
+		return float4(1,1,1,1);
+	}
+	curpos += CamVec * max(minstepsize,curdist);
+	minstepsize += 0.02;
+	i++
+}
+return 0;
