@@ -7,6 +7,8 @@
 #include "POTLStructure.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "Engine/StreamableManager.h"
+#include "Components/ArrowComponent.h"
+#include "Actors/ARangeDecal.h"
 #include "AStructureBuilder.h"
 
 
@@ -18,6 +20,9 @@ AStructureBuilder::AStructureBuilder()
 
 	bIsBuildValid = false;
 	Rotation = 0;
+
+	USceneComponent* RootScene = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Scene"));
+	SetRootComponent(RootScene);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>BaseMeshObj(TEXT("StaticMesh'/Game/Meshes/SM_HexCylinder.SM_HexCylinder'")); 
@@ -40,7 +45,35 @@ AStructureBuilder::AStructureBuilder()
 			}
 		}
 	}
-	
+
+	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
+	if (Arrow)
+	{
+		Arrow->SetupAttachment(RootComponent);
+		Arrow->SetHiddenInGame(false);
+		Arrow->ArrowSize = 2.1;
+		Arrow->SetRelativeLocation(FVector(0, 0, 30));
+		//Arrow->SetMobility(EComponentMobility::Movable);
+	}
+
+
+	static ConstructorHelpers::FObjectFinder<UClass>RangeDecalBPObj(TEXT("BlueprintGeneratedClass'/Game/Blueprint/Actor/BP_RangeDecal.BP_RangeDecal_C'"));
+	//static ConstructorHelpers::FObjectFinder<UBlueprint>RangeDecalBPObj(TEXT("Blueprint'/Game/Blueprint/Actor/BP_RangeDecal.BP_RangeDecal'"));
+	if (RangeDecalBPObj.Succeeded())
+	{
+		//RangeDecalBPClass = (UClass*)RangeDecalBPObj.Object->GeneratedClass;
+		RangeDecalBPClass = RangeDecalBPObj.Object;
+
+		//RangeDecal = CreateDefaultSubobject<ARangeDecal>(TEXT("RangeDecal"));
+		/*
+		RangeDecal = CreateDefaultSubobject<ARangeDecal>(TEXT("RangeDecal"));
+		if (RangeDecal)
+		{
+			RangeDecal->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+		}
+		*/
+	}
+
 }
 
 
@@ -59,27 +92,7 @@ void AStructureBuilder::SetData(FST_Structure Data)
 {
 	StructureBaseData = Data;
 
-
 	//https://docs.unrealengine.com/latest/INT/Programming/Assets/ReferencingAssets/
-	// I think i'm not loading mesh correctly
-	//TAssetPtr
-
-	/*
-	if (StructureBaseData.PreviewMesh.IsPending())
-	{
-	const FStringAssetReference& AssetRef = StructureBaseData.PreviewMesh.ToStringReference();
-	//AssetLoader.SimpleAsyncLoad(AssetRef);
-	//UStaticMesh* PreviewMesh = Cast< UStaticMesh>(AssetLoader.SynchronousLoad(AssetRef));
-	TAssetPtr<UStaticMesh> PreviewMesh = Cast<UStaticMesh>(AssetLoader.SynchronousLoad(AssetRef));
-	if (PreviewMesh)
-	{
-
-	//PreviewMesh->Get();
-	Mesh->SetStaticMesh(PreviewMesh);
-	return;
-	}
-	}
-	*/
 
 	UStaticMesh* PreviewMesh = LoadMesh(StructureBaseData.PreviewMesh);
 	if (PreviewMesh)
@@ -239,7 +252,23 @@ UStaticMesh* AStructureBuilder::LoadMesh(TAssetPtr<UStaticMesh> MeshAssetID)
 void AStructureBuilder::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.bNoFail = true; // Might freeze game for 20s. Not in PIE. Strange! Not sure.
+	//SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	if (RangeDecalBPClass)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			RangeDecal = GetWorld()->SpawnActor<ARangeDecal>(RangeDecalBPClass, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnInfo);
+			if (RangeDecal)
+			{
+				RangeDecal->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
+			}
+		}
+	}
 }
 
 // Called every frame

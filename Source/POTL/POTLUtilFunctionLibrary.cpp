@@ -418,15 +418,6 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 	CubeDirections.Add({ -1, 1, 0 });
 	CubeDirections.Add({ 0, 1, -1 });
 
-	/*
-	CubeDirections.Add({ 0, 1, -1 });
-	CubeDirections.Add({ 1, 0, -1 });
-	CubeDirections.Add({ 1, -1, 0 });
-	CubeDirections.Add({ 0, -1, 1 });
-	CubeDirections.Add({ -1, 0, 1 });
-	CubeDirections.Add({ -1, 1, 0 });
-	*/
-
 	// Add StartPosition to cubecoords already visited 
 	VisitedCubeCoords.Add(StartPosition);
 

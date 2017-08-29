@@ -10,6 +10,8 @@
 #include "AStructureBuilder.generated.h"
 
 
+class UArrowComponent;
+class ARangeDecal;
 
 UCLASS()
 class POTL_API AStructureBuilder : public AActor
@@ -23,6 +25,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Builder") //EditDefaultsOnly 
 	UStaticMesh* DefaultMesh;
 	//TAssetPtr<UStaticMesh> DefaultMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Builder")
+	UArrowComponent* Arrow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Builder")
+	ARangeDecal* RangeDecal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Builder")
+	TSubclassOf<class ARangeDecal> RangeDecalBPClass;
+
 
 	UFUNCTION(BlueprintCallable, Category = "Builder")
 	int Rotate(int Direction);
@@ -50,6 +62,7 @@ private:
 	UStaticMeshComponent* Mesh;
 	UMaterialInstanceDynamic* DynamicMaterial;
 	FStreamableManager AssetLoader;
+
 
 	// Build validation parameters
 	// bIsRequiredResourcesPresent

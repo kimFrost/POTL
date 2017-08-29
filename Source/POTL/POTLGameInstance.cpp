@@ -645,12 +645,12 @@ void UPOTLGameInstance::EnrichHexes()
 			Hex->HexIndex = i; // Set HexIndex
 
 			TArray<FVector> CubeDirections;
-			CubeDirections.Add({ 0, 1, -1 });
 			CubeDirections.Add({ 1, 0, -1 });
 			CubeDirections.Add({ 1, -1, 0 });
 			CubeDirections.Add({ 0, -1, 1 });
 			CubeDirections.Add({ -1, 0, 1 });
 			CubeDirections.Add({ -1, 1, 0 });
+			CubeDirections.Add({ 0, 1, -1 });
 
 			FVector CubeCoord = Hex->HexCubeCoords;
 			for (int32 ii = 0; ii < CubeDirections.Num(); ii++)
