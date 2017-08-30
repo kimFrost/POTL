@@ -15,8 +15,10 @@ class POTL_API ARangeDecal : public ADecalActor
 {
 	GENERATED_BODY()
 	
-public:	
-	
+public:
+
+	void DrawHexes(const TArray<UHexTile*>& Hexes);
+
 	UFUNCTION(BlueprintNativeEvent)
-	void OnSpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes);
+	void OnDrawHexes(const TArray<UHexTile*>& Hexes);
 };

@@ -112,6 +112,10 @@ void AStructureBuilder::SetRootHex(UHexTile* Hex)
 		//FHitResult* HitResult = FHitResult();
 		FHitResult HitResult(ForceInit);
 		SetActorLocation(Hex->Location, false, &HitResult, ETeleportType::TeleportPhysics);
+		if (RangeDecal)
+		{
+			RangeDecal->SetActorLocation(Hex->Location, false, &HitResult, ETeleportType::TeleportPhysics);
+		}
 		RootHex = Hex;
 
 		TraceHexes();
@@ -191,6 +195,11 @@ void AStructureBuilder::TraceHexes()
 			DynamicMaterial->SetVectorParameterValue("Color", FLinearColor::Red);
 		}
 	}
+
+	if (RangeDecal)
+	{
+		RangeDecal->DrawHexes(TilesOn);
+	}
 }
 bool AStructureBuilder::ValidatePlacement()
 {
@@ -232,10 +241,18 @@ bool AStructureBuilder::ValidatePlacement()
 void AStructureBuilder::Show()
 {
 	SetActorHiddenInGame(false);
+	if (RangeDecal)
+	{
+		RangeDecal->SetActorHiddenInGame(false);
+	}
 }
 void AStructureBuilder::Hide()
 {
 	SetActorHiddenInGame(true);
+	if (RangeDecal)
+	{
+		RangeDecal->SetActorHiddenInGame(true);
+	}
 }
 
 UStaticMesh* AStructureBuilder::LoadMesh(TAssetPtr<UStaticMesh> MeshAssetID)
@@ -262,10 +279,11 @@ void AStructureBuilder::BeginPlay()
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			RangeDecal = GetWorld()->SpawnActor<ARangeDecal>(RangeDecalBPClass, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnInfo);
+			RangeDecal = GetWorld()->SpawnActor<ARangeDecal>(RangeDecalBPClass, FVector(0, 0, 0), FRotator(-90, 0, 0), SpawnInfo);
 			if (RangeDecal)
 			{
-				RangeDecal->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
+				//RangeDecal->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+				RangeDecal->SetActorRotation(FRotator(-90, 0, 0));
 			}
 		}
 	}

@@ -7,7 +7,12 @@
 
 
 
-void ARangeDecal::OnSpawnHexRange_Implementation(FVector Location, const TArray<UHexTile*>& Hexes)
+void ARangeDecal::DrawHexes(const TArray<UHexTile*>& Hexes)
 {
-
+	OnDrawHexes(Hexes);
 }
+
+void ARangeDecal::OnDrawHexes_Implementation(const TArray<UHexTile*>& Hexes)
+{}
+
+
