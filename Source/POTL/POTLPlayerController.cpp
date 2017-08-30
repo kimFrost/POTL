@@ -4,6 +4,7 @@
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
+#include "Components/UEventComponent.h"
 #include "Actors/StructureBuilder/AStructureBuilder.h"
 #include "Actors/AProFow.h"
 #include "Kismet/GameplayStatics.h"
@@ -26,6 +27,12 @@ APOTLPlayerController::APOTLPlayerController(const FObjectInitializer &ObjectIni
 	BuildBroadcastRootHex = nullptr;
 	BuildValid = false;
 	BuildMsg = "";
+
+	EventComponent = CreateDefaultSubobject<UEventComponent>(TEXT("EventComponent"));
+	if (EventComponent)
+	{
+		AddOwnedComponent(EventComponent);
+	}
 }
 
 
@@ -385,11 +392,23 @@ void APOTLPlayerController::LeftClickPressed()
 void APOTLPlayerController::LeftClickReleased()
 {
 	LeftMouseButtonDown = false;
+
+	if (EventComponent)
+	{
+		EventComponent->OnConfirmEvent.Broadcast();
+		EventComponent->TriggerConfirmEvent();
+	}
 }
 void APOTLPlayerController::RightClickPressed()
 {
 	RightMouseButtonDown = true;
 	SetToolType(EToolType::Select);
+
+	if (EventComponent)
+	{
+		EventComponent->OnCancelEvent.Broadcast();
+		EventComponent->TriggerCancelEvent();
+	}
 }
 void APOTLPlayerController::RightClickReleased()
 {

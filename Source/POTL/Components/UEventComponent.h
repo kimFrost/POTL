@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "UObjects/Singletons/UEventSingleton.h"
 #include "UEventComponent.generated.h"
 
 
@@ -13,6 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConfirmDelegate);
 
 
 //~~ Forward declarations ~~//
+//class UEventSingleton;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -25,15 +27,24 @@ public:
 	// Sets default values for this component's properties
 	UEventComponent();
 
+private:
+
+	UEventSingleton* EventSingleton;
 
 public:
+
 	void InitializeComponent() override;
 	
-	
+	FOnCancelRetDelegate* BindToCancelEvent(UObject* Listener, int Priority);
 
+	void UnbindToCancelEvent(UObject* Listener);
 
+	void TriggerConfirmEvent();
+	void TriggerCancelEvent();
 
-	// DELEGATES
+	//TArray<FOnCancelRetDelegate*> CancelDelegates;
+	//TMap<UObject*, FOnCancelRetDelegate*> CancelDelegates;
+
 
 	UPROPERTY(BlueprintAssignable, Category = "Global|Event")
 	FOnCancelDelegate OnCancelEvent;
@@ -41,7 +52,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Global|Event")
 	FOnConfirmDelegate OnConfirmEvent;
 
-	// NATIVE EVENTS
 
+
+	virtual void BeginPlay() override;
 
 };

@@ -18,6 +18,7 @@ class APOTLStructure;
 class UStructureComponent;
 class UStorageComponent;
 class AIsland;
+class UEventSingleton;
 
 
 
@@ -127,8 +128,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Structure")
 	TArray<APOTLStructure*> PlaceholderStructures;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UEventSingleton* EventSingleton;
 
 	/*********** FUNCTIONS **************/
+
+	UEventSingleton* GetEventSingleton();
 
 	//~~ Data ~~//
 

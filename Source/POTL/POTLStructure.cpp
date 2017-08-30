@@ -4,6 +4,7 @@
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "POTLGameMode.h"
+#include "Components/UEventComponent.h"
 #include "Components/UStorageComponent.h"
 #include "Components/UResidentsComponent.h"
 #include "Components/UConstructionComponent.h"
@@ -34,6 +35,12 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	BlockPathing = true;
 	IsUnderConstruction = true;
 
+	EventComponent = CreateDefaultSubobject<UEventComponent>(TEXT("EventComponent"));
+	if (EventComponent)
+	{
+		AddOwnedComponent(EventComponent);
+	}
+
 	ConstructionComponent = CreateDefaultSubobject<UConstructionComponent>(TEXT("ConstructionComponent"));
 	if (ConstructionComponent)
 	{
@@ -63,7 +70,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 
 /******************** UTIL *************************/
 
-void APOTLStructure::Select()
+bool APOTLStructure::Select()
 {
 	if (!bSelected)
 	{
@@ -74,9 +81,20 @@ void APOTLStructure::Select()
 		{
 			GameInstance->OnStructureSelectedDelegate.Broadcast(this);
 		}
+		if (EventComponent)
+		{
+			FOnCancelRetDelegate* Delegate = EventComponent->BindToCancelEvent(this, 0);
+			if (Delegate)
+			{
+				//Delegate->BindUObject(this, &APOTLStructure::CancelSelect);
+				Delegate->BindUObject(this, &APOTLStructure::Deselect);
+			}
+		}
+		return true;
 	}
+	return false;
 }
-void APOTLStructure::Deselect()
+bool APOTLStructure::Deselect()
 {
 	if (bSelected)
 	{
@@ -88,7 +106,13 @@ void APOTLStructure::Deselect()
 		{
 			GameInstance->OnStructureDeselectedDelegate.Broadcast(this);
 		}
+		if (EventComponent)
+		{
+			EventComponent->UnbindToCancelEvent(this);
+		}
+		return true;
 	}
+	return false;
 }
 void APOTLStructure::EnterEditMode()
 {
@@ -151,7 +175,6 @@ void APOTLStructure::EnterEditMode()
 				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex);
 				//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
 				//Delegate.IsBoundToObject(this)
-
 				
 				//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
 				//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
@@ -183,10 +206,20 @@ void APOTLStructure::EnterEditMode()
 		}
 
 		bInEditMode = true;
+
+		if (EventComponent)
+		{
+			FOnCancelRetDelegate* Delegate = EventComponent->BindToCancelEvent(this, 0);
+			if (Delegate)
+			{
+				Delegate->BindUObject(this, &APOTLStructure::LeaveEditMode);
+			}
+		}
+
 		OnEnterEditMode();
 	}
 }
-void APOTLStructure::LeaveEditMode()
+bool APOTLStructure::LeaveEditMode()
 {
 	if (bInEditMode)
 	{
@@ -200,8 +233,16 @@ void APOTLStructure::LeaveEditMode()
 			}
 		}
 		bInEditMode = false;
+
+		if (EventComponent)
+		{
+			EventComponent->UnbindToCancelEvent(this);
+		}
+
 		OnLeaveEditMode();
+		return true;
 	}
+	return false;
 }
 void APOTLStructure::UpdateInRangeLists(bool bUpdateOthers)
 {

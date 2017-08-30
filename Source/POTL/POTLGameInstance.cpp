@@ -7,6 +7,7 @@
 #include "UObjects/UResourceMap.h"
 #include "UObjects/UStorageMap.h"
 #include "UObjects/UTransaction.h"
+#include "UObjects/Singletons/UEventSingleton.h"
 #include "POTLUtilFunctionLibrary.h"
 #include "Actors/AIsland.h"
 #include "POTLStructure.h"
@@ -56,6 +57,17 @@ UPOTLGameInstance::UPOTLGameInstance(const FObjectInitializer &ObjectInitializer
 	*/
 
 }
+
+UEventSingleton* UPOTLGameInstance::GetEventSingleton()
+{
+	if (!EventSingleton)
+	{
+		EventSingleton = NewObject<UEventSingleton>();
+		//EventSingleton->AddToRoot(); // Prevent Garbage collection // UPROP instead
+	}
+	return EventSingleton;
+}
+
 
 /******************** DATA *************************/
 

@@ -10,6 +10,11 @@
 #include "POTLStructure.generated.h"
 
 
+//~~~~~ Forward Declarations ~~~~~//
+class UConstructionComponent;
+class UEventComponent;
+
+
 //~~ DELEGATES ~~//
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllocatedHexesChanged);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStructureClicked, AActor*, TouchedActor, FKey, ButtonPressed);
@@ -30,8 +35,6 @@ DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnHexUnallocateDelegate, UHexTile
 //~~~~~ ENUMS ~~~~~//
 
 
-//~~~~~ Forward Declarations ~~~~~//
-class UConstructionComponent;
 
 
 UCLASS()
@@ -106,6 +109,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
 	UConstructionComponent* ConstructionComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	UEventComponent* EventComponent;
+
+
 	bool bSelected;
 	bool bInEditMode;
 
@@ -119,13 +126,23 @@ public:
 
 	/** Util */
 
-	void Select();
-	void Deselect();
+	bool Select();
+	bool Deselect();
+
+	/*
+	// bool CancelSelect() const
+	FORCEINLINE bool CancelSelect()
+	{
+		
+		return false;
+		//return Func; Native
+	}
+	*/
 
 	UFUNCTION(BlueprintCallable, Category = "Structure")
 	void EnterEditMode();
 
-	void LeaveEditMode();
+	bool LeaveEditMode();
 
 	void UpdateInRangeLists(bool bUpdateOthers);
 
@@ -257,3 +274,4 @@ public:
 
 	
 };
+

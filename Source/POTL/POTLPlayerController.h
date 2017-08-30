@@ -14,6 +14,11 @@
 
 
 
+
+//~~~~~ Forward Declarations ~~~~~//
+class UEventComponent;
+
+
 //~~~~~ ENUMS ~~~~~//
 
 
@@ -44,6 +49,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	UPOTLGameInstance* GameInstance;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	UEventComponent* EventComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	EToolType ActiveToolType;
