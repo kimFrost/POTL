@@ -207,6 +207,7 @@ void APOTLStructure::EnterEditMode()
 
 		bInEditMode = true;
 
+		/*
 		if (EventComponent)
 		{
 			FOnCancelRetDelegate* Delegate = EventComponent->BindToCancelEvent(this, 0);
@@ -215,6 +216,7 @@ void APOTLStructure::EnterEditMode()
 				Delegate->BindUObject(this, &APOTLStructure::LeaveEditMode);
 			}
 		}
+		*/
 
 		OnEnterEditMode();
 	}
@@ -234,10 +236,12 @@ bool APOTLStructure::LeaveEditMode()
 		}
 		bInEditMode = false;
 
+		/*
 		if (EventComponent)
 		{
 			EventComponent->UnbindToCancelEvent(this);
 		}
+		*/
 
 		OnLeaveEditMode();
 		return true;
