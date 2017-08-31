@@ -4,6 +4,7 @@
 #include "POTLGameInstance.h"
 #include "UObjects/TileManager/UTileManager.h"
 #include "UObjects/OverlayManager/UOverlayManager.h"
+#include "Actors/ARangeDecal.h"
 #include "AIsland.h"
 
 
@@ -140,9 +141,9 @@ void AIsland::Tick( float DeltaTime )
 
 // Native events
 
-void AIsland::OnSpawnHexRange_Implementation(FVector Location, const TArray<UHexTile*>& Hexes)
+ARangeDecal* AIsland::OnSpawnHexRange_Implementation(FVector Location, const TArray<UHexTile*>& Hexes) const
 {
-
+	return nullptr;
 }
 void AIsland::OnDrawProviders_Implementation(const TArray<UHexTile*>& Hexes)
 {

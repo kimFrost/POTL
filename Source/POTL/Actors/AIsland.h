@@ -10,7 +10,7 @@
 //~~~~~ Forward Declarations ~~~~~//
 class UTileManager;
 class UOverlayManager;
-
+class ARangeDecal;
 
 UCLASS()
 class POTL_API AIsland : public AActor
@@ -58,7 +58,8 @@ public:
 
 
 	UFUNCTION(BlueprintNativeEvent, Category = "World")
-	void OnSpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes);
+	ARangeDecal* OnSpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes) const; // Const if return should work in BP
+
 
 	UFUNCTION(BlueprintNativeEvent, Category = "World")
 	void OnDrawProviders(const TArray<UHexTile*>& Hexes);
