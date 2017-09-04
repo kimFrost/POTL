@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DecalActor.h"
+#include "POTLDataHolder.h"
 #include "ARangeDecal.generated.h"
 
 
@@ -19,6 +20,11 @@ public:
 
 	void DrawHexes(const TArray<UHexTile*>& Hexes);
 
+	void DrawStructureInfo(const FST_Structure& StructureInfo);
+
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDrawHexes(const TArray<UHexTile*>& Hexes);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnDrawStructureInfo(const FST_Structure& StructureInfo);
 };

@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "UObjects/UHexTile.h"
+#include "POTLDataHolder.h"
 #include "ARangeDecal.h"
 
 
@@ -12,7 +13,15 @@ void ARangeDecal::DrawHexes(const TArray<UHexTile*>& Hexes)
 	OnDrawHexes(Hexes);
 }
 
+void ARangeDecal::DrawStructureInfo(const FST_Structure& StructureInfo)
+{
+	OnDrawStructureInfo(StructureInfo);
+}
+
+
 void ARangeDecal::OnDrawHexes_Implementation(const TArray<UHexTile*>& Hexes)
 {}
 
+void ARangeDecal::OnDrawStructureInfo_Implementation(const FST_Structure& StructureInfo)
+{}
 

@@ -198,7 +198,8 @@ void AStructureBuilder::TraceHexes()
 
 	if (RangeDecal)
 	{
-		RangeDecal->DrawHexes(TilesOn);
+		//RangeDecal->DrawHexes(TilesOn);
+		RangeDecal->DrawStructureInfo(StructureBaseData);
 	}
 }
 bool AStructureBuilder::ValidatePlacement()
