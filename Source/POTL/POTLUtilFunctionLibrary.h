@@ -10,6 +10,7 @@
 
 
 
+
 UENUM(BlueprintType)
 enum EBoolGateEnum
 {
@@ -27,6 +28,10 @@ class POTL_API UPOTLUtilFunctionLibrary : public UBlueprintFunctionLibrary
 public:
 
 	UPOTLUtilFunctionLibrary(const FObjectInitializer& ObjectInitializer);
+
+	//float HexWidth;
+	//float HexHeight;
+	//float HexSideLength;
 
 	static int32 GetObjReferenceCount(UObject* Obj, TArray<UObject*>* OutReferredToObjects);
 
@@ -62,6 +67,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static FVector AxialToCube(float Q, float R);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Util")
+	static FVector CubeToRelativeLocation(FVector CubeCoords);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
 	static int32 GetGridIndex(int32 GridWidth, int32 Column, int32 Row, bool NoWrap);

@@ -291,6 +291,13 @@ FVector UPOTLUtilFunctionLibrary::AxialToCube(float Q, float R)
 	CubeCoords.Z = R;
 	return CubeCoords;
 }
+FVector UPOTLUtilFunctionLibrary::CubeToRelativeLocation(FVector CubeCoords)
+{
+	//TODO get numbers from game instance instead
+	float X = CubeCoords.X * 127.5f + CubeCoords.Y * -127.5f;
+	float Y = CubeCoords.Z * (294.f / 4 * 3);
+	return FVector(X, Y, 0);
+}
 
 void UPOTLUtilFunctionLibrary::ActorExits(AActor* Actor, TEnumAsByte<EBoolGateEnum>& Branches)
 {
