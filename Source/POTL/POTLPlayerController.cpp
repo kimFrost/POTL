@@ -44,7 +44,7 @@ void APOTLPlayerController::RotateStructure()
 	{
 		if (StructureBuilder)
 		{
-			StructureBuilder->Rotate(1);
+			StructureBuilder->Rotate(1, CachedHex);
 		}
 		/*
 		if (BuilderStructure && GameInstance)

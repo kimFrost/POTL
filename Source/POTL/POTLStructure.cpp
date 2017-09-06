@@ -12,6 +12,7 @@
 #include "Actors/AIsland.h"
 #include "UObjects/UHexTile.h"
 #include "Kismet/GameplayStatics.h"
+#include "Actors/ARangeDecal.h"
 #include "POTLPlayerController.h"
 #include "POTLStructure.h"
 
@@ -34,6 +35,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	bIsInitialized = false;
 	BlockPathing = true;
 	IsUnderConstruction = true;
+	DecalRange = nullptr;
 
 	EventComponent = CreateDefaultSubobject<UEventComponent>(TEXT("EventComponent"));
 	if (EventComponent)
@@ -162,13 +164,14 @@ void APOTLStructure::EnterEditMode()
 					}
 				}
 
-				Hex->ShowDecal(EDecalType::ValidBuild);
+				Hex->ShowDecal(EDecalType::ValidBuild); // Decal on individual hexes ain't used anymore
 
 				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
 				if (Delegate)
 				{
 					Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
 				}
+
 				//Hex->BindToOnHexClicked(0, &APOTLStructure::ToggleAllocateHex);
 
 				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
@@ -180,27 +183,21 @@ void APOTLStructure::EnterEditMode()
 				//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
 			}
 		}
+		
 		for (auto& Hex : AllocatedHexes)
 		{
 			if (Hex)
 			{
-				Hex->ShowDecal(EDecalType::Allocated);
+				Hex->ShowDecal(EDecalType::Allocated); // Decal on individual hexes ain't used anymore
 			}
 		}
-		/*
-		//~~ Set edit mode in player controller ~~//
-		APOTLPlayerController* PlayerController = Cast<APOTLPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		if (PlayerController)
-		{
-			PlayerController->EditStructure(this);
-		}
-		*/
+		
 
 		for (TActorIterator<AIsland> IslandItr(GetWorld()); IslandItr; ++IslandItr)
 		{
 			if (IslandItr)
 			{
-				IslandItr->SpawnHexRange(this->GetActorLocation(), HexesInRange);
+				DecalRange = IslandItr->SpawnHexRange(this->GetActorLocation(), HexesInRange);
 				break;
 			}
 		}
@@ -242,6 +239,12 @@ bool APOTLStructure::LeaveEditMode()
 			EventComponent->UnbindToCancelEvent(this);
 		}
 		*/
+
+		if (DecalRange)
+		{
+			DecalRange->Destroy();
+			DecalRange = nullptr;
+		}
 
 		OnLeaveEditMode();
 		return true;

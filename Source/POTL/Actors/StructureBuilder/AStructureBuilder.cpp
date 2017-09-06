@@ -24,6 +24,22 @@ AStructureBuilder::AStructureBuilder()
 	USceneComponent* RootScene = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Scene"));
 	SetRootComponent(RootScene);
 
+	/*
+	RangeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RangeMesh"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>RangeMeshObj(TEXT("StaticMesh'/Game/POTL/Meshes/SM_HexRange.SM_HexRange'"));
+	if (RangeMeshObj.Succeeded())
+	{
+		RangeMesh->SetStaticMesh(RangeMeshObj.Object);
+		RangeMesh->SetupAttachment(RootComponent);
+		RangeMesh->SetCastShadow(false);
+		static ConstructorHelpers::FObjectFinder<UMaterial>MaterialObj(TEXT("Material'/Game/POTL/Stuff/M_IntersectionTest.M_IntersectionTest'"));
+		if (MaterialObj.Succeeded())
+		{
+			RangeMesh->SetMaterial(0, MaterialObj.Object);
+		}
+	}
+	*/
+
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>BaseMeshObj(TEXT("StaticMesh'/Game/Meshes/SM_HexCylinder.SM_HexCylinder'")); 
 	if (BaseMeshObj.Succeeded())
@@ -52,9 +68,11 @@ AStructureBuilder::AStructureBuilder()
 		Arrow->SetupAttachment(RootComponent);
 		Arrow->SetHiddenInGame(false);
 		Arrow->ArrowSize = 2.1;
+		Arrow->SetRelativeRotation(FRotator(0, -60.f, 0));
 		Arrow->SetRelativeLocation(FVector(0, 0, 30));
 		//Arrow->SetMobility(EComponentMobility::Movable);
 	}
+
 
 
 	static ConstructorHelpers::FObjectFinder<UClass>RangeDecalBPObj(TEXT("BlueprintGeneratedClass'/Game/Blueprint/Actor/BP_RangeDecal.BP_RangeDecal_C'"));
@@ -77,14 +95,15 @@ AStructureBuilder::AStructureBuilder()
 }
 
 
-int AStructureBuilder::Rotate(int Direction)
+int AStructureBuilder::Rotate(int Direction, UHexTile* Hex)
 {
 	Rotation = (Rotation + 1) % 6;
-
 	SetActorRotation(FRotator(0, Rotation * (360 / 6), 0));
-
+	if (Hex)
+	{
+		SetRootHex(Hex);
+	}
 	TraceHexes();
-
 	return Rotation;
 }
 
@@ -163,6 +182,20 @@ void AStructureBuilder::Build()
 }
 void AStructureBuilder::TraceHexes()
 {
+	// If RootHex is occupied
+	if (RootHex && RootHex->AttachedBuilding)
+	{
+		if (StructureBaseData.AttachTo.Contains(RootHex->AttachedBuilding->StructureBaseData.Id))
+		{
+			UHexTile* NewAttachPlacement = RootHex->GetNeighbourByOffset(UPOTLUtilFunctionLibrary::DirectionToCube(Rotation + 3)); // +3 to flip rotation
+			if (NewAttachPlacement)
+			{
+				SetRootHex(NewAttachPlacement);
+				return;
+			}
+		}
+	}
+
 	// Set attachTo Hex
 	FVector RotatedEntranceCubeCoord = StructureBaseData.Entrance + UPOTLUtilFunctionLibrary::DirectionToCube(Rotation);
 	AttachToHex = RootHex->GetNeighbourByOffset(RotatedEntranceCubeCoord);

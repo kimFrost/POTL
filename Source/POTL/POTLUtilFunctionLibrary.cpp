@@ -77,6 +77,7 @@ FVector UPOTLUtilFunctionLibrary::RotateCube(FVector CubeCoord, int32 Direction,
 }
 FVector UPOTLUtilFunctionLibrary::DirectionToCube(int32 Direction)
 {
+	Direction = Direction % 6;
 	switch (Direction)
 	{
 		case 0:

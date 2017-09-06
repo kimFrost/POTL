@@ -51,7 +51,7 @@ public:
 
 	void SpawnForest(UHexTile* OnHex, int Density);
 
-	void SpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes);
+	ARangeDecal* SpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes);
 
 	UFUNCTION(Category = "World")
 	void InitializeIsland();

@@ -97,9 +97,9 @@ void AIsland::SpawnForest(UHexTile* OnHex, int Density)
 		}
 	}
 }
-void AIsland::SpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes)
+ARangeDecal* AIsland::SpawnHexRange(FVector Location, const TArray<UHexTile*>& Hexes)
 {
-	OnSpawnHexRange(Location, Hexes);
+	return OnSpawnHexRange(Location, Hexes);
 }
 void AIsland::InitializeIsland()
 {

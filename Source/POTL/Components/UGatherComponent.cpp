@@ -214,6 +214,11 @@ EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 				}
 			}
 		}
+		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+		if (GameInstance)
+		{
+			GameInstance->ShowFeedbackMsg(TEXT("No TileConversion found"), EMessageType::Common, Hex->Location);
+		}
 	}
 	return EHandleType::Unhandled;
 }

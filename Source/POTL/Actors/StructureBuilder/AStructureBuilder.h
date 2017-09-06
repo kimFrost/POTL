@@ -37,7 +37,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "Builder")
-	int Rotate(int Direction);
+	int Rotate(int Direction, UHexTile* Hex);
 	 
 	UFUNCTION(BlueprintCallable, Category = "Builder")
 	void SetData(FST_Structure Data);
@@ -60,6 +60,7 @@ private:
 	bool bIsBuildValid;
 	FST_Structure StructureBaseData;
 	UStaticMeshComponent* Mesh;
+	UStaticMeshComponent* RangeMesh;
 	UMaterialInstanceDynamic* DynamicMaterial;
 	FStreamableManager AssetLoader;
 

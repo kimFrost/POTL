@@ -13,6 +13,7 @@
 //~~~~~ Forward Declarations ~~~~~//
 class UConstructionComponent;
 class UEventComponent;
+class ARangeDecal;
 
 
 //~~ DELEGATES ~~//
@@ -91,6 +92,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	FString StructureRowName;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	ARangeDecal* DecalRange;
 
 	/** Construction */
 
