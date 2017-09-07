@@ -29,7 +29,7 @@ public:
 	void OnDrawHexes(const TArray<UHexTile*>& Hexes);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void OnDrawHex(const UHexTile*, const FLinearColor Color);
+	void OnDrawHex(const UHexTile* Hex, const FLinearColor Color);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDrawStructureInfo(const FST_Structure& StructureInfo);

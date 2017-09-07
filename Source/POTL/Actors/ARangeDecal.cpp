@@ -25,7 +25,7 @@ void ARangeDecal::OnClear_Implementation()
 void ARangeDecal::OnDrawHexes_Implementation(const TArray<UHexTile*>& Hexes)
 {}
 
-void ARangeDecal::OnDrawHex_Implementation(const UHexTile*, const FLinearColor Color)
+void ARangeDecal::OnDrawHex_Implementation(const UHexTile* Hex, const FLinearColor Color)
 {}
 
 void ARangeDecal::OnDrawStructureInfo_Implementation(const FST_Structure& StructureInfo)
