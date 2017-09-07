@@ -93,7 +93,7 @@ public:
 	FString StructureRowName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
-	ARangeDecal* DecalRange;
+	ARangeDecal* RangeDecal;
 
 	/** Construction */
 
@@ -148,6 +148,8 @@ public:
 	bool LeaveEditMode();
 
 	void UpdateInRangeLists(bool bUpdateOthers);
+
+	void DrawInRangeInfo();
 
 
 	TMap<UObject*, FOnHexAllocateDelegate*> OnHexAllocateDelegates;

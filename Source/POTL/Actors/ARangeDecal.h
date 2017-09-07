@@ -23,7 +23,13 @@ public:
 	void DrawStructureInfo(const FST_Structure& StructureInfo);
 
 	UFUNCTION(BlueprintNativeEvent)
+	void OnClear();
+
+	UFUNCTION(BlueprintNativeEvent)
 	void OnDrawHexes(const TArray<UHexTile*>& Hexes);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnDrawHex(const UHexTile*, const FLinearColor Color);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDrawStructureInfo(const FST_Structure& StructureInfo);

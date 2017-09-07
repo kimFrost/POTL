@@ -35,7 +35,7 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 	bIsInitialized = false;
 	BlockPathing = true;
 	IsUnderConstruction = true;
-	DecalRange = nullptr;
+	RangeDecal = nullptr;
 
 	EventComponent = CreateDefaultSubobject<UEventComponent>(TEXT("EventComponent"));
 	if (EventComponent)
@@ -164,7 +164,7 @@ void APOTLStructure::EnterEditMode()
 					}
 				}
 
-				Hex->ShowDecal(EDecalType::ValidBuild); // Decal on individual hexes ain't used anymore
+				//Hex->ShowDecal(EDecalType::ValidBuild); // Decal on individual hexes ain't used anymore
 
 				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
 				if (Delegate)
@@ -184,6 +184,7 @@ void APOTLStructure::EnterEditMode()
 			}
 		}
 		
+		/*
 		for (auto& Hex : AllocatedHexes)
 		{
 			if (Hex)
@@ -191,16 +192,19 @@ void APOTLStructure::EnterEditMode()
 				Hex->ShowDecal(EDecalType::Allocated); // Decal on individual hexes ain't used anymore
 			}
 		}
+		*/
 		
 
 		for (TActorIterator<AIsland> IslandItr(GetWorld()); IslandItr; ++IslandItr)
 		{
 			if (IslandItr)
 			{
-				DecalRange = IslandItr->SpawnHexRange(this->GetActorLocation(), HexesInRange);
+				RangeDecal = IslandItr->SpawnHexRange(this->GetActorLocation(), HexesInRange);
 				break;
 			}
 		}
+
+		DrawInRangeInfo();
 
 		bInEditMode = true;
 
@@ -240,10 +244,10 @@ bool APOTLStructure::LeaveEditMode()
 		}
 		*/
 
-		if (DecalRange)
+		if (RangeDecal)
 		{
-			DecalRange->Destroy();
-			DecalRange = nullptr;
+			RangeDecal->Destroy();
+			RangeDecal = nullptr;
 		}
 
 		OnLeaveEditMode();
@@ -281,6 +285,29 @@ void APOTLStructure::UpdateInRangeLists(bool bUpdateOthers)
 	RootStructuresInRange.Sort([this](const APOTLStructure& Structure1, const APOTLStructure& Structure2) {
 		return (Structure1.GetActorLocation() - this->GetActorLocation()).Size() < (Structure2.GetActorLocation() - this->GetActorLocation()).Size();
 	});
+}
+void APOTLStructure::DrawInRangeInfo()
+{
+	if (RangeDecal)
+	{
+		RangeDecal->OnClear();
+		for (auto& Hex : AllocatedHexes)
+		{
+			if (Hex)
+			{
+				RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
+			}
+		}
+		/*
+		for (auto& Hex : HexesInRange)
+		{
+			if (Hex)
+			{
+				RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
+			}
+		}
+		*/
+	}
 }
 FOnHexAllocateDelegate* APOTLStructure::BindToOnHexAllocate(UObject* Listener, int Priority)
 {
@@ -340,6 +367,8 @@ EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 		
 		if (bChanged)
 		{
+			DrawInRangeInfo();
+
 			OnAllocatedHexesChangedDelegate.Broadcast();
 			OnAllocatedHexesChanged();
 
@@ -406,7 +435,7 @@ bool APOTLStructure::AllocateHex(UHexTile* Hex)
 				}
 			}
 
-			Hex->ShowDecal(EDecalType::Allocated);
+			//Hex->ShowDecal(EDecalType::Allocated);
 
 			Hex->AllocatedTo = this;
 			AllocatedHexes.Add(Hex);
@@ -433,7 +462,7 @@ bool APOTLStructure::UnallocateHex(UHexTile* Hex)
 			}
 		}
 
-		Hex->ShowDecal(EDecalType::ValidBuild);
+		//Hex->ShowDecal(EDecalType::ValidBuild);
 
 		Hex->AllocatedTo = nullptr;
 		AllocatedHexes.Remove(Hex);
