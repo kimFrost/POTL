@@ -201,6 +201,7 @@ EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 			{
 				if (ParentStructure->RequestLabor(TileConversion.LaborRequired))
 				{
+					CalcPetalProduction();
 					return EHandleType::Handled;
 				}
 				else
@@ -232,6 +233,7 @@ EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
 			{
 				if (ParentStructure->StoreLabor(TileConversion.LaborRequired))
 				{
+					CalcPetalProduction();
 					return EHandleType::Handled;
 				}
 				else
