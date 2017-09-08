@@ -25,7 +25,6 @@ UGatherComponent::UGatherComponent()
 }
 
 
-/******************** OnGathered *************************/
 void UGatherComponent::OnGathered_Implementation()
 {
 	//MissingResources = RequiredResources;
@@ -40,24 +39,6 @@ void UGatherComponent::ValidateRequirements()
 	if (ParentStructure)
 	{
 		bIsWorking = true;
-		/*
-		bool anyResourceInRange = false;
-		for (auto& Hex : HexesInRange)
-		{
-			if (Hex)
-			{
-				
-			}
-		}
-		bIsWorking = anyResourceInRange;
-		*/
-		/*
-		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-		if (GameInstance)
-		{
-			
-		}
-		*/
 	}
 	else
 	{
@@ -94,32 +75,48 @@ TArray<FST_ResourceQuantity> UGatherComponent::GetTileResourceOutput(UHexTile* H
 void UGatherComponent::CalcPetalProduction()
 {
 	PetalProduction.Empty();
-	for (auto& Hex : AllocatedHexes)
+	if (ParentStructure)
 	{
-		if (Hex)
+		//for (auto& Hex : AllocatedHexes)
+		for (auto& Hex : ParentStructure->AllocatedHexes)
 		{
-			for (auto& TileConversion : TileConversions)
+			if (Hex)
 			{
-				if (Hex->HexTileType == TileConversion.TileTypeId)
+				for (auto& TileConversion : TileConversions)
 				{
-					for (auto& Output : TileConversion.PetalsOutput)
+					if (Hex->HexTileType == TileConversion.TileTypeId)
 					{
-						if (PetalProduction.Contains(Output.Key))
+						for (auto& Output : TileConversion.PetalsOutput)
 						{
-							PetalProduction[Output.Key] += Output.Value;
-						}
-						else
-						{
-							PetalProduction.Add(Output.Key, Output.Value);
+							if (PetalProduction.Contains(Output.Key))
+							{
+								PetalProduction[Output.Key] += Output.Value;
+							}
+							else
+							{
+								PetalProduction.Add(Output.Key, Output.Value);
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-	OnProductionChangedDelegate.Broadcast(GetTotalPetalProduction());
+
+	TArray<FST_ResourceQuantity> TotalPetalProduction = GetTotalPetalProduction();
+	TArray<FST_ResourceQuantity> TotalResourceProduction;
+
+	for (int32 i = 0; i < TotalPetalProduction.Num(); i++)
+	{
+		FST_ResourceQuantity& Entry = TotalPetalProduction[i];
+		if (Entry.Quantity >= 5)
+		{
+			TotalResourceProduction.Add(FST_ResourceQuantity(Entry.ResourceId, FMath::FloorToInt(Entry.Quantity / 5)));
+		}
+	}
+	OnProductionChangedDelegate.Broadcast(TotalResourceProduction);
 }
-void UGatherComponent::AddPetal(FString PetalId, int Quantity)
+void UGatherComponent::AddPetal(FString PetalId, int32 Quantity)
 {
 	if (StoredPetals.Contains(PetalId))
 	{
@@ -147,14 +144,14 @@ void UGatherComponent::ConvertPetals()
 		for (auto& Entry : StoredPetals)
 		{
 			//TODO: Lookup conversion rates for Entry.Key
-			int ConversionRate = 3;
+			int32 ConversionRate = 5;
 			if (Entry.Value >= ConversionRate)
 			{
-				int NumOfCombined = FPlatformMath::FloorToInt(Entry.Value / ConversionRate);
+				int32 NumOfCombined = FPlatformMath::FloorToInt(Entry.Value / ConversionRate);
 				if (NumOfCombined > 0)
 				{
 					Entry.Value = Entry.Value - (NumOfCombined * ConversionRate);
-					for (int i = 0; i < NumOfCombined; i++)
+					for (int32 i = 0; i < NumOfCombined; i++)
 					{
 						UResource* Resource = GameInstance->CreateResource(Entry.Key);
 						if (Resource)
@@ -201,7 +198,6 @@ EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 			{
 				if (ParentStructure->RequestLabor(TileConversion.LaborRequired))
 				{
-					CalcPetalProduction();
 					return EHandleType::Handled;
 				}
 				else
@@ -233,7 +229,6 @@ EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
 			{
 				if (ParentStructure->StoreLabor(TileConversion.LaborRequired))
 				{
-					CalcPetalProduction();
 					return EHandleType::Handled;
 				}
 				else
@@ -257,56 +252,11 @@ void UGatherComponent::OnProgressComplete()
 {
 	Super::OnProgressComplete();
 
+	/*
 	OnGathered();
 	
 	CollectPetals();
 	ConvertPetals();
-
-	/*
-	if (ParentStructure)
-	{
-		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-		if (GameInstance)
-		{
-			bool AnyGathered = false; 
-			for (auto& Hex : AllocatedHexes) //GatherFrom
-			{
-				if (Hex && Hex->Resources.Num() > 0)
-				{
-					//int RandIndex = FMath::RandRange(0, GatherResources.Num() - 1);
-					//FString ResourceId = GatherResources[RandIndex];
-
-					// Shuffle resources to gather
-					TArray<FString> GatherResourcesShuffled = GatherResources;
-					GatherResourcesShuffled.Sort([this](const FString Item1, const FString Item2) {
-						return FMath::FRand() < 0.5f;
-					});
-					for (auto& ResourceId : GatherResourcesShuffled)
-					{
-						if (Hex->Resources.Contains(ResourceId))
-						{
-							UResource* Resource = GameInstance->CreateResource(ResourceId);
-							if (Resource)
-							{
-								ParentStructure->StoreResource(Resource);
-								AnyGathered = true;
-								break;
-							}
-						}
-					}
-					if (AnyGathered)
-					{
-						break;
-					}
-				}
-			}
-			if (!AnyGathered)
-			{
-				// No resource found on hexes in range
-
-			}
-		}
-	}
 	*/
 }
 
@@ -343,6 +293,12 @@ void UGatherComponent::Init()
 		{
 			UnallocateDelegate->BindUObject(this, &UGatherComponent::ParseUnallocateHex);
 		}
+		//~~ Update Production when structure allocated hexes change ~~//
+		ParentStructure->OnAllocatedHexesChangedDelegate.AddDynamic(this, &UGatherComponent::CalcPetalProduction);
+
+		//ParentStructure->OnHexAllocated
+		//ParentStructure->OnHexUnallocated
+
 	}
 
 	CalcPetalProduction();

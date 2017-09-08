@@ -129,7 +129,7 @@ void UHexTile::ClickHex()
 }
 void UHexTile::AddProvider(UProviderComponent* Provider)
 {
-	if (Provider)
+	if (Provider && !Providers.Contains(Provider))
 	{
 		Providers.Add(Provider);
 		UpdateResources();
@@ -137,7 +137,7 @@ void UHexTile::AddProvider(UProviderComponent* Provider)
 }
 void UHexTile::RemoveProvider(UProviderComponent* Provider)
 {
-	if (Provider)
+	if (Provider && Providers.Contains(Provider))
 	{
 		Providers.Remove(Provider);
 		UpdateResources();

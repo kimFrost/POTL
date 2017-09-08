@@ -43,6 +43,8 @@ public:
 
 	TArray<UHexTile*> HexesInRange;
 	TArray<UHexTile*> AllocatedHexes;
+	//TArray<UHexTile*>* AllocatedHexes2;
+
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module")
 	//float Progress;

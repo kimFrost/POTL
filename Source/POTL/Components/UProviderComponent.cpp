@@ -37,9 +37,9 @@ void UProviderComponent::ToggleProvider()
 
 void UProviderComponent::ActivateProvider()
 {
-	if (!bIsWorking)
+	if (!bIsWorking && ParentStructure)
 	{
-		for (auto& Hex : HexesInRange)
+		for (auto& Hex : ParentStructure->HexesInRange)
 		{
 			if (Hex) {
 				Hex->AddProvider(this);
@@ -51,9 +51,9 @@ void UProviderComponent::ActivateProvider()
 
 void UProviderComponent::DeactivateProvider()
 {
-	if (bIsWorking)
+	if (bIsWorking && ParentStructure)
 	{
-		for (auto& Hex : HexesInRange)
+		for (auto& Hex : ParentStructure->HexesInRange)
 		{
 			if (Hex) {
 				Hex->RemoveProvider(this);
@@ -85,7 +85,30 @@ void UProviderComponent::ValidateRequirements()
 	}
 }
 
-
+void UProviderComponent::SetProduction(const TArray<FST_ResourceQuantity>& ResourceList)
+{
+	Provides.Empty();
+	for (auto& Entry : ResourceList)
+	{
+		if (Provides.Contains(Entry.ResourceId))
+		{
+			Provides[Entry.ResourceId] += Entry.Quantity;
+		}
+		else
+		{
+			Provides.Add(Entry.ResourceId, Entry.Quantity);
+		}
+	}
+	if (ParentStructure)
+	{
+		for (auto& Hex : ParentStructure->HexesInRange)
+		{
+			if (Hex) {
+				Hex->UpdateResources();
+			}
+		}
+	}
+}
 
 void UProviderComponent::Init()
 {

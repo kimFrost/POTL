@@ -223,14 +223,14 @@ struct FST_ResourceQuantity
 public:
 	FST_ResourceQuantity(
 		FString ResourceId = "",
-		int Quantity = 1)
+		int32 Quantity = 1)
 		: ResourceId(ResourceId)
 		, Quantity(Quantity)
 	{}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	FString ResourceId;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	int Quantity;
+	int32 Quantity;
 };
 
 

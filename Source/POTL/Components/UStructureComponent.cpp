@@ -98,6 +98,11 @@ void UStructureComponent::Init()
 			{
 				HexesInRange = ParentStructure->HexesInRange;
 				AllocatedHexes = ParentStructure->AllocatedHexes;
+
+
+
+				//OnHexAllocated
+				//OnHexUnallocated
 			}
 		}
 		else
@@ -131,7 +136,11 @@ void UStructureComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	APOTLStructure* Structure = Cast<APOTLStructure>(GetOwner());
+	if (Structure)
+	{
+		ParentStructure = Structure;
+	}
 }
 
 

@@ -44,6 +44,9 @@ public:
 
 	void ValidateRequirements();
 
+	UFUNCTION(BlueprintCallable, Category = "Provider")
+	void SetProduction(const TArray<FST_ResourceQuantity>& ResourceList);
+
 
 	virtual void Init() override;
 

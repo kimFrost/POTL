@@ -59,8 +59,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gather")
 	TArray<FST_ResourceQuantity> GetTileResourceOutput(UHexTile* Hex);
 	//void GetConversion(UHexTile* Hex, UPARAM(ref) TArray<FST_TileConversion>& Conversions);
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Gather")
 	void CalcPetalProduction();
+
 	void AddPetal(FString PetalId, int Quantity);
 	void CollectPetals();
 	void ConvertPetals();
