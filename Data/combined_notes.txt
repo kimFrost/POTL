@@ -1,0 +1,96 @@
+A king getting old in his own kingdom.
+The kings legacy
+
+A lonely king sits atop his tower. Looking out at the lands beneath. One day, all will be different
+
+
+Total build force
+Total work force
+
+Asign work pelets on slots like civilazation city management.
+
+House give labor pelet
+Farm give food pelet
+
+
+- Safety pelet / Or just safety from city walls
+- Food pelet
+
+
+
+
+
+I have failed my quest. Only just reward for an incapable hero.
+All now is to remain in solitude for the rest of my days.
+
+
+
+
+
+https://www.youtube.com/watch?v=FCH1UCw8ejY - Gamasutra plays The Shrouded Isle with Jongwoo Kim
+https://www.youtube.com/watch?v=-zRaFJHK0S4 - Game Studio Management: Making It Great
+https://www.youtube.com/watch?v=XIpDLa585ao - The Gamer's Brain: How Neuroscience and UX Can Impact Design
+https://www.youtube.com/watch?v=5xWNfVhVTJU - How Board Games Matter
+https://www.youtube.com/watch?v=0E6fHIa81rY - Discussion Panel: Indie Survival Guide
+
+
+- Builder
+- Craftsman
+- Settler
+- Trader
+- Prospector
+- Turist
+- Mayor
+- Captain
+
+
+
+http://ndpr.nd.edu/news/the-concept-of-violence/
+http://www.goodtherapy.org/learn-about-therapy/issues/aggression-violence
+https://en.wikipedia.org/wiki/Violence
+https://www.youtube.com/watch?v=HROsqfsJkx8
+https://www.ted.com/talks/barry_schwartz_on_the_paradox_of_choice
+
+
+
+
+https://webpack.github.io/docs/usage-with-gulp.html - webpack + Gulp
+https://webpack.js.org/guides/typescript/ - webpack + typescript
+https://webpack.js.org/guides/installation/ - webpack install
+https://github.com/stevejhiggs/gulp-webpack-typescript-pipeline 
+
+
+
+https://forums.unrealengine.com/showthread.php?60441-Pixel-to-Hexagon-Material 
+https://hexode.xyz/2016/01/08/infinite-hexagonal-board-with-axial-coordinates/
+https://forums.unrealengine.com/showthread.php?97053-Writing-shaders-for-UE4-where-do-I-start
+
+https://forums.unrealengine.com/showthread.php?141011-Extending-Custom-HLSL-Custom-Expressions
+
+https://answers.unrealengine.com/questions/554250/using-arrays-in-materials.html
+
+https://answers.unrealengine.com/questions/567473/umaterialparametercollection-changes-do-not-affect.html
+
+https://answers.unrealengine.com/questions/288012/is-it-possible-to-create-textures-dynamically.html
+
+https://experilous.com/1/blog/post/procedural-planet-generation
+
+
+
+
+
+https://forums.unrealengine.com/development-discussion/rendering/101264-feeding-material-with-world-position-offset-data?128723-Feeding-material-with-world-position-offset-data=&styleid=2
+https://forums.unrealengine.com/development-discussion/rendering/123910-possible-to-use-texture-as-texture-coordinates
+https://www.reddit.com/r/unrealengine/comments/3s6wqp/writing_your_own_custom_shaders_for_ue4/
+https://docs.unrealengine.com/latest/INT/Programming/Rendering/ShaderDevelopment/index.html
+https://docs.unrealengine.com/latest/INT/Engine/Rendering/Materials/ExpressionReference/Custom/
+https://wiki.unrealengine.com/HLSL_Shaders
+https://answers.unrealengine.com/questions/103571/custom-texture-interpreted-as-texture2d-when-tryin.html
+https://answers.unrealengine.com/storage/temp/16153-customtexturemorelikebrokentexture.png
+
+https://80.lv/articles/empires-apart-low-poly-return-of-old-school-rts-genre/
+
+
+
+https://www.youtube.com/watch?v=CWzPP5FAYAg&t=955s
+https://www.youtube.com/watch?v=1Z-V1Buk6z8
