@@ -1,9 +1,8 @@
 
 float3 offset=float3(1,1,1);
-float numstep=100;
 
 //float2 WorldLocationUV = float2(0.01+0.005,0.5);
-float2 WorldLocationUV = float2(5 * (1 / numstep) + 0.005, 0.5);
+float2 WorldLocationUV = float2(5 * (1 / NumOfTileStates) + 0.005, 0.5);
 
 float2 WorldLocation = Texture2DSampleLevel(WorldLocations,WorldLocationsSampler,WorldLocationUV,0.0).xy;
 
@@ -17,12 +16,12 @@ float2 UV = (wpos.xy + WorldLocation * -1) / float2(255, 294);
 //return Texture2DSampleLevel(DrawTex, DrawTexSampler, UV, 0.0).xyz;
 
 
-for(int i = 0; i < numstep; i++) {        
+for(int i = 0; i < NumOfTileStates; i++) {        
 	//loc = Texture2DSampleLevel(WorldLocations,WorldLocationsSampler,float2(float(i)*0.01+0.005,0.5),0.0).xyz;
 	//WorldLocation = float2(loc.x,loc.y);
 	
 	//WorldLocationUV = float2(float(i)*0.01+0.005,0.5);
-	WorldLocationUV = float2(float(i) * (1 / numstep) + 0.005, 0.5);
+	WorldLocationUV = float2(float(i) * (1 / NumOfTileStates) + 0.005, 0.5);
 	
 	WorldLocation = Texture2DSampleLevel(WorldLocations,WorldLocationsSampler,WorldLocationUV,0.0).xy;
 	UV = (wpos.xy + (WorldLocation) * -1 + float2(255, 294) / 2) / float2(255, 294);
