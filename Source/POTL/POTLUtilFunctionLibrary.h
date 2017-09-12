@@ -29,10 +29,6 @@ public:
 
 	UPOTLUtilFunctionLibrary(const FObjectInitializer& ObjectInitializer);
 
-	//float HexWidth;
-	//float HexHeight;
-	//float HexSideLength;
-
 	static int32 GetObjReferenceCount(UObject* Obj, TArray<UObject*>* OutReferredToObjects);
 
 	UFUNCTION(BlueprintCallable, Category = "Debug")

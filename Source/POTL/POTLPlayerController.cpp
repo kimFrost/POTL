@@ -6,7 +6,6 @@
 #include "POTLStructure.h"
 #include "Components/UEventComponent.h"
 #include "Actors/StructureBuilder/AStructureBuilder.h"
-#include "Actors/AProFow.h"
 #include "Kismet/GameplayStatics.h"
 #include "POTLHUD.h"
 #include "POTLUtilFunctionLibrary.h"
