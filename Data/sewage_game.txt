@@ -1,0 +1,34 @@
+
+- Gathers in data
+- Gather with provider component
+
+
+
+
+- Filter by size (coarse screening for large objects, fine screening for )
+- Filter by 
+
+- Grit removal
+
+- Boiler
+- Freezer
+- Dryer
+- Centrifuge
+- Chopper
+- Separator
+- Burner/heater
+
+- Anaerobic (Anaerobic digestion is a collection of processes by which microorganisms break down biodegradable material in the absence of oxygen.)
+
+- Nutrient recovery (For food production (Alligator burgers,))
+
+- Bio reactor
+
+- Cage
+- refinery (for crude oil)
+- recycle (Manned)
+
+
+Support:
+- Airtank
+- 
