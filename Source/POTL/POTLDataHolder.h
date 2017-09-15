@@ -197,17 +197,17 @@ struct FST_TileConversion
 	GENERATED_USTRUCT_BODY()
 public:
 	FST_TileConversion(
-		FString TileTypeId = "",
+		FString TileTypeID = "",
 		int LaborRequired = 1,
 		TMap<FString, int> PetalsInput = TMap<FString, int>(),
 		TMap<FString, int> PetalsOutput = TMap<FString, int>())
-		: TileTypeId(TileTypeId)
+		: TileTypeID(TileTypeID)
 		, LaborRequired(LaborRequired)
 		, PetalsInput(PetalsInput)
 		, PetalsOutput(PetalsOutput)
 	{}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	FString TileTypeId;
+	FString TileTypeID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
 	int LaborRequired;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
@@ -527,23 +527,25 @@ struct FST_Factory : public FTableRowBase
 };
 
 
-/*** FST_Factory ***/
+/*** FST_Gatherer ***/
 USTRUCT(BlueprintType)
 struct FST_Gatherer : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
+public:
+	FST_Gatherer(
+		int32 GatherRange = 5,
+		TArray<FST_TileConversion> TileConvertions = TArray<FST_TileConversion>())
+		: GatherRange(GatherRange)
+		, TileConvertions(TileConvertions)
+	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
-	FString Type;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
+	int32 GatherRange;
 
-	// Constructor
-	FST_Gatherer()
-	{
-		Type = "";
-	}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
+	TArray<FST_TileConversion> TileConvertions;
 };
-
-/*** FST_ConstructionStage ***/
 
 
 
@@ -564,7 +566,8 @@ public:
 		bool BlockConstruction = true,
 		bool BlockPathing = true,
 		float ConstructionTime = 10.f,
-		TArray<FIdAmount> ConstructionCost = TArray<FIdAmount>())
+		TArray<FIdAmount> ConstructionCost = TArray<FIdAmount>(),
+		TArray<FST_Gatherer> Gatherers = TArray<FST_Gatherer>())
 		: Id(Id)
 		, Title(Title)
 		, Description(Description)
@@ -576,6 +579,7 @@ public:
 		, BlockPathing(BlockPathing)
 		, ConstructionTime(ConstructionTime)
 		, ConstructionCost(ConstructionCost)
+		, Gatherers(Gatherers)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -622,6 +626,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FIdAmount> ConstructionCost;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FST_Gatherer> Gatherers;
+
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FString> EmitTo;
@@ -632,8 +639,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FST_Factory> Factories;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
-	TArray<FST_Gatherer> Gatherers;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	int32 BaseBroadcastRange;

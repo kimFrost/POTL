@@ -120,6 +120,20 @@
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}
         ],
+		"Gatherers": [
+			{
+				"GatherRange": 5,
+				"TileConvertions": [
+					{
+						"TileTypeID": "Woodland",
+						"LaborRequired": 1,
+						"PetalsOutput": {
+							"Lumber": 2
+						}
+					}
+				]
+			}
+		],
         "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,

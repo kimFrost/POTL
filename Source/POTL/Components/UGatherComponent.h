@@ -9,6 +9,9 @@
 
 
 
+class UProviderComponent;
+
+
 //~~ DELEGATES ~~//
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProductionChangedDelegate, TMap<FString, int>, Production);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProductionChangedDelegate, const TArray<FST_ResourceQuantity>&, TotalProduction);
@@ -26,6 +29,8 @@ public:
 	// Sets default values for this component's properties
 	UGatherComponent();
 
+
+	UProviderComponent* ProviderComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
 	bool bGatherFromAll;

@@ -7,6 +7,7 @@
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
 #include "POTLUtilFunctionLibrary.h"
+#include "Components/UProviderComponent.h"
 #include "UGatherComponent.h"
 
 
@@ -22,6 +23,22 @@ UGatherComponent::UGatherComponent()
 	TaskLength = 5.f;
 	MaxGatheredPerCycle = 1;
 	TileConversions = TArray<FST_TileConversion>();
+
+	// Construct provider component
+
+
+	ProviderComponent = CreateDefaultSubobject<UProviderComponent>(TEXT("ProviderComponent"));
+	if (ProviderComponent)
+	{
+		//ProviderComponent->AttachTo(Rootcomponent);
+		//ProviderComponent->AttachParent
+		//ProviderComponent->AttachToComponent(this);
+		//AttachToComponent
+		//ProviderComponent->SetupAttachment()
+		//Mesh->SetupAttachment(RootComponent);
+		//AddOwnedComponent(ProviderComponent);
+	}
+
 }
 
 
@@ -61,7 +78,7 @@ TArray<FST_ResourceQuantity> UGatherComponent::GetTileResourceOutput(UHexTile* H
 	{
 		for (auto& TileConversion : TileConversions)
 		{
-			if (Hex->HexTileType == TileConversion.TileTypeId)
+			if (Hex->HexTileType == TileConversion.TileTypeID)
 			{
 				for (auto& Output : TileConversion.PetalsOutput)
 				{
@@ -84,7 +101,7 @@ void UGatherComponent::CalcPetalProduction()
 			{
 				for (auto& TileConversion : TileConversions)
 				{
-					if (Hex->HexTileType == TileConversion.TileTypeId)
+					if (Hex->HexTileType == TileConversion.TileTypeID)
 					{
 						for (auto& Output : TileConversion.PetalsOutput)
 						{
@@ -178,7 +195,7 @@ bool UGatherComponent::IsHexWorkable(UHexTile* Hex)
 	{
 		for (auto& TileConversion : TileConversions)
 		{
-			if (Hex->HexTileType == TileConversion.TileTypeId)
+			if (Hex->HexTileType == TileConversion.TileTypeID)
 			{
 				return true;
 			}
@@ -194,7 +211,7 @@ EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 		// Request Labor
 		for (auto& TileConversion : TileConversions)
 		{
-			if (Hex->HexTileType == TileConversion.TileTypeId)
+			if (Hex->HexTileType == TileConversion.TileTypeID)
 			{
 				if (ParentStructure->RequestLabor(TileConversion.LaborRequired))
 				{
@@ -225,7 +242,7 @@ EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
 	{
 		for (auto& TileConversion : TileConversions)
 		{
-			if (Hex->HexTileType == TileConversion.TileTypeId)
+			if (Hex->HexTileType == TileConversion.TileTypeID)
 			{
 				if (ParentStructure->StoreLabor(TileConversion.LaborRequired))
 				{
