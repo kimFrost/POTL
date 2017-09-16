@@ -560,6 +560,7 @@ public:
 		FString Title = "",
 		FString Description = "",
 		bool Burnable = false,
+		//TSubclassOf<APOTLStructure> StructureClass = "BlueprintGeneratedClass'/Game/Blueprint/Actor/BP_Structure.BP_Structure_C'",
 		TArray<FVector> CubeSizes = TArray<FVector>(),
 		FVector Entrance = { 0, 0, 0 },
 		int RotationDirection = 0,
@@ -572,6 +573,7 @@ public:
 		, Title(Title)
 		, Description(Description)
 		, Burnable(Burnable)
+		//, StructureClass(StructureClass)
 		, CubeSizes(CubeSizes)
 		, Entrance(Entrance)
 		, RotationDirection(RotationDirection)

@@ -13,6 +13,8 @@
 //~~~~~ Forward Declarations ~~~~~//
 class UConstructionComponent;
 class UEventComponent;
+class UGatherComponent;
+class UProviderComponent;
 class ARangeDecal;
 
 
@@ -28,8 +30,6 @@ DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnHexUnallocateDelegate, UHexTile
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConstructionComplete);
 
-
-//~~~~~ Forward Declarations ~~~~~//
 
 //~~~~~ STRUCTS ~~~~~//
  
@@ -58,6 +58,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<APOTLStructure*> AttachedStructures;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	TArray<UGatherComponent*> GatherComponents;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	TArray<UProviderComponent*> ProviderComponents;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	UHexTile* BaseHex;

@@ -9,6 +9,7 @@
 #include "Components/UResidentsComponent.h"
 #include "Components/UConstructionComponent.h"
 #include "Components/UGatherComponent.h"
+#include "Components/UProviderComponent.h"
 #include "Actors/AIsland.h"
 #include "UObjects/UHexTile.h"
 #include "Kismet/GameplayStatics.h"
@@ -699,6 +700,25 @@ void APOTLStructure::RemoveStructure()
 }
 void APOTLStructure::ProcessBaseData()
 {
+	// Add gatherers and providers based on StructureBaseData
+	for (auto& Gather : StructureBaseData.Gatherers)
+	{
+		UGatherComponent* GatherComponent = NewObject<UGatherComponent>(this);
+		UProviderComponent* ProviderComponent = NewObject<UProviderComponent>(this);
+		GatherComponents.Add(GatherComponent);
+		ProviderComponents.Add(ProviderComponent);
+		if (GatherComponent && ProviderComponent)
+		{
+			GatherComponent->RegisterComponent();
+			ProviderComponent->RegisterComponent();
+			AddOwnedComponent(GatherComponent);
+			AddOwnedComponent(ProviderComponent);
+			GatherComponent->GatherRange = Gather.GatherRange;
+			GatherComponent->TileConversions = Gather.TileConvertions;
+			GatherComponent->OnProductionChangedDelegate.AddDynamic(ProviderComponent, &UProviderComponent::SetProduction);
+		}
+	}
+
 	/*
 	for (auto& Factory : StructureBaseData.Factories)
 	{
@@ -1027,6 +1047,9 @@ void APOTLStructure::BeginPlay()
 	{
 		GameMode->OnTimeUpdated.AddDynamic(this, &APOTLStructure::OnTimeUpdate);
 	}
+
+
+	
 
 	GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
 	if (GameInstance)

@@ -26,7 +26,7 @@ UGatherComponent::UGatherComponent()
 
 	// Construct provider component
 
-
+	/*
 	ProviderComponent = CreateDefaultSubobject<UProviderComponent>(TEXT("ProviderComponent"));
 	if (ProviderComponent)
 	{
@@ -38,6 +38,7 @@ UGatherComponent::UGatherComponent()
 		//Mesh->SetupAttachment(RootComponent);
 		//AddOwnedComponent(ProviderComponent);
 	}
+	*/
 
 }
 

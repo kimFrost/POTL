@@ -212,6 +212,21 @@
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}
         ],
+		"Gatherers": [
+			{
+				"GatherRange": 5,
+				"TileConvertions": [
+					{
+						"TileTypeID": "Woodland",
+						"LaborRequired": 1,
+						"PetalsOutput": {
+							"Meat": 2,
+							"Pelt": 2
+						}
+					}
+				]
+			}
+		],
         "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,
@@ -220,6 +235,26 @@
 		"ConstructionCost": [
 			{"Id": "Lumber", "Amount": 1}
 		]
-    }
+    },
+	{
+        "Name": "TestStructure",
+        "Id": "TestStructure",
+        "Title": "TestStructure",
+        "Description": "Just a test structure for testing development",
+		"StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/BP_Structure.BP_Structure_C'",
+        "Burnable": true,
+        "AttachTo": [
+            "BasicTenant"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true,
+		"ConstructionCost": []
+    },
 ]
 
