@@ -10,6 +10,8 @@
 
 
 
+class UProviderComponent;
+
 
 UENUM(BlueprintType)
 enum EBoolGateEnum
@@ -100,8 +102,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Util|Hex")
 	static TArray<FVector> GetHexesWithFloodFill(FVector StartPosition, const TArray<FVector>& Obstacles, int32 Range);
 
+	/**   */
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Util")
+	static TArray<UProviderComponent*> FilterProvidersByResourceList(const TArray<UProviderComponent*>& Providers, const TArray<FST_ResourceQuantity>& ResourceList);
+
 	//UFUNCTION(BlueprintCallable, Category = "Util|Hex") //TMap not allowed
 	static void FilterTileArrayByResources(const TArray<UHexTile*>& TargetArray, const TMap<FString, int>& Resources, TArray<UHexTile*>& FilteredArray);
+
+
 
 
 	/** TMap -  */

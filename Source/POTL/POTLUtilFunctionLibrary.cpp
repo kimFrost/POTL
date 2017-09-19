@@ -5,6 +5,7 @@
 #include "UObjects/UHexTile.h"
 #include "POTLDataHolder.h"
 #include <string>
+#include "Components/UProviderComponent.h"
 #include "POTLUtilFunctionLibrary.h"
 
 
@@ -463,6 +464,31 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 		}
 	}
 	return VisitedCubeCoords;
+}
+
+TArray<UProviderComponent*> UPOTLUtilFunctionLibrary::FilterProvidersByResourceList(const TArray<UProviderComponent*>& Providers, const TArray<FST_ResourceQuantity>& ResourceList)
+{
+	TArray<UProviderComponent*> FilterProviders = TArray<UProviderComponent*>();
+	for (auto& Provider : Providers)
+	{
+		if (Provider)
+		{
+			bool bValid = true;
+			for (auto& Resource : ResourceList)
+			{
+				if (!Provider->Provides.Contains(Resource.ResourceId) || Provider->Provides[Resource.ResourceId] < Resource.Quantity)
+				{
+					bValid = false;
+					break;
+				}
+			}
+			if (bValid)
+			{
+				FilterProviders.Add(Provider);
+			}
+		}
+	}
+	return FilterProviders;
 }
 
 void UPOTLUtilFunctionLibrary::FilterTileArrayByResources(const TArray<UHexTile*>& TargetArray, const TMap<FString, int>& Resources, TArray<UHexTile*>& FilteredArray)
