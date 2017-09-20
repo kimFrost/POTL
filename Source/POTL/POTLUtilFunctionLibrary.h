@@ -104,6 +104,9 @@ public:
 
 	/**   */
 
+	//UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Util")
+	//static TArray<FST_ResourceQuantity> ConvertResourceList(const TMap<FString, int>& ResourceList);
+
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Util")
 	static TArray<UProviderComponent*> FilterProvidersByResourceList(const TArray<UProviderComponent*>& Providers, const TArray<FST_ResourceQuantity>& ResourceList);
 

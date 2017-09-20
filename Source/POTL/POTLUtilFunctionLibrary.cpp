@@ -466,6 +466,13 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetHexesWithFloodFill(FVector StartPos
 	return VisitedCubeCoords;
 }
 
+/*
+TArray<FST_ResourceQuantity> UPOTLUtilFunctionLibrary::ConvertResourceList(const TMap<FString, int>& ResourceList)
+{
+	return TArray<FST_ResourceQuantity>();
+}
+*/
+
 TArray<UProviderComponent*> UPOTLUtilFunctionLibrary::FilterProvidersByResourceList(const TArray<UProviderComponent*>& Providers, const TArray<FST_ResourceQuantity>& ResourceList)
 {
 	TArray<UProviderComponent*> FilterProviders = TArray<UProviderComponent*>();
