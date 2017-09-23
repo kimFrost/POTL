@@ -15,6 +15,21 @@
 		"PetalsRequired": 10
 	},
 	{
+		"Name": "Lumber",
+		"Id": "Lumber",
+		"Title": "Lumber",
+		"Tags": ["Construction", "Raw"],
+		"UnitMass": 10,
+		"Value": 0.05,
+		"Stackable": true,
+		"Burnable": true,
+		"StackSize": 64,
+		"Quantity": 0,
+		"MaxAge": -1,
+		"SortSequence": 1,
+		"PetalsRequired": 10
+	},
+	{
 		"Name": "Stone",
 		"Id": "Stone",
 		"Title": "Stone",
@@ -105,24 +120,9 @@
 		"PetalsRequired": 10
 	},
 	{
-		"Name": "Aples",
-		"Id": "Aples",
-		"Title": "Aples",
-		"Tags": ["Food"],
-		"UnitMass": 2,
-		"Value": 0.1,
-		"Stackable": true,
-		"Burnable": true,
-		"StackSize": 64,
-		"Quantity": 0,
-		"MaxAge": -1,
-		"SortSequence": 1,
-		"PetalsRequired": 10
-	},
-	{
-		"Name": "Aple",
-		"Id": "Aple",
-		"Title": "Aple",
+		"Name": "Apples",
+		"Id": "Apples",
+		"Title": "Apples",
 		"Tags": ["Food"],
 		"UnitMass": 2,
 		"Value": 0.01,

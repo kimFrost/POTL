@@ -237,6 +237,79 @@
 		]
     },
 	{
+        "Name": "Forager",
+        "Id": "Forager",
+        "Title": "Forager",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/BP_Structure.BP_Structure_C'",
+        "AttachTo": [
+            "BasicTenant"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+		"Gatherers": [
+			{
+				"GatherRange": 5,
+				"TileConvertions": [
+					{
+						"TileTypeID": "Woodland",
+						"LaborRequired": 1,
+						"PetalsOutput": {
+							"Mushrooms": 1,
+							"Berries": 1,
+							"Plantfiber": 1
+						}
+					}
+				]
+			}
+		],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"Id": "Lumber", "Amount": 1}
+		]
+    },
+	{
+        "Name": "Tapper",
+        "Id": "Tapper",
+        "Title": "Tapper",
+        "Burnable": true,
+        "StructureClass": "BlueprintGeneratedClass'/Game/Blueprint/Actor/BP_Structure.BP_Structure_C'",
+        "AttachTo": [
+            "BasicTenant"
+        ],
+        "CubeSizes": [
+            {"X":0, "Y":0, "Z":0}
+        ],
+		"Gatherers": [
+			{
+				"GatherRange": 5,
+				"TileConvertions": [
+					{
+						"TileTypeID": "Woodland",
+						"LaborRequired": 1,
+						"PetalsOutput": {
+							"Sap": 1,
+							"Resin": 1
+						}
+					}
+				]
+			}
+		],
+        "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
+        "Entrance": {"X":0, "Y":0, "Z":0},
+        "RotationDirection": 0,
+        "BlockConstruction": true,
+        "BlockPathing": true,
+		"ConstructionCost": [
+			{"Id": "Lumber", "Amount": 1}
+		]
+    },
+	{
         "Name": "TestStructure",
         "Id": "TestStructure",
         "Title": "TestStructure",
