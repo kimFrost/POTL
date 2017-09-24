@@ -32,6 +32,34 @@
         "CubeSizes": [
             {"X":0, "Y":0, "Z":0}
         ],
+		"Gatherers": [
+			{
+				"GatherRange": 5,
+				"TileConvertions": [
+					{
+						"TileTypeID": "Woodland",
+						"LaborRequired": 1,
+						"PetalsOutput": {
+							"Lumber": 2
+						}
+					},
+					{
+						"TileTypeID": "Grassland",
+						"LaborRequired": 1,
+						"PetalsOutput": {
+							"Berries": 1
+						}
+					},
+					{
+						"TileTypeID": "Coast",
+						"LaborRequired": 1,
+						"PetalsOutput": {
+							"Fish": 1
+						}
+					}
+				]
+			}
+		],
         "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
         "Entrance": {"X":0, "Y":0, "Z":0},
         "RotationDirection": 0,

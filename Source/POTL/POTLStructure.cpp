@@ -75,6 +75,12 @@ APOTLStructure::APOTLStructure(const FObjectInitializer &ObjectInitializer) : Su
 
 bool APOTLStructure::Select()
 {
+	/*
+	if (AttachedTo)
+	{
+		return AttachedTo->Select(); //~~ Only root structure is selectable ~~//
+	}
+	*/
 	if (!bSelected)
 	{
 		bSelected = true;

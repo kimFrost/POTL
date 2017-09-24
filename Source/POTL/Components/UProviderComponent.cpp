@@ -65,14 +65,13 @@ void UProviderComponent::DeactivateProvider()
 
 void UProviderComponent::ValidateRequirements()
 {
-	//TODO: Better validation Logic for attachedTo
 	if (!ParentStructure)
 	{
 		DeactivateProvider();
 	}
 	else if (bRequireAttached)
 	{
-		if (ParentStructure && ParentStructure->AttachedTo)
+		if (ParentStructure) // && ParentStructure->AttachedTo
 		{
 			//?? Validate tile on for required resource??
 
@@ -114,7 +113,7 @@ void UProviderComponent::Init()
 {
 	Super::Init();
 
-	if (!ParentStructure || (ParentStructure && !ParentStructure->AttachedTo))
+	if (!ParentStructure) // || (ParentStructure && !ParentStructure->AttachedTo)
 	{
 		bIsOn = false;
 	}
