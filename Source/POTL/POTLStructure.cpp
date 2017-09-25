@@ -99,6 +99,7 @@ bool APOTLStructure::Select()
 				Delegate->BindUObject(this, &APOTLStructure::Deselect);
 			}
 		}
+		EnterEditMode(); 
 		return true;
 	}
 	return false;
@@ -298,6 +299,8 @@ void APOTLStructure::DrawInRangeInfo()
 	if (RangeDecal)
 	{
 		RangeDecal->OnClear();
+	
+		/*
 		for (auto& Hex : AllocatedHexes)
 		{
 			if (Hex)
@@ -305,15 +308,44 @@ void APOTLStructure::DrawInRangeInfo()
 				RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
 			}
 		}
-		/*
+
+		for (auto& AttachedStructure : AttachedStructures)
+		{
+			if (AttachedStructure)
+			{
+				for (auto& Hex : AttachedStructure->AllocatedHexes)
+				{
+					if (Hex)
+					{
+						RangeDecal->OnDrawHex(Hex, FLinearColor::Blue);
+					}
+				}
+			}
+		}
+		*/
+
 		for (auto& Hex : HexesInRange)
 		{
 			if (Hex)
 			{
-				RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
+				if (Hex->AllocatedTo)
+				{
+					if (Hex->AllocatedTo == this)
+					{
+						RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
+					}
+					else if (AttachedStructures.Contains(Hex->AllocatedTo))
+					{
+						RangeDecal->OnDrawHex(Hex, FLinearColor::Blue);
+					}
+					else
+					{
+						RangeDecal->OnDrawHex(Hex, FLinearColor::Yellow);
+					}
+				}
 			}
 		}
-		*/
+		
 	}
 }
 FOnHexAllocateDelegate* APOTLStructure::BindToOnHexAllocate(UObject* Listener, int Priority)
