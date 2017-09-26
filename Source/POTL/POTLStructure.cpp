@@ -324,6 +324,7 @@ void APOTLStructure::DrawInRangeInfo()
 		}
 		*/
 
+		TArray<FHexLinearColor> HexColorList = TArray<FHexLinearColor>();
 		for (auto& Hex : HexesInRange)
 		{
 			if (Hex)
@@ -332,20 +333,24 @@ void APOTLStructure::DrawInRangeInfo()
 				{
 					if (Hex->AllocatedTo == this)
 					{
-						RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
+						HexColorList.Add(FHexLinearColor(Hex, FLinearColor::Green));
+						//RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
 					}
 					else if (AttachedStructures.Contains(Hex->AllocatedTo))
 					{
-						RangeDecal->OnDrawHex(Hex, FLinearColor::Blue);
+						HexColorList.Add(FHexLinearColor(Hex, FLinearColor::Blue));
+						//RangeDecal->OnDrawHex(Hex, FLinearColor::Blue);
 					}
 					else
 					{
-						RangeDecal->OnDrawHex(Hex, FLinearColor::Yellow);
+						HexColorList.Add(FHexLinearColor(Hex, FLinearColor::Yellow));
+						//RangeDecal->OnDrawHex(Hex, FLinearColor::Yellow);
 					}
 				}
 			}
 		}
-		
+		RangeDecal->OnDrawHexes(HexColorList);
+
 	}
 }
 FOnHexAllocateDelegate* APOTLStructure::BindToOnHexAllocate(UObject* Listener, int Priority)

@@ -10,7 +10,7 @@
 
 void ARangeDecal::DrawHexes(const TArray<UHexTile*>& Hexes)
 {
-	OnDrawHexes(Hexes);
+	//OnDrawHexes(Hexes);
 }
 
 void ARangeDecal::DrawStructureInfo(const FST_Structure& StructureInfo)
@@ -22,7 +22,7 @@ void ARangeDecal::DrawStructureInfo(const FST_Structure& StructureInfo)
 void ARangeDecal::OnClear_Implementation()
 {}
 
-void ARangeDecal::OnDrawHexes_Implementation(const TArray<UHexTile*>& Hexes)
+void ARangeDecal::OnDrawHexes_Implementation(const TArray<FHexLinearColor>& HexColorList)
 {}
 
 void ARangeDecal::OnDrawHex_Implementation(const UHexTile* Hex, const FLinearColor Color)

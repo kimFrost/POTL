@@ -9,6 +9,7 @@
 //~~~~~ Forward Declarations ~~~~~//
 class APOTLStructure;
 class UFactoryComponent;
+class UHexTile;
 
 
 
@@ -146,7 +147,21 @@ public:
 	int Amount;
 };
 
- 
+USTRUCT(BlueprintType)
+struct FHexLinearColor
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FHexLinearColor(UHexTile* Hex = nullptr, FLinearColor Color = FLinearColor::White)
+		: Hex(Hex)
+		, Color(Color)
+	{}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CustomType")
+	UHexTile* Hex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CustomType")
+	FLinearColor Color;
+}; 
+
 //~~~~~ TEST DATA IMPORT ~~~~~//
 USTRUCT(BlueprintType)
 struct FItemInformation : public FTableRowBase

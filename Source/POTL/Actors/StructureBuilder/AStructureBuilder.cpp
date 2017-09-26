@@ -231,7 +231,6 @@ void AStructureBuilder::TraceHexes()
 
 	if (RangeDecal)
 	{
-		//RangeDecal->DrawHexes(TilesOn);
 		RangeDecal->DrawStructureInfo(StructureBaseData);
 	}
 }
