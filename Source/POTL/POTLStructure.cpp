@@ -334,17 +334,17 @@ void APOTLStructure::DrawInRangeInfo()
 					if (Hex->AllocatedTo == this)
 					{
 						HexColorList.Add(FHexLinearColor(Hex, FLinearColor::Green));
-						//RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
+						RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
 					}
 					else if (AttachedStructures.Contains(Hex->AllocatedTo))
 					{
 						HexColorList.Add(FHexLinearColor(Hex, FLinearColor::Blue));
-						//RangeDecal->OnDrawHex(Hex, FLinearColor::Blue);
+						RangeDecal->OnDrawHex(Hex, FLinearColor::Blue);
 					}
 					else
 					{
 						HexColorList.Add(FHexLinearColor(Hex, FLinearColor::Yellow));
-						//RangeDecal->OnDrawHex(Hex, FLinearColor::Yellow);
+						RangeDecal->OnDrawHex(Hex, FLinearColor::Yellow);
 					}
 				}
 			}
