@@ -900,13 +900,17 @@ void UPOTLGameInstance::CalcHexResourceDensity()
 
 void UPOTLGameInstance::InjectTestValuesToHexes()
 {
+	//FRandomStream Stream = FRandomStream(451);
+	//Stream.GenerateNewSeed();
 	for (auto& Hex : Hexes)
 	{
 		if (Hex)
 		{
-			if (FMath::FRand() > 0.2f)
+			//bool HasTress = (Stream.FRand() > 0.2f);
+			bool HasTress = (FRandomStream(Hex->HexIndex).FRand() > 0.2f);
+			if (HasTress)
 			{
-				Hex->HexResourceInfo.HasTrees = true;
+				Hex->HexResourceInfo.HasTrees = HasTress;
 				Hex->HexResourceInfo.ForestDepth = 1;
 				//Hex->HexTileType = "Woodland";
 			}

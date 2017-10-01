@@ -663,6 +663,33 @@ public:
 	*/
 };
 
+
+/*** FST_World ***/
+USTRUCT(BlueprintType)
+struct FST_World : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FST_World(
+		FString ID = "",
+		FString Title = "",
+		TArray<FVector> HexesWithForest = TArray<FVector>())
+		: ID(ID)
+		, Title(Title)
+		, HexesWithForest(HexesWithForest)
+	{}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> HexesWithForest;
+
+};
+
 USTRUCT(BlueprintType)
 struct FST_BuildInfo
 {
