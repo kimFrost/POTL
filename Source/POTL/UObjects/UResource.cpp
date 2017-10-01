@@ -33,6 +33,8 @@ APOTLStructure* UResource::GetOwner()
 
 void UResource::Consume(EConsumeType ConsumeType, bool bRemoveFromStorage)
 {
+	Unallocate();
+
 	// Remove from storage in StoredIn
 	if (bRemoveFromStorage)
 	{
@@ -74,6 +76,32 @@ bool UResource::Transfer(UStorageComponent* Storage)
 			StoredIn->RemoveResourceFromStorage(this);
 		}
 		return Storage->StoreResource(this);
+	}
+	return false;
+}
+
+bool UResource::AllocateTo(APOTLStructure* Structure)
+{
+	if (Structure)
+	{
+		Unallocate();
+
+		/* Rest of the logic here */
+
+		AllocatedTo = Structure;
+	}
+	return false;
+}
+
+bool UResource::Unallocate()
+{
+	if (AllocatedTo)
+	{
+
+		/* Rest of the logic here */
+
+		AllocatedTo = nullptr;
+		return true;
 	}
 	return false;
 }

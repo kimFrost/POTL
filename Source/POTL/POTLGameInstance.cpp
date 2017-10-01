@@ -907,7 +907,7 @@ void UPOTLGameInstance::InjectTestValuesToHexes()
 		if (Hex)
 		{
 			//bool HasTress = (Stream.FRand() > 0.2f);
-			bool HasTress = (FRandomStream(Hex->HexIndex).FRand() > 0.2f);
+			bool HasTress = (FRandomStream(Hex->HexIndex * 256).FRand() > 0.2f);
 			if (HasTress)
 			{
 				Hex->HexResourceInfo.HasTrees = HasTress;

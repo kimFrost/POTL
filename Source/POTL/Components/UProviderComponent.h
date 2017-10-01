@@ -3,10 +3,12 @@
 #pragma once
 
 #include "UStructureComponent.h"
-#include "UObjects/UResource.h"
 #include "UObjects/UHexTile.h"
 #include "UProviderComponent.generated.h"
 
+
+
+class UResource;
 
 
 //~~ DELEGATES ~~//
@@ -36,6 +38,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Provider")
 	TMap<FString, int> Provides;
 
+	//TMap<FString, TArray<UResource*>> Provides;
+
+
 	FTimerHandle ProvideCheckTimer;
 
 	void ToggleProvider();
@@ -46,6 +51,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Provider")
 	void SetProduction(const TArray<FST_ResourceQuantity>& ResourceList);
+	//void SetProduction(const TArray<UResource*>& ResourceList);
 
 
 	virtual void Init() override;

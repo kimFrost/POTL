@@ -8,6 +8,7 @@
 
 //~~~~~ Forward Declarations ~~~~~//
 class UStorageComponent;
+class UProviderComponent;
 class APOTLStructure;
 
 //~~~~~ Enum ~~~~~//
@@ -36,6 +37,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	TArray<FString> Tags;
 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
+	APOTLStructure* AllocatedTo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
+	UProviderComponent* Provider;
+
+
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	float Value;
 
@@ -55,6 +66,10 @@ public:
 	void RemoveFromStorage();
 
 	bool Transfer(UStorageComponent* Storage);
+
+	bool AllocateTo(APOTLStructure* Structure);
+
+	bool Unallocate();
 
 	void Init();
 

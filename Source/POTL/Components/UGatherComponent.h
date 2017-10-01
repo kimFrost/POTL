@@ -3,12 +3,11 @@
 #pragma once
 
 #include "UStructureTaskComponent.h"
-#include "UObjects/UResource.h"
 #include "UObjects/UHexTile.h"
 #include "UGatherComponent.generated.h"
 
 
-
+class UResource;
 class UProviderComponent;
 
 
@@ -57,6 +56,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
 	TMap<FString, int> StoredPetals;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
+	TArray<UResource*> ProducedResources;
+
 
 	UFUNCTION(BlueprintCallable, Category = "Gather")
 	TArray<FST_ResourceQuantity> GetTotalPetalProduction();

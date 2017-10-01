@@ -1,0 +1,203 @@
+
+
+
+- GatherComponent produces array of UResource
+	- Set production in Provider component
+- ProviderComponent Add provider to hexes
+	- Hexes update their resource list with resources that are not allocated
+	
+- AStructureBuilder
+	- CheckRequirement() checks root hex for resources avaiable
+
+- GameInstance
+	- Plant structure will allocate resource to structure.
+	
+	
+- All resources not allocated, will be split onto all households in range. If 4 households, then each recieve 1/4 of the resource, thus only 1/4 of the happiness boost from it. 
+	- This will not allocate the resource to the households. Allocation will only happen to a production, constuction or other that require a fixed amount, will have the resource allocated to them.
+
+
+
+- POTL 
+	- Attached. Attached building require 1 labor in upkeep. Upgrades base building convertions
+	
+	
+	
+- Household
+	- Gather
+		- Woodland: 1 x Lumber
+		- Grassland: 1 x Meat + 1 x Berries
+		
+		
+- Woodcutter AddOn
+	- Cost: 1 x Lumber
+	- Upkeep: 1 x Labor
+	- Woodland: + 1 x Lumber
+		
+		
+- Forrager AddOn
+	- Cost: 1 x Lumber
+	- Upkeep: 1 x Labor
+	- Woodland: + 1 x Mushrooms, Req 1 x Labor
+	- Stoneland: + 3 x stone, Req 3 x Labor
+	
+- Stonecutter Addon
+	- Cost: 1 x Lumber
+	- Upkeep: 1 x Labor, Tools lv. 1??
+	- Stoneland: + 1 x stone.
+	- Provides: Cut stone lv. 1
+	
+	
+	
+	
+- AddOns require dependencies.
+
+- Wooden tools => Tools lv.1
+- Iron tools => Tools lv.2
+- Steel tools => Tools lv.3
+
+
+
+
+
+- Households need to be more independent, if the king can issue rules that change their conditions.
+
+- The king owns the land. The peasant work the land in return for 
+
+- Nobles own their own land
+	- Can have their own vassals
+	- Hard to get rid off for the king
+	
+	
+	
+	
+	
+	
+	
+	
+Woodcutter provides 2 x lumber
+	- One is allocated to lumbermill that then provides 1 x planks
+	- One is temp allocated to building construction.
+	- Can hexes be unallocated while resources are allocated/locked ??
+		- If yes, then try to remove an unallocate resource, else unallocate resource and then remove it. 
+			- Then I can't just recal resources anymore on hex allocate/unallocate. 
+
+			
+			
+			
+			
+			
+			
+
+Should people's needs be centralized as a single group?
+YES: Then resources should be dynamic ib production and production.
+NO:  Then Resources must be static range or static range allocated
+
+
+Should resources be static range or static allocated
+YES: Then
+NO:  
+
+Should hexes only be allocated to root structure
+YES: 
+NO: Then hexes should be allocated to
+
+
+
+If I want resources to be static
+Then resources must be level based instead of quantity based.
+
+
+If I want resources to be static allocated
+Then resources must be quantity based instead of level based.
+Then can resource production be changed if resources are allocated?
+
+
+
+If I want happiness to be able to affect labor avaiable
+Then how will it affect structure and others that depend on the resource, either from static range or static allocated
+
+
+
+
+
+
+Pain points:
+
+- Resource consumation
+	- How is food resource consume. As static allocation or static range?
+		
+- Happiness
+	- Should happiness affect production?
+	
+- Production
+	- Should anything be able to affect resource production?
+		
+		
+		
+Pain points solutions:
+
+- Resource consumation
+	- If a resourec can be allocate to multipe tiles. 
+	- If food/consumable goods always are static range instead of static allocation. 
+	
+	
+	
+	
+People in center. Work from people's needs. 	
+
+
+
+
+
+- Fence for structure and attached structures. Fence in area.
+
+
+
+
+- Sap collector
+
+- Collector/Gatherer/Forager
+	- Stone
+	- Sap + berries + mushrooms
+	- Fiber
+	
+- Tapper
+	- Sap
+	- Resin
+	- Tar
+	
+- Miner
+	- Stone
+	- Iron
+	- Gold
+	- Silver
+	- Copper
+	- Coal
+	- Clay
+	- Quartz
+	- Salt
+	- Aluminium
+	
+	
+- Hunter
+
+
+
+
+- City Building RPG
+	- Your city is your character. Building city is leveling your character
+
+
+- Tile Modifiers
+	- Should a tile next to a structure produce the same wild game as those deep in the forrest?
+	- Should inhabitance provide a -1 wild game provider to all adjacent tiles
+
+
+
+
+- Food shortage
+- Overpopulation/Overcrowded
+- Hygine/decease
+- Polution
+
