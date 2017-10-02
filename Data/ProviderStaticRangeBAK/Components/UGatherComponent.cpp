@@ -122,8 +122,7 @@ void UGatherComponent::CalcPetalProduction()
 	}
 
 	TArray<FST_ResourceQuantity> TotalPetalProduction = GetTotalPetalProduction();
-	TArray<FST_ResourceQuantity> PrevTotalResourceProduction = TotalResourceProduction;
-	TotalResourceProduction.Empty();
+	TArray<FST_ResourceQuantity> TotalResourceProduction;
 
 	for (int32 i = 0; i < TotalPetalProduction.Num(); i++)
 	{
@@ -133,14 +132,7 @@ void UGatherComponent::CalcPetalProduction()
 			TotalResourceProduction.Add(FST_ResourceQuantity(Entry.ResourceId, FMath::FloorToInt(Entry.Quantity / 5)));
 		}
 	}
-
-	// Get number of resource to remove or add and their type
-
-	TMap<FString, int32> ResourceProductionChange;
-
-
-	//OnProductionChangedDelegate.Broadcast(TotalResourceProduction);
-	OnProductionChangedDelegate.Broadcast(ProducedResources);
+	OnProductionChangedDelegate.Broadcast(TotalResourceProduction);
 }
 void UGatherComponent::AddPetal(FString PetalId, int32 Quantity)
 {
