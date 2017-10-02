@@ -14,7 +14,7 @@ class UProviderComponent;
 //~~ DELEGATES ~~//
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProductionChangedDelegate, TMap<FString, int>, Production);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProductionChangedDelegate, const TArray<FST_ResourceQuantity>&, TotalProduction);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProductionChangedDelegate, constTArray<UResource*>&, TotalProduction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProductionChangedDelegate, const TArray<UResource*>&, TotalProduction);
 
 
 
@@ -56,6 +56,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
 	TMap<FString, int> StoredPetals;
+
 
 	TArray<FST_ResourceQuantity> TotalResourceProduction;
 

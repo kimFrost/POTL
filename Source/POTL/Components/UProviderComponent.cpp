@@ -84,9 +84,29 @@ void UProviderComponent::ValidateRequirements()
 	}
 }
 
-void UProviderComponent::SetProduction(const TArray<FST_ResourceQuantity>& ResourceList)
+//void UProviderComponent::SetProduction(const TArray<FST_ResourceQuantity>& ResourceList)
+void UProviderComponent::SetProduction(const TArray<UResource*>& ResourceList)
 {
+	Resources = ResourceList;
 	Provides.Empty();
+
+	for (int32 i = 0; i < ResourceList.Num(); i++)
+	{
+		UResource* Resource = ResourceList[i];
+		if (Resource)
+		{
+			if (Provides.Contains(Resource->ResourceId))
+			{
+				Provides[Resource->ResourceId] += 1;
+			}
+			else
+			{
+				Provides.Add(Resource->ResourceId, 1);
+			}
+		}
+	}
+
+	/*
 	for (auto& Entry : ResourceList)
 	{
 		if (Provides.Contains(Entry.ResourceId))
@@ -98,6 +118,8 @@ void UProviderComponent::SetProduction(const TArray<FST_ResourceQuantity>& Resou
 			Provides.Add(Entry.ResourceId, Entry.Quantity);
 		}
 	}
+	*/
+
 	if (ParentStructure)
 	{
 		for (auto& Hex : ParentStructure->HexesInRange)

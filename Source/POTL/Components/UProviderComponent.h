@@ -32,8 +32,8 @@ public:
 
 	TArray<UHexTile*> HexesInRange;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Provider")
-	//TArray<FString> Resources;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Provider")
+	TArray<UResource*> Resources;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Provider")
 	TMap<FString, int> Provides;
@@ -50,8 +50,9 @@ public:
 	void ValidateRequirements();
 
 	UFUNCTION(BlueprintCallable, Category = "Provider")
-	void SetProduction(const TArray<FST_ResourceQuantity>& ResourceList);
-	//void SetProduction(const TArray<UResource*>& ResourceList);
+	void SetProduction(const TArray<UResource*>& ResourceList);
+	//void SetProduction(const TArray<FST_ResourceQuantity>& ResourceList);
+
 
 
 	virtual void Init() override;

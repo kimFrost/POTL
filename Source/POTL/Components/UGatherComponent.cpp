@@ -121,8 +121,9 @@ void UGatherComponent::CalcPetalProduction()
 		}
 	}
 
+
+	/*
 	TArray<FST_ResourceQuantity> TotalPetalProduction = GetTotalPetalProduction();
-	TArray<FST_ResourceQuantity> PrevTotalResourceProduction = TotalResourceProduction;
 	TotalResourceProduction.Empty();
 
 	for (int32 i = 0; i < TotalPetalProduction.Num(); i++)
@@ -133,13 +134,73 @@ void UGatherComponent::CalcPetalProduction()
 			TotalResourceProduction.Add(FST_ResourceQuantity(Entry.ResourceId, FMath::FloorToInt(Entry.Quantity / 5)));
 		}
 	}
+	*/
 
-	// Get number of resource to remove or add and their type
+	TMap<FString, int32> ResourceProductionMap;
+	for (auto& Entry : PetalProduction)
+	{
+		if (Entry.Value >= 5)
+		{
+			if (ResourceProductionMap.Contains(Entry.Key))
+			{
+				ResourceProductionMap[Entry.Key] += FMath::FloorToInt(Entry.Value / 5);
+			}
+			else
+			{
+				ResourceProductionMap.Add(Entry.Key, FMath::FloorToInt(Entry.Value / 5));
+			}
+		}
+	}
 
-	TMap<FString, int32> ResourceProductionChange;
 
+	// Sort so free resources are first in array. !!Not tested yet!!
+	ProducedResources.Sort([this](const UResource& Resource1, const UResource& Resource2) {
+		return (Resource1.AllocatedTo);
+	});
 
-	//OnProductionChangedDelegate.Broadcast(TotalResourceProduction);
+	// Validate all stored UResources up against ResourceProductionMap 
+	for (int i = ProducedResources.Num() - 1; i >= 0; i--)
+	{
+		UResource* Resource = ProducedResources[i];
+		if (Resource)
+		{
+			if (ResourceProductionMap.Contains(Resource->ResourceId) && ResourceProductionMap[Resource->ResourceId] >= 1)
+			{
+				ResourceProductionMap[Resource->ResourceId] -= 1;
+				if (ResourceProductionMap[Resource->ResourceId] < 1)
+				{
+					ResourceProductionMap.Remove(Resource->ResourceId);
+				}
+			}
+			else {
+				Resource->Unallocate();
+				ProducedResources.RemoveAt(i);
+				Resource->Consume(EConsumeType::Undefined);
+			}
+		}
+		else
+		{
+			ProducedResources.RemoveAt(i);
+		}
+	}
+
+	// If any left in array, then create new resources
+	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+	if (GameInstance)
+	{
+		for (auto& Entry : ResourceProductionMap)
+		{
+			for (int32 i = 0; i < Entry.Value; i++)
+			{
+				UResource* Resource = GameInstance->CreateResource(Entry.Key);
+				if (Resource)
+				{
+					ProducedResources.Add(Resource);
+				}
+			}
+		}
+	}
+
 	OnProductionChangedDelegate.Broadcast(ProducedResources);
 }
 void UGatherComponent::AddPetal(FString PetalId, int32 Quantity)
