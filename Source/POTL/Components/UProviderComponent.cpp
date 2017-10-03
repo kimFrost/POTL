@@ -87,6 +87,15 @@ void UProviderComponent::ValidateRequirements()
 //void UProviderComponent::SetProduction(const TArray<FST_ResourceQuantity>& ResourceList)
 void UProviderComponent::SetProduction(const TArray<UResource*>& ResourceList)
 {
+	for (auto& Resource : ResourceList)
+	{
+		if (Resource)
+		{
+
+		}
+	}
+
+
 	Resources = ResourceList;
 	Provides.Empty();
 
@@ -105,20 +114,6 @@ void UProviderComponent::SetProduction(const TArray<UResource*>& ResourceList)
 			}
 		}
 	}
-
-	/*
-	for (auto& Entry : ResourceList)
-	{
-		if (Provides.Contains(Entry.ResourceId))
-		{
-			Provides[Entry.ResourceId] += Entry.Quantity;
-		}
-		else
-		{
-			Provides.Add(Entry.ResourceId, Entry.Quantity);
-		}
-	}
-	*/
 
 	if (ParentStructure)
 	{

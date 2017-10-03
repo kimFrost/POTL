@@ -422,7 +422,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 						{
 							for (auto& Resource : Hex->AvailableResources)
 							{
-								if (Resource && Resource->ResourceId == Cost.Id && !Resource->AllocatedTo) //?? Should AvailableResources contain resource that are already allocated??
+								if (Resource && Resource->ResourceId == Cost.Id && !Resource->AllocatedTo)
 								{
 									Resource->AllocateTo(Structure);
 								}

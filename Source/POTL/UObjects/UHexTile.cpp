@@ -162,6 +162,14 @@ void UHexTile::UpdateResources()
 			}
 		}
 	}
+	SortResources();
+}
+void UHexTile::SortResources()
+{
+	// Sort so free resources are first in array. !!Not tested yet!!
+	AvailableResources.Sort([this](const UResource& Resource1, const UResource& Resource2) {
+		return (Resource1.AllocatedTo);
+	});
 }
 void UHexTile::OnHexClicked_Implementation()
 {

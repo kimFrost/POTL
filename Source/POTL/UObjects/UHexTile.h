@@ -133,6 +133,8 @@ public:
 
 	void UpdateResources();
 
+	void SortResources();
+
 	UFUNCTION(BlueprintNativeEvent, Category = "Hex")
 	void OnHexClicked();	
 

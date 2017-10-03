@@ -121,21 +121,6 @@ void UGatherComponent::CalcPetalProduction()
 		}
 	}
 
-
-	/*
-	TArray<FST_ResourceQuantity> TotalPetalProduction = GetTotalPetalProduction();
-	TotalResourceProduction.Empty();
-
-	for (int32 i = 0; i < TotalPetalProduction.Num(); i++)
-	{
-		FST_ResourceQuantity& Entry = TotalPetalProduction[i];
-		if (Entry.Quantity >= 5)
-		{
-			TotalResourceProduction.Add(FST_ResourceQuantity(Entry.ResourceId, FMath::FloorToInt(Entry.Quantity / 5)));
-		}
-	}
-	*/
-
 	TMap<FString, int32> ResourceProductionMap;
 	for (auto& Entry : PetalProduction)
 	{

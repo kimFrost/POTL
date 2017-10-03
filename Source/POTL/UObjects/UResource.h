@@ -10,6 +10,7 @@
 class UStorageComponent;
 class UProviderComponent;
 class APOTLStructure;
+class UHexTile;
 
 //~~~~~ Enum ~~~~~//
 UENUM(BlueprintType)
@@ -20,6 +21,9 @@ enum class EConsumeType : uint8
 	Construction UMETA(DisplayName = "Construction")
 };
 
+//~~~~~ Delegates/Event dispatcher ~~~~~//
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FResourceOnAllocated, UResource*, Resource);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FResourceOnUnallocated, UResource*, Resource);
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -43,8 +47,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
 	UProviderComponent* Provider;
-
-
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
@@ -72,6 +74,14 @@ public:
 	bool Unallocate();
 
 	void Init();
+
+	UPROPERTY(BlueprintAssignable, Category = "Resource|Event")
+	FResourceOnAllocated OnResourceAllocated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Resource|Event")
+	FResourceOnUnallocated OnResourceUnallocated;
+
+
 
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
