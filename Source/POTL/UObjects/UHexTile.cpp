@@ -4,6 +4,7 @@
 #include "POTLDataHolder.h"
 #include "POTLGameInstance.h"
 #include "UObjects/UHexPoint.h"
+#include "UObjects/UResource.h"
 #include "HexDecal.h"
 #include "Components/UProviderComponent.h"
 #include "POTLUtilFunctionLibrary.h"
@@ -146,11 +147,19 @@ void UHexTile::RemoveProvider(UProviderComponent* Provider)
 void UHexTile::UpdateResources()
 {
 	Resources.Empty();
+	AvailableResources.Empty();
 	for (auto& Provider : Providers)
 	{
 		if (Provider)
 		{
 			UPOTLUtilFunctionLibrary::MergeResourceLists(Provider->Provides, Resources);
+			for (auto& Resource : Provider->Resources)
+			{
+				if (Resource && !Resource->AllocatedTo)
+				{
+					AvailableResources.Add(Resource);
+				}
+			}
 		}
 	}
 }

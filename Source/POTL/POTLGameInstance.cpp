@@ -349,7 +349,6 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 
 					}
 
-
 					//~~ Store hex in structure ~~// //~~ CubeCoord is the rotation center cube coord ~~//
 					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(CubeCoord);
 					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
@@ -411,6 +410,22 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 							if (AttachToHex->AttachedBuilding != Structure)
 							{
 								Structure->AttachedTo = AttachToHex->AttachedBuilding;
+							}
+						}
+					}
+
+					// Allocate resources for operation requirement
+					for (int32 i = 0; i < StructureData->ConstructionCost.Num(); i++)
+					{
+						FIdAmount& Cost = StructureData->ConstructionCost[i];
+						for (int32 k = 0; k < Cost.Amount; k++)
+						{
+							for (auto& Resource : Hex->AvailableResources)
+							{
+								if (Resource && Resource->ResourceId == Cost.Id && !Resource->AllocatedTo) //?? Should AvailableResources contain resource that are already allocated??
+								{
+									Resource->AllocateTo(Structure);
+								}
 							}
 						}
 					}

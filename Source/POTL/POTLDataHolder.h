@@ -582,6 +582,7 @@ public:
 		bool BlockConstruction = true,
 		bool BlockPathing = true,
 		float ConstructionTime = 10.f,
+		TArray<FIdAmount> OperationCost = TArray<FIdAmount>(),
 		TArray<FIdAmount> ConstructionCost = TArray<FIdAmount>(),
 		TArray<FST_Gatherer> Gatherers = TArray<FST_Gatherer>())
 		: Id(Id)
@@ -595,6 +596,7 @@ public:
 		, BlockConstruction(BlockConstruction)
 		, BlockPathing(BlockPathing)
 		, ConstructionTime(ConstructionTime)
+		, OperationCost(OperationCost)
 		, ConstructionCost(ConstructionCost)
 		, Gatherers(Gatherers)
 	{}
@@ -639,6 +641,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	float ConstructionTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FIdAmount> OperationCost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FIdAmount> ConstructionCost;

@@ -12,6 +12,7 @@
 class APOTLStructure;
 class UStructureComponent;
 class UProviderComponent;
+class UResource;
 
 
 //~~~~~ Delegates ~~~~~//
@@ -94,6 +95,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
 	TMap<FString, int> Resources;
+
+	TArray<UResource*> AvailableResources;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
 	TArray<UProviderComponent*> Providers;
