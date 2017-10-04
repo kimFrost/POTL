@@ -86,8 +86,7 @@ bool UResource::AllocateTo(APOTLStructure* Structure)
 	{
 		Unallocate();
 
-		/* Rest of the logic here */
-		//Structure->AllocateResource(this); // Function not coded yet!!
+		Structure->AllocateResource(this); 
 
 		AllocatedTo = Structure;
 		OnResourceAllocated.Broadcast(this);
@@ -100,9 +99,7 @@ bool UResource::Unallocate()
 {
 	if (AllocatedTo)
 	{
-
-		/* Rest of the logic here */
-		//AllocatedTo->UnallocateResource(this); // Function not coded yet!!
+		AllocatedTo->UnallocateResource(this);
 
 		AllocatedTo = nullptr;
 		OnResourceUnallocated.Broadcast(this);

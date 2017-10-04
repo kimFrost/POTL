@@ -126,6 +126,18 @@ void UProviderComponent::SetProduction(const TArray<UResource*>& ResourceList)
 	}
 }
 
+void UProviderComponent::ActivateComponent()
+{
+	Super::ActivateComponent();
+	ActivateProvider();
+}
+
+void UProviderComponent::DeactivateComponent()
+{
+	Super::DeactivateComponent();
+	DeactivateProvider();
+}
+
 void UProviderComponent::Init()
 {
 	Super::Init();
@@ -156,9 +168,11 @@ void UProviderComponent::Init()
 	}
 
 	// ValidateRequirements on initialization
-	ValidateRequirements();
+	//ValidateRequirements(); // Might need to use use ActivateProvider instead.
+	ActivateComponent();
+
 	// ValidateRequirements every second
-	GetWorld()->GetTimerManager().SetTimer(ProvideCheckTimer, this, &UProviderComponent::ValidateRequirements, 1.f, true);
+	//GetWorld()->GetTimerManager().SetTimer(ProvideCheckTimer, this, &UProviderComponent::ValidateRequirements, 1.f, true);
 }
 
 

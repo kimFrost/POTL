@@ -64,11 +64,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Time")
 	virtual void OnTimeUpdate(float Time, float TimeProgressed);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Module")
-	void OnInit();
-
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	virtual void Init();
+
+	UFUNCTION(BlueprintCallable, Category = "Module")
+	virtual void ActivateComponent();
+
+	UFUNCTION(BlueprintCallable, Category = "Module")
+	virtual void DeactivateComponent();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Module")
+	void OnInit();
 
 	//UFUNCTION(BlueprintCallable, Category = "Time")
 	//virtual void OnProgressComplete();

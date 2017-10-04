@@ -155,7 +155,7 @@ void UHexTile::UpdateResources()
 			UPOTLUtilFunctionLibrary::MergeResourceLists(Provider->Provides, Resources);
 			for (auto& Resource : Provider->Resources)
 			{
-				if (Resource && !Resource->AllocatedTo)
+				if (Resource) //  && !Resource->AllocatedTo // Can't make it reliable that AvailableResources only contains resources that are not allocated.
 				{
 					AvailableResources.Add(Resource);
 				}
@@ -168,7 +168,7 @@ void UHexTile::SortResources()
 {
 	// Sort so free resources are first in array. !!Not tested yet!!
 	AvailableResources.Sort([this](const UResource& Resource1, const UResource& Resource2) {
-		return (Resource1.AllocatedTo);
+		return (Resource1.AllocatedTo != nullptr);
 	});
 }
 void UHexTile::OnHexClicked_Implementation()

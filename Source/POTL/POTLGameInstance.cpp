@@ -425,6 +425,7 @@ APOTLStructure* UPOTLGameInstance::PlantStructure(FVector CubeCoord, int32 Rotat
 								if (Resource && Resource->ResourceId == Cost.Id && !Resource->AllocatedTo)
 								{
 									Resource->AllocateTo(Structure);
+									break;
 								}
 							}
 						}

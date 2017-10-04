@@ -140,7 +140,7 @@ void UGatherComponent::CalcPetalProduction()
 
 	// Sort so free resources are first in array. !!Not tested yet!!
 	ProducedResources.Sort([this](const UResource& Resource1, const UResource& Resource2) {
-		return (Resource1.AllocatedTo);
+		return (Resource1.AllocatedTo != nullptr);
 	});
 
 	// Validate all stored UResources up against ResourceProductionMap 

@@ -54,6 +54,9 @@ public:
 	//void SetProduction(const TArray<FST_ResourceQuantity>& ResourceList);
 
 
+	virtual void ActivateComponent() override;
+
+	virtual void DeactivateComponent() override;
 
 	virtual void Init() override;
 

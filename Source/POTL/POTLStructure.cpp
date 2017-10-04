@@ -518,6 +518,85 @@ bool APOTLStructure::UnallocateHex(UHexTile* Hex)
 
 /******************** RESOURCES *************************/
 
+void APOTLStructure::AllocateResource(UResource* Resource)
+{
+	if (Resource && !AllocatedResources.Contains(Resource))
+	{
+		AllocatedResources.Add(Resource);
+		CheckOperationRequirements();
+	}
+}
+
+void APOTLStructure::UnallocateResource(UResource* Resource)
+{
+	if (Resource && AllocatedResources.Contains(Resource))
+	{
+		AllocatedResources.Remove(Resource);
+		CheckOperationRequirements();
+	}
+}
+
+void APOTLStructure::CheckOperationRequirements()
+{
+	bool Valid = true;
+	TMap<FString, int32> ResourcesRequired;
+
+	for (int32 i = 0; i < StructureBaseData.OperationCost.Num(); i++)
+	{
+		FIdAmount& Cost = StructureBaseData.OperationCost[i];
+		if (ResourcesRequired.Contains(Cost.Id))
+		{
+			ResourcesRequired[Cost.Id] += Cost.Amount;
+		}
+		else
+		{
+			ResourcesRequired.Add(Cost.Id, Cost.Amount);
+		}
+	}
+
+	for (auto& Resource : AllocatedResources)
+	{
+		if (Resource)
+		{
+			if (ResourcesRequired.Contains(Resource->ResourceId))
+			{
+				if (ResourcesRequired[Resource->ResourceId] > 0)
+				{
+					ResourcesRequired[Resource->ResourceId] -= 1;
+				}
+			}
+		}
+	}
+
+	for (auto& Entry : ResourcesRequired)
+	{
+		if (Entry.Value > 0)
+		{
+			Valid = false;
+			break;
+		}
+	}
+
+	//~~ Disable or enable structure components like gather/provider ~~//
+	TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
+	for (auto& Component : StructureComponents)
+	{
+		UStructureComponent* StructureComponent = Cast<UStructureComponent>(Component);
+		if (StructureComponent)
+		{
+			if (Valid)
+			{
+				StructureComponent->ActivateComponent();
+			}
+			else
+			{
+				StructureComponent->DeactivateComponent();
+			}
+		}
+	}
+	
+}
+
 int APOTLStructure::AddResource(FString ResourceId, int32 Quantity)
 {
 	int Leftovers = Quantity;
@@ -708,6 +787,7 @@ void APOTLStructure::Init()
 			bIsInitialized = true;
 		}
 		UpdateInRangeLists(true);
+		CheckOperationRequirements();
 		OnInit();
 	}
 }

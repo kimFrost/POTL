@@ -117,18 +117,19 @@ void UStructureComponent::Init()
 }
 
 
-/******************** OnTimeUpdate *************************/
 void UStructureComponent::OnTimeUpdate(float Time, float TimeProgressed)
-{
-	
-}
-
+{}
+void UStructureComponent::ActivateComponent()
+{}
+void UStructureComponent::DeactivateComponent()
+{}
 
 /******************** OnInit *************************/
 void UStructureComponent::OnInit_Implementation()
 {
 
 }
+
 
 
 // Called when the game starts

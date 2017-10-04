@@ -226,7 +226,7 @@
         "BlockPathing": true,
 		"OperationCost": [
 			{"Id": "Lumber", "Amount": 1}
-		]
+		],
 		"ConstructionCost": [
 			{"Id": "Lumber", "Amount": 2}
 		]
@@ -263,6 +263,9 @@
         "RotationDirection": 0,
         "BlockConstruction": true,
         "BlockPathing": true,
+		"OperationCost": [
+			{"Id": "Lumber", "Amount": 1}
+		],
 		"ConstructionCost": [
 			{"Id": "Lumber", "Amount": 1}
 		]

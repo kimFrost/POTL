@@ -175,6 +175,21 @@ public:
 
 	/** Resources */
 
+	// NEW RESOURCE SYSTEM
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	TArray<UResource*> AllocatedResources;
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void AllocateResource(UResource* Resource);
+
+	UFUNCTION(BlueprintCallable, Category = "Resources")
+	void UnallocateResource(UResource* Resource);
+
+	void CheckOperationRequirements();
+
+	// OLD RESOURCE SYSTEM 
+
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	int AddResource(FString ResourceId, int32 Quantity); // , EResourceList Type
 

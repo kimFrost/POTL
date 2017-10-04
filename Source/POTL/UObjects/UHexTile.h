@@ -96,6 +96,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
 	TMap<FString, int> Resources;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
 	TArray<UResource*> AvailableResources;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hex")
