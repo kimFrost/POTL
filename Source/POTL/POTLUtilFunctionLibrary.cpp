@@ -250,7 +250,6 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetCubesInRange(FVector CubeCoordsFrom
 		int32 NegativeRange = Range * -1;
 		for (int32 Dx = NegativeRange; Dx <= Range; Dx++)
 		{
-			//int32 First = FMath::FloorToInt(FMath::Max3(0, 0, 0));
 			int32 From = FMath::FloorToInt(FVector(NegativeRange, (Dx * -1) - Range, -99999999).GetMax());
 			int32 To = FMath::FloorToInt(FVector(Range, (Dx * -1) + Range, 99999999).GetMin());
 			for (int32 Dy = From; Dy <= To; Dy++)
@@ -264,6 +263,13 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetCubesInRange(FVector CubeCoordsFrom
 	{
 		Cubes.Remove(CubeCoordsFrom);
 	}
+	return Cubes;
+}
+TArray<FVector> UPOTLUtilFunctionLibrary::GetCubesSpiralInRange(FVector CubeCoordsFrom, int32 Range, bool IncludeFrom)
+{
+	TArray<FVector> Cubes;
+
+
 	return Cubes;
 }
 FVector UPOTLUtilFunctionLibrary::ConvertOffsetToCube(FVector2D OffsetCoords)

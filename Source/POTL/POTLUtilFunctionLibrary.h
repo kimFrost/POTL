@@ -58,6 +58,9 @@ public:
 	static TArray<FVector> GetCubesInRange(FVector CubeCoordsFrom, int32 Range, bool IncludeFrom);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
+	static TArray<FVector> GetCubesSpiralInRange(FVector CubeCoordsFrom, int32 Range, bool IncludeFrom);
+
+	UFUNCTION(BlueprintCallable, Category = "Util")
 	static FVector ConvertOffsetToCube(FVector2D OffsetCoords);
 
 	UFUNCTION(BlueprintCallable, Category = "Util")
