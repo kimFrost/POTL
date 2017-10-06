@@ -265,16 +265,17 @@ TArray<FVector> UPOTLUtilFunctionLibrary::GetCubesInRange(FVector CubeCoordsFrom
 	}
 	return Cubes;
 }
-TArray<FVector> UPOTLUtilFunctionLibrary::GetCubeRing(FVector CubeCoordsCenter, int32 Distance)
+TArray<FVector> UPOTLUtilFunctionLibrary::GetCubeRing(FVector CubeCoordsCenter, int32 Radius)
 {
 	TArray<FVector> Cubes = TArray<FVector>();
-	FVector Cube = CubeCoordsCenter + (DirectionToCube(0) * Distance); // Start which is not center, but position zero
-	for (int32 i = 0; i <= 6; i++)
+
+	FVector Cube = CubeCoordsCenter + (DirectionToCube(0) * Radius); // Start which is not center, but position zero
+	for (int32 i = 0; i < 6; i++)
 	{
-		for (int32 r = 0; r <= Distance; r++)
+		for (int32 r = 0; r < Radius; r++)
 		{
 			Cubes.Add(Cube);
-			Cube = Cube + DirectionToCube(i);
+			Cube = Cube + DirectionToCube(i + 2); // +2 to make rotation match.
 		}
 	}
 	return Cubes;
