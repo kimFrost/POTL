@@ -719,7 +719,8 @@ void APOTLStructure::Init()
 			GameInstance = Cast<UPOTLGameInstance>(GetGameInstance());
 			if (GameInstance)
 			{
-				TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(CubeCoord, 5, false);
+				//TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(CubeCoord, 5, false);
+				TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubeSpiralInRange(CubeCoord, 5, false);
 				for (int32 i = 0; i < Cubes.Num(); i++)
 				{
 					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cubes[i]);
