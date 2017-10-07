@@ -57,6 +57,8 @@ void AIsland::CreateAssets()
 		//InstTreeMesh->SetCollisionResponseToChannel()
 		//InstTreeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		InstTreeMesh->RegisterComponent();
+		InstTreeMesh->ReleasePerInstanceRenderData(); //To fix crash in 4.17
+		InstTreeMesh->InitPerInstanceRenderData(); //To fix crash in 4.17
 		InstTreeMesh->SetStaticMesh(TreeStaticMesh);
 		InstTreeMesh->SetFlags(RF_Transactional);
 		//InstTreeMesh->SetWorldLocation(OnHex->Location);
