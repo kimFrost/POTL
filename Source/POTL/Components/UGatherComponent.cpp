@@ -180,6 +180,7 @@ void UGatherComponent::CalcPetalProduction()
 				UResource* Resource = GameInstance->CreateResource(Entry.Key);
 				if (Resource)
 				{
+					Resource->Owner = ParentStructure;
 					ProducedResources.Add(Resource);
 				}
 			}

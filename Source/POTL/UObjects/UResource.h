@@ -58,8 +58,10 @@ public:
 
 	float LuxucyRating; // 1-10 factor. The richer the more luxury resource people will require.
 
-	UStorageComponent* StoredIn;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
+	APOTLStructure* Owner;
 
+	UStorageComponent* StoredIn;
 
 	APOTLStructure* GetOwner();
 
