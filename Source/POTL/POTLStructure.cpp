@@ -522,6 +522,15 @@ void APOTLStructure::AllocateResource(UResource* Resource)
 {
 	if (Resource && !AllocatedResources.Contains(Resource))
 	{
+		APOTLStructure* Owner = Resource->Owner;
+		if (AllocatedResourcesByStructure.Contains(Owner))
+		{
+			AllocatedResourcesByStructure[Owner].Add(Resource);
+		}
+		else
+		{
+			AllocatedResourcesByStructure.Add(Owner, { Resource });
+		}
 		AllocatedResources.Add(Resource);
 		CheckOperationRequirements();
 	}
@@ -531,6 +540,15 @@ void APOTLStructure::UnallocateResource(UResource* Resource)
 {
 	if (Resource && AllocatedResources.Contains(Resource))
 	{
+		APOTLStructure* Owner = Resource->Owner;
+		if (AllocatedResourcesByStructure.Contains(Owner))
+		{
+			AllocatedResourcesByStructure[Owner].Remove(Resource);
+			if (AllocatedResourcesByStructure[Owner].Num() == 0)
+			{
+				AllocatedResourcesByStructure.Remove(Owner);
+			}
+		}
 		AllocatedResources.Remove(Resource);
 		CheckOperationRequirements();
 	}
