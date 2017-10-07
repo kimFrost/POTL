@@ -522,14 +522,14 @@ void APOTLStructure::AllocateResource(UResource* Resource)
 {
 	if (Resource && !AllocatedResources.Contains(Resource))
 	{
-		APOTLStructure* Owner = Resource->Owner;
-		if (AllocatedResourcesByStructure.Contains(Owner))
+		APOTLStructure* ResourceOwner = Resource->Owner;
+		if (AllocatedResourcesByStructure.Contains(ResourceOwner))
 		{
-			AllocatedResourcesByStructure[Owner].Add(Resource);
+			AllocatedResourcesByStructure[ResourceOwner].Add(Resource);
 		}
 		else
 		{
-			AllocatedResourcesByStructure.Add(Owner, { Resource });
+			AllocatedResourcesByStructure.Add(ResourceOwner, { Resource });
 		}
 		AllocatedResources.Add(Resource);
 		CheckOperationRequirements();
@@ -540,13 +540,13 @@ void APOTLStructure::UnallocateResource(UResource* Resource)
 {
 	if (Resource && AllocatedResources.Contains(Resource))
 	{
-		APOTLStructure* Owner = Resource->Owner;
-		if (AllocatedResourcesByStructure.Contains(Owner))
+		APOTLStructure* ResourceOwner = Resource->Owner;
+		if (AllocatedResourcesByStructure.Contains(ResourceOwner))
 		{
-			AllocatedResourcesByStructure[Owner].Remove(Resource);
-			if (AllocatedResourcesByStructure[Owner].Num() == 0)
+			AllocatedResourcesByStructure[ResourceOwner].Remove(Resource);
+			if (AllocatedResourcesByStructure[ResourceOwner].Num() == 0)
 			{
-				AllocatedResourcesByStructure.Remove(Owner);
+				AllocatedResourcesByStructure.Remove(ResourceOwner);
 			}
 		}
 		AllocatedResources.Remove(Resource);
@@ -742,10 +742,10 @@ void APOTLStructure::Init()
 				for (int32 i = 0; i < Cubes.Num(); i++)
 				{
 					FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cubes[i]);
-					int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
-					if (GameInstance->Hexes.IsValidIndex(HexIndex))
+					int32 _HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
+					if (GameInstance->Hexes.IsValidIndex(_HexIndex))
 					{
-						HexesInRange.Add(GameInstance->Hexes[HexIndex]);
+						HexesInRange.Add(GameInstance->Hexes[_HexIndex]);
 					}
 				}
 			}

@@ -235,10 +235,10 @@ bool UPOTLGameInstance::ValidatePlaceStructureOnHex(UHexTile* Hex, const FST_Bui
 			int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GridXCount);
 			if (Hexes.IsValidIndex(HexIndex))
 			{
-				UHexTile* Hex = Hexes[HexIndex];
-				if (Hex)
+				UHexTile* _Hex = Hexes[HexIndex];
+				if (_Hex)
 				{	
-					if (!Hex->IsBuildable())
+					if (!_Hex->IsBuildable())
 					{
 						return false;
 					}

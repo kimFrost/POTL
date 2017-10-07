@@ -344,7 +344,8 @@ void APOTLPlayerController::LeftClickPressed()
 				const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhysicalSurface"), true);
 				if (EnumPtr)
 				{
-					FText SurfaceString = EnumPtr->GetEnumText(CachedHex->HexResourceInfo.SurfaceType);
+					//FText SurfaceString = EnumPtr->GetEnumText(CachedHex->HexResourceInfo.SurfaceType);
+					FText SurfaceString = EnumPtr->GetDisplayNameTextByIndex(CachedHex->HexResourceInfo.SurfaceType);
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, "trace surface type: " + SurfaceString.ToString());
 				}
 				//OnHexSelected.Broadcast(CachedHex);
