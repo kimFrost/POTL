@@ -180,8 +180,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
 	TArray<UResource*> AllocatedResources;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
 	TMap<APOTLStructure*, TArray<UResource*>> AllocatedResourcesByStructure;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Resources")
+	TArray<UResource*> GetAllocatedResourceByStructure(const APOTLStructure* Structure);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Resources")
+	TArray<APOTLStructure*> GetAllocatedResourcesOwners();
 
 	UFUNCTION(BlueprintCallable, Category = "Resources")
 	void AllocateResource(UResource* Resource);

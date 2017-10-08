@@ -518,6 +518,29 @@ bool APOTLStructure::UnallocateHex(UHexTile* Hex)
 
 /******************** RESOURCES *************************/
 
+TArray<UResource*> APOTLStructure::GetAllocatedResourceByStructure(const APOTLStructure* Structure)
+{
+	if (AllocatedResourcesByStructure.Contains(Structure))
+	{
+		return AllocatedResourcesByStructure[Structure];
+	}
+	return TArray<UResource*>();
+}
+
+TArray<APOTLStructure*> APOTLStructure::GetAllocatedResourcesOwners()
+{
+	TArray<APOTLStructure*> _Owners = TArray<APOTLStructure*>();
+	for (auto& Resource : AllocatedResources)
+	{
+		if (Resource)
+		{
+			APOTLStructure* ResourceOwner = Resource->Owner;
+			_Owners.AddUnique(ResourceOwner);
+		}
+	}
+	return _Owners;
+}
+
 void APOTLStructure::AllocateResource(UResource* Resource)
 {
 	if (Resource && !AllocatedResources.Contains(Resource))
