@@ -11,7 +11,7 @@
 
 
 //~~ Forward declarations ~~//
-
+class UPerson;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class POTL_API UResidentsComponent : public UStructureComponent
@@ -22,6 +22,10 @@ public:
 
 	// Sets default values for this component's properties
 	UResidentsComponent();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
+	TArray<UPerson*> People;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
 	float ResidentDensity;

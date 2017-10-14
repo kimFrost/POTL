@@ -3,6 +3,8 @@
 #include "POTL.h"
 #include "UObjects/UResource.h"
 #include "UObjects/UHexTile.h"
+#include "UObjects/Allocations/UPersonSlot.h"
+#include "UObjects/Allocations/UHexSlot.h"
 #include "POTLGameMode.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
@@ -405,4 +407,16 @@ void UGatherComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+	UHexSlot* HexSlot = NewObject<UHexSlot>(this);
+	if (HexSlot)
+	{
+		//AllocationSlot-> Bind to allocation change
+	}
+
+	UPersonSlot* PersonSlot = NewObject<UPersonSlot>(this);
+	if (PersonSlot)
+	{
+		//AllocationSlot-> Bind to allocation change
+	}
 }

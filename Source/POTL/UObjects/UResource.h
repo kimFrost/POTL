@@ -3,6 +3,7 @@
 #pragma once
 
 #include "UObject/NoExportTypes.h"
+#include "UObjects/Allocations/UAllocatable.h"
 #include "UResource.generated.h"
 
 
@@ -27,7 +28,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FResourceOnUnallocated, UResource*, 
 
 
 UCLASS(Blueprintable, BlueprintType)
-class POTL_API UResource : public UObject
+class POTL_API UResource : public UAllocatable
 {
 	GENERATED_BODY()
 

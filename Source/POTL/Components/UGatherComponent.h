@@ -9,6 +9,9 @@
 
 class UResource;
 class UProviderComponent;
+class UAllocationSlot;
+class UPersonSlot;
+class UHexSlot;
 
 
 //~~ DELEGATES ~~//
@@ -31,11 +34,36 @@ public:
 
 	UProviderComponent* ProviderComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
-	bool bGatherFromAll;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
+	TArray<UPersonSlot*> AllocatedPeopleSlots;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
+	TArray<UHexSlot*> AllocatedTileSlots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
 	int GatherRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
+	TArray<FST_TileConversion> TileConversions;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
+	TArray<UResource*> ProducedResources;
+
+
+	UFUNCTION(Category = "Structure")
+	EHandleType ParseAllocateHex(UHexTile* Hex);
+
+	UFUNCTION(Category = "Structure")
+	EHandleType ParseUnallocateHex(UHexTile* Hex);
+
+
+
+
+
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
+	bool bGatherFromAll;
 
 	TArray<UHexTile*> GatherFrom;
 
@@ -48,8 +76,7 @@ public:
 
 	void ValidateRequirements();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
-	TArray<FST_TileConversion> TileConversions;
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
 	TMap<FString, int> PetalProduction;
@@ -60,8 +87,7 @@ public:
 
 	TArray<FST_ResourceQuantity> TotalResourceProduction;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
-	TArray<UResource*> ProducedResources;
+	
 
 
 	UFUNCTION(BlueprintCallable, Category = "Gather")
@@ -81,11 +107,6 @@ public:
 
 	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
 
-	UFUNCTION(Category = "Structure")
-	EHandleType ParseAllocateHex(UHexTile* Hex);
-
-	UFUNCTION(Category = "Structure")
-	EHandleType ParseUnallocateHex(UHexTile* Hex);
 
 	UPROPERTY(BlueprintAssignable, Category = "Gather|Event")
 	FOnProductionChangedDelegate OnProductionChangedDelegate;
