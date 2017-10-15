@@ -59,10 +59,11 @@ public:
 	UFUNCTION(Category = "Structure")
 	EHandleType ParseUnallocateHex(UHexTile* Hex);
 
+	void UpdateMaxTiles(UAllocationSlot* AllocationSlot);
 
 	void ProcessBaseData();
 
-
+	UAllocatable* RequestAllocatable(TSubclassOf<class UAllocatable> AllocatableClass, FString AllocatableID);
 
 
 

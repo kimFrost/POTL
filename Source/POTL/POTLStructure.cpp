@@ -1027,6 +1027,20 @@ bool APOTLStructure::StoreLabor(int Amount)
 	return false;
 }
 
+UAllocatable* APOTLStructure::RequestAllocatable(TSubclassOf<class UAllocatable> AllocatableClass, FString AllocatableID)
+{
+	// Loop through hexes in range, and if structure then request Allocatable. 
+	// Could this be used for both people and resources? Maybe even hexes?
+
+	UAllocatable* Allocatable = NewObject<UAllocatable>(this);
+	if (Allocatable)
+	{
+		return Allocatable;
+	}
+
+	return nullptr;
+}
+
 
 /******************** MAP *************************/
 APOTLStructure* APOTLStructure::GetNearestStructure()
@@ -1035,6 +1049,8 @@ APOTLStructure* APOTLStructure::GetNearestStructure()
 	//TSubclassOf<AActor> ClassToFind;
 	//Array<AActor*> FoundActors;
 	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, FoundActors);
+
+	// Loop HexesInRange. They are sorted by distance.
 
 	for (TActorIterator<APOTLStructure> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{

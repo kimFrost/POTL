@@ -243,6 +243,8 @@ public:
 	bool RequestLabor(int Amount);
 	bool StoreLabor(int Amount);
 
+	UAllocatable* RequestAllocatable(TSubclassOf<class UAllocatable> AllocatableClass, FString AllocatableID);
+
 
 	/** Map */
 

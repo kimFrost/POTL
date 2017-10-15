@@ -3,6 +3,7 @@
 #include "POTL.h"
 #include "UObjects/UResource.h"
 #include "UObjects/UHexTile.h"
+#include "UObjects/UPerson.h"
 #include "UObjects/Allocations/UPersonSlot.h"
 #include "UObjects/Allocations/UHexSlot.h"
 #include "POTLGameMode.h"
@@ -322,6 +323,7 @@ EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
 }
 
 
+
 /******************** OnProgressComplete *************************/
 void UGatherComponent::OnProgressComplete()
 {
@@ -335,6 +337,39 @@ void UGatherComponent::OnProgressComplete()
 	*/
 }
 
+void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
+{
+	int32 MaxNumberOfTiles = 0;
+	for (auto& Slot : AllocatedPersonSlots)
+	{
+		if (Slot && Slot->Allocated)
+		{
+			UPerson* Person = Cast<UPerson>(Slot->Allocated);
+			if (Person)
+			{
+				MaxNumberOfTiles += 3;
+			}
+		}
+	}
+	int32 DiffCount = MaxNumberOfTiles - AllocatedTilSlots.Num();
+	if (DiffCount > 0)
+	{
+		// Add Tile slots
+		for (int32 i = 0; i < DiffCount; i++)
+		{
+			UHexSlot* HexSlot = NewObject<UHexSlot>(this);
+			if (HexSlot)
+			{
+				AllocatedTilSlots.Add(HexSlot);
+			}
+		}
+	}
+	else if (DiffCount < 0)
+	{
+		// Remove Tile slots
+	}
+}
+
 void UGatherComponent::ProcessBaseData()
 {
 	for (auto& Entry : BaseData.AllocationSlots)
@@ -344,16 +379,24 @@ void UGatherComponent::ProcessBaseData()
 			UPersonSlot* PersonSlot = NewObject<UPersonSlot>(this);
 			if (PersonSlot)
 			{
+				// Bind RequestAllocatable on slot to RequestAllocatable for processing
+				PersonSlot->OnRequestAllocatable.BindUObject(this, &UGatherComponent::RequestAllocatable);
+				// Bind to allocate/unallocate
+				PersonSlot->OnAllocatedDelegate.AddDynamic(this, &UGatherComponent::UpdateMaxTiles);
+				PersonSlot->OnUnallocatedDelegate.AddDynamic(this, &UGatherComponent::UpdateMaxTiles);
 				AllocatedPersonSlots.Add(PersonSlot);
 			}
 		}
 	}
+}
 
-	UHexSlot* HexSlot = NewObject<UHexSlot>(this);
-	if (HexSlot)
+UAllocatable* UGatherComponent::RequestAllocatable(TSubclassOf<class UAllocatable> AllocatableClass, FString AllocatableID)
+{
+	if (ParentStructure)
 	{
-		//AllocationSlot-> Bind to allocation change
+		return ParentStructure->RequestAllocatable(AllocatableClass, AllocatableID);
 	}
+	return nullptr;
 }
 
 void UGatherComponent::Init()
