@@ -351,7 +351,7 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 			}
 		}
 	}
-	int32 DiffCount = MaxNumberOfTiles - AllocatedTilSlots.Num();
+	int32 DiffCount = MaxNumberOfTiles - AllocatedTileSlots.Num();
 	if (DiffCount > 0)
 	{
 		// Add Tile slots
@@ -360,14 +360,33 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 			UHexSlot* HexSlot = NewObject<UHexSlot>(this);
 			if (HexSlot)
 			{
-				AllocatedTilSlots.Add(HexSlot);
+				AllocatedTileSlots.Add(HexSlot);
 			}
 		}
 	}
 	else if (DiffCount < 0)
 	{
 		// Remove Tile slots
+		for (int32 i = 0; i < DiffCount * 1; i++)
+		{
+			UHexSlot*LastHexSlot = AllocatedTileSlots[AllocatedTileSlots.Num() - 1];
+			if (LastHexSlot)
+			{
+				LastHexSlot->Unallocate();
+				AllocatedTileSlots.RemoveAt(AllocatedTileSlots.Num() - 1);
+			}
+		}
+		/*
+		for (int i = ProducedResources.Num() - 1; i >= 0; i--)
+		{
+
+		}
+		*/
 	}
+	// Sort. Put free last
+	AllocatedTileSlots.Sort([this](const UHexSlot& HexSlot1, const UHexSlot& HexSlot2) {
+		return (HexSlot1.Allocated == nullptr);
+	});
 }
 
 void UGatherComponent::ProcessBaseData()

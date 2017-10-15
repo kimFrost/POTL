@@ -38,7 +38,7 @@ public:
 	TArray<UPersonSlot*> AllocatedPersonSlots;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
-	TArray<UHexSlot*> AllocatedTilSlots;
+	TArray<UHexSlot*> AllocatedTileSlots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
 	int GatherRange;
@@ -59,6 +59,7 @@ public:
 	UFUNCTION(Category = "Structure")
 	EHandleType ParseUnallocateHex(UHexTile* Hex);
 
+	UFUNCTION(Category = "Structure")
 	void UpdateMaxTiles(UAllocationSlot* AllocationSlot);
 
 	void ProcessBaseData();
