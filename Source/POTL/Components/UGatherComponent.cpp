@@ -335,6 +335,26 @@ void UGatherComponent::OnProgressComplete()
 	*/
 }
 
+void UGatherComponent::ProcessBaseData()
+{
+	for (auto& Entry : BaseData.AllocationSlots)
+	{
+		for (int32 i = 0; i < Entry.Value; i++)
+		{
+			UPersonSlot* PersonSlot = NewObject<UPersonSlot>(this);
+			if (PersonSlot)
+			{
+				AllocatedPersonSlots.Add(PersonSlot);
+			}
+		}
+	}
+
+	UHexSlot* HexSlot = NewObject<UHexSlot>(this);
+	if (HexSlot)
+	{
+		//AllocationSlot-> Bind to allocation change
+	}
+}
 
 void UGatherComponent::Init()
 {
@@ -353,6 +373,8 @@ void UGatherComponent::Init()
 	{
 		GatherFrom = AllocatedHexes;
 	}
+
+	ProcessBaseData();
 
 	if (ParentStructure)
 	{
@@ -407,16 +429,4 @@ void UGatherComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-	UHexSlot* HexSlot = NewObject<UHexSlot>(this);
-	if (HexSlot)
-	{
-		//AllocationSlot-> Bind to allocation change
-	}
-
-	UPersonSlot* PersonSlot = NewObject<UPersonSlot>(this);
-	if (PersonSlot)
-	{
-		//AllocationSlot-> Bind to allocation change
-	}
 }

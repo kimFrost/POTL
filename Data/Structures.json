@@ -159,7 +159,8 @@
 							"Lumber": 2
 						}
 					}
-				]
+				],
+				"AllocationSlots": { "Laborer": 2 }
 			}
 		],
         "CubeRotationRoot": {"X":0, "Y":0, "Z":0},

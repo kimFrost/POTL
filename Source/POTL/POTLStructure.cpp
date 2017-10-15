@@ -878,6 +878,7 @@ void APOTLStructure::ProcessBaseData()
 			ProviderComponent->RegisterComponent();
 			AddOwnedComponent(GatherComponent);
 			AddOwnedComponent(ProviderComponent);
+			GatherComponent->BaseData = Gather;
 			GatherComponent->GatherRange = Gather.GatherRange;
 			GatherComponent->TileConversions = Gather.TileConvertions;
 			GatherComponent->OnProductionChangedDelegate.AddDynamic(ProviderComponent, &UProviderComponent::SetProduction);

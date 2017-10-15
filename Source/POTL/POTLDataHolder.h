@@ -550,9 +550,11 @@ struct FST_Gatherer : public FTableRowBase
 public:
 	FST_Gatherer(
 		int32 GatherRange = 5,
-		TArray<FST_TileConversion> TileConvertions = TArray<FST_TileConversion>())
+		TArray<FST_TileConversion> TileConvertions = TArray<FST_TileConversion>(),
+		TMap<FString, int32> AllocationSlots = TMap<FString, int32>())
 		: GatherRange(GatherRange)
 		, TileConvertions(TileConvertions)
+		, AllocationSlots(AllocationSlots)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
@@ -560,6 +562,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
 	TArray<FST_TileConversion> TileConvertions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
+	TMap<FString, int32> AllocationSlots;
 };
 
 

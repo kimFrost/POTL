@@ -2,6 +2,7 @@
 
 #include "POTL.h"
 #include "UObjects/UResource.h"
+#include "UObjects/UPerson.h"
 #include "POTLStructure.h"
 #include "POTLGameMode.h"
 #include "POTLGameInstance.h"
@@ -70,7 +71,14 @@ void UResidentsComponent::Init()
 {
 	Super::Init();
 
-
+	for (int32 i = 0; i < 2; i++)
+	{
+		UPerson* Person = NewObject<UPerson>(this);
+		if (Person)
+		{
+			People.Add(Person);
+		}
+	}
 
 	// CheckProduction every second
 	GetWorld()->GetTimerManager().SetTimer(NeedsCheckTimer, this, &UResidentsComponent::CheckNeeds, 1.f, true);

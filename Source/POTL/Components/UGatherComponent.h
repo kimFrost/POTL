@@ -35,10 +35,10 @@ public:
 	UProviderComponent* ProviderComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
-	TArray<UPersonSlot*> AllocatedPeopleSlots;
+	TArray<UPersonSlot*> AllocatedPersonSlots;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
-	TArray<UHexSlot*> AllocatedTileSlots;
+	TArray<UHexSlot*> AllocatedTilSlots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gather")
 	int GatherRange;
@@ -49,6 +49,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
 	TArray<UResource*> ProducedResources;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
+	FST_Gatherer BaseData;
+
 
 	UFUNCTION(Category = "Structure")
 	EHandleType ParseAllocateHex(UHexTile* Hex);
@@ -57,6 +60,7 @@ public:
 	EHandleType ParseUnallocateHex(UHexTile* Hex);
 
 
+	void ProcessBaseData();
 
 
 
@@ -113,6 +117,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Production")
 	void OnGathered();
+
+	
 
 
 
