@@ -3,6 +3,7 @@
 #pragma once
 
 #include "UObject/NoExportTypes.h"
+#include "UObjects/Allocations/UAllocatable.h"
 #include "UObjects/UHexPoint.h"
 #include "HexDecal.h"
 #include "UHexTile.generated.h"
@@ -21,7 +22,7 @@ DECLARE_DELEGATE_RetVal_OneParam(EHandleType, FOnHexClickedDelegate, UHexTile*);
 //DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam
 
 UCLASS(Blueprintable, BlueprintType)
-class POTL_API UHexTile : public UObject
+class POTL_API UHexTile : public UAllocatable
 {
 	GENERATED_BODY()
 

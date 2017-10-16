@@ -240,7 +240,6 @@ bool APOTLStructure::LeaveEditMode()
 			{
 				Hex->HideDecal();
 				Hex->UnbindToHexClicked(this);
-				//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
 			}
 		}
 		bInEditMode = false;
@@ -1027,15 +1026,22 @@ bool APOTLStructure::StoreLabor(int Amount)
 	return false;
 }
 
-UAllocatable* APOTLStructure::RequestAllocatable(TSubclassOf<class UAllocatable> AllocatableClass, FString AllocatableID)
+UAllocatable* APOTLStructure::RequestAllocatable(UClass* AllocatableClass, FString AllocatableID)
 {
+	//TSubclassOf<class UAllocatable>
+	//UClass*
+
 	// Loop through hexes in range, and if structure then request Allocatable. 
 	// Could this be used for both people and resources? Maybe even hexes?
 
-	UAllocatable* Allocatable = NewObject<UAllocatable>(this);
-	if (Allocatable)
+	if (AllocatableClass)
 	{
-		return Allocatable;
+		//UAllocatable* Allocatable = NewObject<UAllocatable>(this, (*AllocatableClass));
+		UAllocatable* Allocatable = NewObject<UAllocatable>(this, AllocatableClass);
+		if (Allocatable)
+		{
+			return Allocatable;
+		}
 	}
 
 	return nullptr;

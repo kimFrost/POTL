@@ -9,7 +9,7 @@
 
 UAllocationSlot::UAllocationSlot()
 {
-	
+	AllowedAllocationClass = UAllocatable::StaticClass();
 }
 
 
@@ -24,6 +24,7 @@ void UAllocationSlot::Allocate(UAllocatable* Allocatable)
 	{
 		Allocated = Allocatable;
 		OnAllocatedDelegate.Broadcast(this);
+		OnAllocatedChange.Broadcast(this);
 	}
 }
 
@@ -33,6 +34,7 @@ void UAllocationSlot::Unallocate()
 	{
 		Allocated = nullptr;
 		OnUnallocatedDelegate.Broadcast(this);
+		OnAllocatedChange.Broadcast(this);
 	}
 }
 

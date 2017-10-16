@@ -14,9 +14,11 @@
 //~~~~~ Deleagtes ~~~~~//
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllocatableUnallocated, UAllocationSlot*, AllocationSlot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllocatableAllocated, UAllocationSlot*, AllocationSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllocatableChange, UAllocationSlot*, AllocationSlot);
 //DECLARE_DELEGATE_RetVal(UAllocatable*, FRequestAllocatable);
-DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FRequestAllocatable, TSubclassOf<class UAllocatable>, FString);
 
+//DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FRequestAllocatable, TSubclassOf<class UAllocatable>, FString);
+DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FRequestAllocatable, UClass*, FString);
 
 UCLASS(Blueprintable, BlueprintType)
 class POTL_API UAllocationSlot : public UObject
@@ -27,7 +29,8 @@ public:
 	UAllocationSlot();
 	~UAllocationSlot();
 
-	TSubclassOf<class UAllocatable> AllowedAllocationClass;
+	//TSubclassOf<class UAllocatable> AllowedAllocationClass;
+	UClass* AllowedAllocationClass;
 	FString AllowedAllocationID;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Allocation")
@@ -52,6 +55,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
 	FOnAllocatableAllocated OnAllocatedDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
+	FOnAllocatableChange OnAllocatedChange;
 
 	FRequestAllocatable OnRequestAllocatable;
 

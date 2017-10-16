@@ -4,6 +4,7 @@
 #include "UObjects/UResource.h"
 #include "UObjects/UHexTile.h"
 #include "UObjects/UPerson.h"
+#include "UObjects/Allocations/UAllocationSlot.h"
 #include "UObjects/Allocations/UPersonSlot.h"
 #include "UObjects/Allocations/UHexSlot.h"
 #include "POTLGameMode.h"
@@ -143,7 +144,7 @@ void UGatherComponent::CalcPetalProduction()
 
 	// Sort so free resources are first in array. !!Not tested yet!!
 	ProducedResources.Sort([this](const UResource& Resource1, const UResource& Resource2) {
-		return (Resource1.AllocatedTo != nullptr);
+		return (Resource1.AllocatedTo == nullptr);
 	});
 
 	// Validate all stored UResources up against ResourceProductionMap 
@@ -264,6 +265,28 @@ bool UGatherComponent::IsHexWorkable(UHexTile* Hex)
 }
 EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 {
+	if (Hex)
+	{
+		for (auto& TileConversion : TileConversions)
+		{
+			if (Hex->HexTileType == TileConversion.TileTypeID)
+			{
+				for (auto& HexSlot : AllocatedTileSlots)
+				{
+					if (HexSlot)
+					{
+						if (HexSlot->Allocated == nullptr)
+						{
+							HexSlot->Allocate(Hex);
+							return EHandleType::Handled;
+						}
+					}
+				}
+			}
+		}
+	}
+	return EHandleType::HandledBreak;
+
 	// Get Required labor or other static resources
 	if (Hex && ParentStructure)
 	{
@@ -272,6 +295,8 @@ EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 		{
 			if (Hex->HexTileType == TileConversion.TileTypeID)
 			{
+				// Move logic to here to allocate hex
+
 				if (ParentStructure->RequestLabor(TileConversion.LaborRequired))
 				{
 					return EHandleType::Handled;
@@ -297,6 +322,22 @@ EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 }
 EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
 {
+	if (Hex)
+	{
+		for (auto& HexSlot : AllocatedTileSlots)
+		{
+			if (HexSlot)
+			{
+				if (HexSlot->Allocated == Hex)
+				{
+					HexSlot->Unallocate();
+					return EHandleType::Handled;
+				}
+			}
+		}
+	}
+	return EHandleType::Unhandled;
+
 	if (Hex && ParentStructure)
 	{
 		for (auto& TileConversion : TileConversions)
@@ -319,7 +360,7 @@ EHandleType UGatherComponent::ParseUnallocateHex(UHexTile* Hex)
 			}
 		}
 	}
-	return EHandleType();
+	return EHandleType::Unhandled;
 }
 
 
@@ -367,9 +408,9 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 	else if (DiffCount < 0)
 	{
 		// Remove Tile slots
-		for (int32 i = 0; i < DiffCount * 1; i++)
+		for (int32 i = DiffCount; i < 0; i++)
 		{
-			UHexSlot*LastHexSlot = AllocatedTileSlots[AllocatedTileSlots.Num() - 1];
+			UHexSlot* LastHexSlot = AllocatedTileSlots[AllocatedTileSlots.Num() - 1];
 			if (LastHexSlot)
 			{
 				LastHexSlot->Unallocate();
@@ -383,9 +424,13 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 		}
 		*/
 	}
-	// Sort. Put free last
+
+	// Sort. Put free slots last
+	AllocatedPersonSlots.Sort([this](const UPersonSlot& PersonSlot1, const UPersonSlot& PersonSlot2) {
+		return (PersonSlot1.Allocated != nullptr);
+	});
 	AllocatedTileSlots.Sort([this](const UHexSlot& HexSlot1, const UHexSlot& HexSlot2) {
-		return (HexSlot1.Allocated == nullptr);
+		return (HexSlot1.Allocated != nullptr);
 	});
 }
 
@@ -396,20 +441,22 @@ void UGatherComponent::ProcessBaseData()
 		for (int32 i = 0; i < Entry.Value; i++)
 		{
 			UPersonSlot* PersonSlot = NewObject<UPersonSlot>(this);
+			//UAllocationSlot* PersonSlot = NewObject<UAllocationSlot>(this);
 			if (PersonSlot)
 			{
-				// Bind RequestAllocatable on slot to RequestAllocatable for processing
-				PersonSlot->OnRequestAllocatable.BindUObject(this, &UGatherComponent::RequestAllocatable);
-				// Bind to allocate/unallocate
-				PersonSlot->OnAllocatedDelegate.AddDynamic(this, &UGatherComponent::UpdateMaxTiles);
-				PersonSlot->OnUnallocatedDelegate.AddDynamic(this, &UGatherComponent::UpdateMaxTiles);
+				PersonSlot->AllowedAllocationClass = UPerson::StaticClass();
+				PersonSlot->AllowedAllocationID = TEXT("Laborer");
+				//~~ Bind RequestAllocatable on slot to RequestAllocatable for processing ~~//
+				PersonSlot->OnRequestAllocatable.BindUObject(this, &UGatherComponent::RequestAllocatable); 
+				//~~ Listen for allocation state change ~~//
+				PersonSlot->OnAllocatedChange.AddDynamic(this, &UGatherComponent::UpdateMaxTiles); 
 				AllocatedPersonSlots.Add(PersonSlot);
 			}
 		}
 	}
 }
 
-UAllocatable* UGatherComponent::RequestAllocatable(TSubclassOf<class UAllocatable> AllocatableClass, FString AllocatableID)
+UAllocatable* UGatherComponent::RequestAllocatable(UClass* AllocatableClass, FString AllocatableID)
 {
 	if (ParentStructure)
 	{

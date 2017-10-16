@@ -64,7 +64,7 @@ public:
 
 	void ProcessBaseData();
 
-	UAllocatable* RequestAllocatable(TSubclassOf<class UAllocatable> AllocatableClass, FString AllocatableID);
+	UAllocatable* RequestAllocatable(UClass* AllocatableClass, FString AllocatableID);
 
 
 
