@@ -415,13 +415,15 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 			{
 				LastHexSlot->Unallocate();
 				AllocatedTileSlots.RemoveAt(AllocatedTileSlots.Num() - 1);
+
+				// Should I make a binding instead? Maybe the hex will be unallocated by something else?
+
+
 			}
 		}
 		/*
 		for (int i = ProducedResources.Num() - 1; i >= 0; i--)
-		{
-
-		}
+		{}
 		*/
 	}
 
