@@ -47,7 +47,9 @@ public:
 	TArray<FST_TileConversion> TileConversions;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
-	TArray<UResource*> ProducedResources;
+	TArray<UResource*> GatheredResources;
+
+	TMap<UHexTile*, TArray<UResource*>> GatheredResourcesMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
 	FST_Gatherer BaseData;
@@ -61,6 +63,8 @@ public:
 
 	UFUNCTION(Category = "Structure")
 	void UpdateMaxTiles(UAllocationSlot* AllocationSlot);
+
+	void UpdateGatheredResources();
 
 	void ProcessBaseData();
 

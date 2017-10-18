@@ -23,6 +23,9 @@ void UAllocationSlot::Allocate(UAllocatable* Allocatable)
 	if (Allocatable)
 	{
 		Allocated = Allocatable;
+
+		//Allocatable->OnUnallocate.AddDynamic();
+
 		OnAllocatedDelegate.Broadcast(this);
 		OnAllocatedChange.Broadcast(this);
 	}

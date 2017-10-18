@@ -143,14 +143,14 @@ void UGatherComponent::CalcPetalProduction()
 
 
 	// Sort so free resources are first in array. !!Not tested yet!!
-	ProducedResources.Sort([this](const UResource& Resource1, const UResource& Resource2) {
+	GatheredResources.Sort([this](const UResource& Resource1, const UResource& Resource2) {
 		return (Resource1.AllocatedTo == nullptr);
 	});
 
 	// Validate all stored UResources up against ResourceProductionMap 
-	for (int i = ProducedResources.Num() - 1; i >= 0; i--)
+	for (int i = GatheredResources.Num() - 1; i >= 0; i--)
 	{
-		UResource* Resource = ProducedResources[i];
+		UResource* Resource = GatheredResources[i];
 		if (Resource)
 		{
 			if (ResourceProductionMap.Contains(Resource->ResourceId) && ResourceProductionMap[Resource->ResourceId] >= 1)
@@ -163,13 +163,13 @@ void UGatherComponent::CalcPetalProduction()
 			}
 			else {
 				Resource->Unallocate();
-				ProducedResources.RemoveAt(i);
+				GatheredResources.RemoveAt(i);
 				Resource->Consume(EConsumeType::Undefined);
 			}
 		}
 		else
 		{
-			ProducedResources.RemoveAt(i);
+			GatheredResources.RemoveAt(i);
 		}
 	}
 
@@ -185,13 +185,13 @@ void UGatherComponent::CalcPetalProduction()
 				if (Resource)
 				{
 					Resource->Owner = ParentStructure;
-					ProducedResources.Add(Resource);
+					GatheredResources.Add(Resource);
 				}
 			}
 		}
 	}
 
-	OnProductionChangedDelegate.Broadcast(ProducedResources);
+	OnProductionChangedDelegate.Broadcast(GatheredResources);
 }
 void UGatherComponent::AddPetal(FString PetalId, int32 Quantity)
 {
@@ -422,7 +422,7 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 			}
 		}
 		/*
-		for (int i = ProducedResources.Num() - 1; i >= 0; i--)
+		for (int i = GatheredResources.Num() - 1; i >= 0; i--)
 		{}
 		*/
 	}
@@ -434,6 +434,11 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 	AllocatedTileSlots.Sort([this](const UHexSlot& HexSlot1, const UHexSlot& HexSlot2) {
 		return (HexSlot1.Allocated != nullptr);
 	});
+}
+
+void UGatherComponent::UpdateGatheredResources()
+{
+
 }
 
 void UGatherComponent::ProcessBaseData()
