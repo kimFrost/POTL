@@ -49,11 +49,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
 	TArray<UResource*> GatheredResources;
 
-	TMap<UHexTile*, TArray<UResource*>> GatheredResourcesMap;
+	TMap<UHexTile*, TArray<UResource*>> GatheredResourcesByHex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gather")
 	FST_Gatherer BaseData;
 
+	UFUNCTION(Category = "Gather")
+	void IncludeHex(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable);
+
+	UFUNCTION(Category = "Gather")
+	void ExcludeHex(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable);
 
 	UFUNCTION(Category = "Structure")
 	EHandleType ParseAllocateHex(UHexTile* Hex);
@@ -62,7 +67,7 @@ public:
 	EHandleType ParseUnallocateHex(UHexTile* Hex);
 
 	UFUNCTION(Category = "Structure")
-	void UpdateMaxTiles(UAllocationSlot* AllocationSlot);
+	void UpdateMaxTiles(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable);
 
 	void UpdateGatheredResources();
 

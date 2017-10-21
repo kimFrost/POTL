@@ -24,20 +24,23 @@ void UAllocationSlot::Allocate(UAllocatable* Allocatable)
 	{
 		Allocated = Allocatable;
 
-		//Allocatable->OnUnallocate.AddDynamic();
+		Allocated->OnUnallocatedDelegate.AddDynamic(this, &UAllocationSlot::Unallocate);
 
-		OnAllocatedDelegate.Broadcast(this);
-		OnAllocatedChange.Broadcast(this);
+		OnAllocatedDelegate.Broadcast(this, Allocated);
+		OnAllocatedChange.Broadcast(this, Allocated);
 	}
 }
 
-void UAllocationSlot::Unallocate()
+void UAllocationSlot::Unallocate(UAllocatable* Allocatable)
 {
 	if (Allocated)
 	{
+		Allocated->OnUnallocatedDelegate.RemoveDynamic(this, &UAllocationSlot::Unallocate);
+		PrevAllocated = Allocated;
 		Allocated = nullptr;
-		OnUnallocatedDelegate.Broadcast(this);
-		OnAllocatedChange.Broadcast(this);
+
+		OnUnallocatedDelegate.Broadcast(this, PrevAllocated);
+		OnAllocatedChange.Broadcast(this, PrevAllocated);
 	}
 }
 

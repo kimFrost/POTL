@@ -17,3 +17,8 @@ UAllocatable::~UAllocatable()
 	
 }
 
+void UAllocatable::Unallocate()
+{
+	OnUnallocatedDelegate.Broadcast(this);
+}
+

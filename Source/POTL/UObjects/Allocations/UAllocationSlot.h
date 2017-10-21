@@ -12,9 +12,9 @@
 
 
 //~~~~~ Deleagtes ~~~~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllocatableUnallocated, UAllocationSlot*, AllocationSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllocatableAllocated, UAllocationSlot*, AllocationSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllocatableChange, UAllocationSlot*, AllocationSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAllocatableUnallocated, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAllocatableAllocated, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAllocatableChange, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
 //DECLARE_DELEGATE_RetVal(UAllocatable*, FRequestAllocatable);
 
 //DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FRequestAllocatable, TSubclassOf<class UAllocatable>, FString);
@@ -42,7 +42,7 @@ public:
 	void Allocate(UAllocatable* Allocatable);
 	
 	UFUNCTION(BlueprintCallable, Category = "Allocation")
-	void Unallocate();
+	void Unallocate(UAllocatable* Allocatable = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "Allocation")
 	void Toggle();

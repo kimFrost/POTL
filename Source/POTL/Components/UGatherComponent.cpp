@@ -263,6 +263,55 @@ bool UGatherComponent::IsHexWorkable(UHexTile* Hex)
 	}
 	return false;
 }
+void UGatherComponent::IncludeHex(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable)
+{
+	UHexTile* Hex = Cast<UHexTile>(Allocatable);
+	if (Hex && !GatheredResourcesByHex.Contains(Hex))
+	{
+		// Add resources from hex to gatheredResources
+		UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
+		if (GameInstance)
+		{
+			for (auto& TileConversion : TileConversions)
+			{
+				if (Hex->HexTileType == TileConversion.TileTypeID)
+				{
+					TArray<UResource*> Resources = TArray<UResource*>();
+					for (auto& Output : TileConversion.PetalsOutput)
+					{
+						for (int32 i = 0; i < Output.Value; i++)
+						{
+							UResource* Resource = GameInstance->CreateResource(Output.Key);
+							if (Resource)
+							{
+								Resources.Add(Resource);
+							}
+						}
+					}
+					GatheredResourcesByHex.Add(Hex, Resources);
+				}
+			}
+		}
+		UpdateGatheredResources();
+	}
+}
+void UGatherComponent::ExcludeHex(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable)
+{
+	UHexTile* Hex = Cast<UHexTile>(Allocatable);
+	if (Hex && GatheredResourcesByHex.Contains(Hex))
+	{
+		TArray<UResource*>& Resources = GatheredResourcesByHex[Hex];
+		for (auto& Resource : Resources)
+		{
+			if (Resource)
+			{
+				Resource->Unallocate();
+			}
+		}
+		GatheredResourcesByHex.Remove(Hex);
+		UpdateGatheredResources();
+	}
+}
 EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 {
 	if (Hex)
@@ -378,7 +427,7 @@ void UGatherComponent::OnProgressComplete()
 	*/
 }
 
-void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
+void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable)
 {
 	int32 MaxNumberOfTiles = 0;
 	for (auto& Slot : AllocatedPersonSlots)
@@ -401,6 +450,8 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 			UHexSlot* HexSlot = NewObject<UHexSlot>(this);
 			if (HexSlot)
 			{
+				HexSlot->OnAllocatedDelegate.AddDynamic(this, &UGatherComponent::IncludeHex);
+				HexSlot->OnUnallocatedDelegate.AddDynamic(this, &UGatherComponent::ExcludeHex);
 				AllocatedTileSlots.Add(HexSlot);
 			}
 		}
@@ -413,6 +464,8 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 			UHexSlot* LastHexSlot = AllocatedTileSlots[AllocatedTileSlots.Num() - 1];
 			if (LastHexSlot)
 			{
+				LastHexSlot->OnAllocatedDelegate.RemoveDynamic(this, &UGatherComponent::IncludeHex);
+				LastHexSlot->OnUnallocatedDelegate.RemoveDynamic(this, &UGatherComponent::ExcludeHex);
 				LastHexSlot->Unallocate();
 				AllocatedTileSlots.RemoveAt(AllocatedTileSlots.Num() - 1);
 
@@ -438,7 +491,15 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot)
 
 void UGatherComponent::UpdateGatheredResources()
 {
-
+	GatheredResources.Empty();
+	for (auto& Entry : GatheredResourcesByHex)
+	{
+		if (Entry.Key)
+		{
+			GatheredResources.Append(Entry.Value);
+		}
+	}
+	OnProductionChangedDelegate.Broadcast(GatheredResources);
 }
 
 void UGatherComponent::ProcessBaseData()
