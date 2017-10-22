@@ -96,6 +96,8 @@ TArray<FST_ResourceQuantity> UGatherComponent::GetTileResourceOutput(UHexTile* H
 }
 void UGatherComponent::CalcPetalProduction()
 {
+	return;
+
 	PetalProduction.Empty();
 	if (ParentStructure)
 	{
@@ -499,6 +501,10 @@ void UGatherComponent::UpdateGatheredResources()
 			GatheredResources.Append(Entry.Value);
 		}
 	}
+	// Sort array by free first
+	GatheredResources.Sort([this](const UResource& Resource1, const UResource& Resource2) {
+		return (Resource1.AllocatedTo == nullptr);
+	});
 	OnProductionChangedDelegate.Broadcast(GatheredResources);
 }
 
