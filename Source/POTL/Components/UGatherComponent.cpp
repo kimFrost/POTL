@@ -209,7 +209,6 @@ void UGatherComponent::AddPetal(FString PetalId, int32 Quantity)
 void UGatherComponent::CollectPetals()
 {
 	bool AnyCollected = false;
-
 	for (auto& Entry : PetalProduction)
 	{
 		AddPetal(Entry.Key, Entry.Value);
@@ -466,14 +465,11 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot, UAllocata
 			UHexSlot* LastHexSlot = AllocatedTileSlots[AllocatedTileSlots.Num() - 1];
 			if (LastHexSlot)
 			{
+				LastHexSlot->Unallocate();
 				LastHexSlot->OnAllocatedDelegate.RemoveDynamic(this, &UGatherComponent::IncludeHex);
 				LastHexSlot->OnUnallocatedDelegate.RemoveDynamic(this, &UGatherComponent::ExcludeHex);
-				LastHexSlot->Unallocate();
 				AllocatedTileSlots.RemoveAt(AllocatedTileSlots.Num() - 1);
-
-				// Should I make a binding instead? Maybe the hex will be unallocated by something else?
-
-
+				// Delete LastHexSlot ??
 			}
 		}
 		/*
@@ -522,6 +518,8 @@ void UGatherComponent::ProcessBaseData()
 				PersonSlot->AllowedAllocationID = TEXT("Laborer");
 				//~~ Bind RequestAllocatable on slot to RequestAllocatable for processing ~~//
 				PersonSlot->OnRequestAllocatable.BindUObject(this, &UGatherComponent::RequestAllocatable); 
+				//PersonSlot->OnUnallocatedDelegate
+				//PersonSlot->OnAllocatedDelegate
 				//~~ Listen for allocation state change ~~//
 				PersonSlot->OnAllocatedChange.AddDynamic(this, &UGatherComponent::UpdateMaxTiles); 
 				AllocatedPersonSlots.Add(PersonSlot);
