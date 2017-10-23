@@ -99,8 +99,6 @@ void UStructureComponent::Init()
 				HexesInRange = ParentStructure->HexesInRange;
 				AllocatedHexes = ParentStructure->AllocatedHexes;
 
-
-
 				//OnHexAllocated
 				//OnHexUnallocated
 			}

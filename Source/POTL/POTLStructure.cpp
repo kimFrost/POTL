@@ -191,17 +191,6 @@ void APOTLStructure::EnterEditMode()
 				//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
 			}
 		}
-		
-		/*
-		for (auto& Hex : AllocatedHexes)
-		{
-			if (Hex)
-			{
-				Hex->ShowDecal(EDecalType::Allocated); // Decal on individual hexes ain't used anymore
-			}
-		}
-		*/
-		
 
 		for (TActorIterator<AIsland> IslandItr(GetWorld()); IslandItr; ++IslandItr)
 		{
@@ -299,30 +288,6 @@ void APOTLStructure::DrawInRangeInfo()
 	{
 		RangeDecal->OnClear();
 	
-		/*
-		for (auto& Hex : AllocatedHexes)
-		{
-			if (Hex)
-			{
-				RangeDecal->OnDrawHex(Hex, FLinearColor::Green);
-			}
-		}
-
-		for (auto& AttachedStructure : AttachedStructures)
-		{
-			if (AttachedStructure)
-			{
-				for (auto& Hex : AttachedStructure->AllocatedHexes)
-				{
-					if (Hex)
-					{
-						RangeDecal->OnDrawHex(Hex, FLinearColor::Blue);
-					}
-				}
-			}
-		}
-		*/
-
 		TArray<FHexLinearColor> HexColorList = TArray<FHexLinearColor>();
 		for (auto& Hex : HexesInRange)
 		{
@@ -414,30 +379,6 @@ EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 
 			OnAllocatedHexesChangedDelegate.Broadcast();
 			OnAllocatedHexesChanged();
-
-
-			//TODO: Move allocated and in range decal handling to function
-			/*
-			for (auto& Hex : HexesInRange)
-			{
-				if (Hex)
-				{
-					if (!Hex->AllocatedTo || (Hex->AllocatedTo && Hex->AllocatedTo == this))
-					{
-						Hex->ShowDecal(EDecalType::ValidBuild);
-						//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
-						//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
-					}
-				}
-			}
-			for (auto& Hex : AllocatedHexes)
-			{
-				if (Hex)
-				{
-					Hex->ShowDecal(EDecalType::Allocated);
-				}
-			}
-			*/
 
 			//~~ Update AllocatedHexes in all structure components ~~//
 			TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());

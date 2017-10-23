@@ -46,13 +46,14 @@ UGatherComponent::UGatherComponent()
 
 }
 
-
+/*
 void UGatherComponent::OnGathered_Implementation()
 {
 	//MissingResources = RequiredResources;
 	ValidateRequirements();
 	CalcPetalProduction();
 }
+*/
 void UGatherComponent::ValidateRequirements()
 {
 	//TODO: Better validation Logic for attachedTo
@@ -94,10 +95,9 @@ TArray<FST_ResourceQuantity> UGatherComponent::GetTileResourceOutput(UHexTile* H
 	}
 	return TileResourceOutput;
 }
+/*
 void UGatherComponent::CalcPetalProduction()
 {
-	return;
-
 	PetalProduction.Empty();
 	if (ParentStructure)
 	{
@@ -195,6 +195,8 @@ void UGatherComponent::CalcPetalProduction()
 
 	OnProductionChangedDelegate.Broadcast(GatheredResources);
 }
+*/
+/*
 void UGatherComponent::AddPetal(FString PetalId, int32 Quantity)
 {
 	if (StoredPetals.Contains(PetalId))
@@ -206,6 +208,8 @@ void UGatherComponent::AddPetal(FString PetalId, int32 Quantity)
 		StoredPetals.Add(PetalId, Quantity);
 	}
 }
+*/
+/*
 void UGatherComponent::CollectPetals()
 {
 	bool AnyCollected = false;
@@ -214,6 +218,8 @@ void UGatherComponent::CollectPetals()
 		AddPetal(Entry.Key, Entry.Value);
 	}
 }
+*/
+/*
 void UGatherComponent::ConvertPetals()
 {
 	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
@@ -250,6 +256,7 @@ void UGatherComponent::ConvertPetals()
 		}
 	}
 }
+*/
 bool UGatherComponent::IsHexWorkable(UHexTile* Hex)
 {
 	if (Hex)
@@ -518,8 +525,6 @@ void UGatherComponent::ProcessBaseData()
 				PersonSlot->AllowedAllocationID = TEXT("Laborer");
 				//~~ Bind RequestAllocatable on slot to RequestAllocatable for processing ~~//
 				PersonSlot->OnRequestAllocatable.BindUObject(this, &UGatherComponent::RequestAllocatable); 
-				//PersonSlot->OnUnallocatedDelegate
-				//PersonSlot->OnAllocatedDelegate
 				//~~ Listen for allocation state change ~~//
 				PersonSlot->OnAllocatedChange.AddDynamic(this, &UGatherComponent::UpdateMaxTiles); 
 				AllocatedPersonSlots.Add(PersonSlot);
@@ -541,7 +546,6 @@ void UGatherComponent::Init()
 {
 	Super::Init();
 
-	//if (!ParentStructure || (ParentStructure && !ParentStructure->AttachedTo))
 	if (!ParentStructure)
 	{
 		bIsOn = false;
@@ -572,34 +576,9 @@ void UGatherComponent::Init()
 			UnallocateDelegate->BindUObject(this, &UGatherComponent::ParseUnallocateHex);
 		}
 		//~~ Update Production when structure allocated hexes change ~~//
-		ParentStructure->OnAllocatedHexesChangedDelegate.AddDynamic(this, &UGatherComponent::CalcPetalProduction);
-
-		//ParentStructure->OnHexAllocated
-		//ParentStructure->OnHexUnallocated
-
+		//ParentStructure->OnAllocatedHexesChangedDelegate.AddDynamic(this, &UGatherComponent::CalcPetalProduction);
 	}
-
-	CalcPetalProduction();
-
-	/*
-	UPOTLGameInstance* GameInstance = Cast<UPOTLGameInstance>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetGameInstance());
-	if (GameInstance)
-	{
-		if (GatherRange > 0)
-		{
-			TArray<FVector> Cubes = UPOTLUtilFunctionLibrary::GetCubesInRange(ParentStructure->CubeCoord, GatherRange, false);
-			for (int32 i = 0; i < Cubes.Num(); i++)
-			{
-				FVector2D OffsetCoords = UPOTLUtilFunctionLibrary::ConvertCubeToOffset(Cubes[i]);
-				int32 HexIndex = UPOTLUtilFunctionLibrary::GetHexIndex(OffsetCoords, GameInstance->GridXCount);
-				if (GameInstance->Hexes.IsValidIndex(HexIndex))
-				{
-					GatherFrom.Add(GameInstance->Hexes[HexIndex]);
-				}
-			}
-		}
-	}
-	*/
+	//CalcPetalProduction();
 
 	// ValidateRequirements every second
 	GetWorld()->GetTimerManager().SetTimer(GatherCheckTimer, this, &UGatherComponent::ValidateRequirements, 1.f, true);

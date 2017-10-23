@@ -112,12 +112,12 @@ public:
 	TArray<FST_ResourceQuantity> GetTileResourceOutput(UHexTile* Hex);
 	//void GetConversion(UHexTile* Hex, UPARAM(ref) TArray<FST_TileConversion>& Conversions);
 	
-	UFUNCTION(BlueprintCallable, Category = "Gather")
-	void CalcPetalProduction();
+	//UFUNCTION(BlueprintCallable, Category = "Gather")
+	//void CalcPetalProduction();
 
-	void AddPetal(FString PetalId, int Quantity);
-	void CollectPetals();
-	void ConvertPetals();
+	//void AddPetal(FString PetalId, int Quantity);
+	//void CollectPetals();
+	//void ConvertPetals();
 	bool IsHexWorkable(UHexTile* Hex);
 
 	//int32 CalcAvaiableResources(UDataTable* RecipeTable);
@@ -126,9 +126,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Gather|Event")
 	FOnProductionChangedDelegate OnProductionChangedDelegate;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Production")
-	void OnGathered();
-
+	//UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Production")
+	//void OnGathered();
 	
 
 

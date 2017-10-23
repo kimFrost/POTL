@@ -1,0 +1,25 @@
+	
+- Structure(Woodcutter)
+	- GatherComponent
+		- Array<UHexSlot*> AllocatedHexSlots
+		- Array<UPersonSlot*> AllocatedPersonSlots
+		- Array<UResource*> GatheredResources
+		- Map<UHexTile*, Array<UResource*>> GatheredResourcesByHex;
+		
+		
+- Structure(Lumbermill)
+	- FactoryComponent
+		- Array<UPersonSlot*> AllocatedPersonSlots
+		- Array<UResourceSlot*> AllocatedResourceSlots
+		- Array<UResource*> ProducedResources
+	
+
+
+- Click On Hex
+	- EnterEditMode()
+	
+	- GatherComponent
+	
+
+	
+- Shouldn't be a AllocatedHexes array. Using array of hexslots instead
