@@ -320,6 +320,42 @@ void UGatherComponent::ExcludeHex(UAllocationSlot* AllocationSlot, UAllocatable*
 		UpdateGatheredResources();
 	}
 }
+EHandleType UGatherComponent::ParseToggleAllocateHex(UHexTile* Hex, bool bUpdate)
+{
+	if (Hex)
+	{
+		//?? This seem like its the wrong way to do it. Might be some more dynamic way??
+		if (Hex->AllocatedTo && AllocatedTileSlots.Contains(Hex->AllocatedTo))
+		{
+			return ParseUnallocateHex(Hex);
+		}
+		else if (!Hex->AllocatedTo)
+		{
+			return ParseAllocateHex(Hex);
+		}
+		/*
+		bool bChanged = false;
+		if (Hex->AllocatedTo == this)
+		{
+			bChanged = UnallocateHex(Hex);
+		}
+		else
+		{
+			bChanged = AllocateHex(Hex);
+		}
+
+		if (bChanged)
+		{
+			DrawInRangeInfo();
+
+			OnAllocatedHexesChangedDelegate.Broadcast();
+			OnAllocatedHexesChanged();
+		}
+		*/
+	}
+
+	return EHandleType::Unhandled;
+}
 EHandleType UGatherComponent::ParseAllocateHex(UHexTile* Hex)
 {
 	if (Hex)
@@ -542,6 +578,61 @@ UAllocatable* UGatherComponent::RequestAllocatable(UClass* AllocatableClass, FSt
 	return nullptr;
 }
 
+void UGatherComponent::OnEnterEditMode()
+{
+	Super::OnEnterEditMode();
+
+	if (ParentStructure)
+	{
+		for (auto& Hex : ParentStructure->HexesInRange)
+		{
+			if (Hex)
+			{
+				if (Hex->AllocatedTo && !AllocatedTileSlots.Contains(Hex->AllocatedTo))
+				{
+					continue;
+				}
+				if (Hex->AttachedBuilding)
+				{
+					continue;
+				}
+				if (!IsHexWorkable(Hex)) {
+					continue;
+				}
+				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
+				if (Delegate)
+				{
+					Delegate->BindUObject(this, &UGatherComponent::ParseToggleAllocateHex, false);
+
+					//Hex->UnbindToHexClicked(this);
+
+					/*
+					FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
+					if (Delegate)
+					{
+						Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
+					}
+					*/
+
+					/*
+					FOnHexUnallocateDelegate* UnallocateDelegate = ParentStructure->BindToOnHexUnallocate(this, 0);
+					if (UnallocateDelegate)
+					{
+						UnallocateDelegate->BindUObject(this, &UGatherComponent::ParseUnallocateHex);
+					}
+					*/
+				}
+			}
+		}
+	}
+}
+
+void UGatherComponent::OnLeaveEditMode()
+{
+	Super::OnLeaveEditMode();
+
+}
+
 void UGatherComponent::Init()
 {
 	Super::Init();
@@ -561,6 +652,7 @@ void UGatherComponent::Init()
 
 	ProcessBaseData();
 
+	/*
 	if (ParentStructure)
 	{
 		//~~ Bind to allocate hex in parent structure ~~//
@@ -578,6 +670,8 @@ void UGatherComponent::Init()
 		//~~ Update Production when structure allocated hexes change ~~//
 		//ParentStructure->OnAllocatedHexesChangedDelegate.AddDynamic(this, &UGatherComponent::CalcPetalProduction);
 	}
+	*/
+
 	//CalcPetalProduction();
 
 	// ValidateRequirements every second

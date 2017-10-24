@@ -27,30 +27,25 @@ bool UStructureComponent::ToggleOn()
 	return bIsOn;
 }
 
-/*
+
 void UStructureComponent::EnterEditMode()
 {
-	// Loop hexesInRange and bind to allocate delegate if not allocated to other than this
-	for (auto& Hex : HexesInRange)
+	if (!bInEditMode)
 	{
-		if (Hex)
-		{
-			Hex->OnHexToggleAllocate.AddDynamic(this, &UStructureComponent::ToggleAllocateHex);
-		}
+		bInEditMode = true;
+		OnEnterEditMode();
 	}
 }
 
 void UStructureComponent::LeaveEditMode()
 {
-	for (auto& Hex : HexesInRange)
+	if (bInEditMode)
 	{
-		if (Hex)
-		{
-			Hex->OnHexToggleAllocate.RemoveDynamic(this, &UStructureComponent::ToggleAllocateHex);
-		}
+		bInEditMode = false;
+		OnLeaveEditMode();
 	}
 }
-
+/*
 void UStructureComponent::ToggleAllocateHex(UHexTile* Hex)
 {
 	if (Hex)
@@ -114,7 +109,10 @@ void UStructureComponent::Init()
 	}
 }
 
-
+void UStructureComponent::OnEnterEditMode()
+{}
+void UStructureComponent::OnLeaveEditMode()
+{}
 void UStructureComponent::OnTimeUpdate(float Time, float TimeProgressed)
 {}
 void UStructureComponent::ActivateComponent()

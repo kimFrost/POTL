@@ -82,6 +82,8 @@ bool UResource::Transfer(UStorageComponent* Storage)
 
 bool UResource::AllocateTo(APOTLStructure* Structure)
 {
+	//!! Handled by UAllocatedable !!//
+	/*
 	if (Structure)
 	{
 		Unallocate();
@@ -92,11 +94,14 @@ bool UResource::AllocateTo(APOTLStructure* Structure)
 		OnResourceAllocated.Broadcast(this);
 		return true;
 	}
+	*/
 	return false;
 }
 
 bool UResource::Unallocate()
 {
+	//!! Handled by UAllocatedable !!//
+	/*
 	if (AllocatedTo)
 	{
 		AllocatedTo->UnallocateResource(this);
@@ -105,6 +110,7 @@ bool UResource::Unallocate()
 		OnResourceUnallocated.Broadcast(this);
 		return true;
 	}
+	*/
 	return false;
 }
 

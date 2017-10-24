@@ -7,6 +7,8 @@
 
 
 //~~~~~ Forward Declarations ~~~~~//
+class UAllocationSlot;
+class APOTLStructure;
 
 //~~~~~ Deleagtes ~~~~~//
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllocatableUnallocate, UAllocatable*, Allocatable);
@@ -21,6 +23,19 @@ public:
 	UAllocatable();
 	~UAllocatable();
 
+private:
+
+
+
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	APOTLStructure* StructureOwner;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UAllocationSlot* AllocatedTo;
+
+	UFUNCTION(BlueprintCallable)
 	void Unallocate();
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")

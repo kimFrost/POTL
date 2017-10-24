@@ -11,6 +11,7 @@
 #include "Components/UGatherComponent.h"
 #include "Components/UProviderComponent.h"
 #include "Actors/AIsland.h"
+#include "UObjects/Allocations/UAllocationSlot.h"
 #include "UObjects/UHexTile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Actors/ARangeDecal.h"
@@ -129,7 +130,6 @@ void APOTLStructure::EnterEditMode()
 	if (!bInEditMode)
 	{
 		//~~ EnterEditMode for all UStructureComponents ~~//
-		/*
 		TArray<UActorComponent*> StructureComponents = GetComponentsByClass(UStructureComponent::StaticClass());
 		for (auto& Component : StructureComponents)
 		{
@@ -137,58 +137,6 @@ void APOTLStructure::EnterEditMode()
 			if (StructureComponent)
 			{
 				StructureComponent->EnterEditMode();
-			}
-		}
-
-
-		*/
-		//TODO: Move allocated and in range decal handling to function
-		for (auto& Hex : HexesInRange)
-		{
-			if (Hex)
-			{
-				if (Hex->AllocatedTo)
-				{
-					if (Hex->AllocatedTo != this)
-					{
-						continue;
-					}
-				}
-				if (Hex->AttachedBuilding)
-				{
-					continue;
-				}
-
-				// If tile is workable with current components
-				UActorComponent* ChildComponent = GetComponentByClass(UGatherComponent::StaticClass());
-				if (ChildComponent)
-				{
-					UGatherComponent* GatherComponent = Cast<UGatherComponent>(ChildComponent);
-					if (GatherComponent)
-					{
-						if (!GatherComponent->IsHexWorkable(Hex)) {
-							continue;
-						}
-					}
-				}
-
-				//Hex->ShowDecal(EDecalType::ValidBuild); // Decal on individual hexes ain't used anymore
-
-				FOnHexClickedDelegate* Delegate = Hex->BindToOnHexClicked(this, 0);
-				if (Delegate)
-				{
-					Delegate->BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
-				}
-
-				//Hex->BindToOnHexClicked(0, &APOTLStructure::ToggleAllocateHex);
-
-				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex, false);
-				//Delegate.BindUObject(this, &APOTLStructure::ToggleAllocateHex);
-				//Delegate.BindUFunction(this, "SomeFunctionThatReturnsEHandleType");
-				//Delegate.IsBoundToObject(this)
-				
-				//Hex->OnHexToggleAllocate.RemoveDynamic(this, &APOTLStructure::ToggleAllocateHex);
-				//Hex->OnHexToggleAllocate.AddDynamic(this, &APOTLStructure::ToggleAllocateHex);
 			}
 		}
 
@@ -295,6 +243,8 @@ void APOTLStructure::DrawInRangeInfo()
 			{
 				if (Hex->AllocatedTo)
 				{
+					//!! Won't work with the new Allocation system !!//
+					/* 
 					if (Hex->AllocatedTo == this)
 					{
 						HexColorList.Add(FHexLinearColor(Hex, FLinearColor::Green));
@@ -310,6 +260,7 @@ void APOTLStructure::DrawInRangeInfo()
 						HexColorList.Add(FHexLinearColor(Hex, FLinearColor::Yellow));
 						RangeDecal->OnDrawHex(Hex, FLinearColor::Yellow);
 					}
+					*/
 				}
 			}
 		}
@@ -361,6 +312,8 @@ void APOTLStructure::UnbindToOnHexUnallocate(UObject* Listener)
 }
 EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 {
+	//!! Moved to gather component !!//
+	/*
 	if (Hex)
 	{
 		bool bChanged = false;
@@ -392,12 +345,15 @@ EHandleType APOTLStructure::ToggleAllocateHex(UHexTile* Hex, bool bUpdate)
 			}
 		}
 	}
+	*/
 
 	return EHandleType::Unhandled;
 }
 
 bool APOTLStructure::AllocateHex(UHexTile* Hex)
 {
+	//!! Moved to gather component !!//
+	/*
 	if (!AllocatedHexes.Contains(Hex))
 	{
 		bool bSuccesfullyUnallocated = true;
@@ -427,11 +383,14 @@ bool APOTLStructure::AllocateHex(UHexTile* Hex)
 			return true;
 		}
 	}
+	*/
 	return false;
 }
 
 bool APOTLStructure::UnallocateHex(UHexTile* Hex)
 {
+	//!! Moved to gather component !!//
+	/*
 	if (AllocatedHexes.Contains(Hex))
 	{
 		for (auto& Delegate : OnHexUnallocateDelegates)
@@ -453,6 +412,7 @@ bool APOTLStructure::UnallocateHex(UHexTile* Hex)
 		OnHexUnallocated(Hex);
 		return true;
 	}
+	*/
 	return false;
 }
 

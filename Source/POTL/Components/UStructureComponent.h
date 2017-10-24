@@ -54,10 +54,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	bool ToggleOn();
 
-	//void EnterEditMode();
-	//void LeaveEditMode();
+	bool bInEditMode;
+
+	UFUNCTION(BlueprintCallable)
+	void EnterEditMode();
+
+	UFUNCTION(BlueprintCallable)
+	void LeaveEditMode();
+
+
 	//void ToggleAllocateHex(UHexTile* Hex);
 	//void HighlightAllocatedHexes();
+
+
+	virtual void OnEnterEditMode();
+
+	virtual void OnLeaveEditMode();
 
 
 	UFUNCTION(BlueprintCallable, Category = "Time")
@@ -65,6 +77,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	virtual void Init();
+
+
 
 	UFUNCTION(BlueprintCallable, Category = "Module")
 	virtual void ActivateComponent();

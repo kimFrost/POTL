@@ -61,6 +61,9 @@ public:
 	void ExcludeHex(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable);
 
 	UFUNCTION(Category = "Structure")
+	EHandleType ParseToggleAllocateHex(UHexTile* Hex, bool bUpdate);
+
+	UFUNCTION(Category = "Structure")
 	EHandleType ParseAllocateHex(UHexTile* Hex);
 
 	UFUNCTION(Category = "Structure")
@@ -130,7 +133,9 @@ public:
 	//void OnGathered();
 	
 
+	virtual void OnEnterEditMode() override;
 
+	virtual void OnLeaveEditMode() override;
 
 	virtual void Init() override;
 

@@ -42,10 +42,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	TArray<FString> Tags;
 
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
-	APOTLStructure* AllocatedTo;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
 	UProviderComponent* Provider;
 
