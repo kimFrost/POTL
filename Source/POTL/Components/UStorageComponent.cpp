@@ -93,7 +93,7 @@ bool UStorageComponent::StoreResource(UResource* Resource)
 
 		if (Stored)
 		{
-			Resource->StoredIn = this;
+			//Resource->StoredIn = this;
 		}
 	}
 	return Stored;
@@ -105,10 +105,12 @@ void UStorageComponent::RemoveResourceFromStorage(UResource* Resource)
 {
 	if (Resource)
 	{
+		/*
 		if (Resource->StoredIn == this)
 		{
 			Resource->StoredIn = nullptr;
 		}
+		*/
 		//StoredResourceCompleteList.Remove(Resource);
 		
 		if (StoredResources.Contains(Resource))

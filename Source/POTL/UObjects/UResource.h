@@ -55,13 +55,6 @@ public:
 
 	float LuxucyRating; // 1-10 factor. The richer the more luxury resource people will require.
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource")
-	APOTLStructure* Owner;
-
-	UStorageComponent* StoredIn;
-
-	APOTLStructure* GetOwner();
-
 	void Consume(EConsumeType ConsumeType = EConsumeType::Undefined, bool bRemoveFromStorage = true);
 
 	void RemoveFromStorage();

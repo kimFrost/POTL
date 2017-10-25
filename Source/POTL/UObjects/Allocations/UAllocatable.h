@@ -30,10 +30,13 @@ private:
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	APOTLStructure* StructureOwner;
+	APOTLStructure* Owner;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UAllocationSlot* AllocatedTo;
+
+	UFUNCTION(BlueprintCallable)
+	void Allocate(UAllocationSlot* AllocationSlot);
 
 	UFUNCTION(BlueprintCallable)
 	void Unallocate();

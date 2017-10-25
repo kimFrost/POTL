@@ -11,7 +11,6 @@
 
 UResource::UResource()
 {
-	StoredIn = nullptr;
 	Value = 0.f;
 	Locked = false;
 }
@@ -20,15 +19,6 @@ UResource::UResource()
 UResource::~UResource()
 {
 	
-}
-
-APOTLStructure* UResource::GetOwner()
-{
-	if (StoredIn)
-	{
-		return StoredIn->ParentStructure;
-	}
-	return nullptr;
 }
 
 void UResource::Consume(EConsumeType ConsumeType, bool bRemoveFromStorage)
@@ -59,11 +49,13 @@ void UResource::Consume(EConsumeType ConsumeType, bool bRemoveFromStorage)
 
 void UResource::RemoveFromStorage()
 {
+	/*
 	if (StoredIn)
 	{
 		StoredIn->RemoveResourceFromStorage(this);
 	}
-	StoredIn = nullptr;
+	*/
+	//StoredIn = nullptr;
 }
 
 
@@ -71,11 +63,13 @@ bool UResource::Transfer(UStorageComponent* Storage)
 {
 	if (Storage)
 	{
+		/*
 		if (StoredIn)
 		{
 			StoredIn->RemoveResourceFromStorage(this);
 		}
 		return Storage->StoreResource(this);
+		*/
 	}
 	return false;
 }

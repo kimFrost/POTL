@@ -33,6 +33,9 @@ public:
 	UClass* AllowedAllocationClass;
 	FString AllowedAllocationID;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	APOTLStructure* Owner;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Allocation")
 	UAllocatable* Allocated;
 
