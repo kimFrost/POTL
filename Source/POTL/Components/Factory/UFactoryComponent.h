@@ -6,12 +6,15 @@
 #include "UFactoryComponent.generated.h"
 
 
-class UHexTile;
+//~~~~~ Forward Declarations ~~~~~//
 class UResource;
+class UAllocationSlot;
+class UPersonSlot;
+class UHexSlot;
 class UProviderComponent;
 
-
 //~~ DELEGATES ~~//
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUFactoryComponentOnProductionChangedDelegate, const TArray<UResource*>&, TotalProduction);
 
 
 
@@ -24,6 +27,33 @@ public:
 	
 	// Sets default values for this component's properties
 	UFactoryComponent();
+
+private:
+
+	UProviderComponent* ProviderComponent;
+
+	//UFUNCTION(Category = "Gather")
+	//void IncludeResource(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable);
+
+	//UFUNCTION(Category = "Gather")
+	//void ExcludeResource(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable);
+
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Factory")
+	FST_Factory BaseData;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Factory")
+	TArray<UPersonSlot*> AllocatedPersonSlots;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Factory")
+	TArray<UResource*> AllocatedResourceSlots;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Factory")
+	TArray<FST_ResourceConversion> ResourceConversions;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Factory")
+	TArray<UResource*> ProducedResources;
 
 	//UResource* GetNearestUnallocatedResource();
 

@@ -11,7 +11,7 @@ class UAllocationSlot;
 class APOTLStructure;
 
 //~~~~~ Deleagtes ~~~~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllocatableUnallocate, UAllocatable*, Allocatable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUAllocatableOnUnallocate, UAllocatable*, Allocatable);
 
 
 UCLASS(Blueprintable, BlueprintType)
@@ -42,5 +42,5 @@ public:
 	void Unallocate();
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
-	FOnAllocatableUnallocate OnUnallocatedDelegate;
+	FUAllocatableOnUnallocate OnUnallocatedDelegate;
 };

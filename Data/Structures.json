@@ -35,7 +35,7 @@
 		"Gatherers": [
 			{
 				"GatherRange": 5,
-				"TileConvertions": [
+				"TileConversions": [
 					{
 						"TileTypeID": "Woodland",
 						"LaborRequired": 1,
@@ -151,7 +151,7 @@
 		"Gatherers": [
 			{
 				"GatherRange": 5,
-				"TileConvertions": [
+				"TileConversions": [
 					{
 						"TileTypeID": "Woodland",
 						"LaborRequired": 1,
@@ -225,6 +225,22 @@
         "RotationDirection": 0,
         "BlockConstruction": true,
         "BlockPathing": true,
+		"Factories": [
+			{
+				"GatherRange": 5,
+				"ResourceConversions": [
+					{
+						"ResourceID": "Lumber",
+						"LaborRequired": 1,
+						"AmountIn": 3,
+						"AmountOut": 1,
+						"PetalsOutput": {
+							"Plank": 1
+						}
+					}
+				]
+			}
+		],
 		"OperationCost": [
 			{"Id": "Lumber", "Amount": 1}
 		],
@@ -247,7 +263,7 @@
 		"Gatherers": [
 			{
 				"GatherRange": 5,
-				"TileConvertions": [
+				"TileConversions": [
 					{
 						"TileTypeID": "Woodland",
 						"LaborRequired": 1,
@@ -286,7 +302,7 @@
 		"Gatherers": [
 			{
 				"GatherRange": 5,
-				"TileConvertions": [
+				"TileConversions": [
 					{
 						"TileTypeID": "Woodland",
 						"LaborRequired": 1,
@@ -323,7 +339,7 @@
 		"Gatherers": [
 			{
 				"GatherRange": 5,
-				"TileConvertions": [
+				"TileConversions": [
 					{
 						"TileTypeID": "Woodland",
 						"LaborRequired": 1,

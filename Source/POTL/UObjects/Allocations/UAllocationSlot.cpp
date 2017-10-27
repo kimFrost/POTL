@@ -27,7 +27,7 @@ void UAllocationSlot::Allocate(UAllocatable* Allocatable)
 		Allocated = Allocatable;
 		Allocated->AllocatedTo = this;
 
-		Allocated->OnUnallocatedDelegate.AddDynamic(this, &UAllocationSlot::Unallocate);
+		Allocated->OnUnallocatedDelegate.AddUniqueDynamic(this, &UAllocationSlot::Unallocate);
 
 		OnAllocatedDelegate.Broadcast(this, Allocated);
 		OnAllocatedChange.Broadcast(this, Allocated);
@@ -38,9 +38,9 @@ void UAllocationSlot::Unallocate(UAllocatable* Allocatable)
 {
 	if (Allocated)
 	{
-		Allocatable->Unallocate();
-
 		Allocated->OnUnallocatedDelegate.RemoveDynamic(this, &UAllocationSlot::Unallocate);
+		Allocated->Unallocate();
+
 		Allocated->AllocatedTo = nullptr;
 		PrevAllocated = Allocated;
 		Allocated = nullptr;
@@ -68,7 +68,6 @@ void UAllocationSlot::RequestAllocation()
 	{
 		if (OnRequestAllocatable.IsBound())
 		{
-			//UAllocatable* Allocatable = OnRequestAllocatable.Execute(this);
 			UAllocatable* Allocatable = OnRequestAllocatable.Execute(AllowedAllocationClass, AllowedAllocationID);
 			if (Allocatable)
 			{

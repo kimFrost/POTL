@@ -3,6 +3,10 @@
 #include "POTL.h"
 #include "UObjects/UResource.h"
 #include "UObjects/UHexTile.h"
+#include "UObjects/UPerson.h"
+#include "UObjects/Allocations/UAllocationSlot.h"
+#include "UObjects/Allocations/UPersonSlot.h"
+#include "UObjects/Allocations/UHexSlot.h"
 #include "POTLGameMode.h"
 #include "POTLGameInstance.h"
 #include "POTLStructure.h"
@@ -18,15 +22,11 @@ UFactoryComponent::UFactoryComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 }
-
-
 void UFactoryComponent::Init()
 {
 	Super::Init();
 
 }
-
-
 void UFactoryComponent::BeginPlay()
 {
 	Super::BeginPlay();

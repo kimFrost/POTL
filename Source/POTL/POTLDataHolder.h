@@ -191,18 +191,28 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FST_ResourceConversion : public FTableRowBase
+struct FST_ResourceConversion
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FST_ResourceConversion()
-		: Wood(0.f)
-		, Planks(0.f)
+	FST_ResourceConversion(
+		FString TileTypeID = "",
+		int LaborRequired = 1,
+		TMap<FString, int32> PetalsInput = TMap<FString, int32>(),
+		TMap<FString, int32> PetalsOutput = TMap<FString, int32>())
+		: TileTypeID(TileTypeID)
+		, LaborRequired(LaborRequired)
+		, PetalsInput(PetalsInput)
+		, PetalsOutput(PetalsOutput)
 	{}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	float Wood;
+	FString TileTypeID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
-	float Planks;
+	int LaborRequired;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	TMap<FString, int32> PetalsInput;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+	TMap<FString, int32> PetalsOutput;
 };
 
 
@@ -526,19 +536,19 @@ USTRUCT(BlueprintType)
 struct FST_Factory : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
+public:
+	FST_Factory(
+		int32 GatherRange = 5,
+		TArray<FST_ResourceConversion> TileConvertions = TArray<FST_ResourceConversion>())
+		: GatherRange(GatherRange)
+		, ResourceConversions(ResourceConversions)
+	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
-	FString Recipe;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
+	int32 GatherRange;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
-	int32 MaxQuantity;
-
-	// Constructor
-	FST_Factory()
-	{
-		Recipe = "";
-		MaxQuantity = -1;
-	}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
+	TArray<FST_ResourceConversion> ResourceConversions;
 };
 
 
@@ -553,7 +563,7 @@ public:
 		TArray<FST_TileConversion> TileConvertions = TArray<FST_TileConversion>(),
 		TMap<FString, int32> AllocationSlots = TMap<FString, int32>())
 		: GatherRange(GatherRange)
-		, TileConvertions(TileConvertions)
+		, TileConversions(TileConversions)
 		, AllocationSlots(AllocationSlots)
 	{}
 
@@ -561,7 +571,7 @@ public:
 	int32 GatherRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
-	TArray<FST_TileConversion> TileConvertions;
+	TArray<FST_TileConversion> TileConversions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
 	TMap<FString, int32> AllocationSlots;
@@ -589,7 +599,8 @@ public:
 		float ConstructionTime = 10.f,
 		TArray<FIdAmount> OperationCost = TArray<FIdAmount>(),
 		TArray<FIdAmount> ConstructionCost = TArray<FIdAmount>(),
-		TArray<FST_Gatherer> Gatherers = TArray<FST_Gatherer>())
+		TArray<FST_Gatherer> Gatherers = TArray<FST_Gatherer>(),
+		TArray<FST_Factory> Factories = TArray<FST_Factory>())
 		: Id(Id)
 		, Title(Title)
 		, Description(Description)
@@ -604,6 +615,7 @@ public:
 		, OperationCost(OperationCost)
 		, ConstructionCost(ConstructionCost)
 		, Gatherers(Gatherers)
+		, Factories(Factories)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
@@ -655,6 +667,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
 	TArray<FST_Gatherer> Gatherers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
+	TArray<FST_Factory> Factories;
 
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")
