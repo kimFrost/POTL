@@ -9,6 +9,7 @@
 //~~~~~ Forward Declarations ~~~~~//
 class UResource;
 class UAllocationSlot;
+class UAllocationSetSlot;
 class UPersonSlot;
 class UHexSlot;
 class UProviderComponent;
@@ -49,11 +50,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Factory")
 	TArray<UResource*> AllocatedResourceSlots;
 
+	//TMap<UPerson*, TArray<UAllocationSetSlot*>>
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Factory")
 	TArray<FST_ResourceConversion> ResourceConversions;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Factory")
 	TArray<UResource*> ProducedResources;
+
+
+	UAllocatable* RequestAllocatable(UClass* AllocatableClass, FString AllocatableID);
+
 
 	//UResource* GetNearestUnallocatedResource();
 

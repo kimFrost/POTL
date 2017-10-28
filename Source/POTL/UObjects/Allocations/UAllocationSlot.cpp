@@ -24,6 +24,8 @@ void UAllocationSlot::Allocate(UAllocatable* Allocatable)
 	{
 		Allocatable->Unallocate();
 
+		//Allocatable->Allocate(this); // Need to call allocate on resource without going into infinity mode
+
 		Allocated = Allocatable;
 		Allocated->AllocatedTo = this;
 

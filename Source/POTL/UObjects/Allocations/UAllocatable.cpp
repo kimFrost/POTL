@@ -23,11 +23,21 @@ void UAllocatable::Allocate(UAllocationSlot* AllocationSlot)
 	if (AllocationSlot)
 	{
 		AllocationSlot->Allocate(this);
+
+		OnAllocatedDelegate.Broadcast(this);
+		/*
+		if (AllocatedTo == AllocationSlot)
+		{
+		}
+		*/
 	}
 }
 
 void UAllocatable::Unallocate()
 {
-	OnUnallocatedDelegate.Broadcast(this);
+	if (AllocatedTo)
+	{
+		OnUnallocatedDelegate.Broadcast(this);
+	}
 }
 

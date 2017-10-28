@@ -106,8 +106,9 @@ public:
 	TArray<FST_ResourceQuantity> TotalResourceProduction;
 
 	
-
-
+	UFUNCTION(BlueprintCallable, Category = "Gather")
+	TArray<UHexTile*> GetTogglableHexes();
+		 
 	UFUNCTION(BlueprintCallable, Category = "Gather")
 	TArray<FST_ResourceQuantity> GetTotalPetalProduction();
 

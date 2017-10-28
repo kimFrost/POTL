@@ -68,6 +68,32 @@ void UGatherComponent::ValidateRequirements()
 		bIsWorking = false;
 	}
 }
+TArray<UHexTile*> UGatherComponent::GetTogglableHexes()
+{
+	TArray<UHexTile*> TogglableHexes = TArray<UHexTile*>();
+	if (ParentStructure)
+	{
+		for (auto& Hex : ParentStructure->HexesInRange)
+		{
+			if (Hex)
+			{
+				if (Hex->AllocatedTo && !AllocatedTileSlots.Contains(Hex->AllocatedTo))
+				{
+					continue;
+				}
+				if (Hex->AttachedBuilding)
+				{
+					continue;
+				}
+				if (!IsHexWorkable(Hex)) {
+					continue;
+				}
+				TogglableHexes.Add(Hex);
+			}
+		}
+	}
+	return TogglableHexes;
+}
 TArray<FST_ResourceQuantity> UGatherComponent::GetTotalPetalProduction()
 {
 	TArray<FST_ResourceQuantity> TotalPetalProduction;

@@ -22,6 +22,14 @@ UFactoryComponent::UFactoryComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 }
+UAllocatable* UFactoryComponent::RequestAllocatable(UClass* AllocatableClass, FString AllocatableID)
+{
+	if (ParentStructure)
+	{
+		return ParentStructure->RequestAllocatable(AllocatableClass, AllocatableID);
+	}
+	return nullptr;
+}
 void UFactoryComponent::Init()
 {
 	Super::Init();
