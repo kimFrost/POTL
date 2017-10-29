@@ -31,8 +31,12 @@ void UAllocationSlot::Allocate(UAllocatable* Allocatable)
 
 		Allocated->OnUnallocatedDelegate.AddUniqueDynamic(this, &UAllocationSlot::Unallocate);
 
-		OnAllocatedDelegate.Broadcast(this, Allocated);
-		OnAllocatedChange.Broadcast(this, Allocated);
+		Allocated->OnAllocatedDelegate.Broadcast(Allocated);
+		Allocated->OnAllocated(Allocated);
+
+		OnAllocationDelegate.Broadcast(this, Allocated);
+		OnAllocationChangeDelegate.Broadcast(this, Allocated);
+		OnAllocation(this);
 	}
 }
 
@@ -41,14 +45,17 @@ void UAllocationSlot::Unallocate(UAllocatable* Allocatable)
 	if (Allocated)
 	{
 		Allocated->OnUnallocatedDelegate.RemoveDynamic(this, &UAllocationSlot::Unallocate);
-		Allocated->Unallocate();
 
 		Allocated->AllocatedTo = nullptr;
 		PrevAllocated = Allocated;
 		Allocated = nullptr;
 
-		OnUnallocatedDelegate.Broadcast(this, PrevAllocated);
-		OnAllocatedChange.Broadcast(this, PrevAllocated);
+		PrevAllocated->OnUnallocatedDelegate.Broadcast(PrevAllocated);
+		PrevAllocated->OnUnallocated(PrevAllocated);
+
+		OnUnallocationDelegate.Broadcast(this, PrevAllocated);
+		OnAllocationChangeDelegate.Broadcast(this, PrevAllocated);
+		OnUnallocation(this);
 	}
 }
 
@@ -86,3 +93,8 @@ void UAllocationSlot::RequestAllocation()
 		//OnRequestAllocatable.Broadcast();
 	}
 }
+
+void UAllocationSlot::OnAllocation_Implementation(UAllocationSlot* Slot)
+{}
+void UAllocationSlot::OnUnallocation_Implementation(UAllocationSlot* Slot)
+{}

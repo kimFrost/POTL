@@ -520,8 +520,8 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot, UAllocata
 			UHexSlot* HexSlot = NewObject<UHexSlot>(this);
 			if (HexSlot)
 			{
-				HexSlot->OnAllocatedDelegate.AddDynamic(this, &UGatherComponent::IncludeHex);
-				HexSlot->OnUnallocatedDelegate.AddDynamic(this, &UGatherComponent::ExcludeHex);
+				HexSlot->OnAllocationDelegate.AddDynamic(this, &UGatherComponent::IncludeHex);
+				HexSlot->OnUnallocationDelegate.AddDynamic(this, &UGatherComponent::ExcludeHex);
 				AllocatedTileSlots.Add(HexSlot);
 			}
 		}
@@ -535,8 +535,8 @@ void UGatherComponent::UpdateMaxTiles(UAllocationSlot* AllocationSlot, UAllocata
 			if (LastHexSlot)
 			{
 				LastHexSlot->Unallocate();
-				LastHexSlot->OnAllocatedDelegate.RemoveDynamic(this, &UGatherComponent::IncludeHex);
-				LastHexSlot->OnUnallocatedDelegate.RemoveDynamic(this, &UGatherComponent::ExcludeHex);
+				LastHexSlot->OnAllocationDelegate.RemoveDynamic(this, &UGatherComponent::IncludeHex);
+				LastHexSlot->OnUnallocationDelegate.RemoveDynamic(this, &UGatherComponent::ExcludeHex);
 				AllocatedTileSlots.RemoveAt(AllocatedTileSlots.Num() - 1);
 				// Delete LastHexSlot ??
 			}
@@ -588,7 +588,7 @@ void UGatherComponent::ProcessBaseData()
 				//~~ Bind RequestAllocatable on slot to RequestAllocatable for processing ~~//
 				PersonSlot->OnRequestAllocatable.BindUObject(this, &UGatherComponent::RequestAllocatable); 
 				//~~ Listen for allocation state change ~~//
-				PersonSlot->OnAllocatedChange.AddDynamic(this, &UGatherComponent::UpdateMaxTiles); 
+				PersonSlot->OnAllocationChangeDelegate.AddDynamic(this, &UGatherComponent::UpdateMaxTiles); 
 				AllocatedPersonSlots.Add(PersonSlot);
 			}
 		}

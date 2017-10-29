@@ -22,8 +22,8 @@ void UAllocationSetSlot::AllocatableUnallocateToSlot(UAllocationSlot* Allocation
 	{
 		if (Slot)
 		{
-			Slot->OnAllocatedDelegate.RemoveDynamic(this, &UAllocationSetSlot::AllocatableUnallocateToSlot);
-			Slot->OnUnallocatedDelegate.RemoveDynamic(this, &UAllocationSetSlot::AllocatableAllocateToSlot);
+			Slot->OnAllocationDelegate.RemoveDynamic(this, &UAllocationSetSlot::AllocatableUnallocateToSlot);
+			Slot->OnUnallocationDelegate.RemoveDynamic(this, &UAllocationSetSlot::AllocatableAllocateToSlot);
 			Slot->Unallocate();
 		}
 	}
@@ -54,8 +54,8 @@ void UAllocationSetSlot::Construct(TMap<UClass*, FString> _SlotEntries)
 			Slot->AllowedAllocationClass = Entry.Key;
 			Slot->AllowedAllocationID = Entry.Value;
 
-			Slot->OnUnallocatedDelegate.AddDynamic(this, &UAllocationSetSlot::AllocatableUnallocateToSlot);
-			Slot->OnAllocatedChange.AddDynamic(this, &UAllocationSetSlot::AllocatableAllocateToSlot);
+			Slot->OnUnallocationDelegate.AddDynamic(this, &UAllocationSetSlot::AllocatableUnallocateToSlot);
+			Slot->OnAllocationChangeDelegate.AddDynamic(this, &UAllocationSetSlot::AllocatableAllocateToSlot);
 
 			//!! Add binding on allocate instead !!//
 

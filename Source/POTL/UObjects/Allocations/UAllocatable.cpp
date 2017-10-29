@@ -18,13 +18,13 @@ UAllocatable::~UAllocatable()
 	
 }
 
-void UAllocatable::Allocate(UAllocationSlot* AllocationSlot)
+void UAllocatable::AllocateTo(UAllocationSlot* AllocationSlot)
 {
 	if (AllocationSlot)
 	{
+		//~~ All logic is happening in AllocationSlot ~~//
 		AllocationSlot->Allocate(this);
-
-		OnAllocatedDelegate.Broadcast(this);
+		//OnAllocatedDelegate.Broadcast(this);
 		/*
 		if (AllocatedTo == AllocationSlot)
 		{
@@ -37,7 +37,13 @@ void UAllocatable::Unallocate()
 {
 	if (AllocatedTo)
 	{
-		OnUnallocatedDelegate.Broadcast(this);
+		//~~ All logic is happening in AllocationSlot ~~//
+		AllocatedTo->Unallocate(this);
+		//OnUnallocatedDelegate.Broadcast(this);
 	}
 }
 
+void UAllocatable::OnAllocated_Implementation(UAllocatable* Allocatable)
+{}
+void UAllocatable::OnUnallocated_Implementation(UAllocatable* Allocatable)
+{}

@@ -37,7 +37,7 @@ public:
 	UAllocationSlot* AllocatedTo;
 
 	UFUNCTION(BlueprintCallable)
-	void Allocate(UAllocationSlot* AllocationSlot);
+	void AllocateTo(UAllocationSlot* AllocationSlot);
 
 	UFUNCTION(BlueprintCallable)
 	void Unallocate();
@@ -47,4 +47,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
 	FUAllocatableOnUnallocate OnUnallocatedDelegate;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAllocated(UAllocatable* Allocatable);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnUnallocated(UAllocatable* Allocatable);
+
 };

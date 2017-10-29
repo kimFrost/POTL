@@ -54,15 +54,20 @@ public:
 	void RequestAllocation();
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
-	FUAllocationSlotOnUnallocated OnUnallocatedDelegate;
+	FUAllocationSlotOnUnallocated OnUnallocationDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
-	FUAllocationSlotOnAllocated OnAllocatedDelegate;
+	FUAllocationSlotOnAllocated OnAllocationDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
-	FUAllocationSlotOnChange OnAllocatedChange;
+	FUAllocationSlotOnChange OnAllocationChangeDelegate;
 
 	FRequestAllocatable OnRequestAllocatable;
 
 
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAllocation(UAllocationSlot* Slot);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnUnallocation(UAllocationSlot* Slot);
 };
