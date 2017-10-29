@@ -48,7 +48,8 @@ public:
 	TArray<UPersonSlot*> AllocatedPersonSlots;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Factory")
-	TArray<UResource*> AllocatedResourceSlots;
+	TArray<UAllocationSetSlot*> AllocatedSetSlots;
+	//TArray<UResource*> AllocatedResourceSlots;
 
 	//TMap<UPerson*, TArray<UAllocationSetSlot*>>
 
@@ -61,6 +62,14 @@ public:
 
 	UAllocatable* RequestAllocatable(UClass* AllocatableClass, FString AllocatableID);
 
+	UFUNCTION(Category = "Structure")
+	void UpdateMaxSlotSets(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable);
+
+	void ProcessBaseData();
+
+
+	UPROPERTY(BlueprintAssignable, Category = "Gather|Event")
+	FUFactoryComponentOnProductionChangedDelegate OnProductionChangedDelegate;
 
 	//UResource* GetNearestUnallocatedResource();
 

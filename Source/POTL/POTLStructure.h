@@ -63,6 +63,9 @@ public:
 	TArray<UGatherComponent*> GatherComponents;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
+	TArray<UFactoryComponent*> FactoryComponents;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Structure")
 	TArray<UProviderComponent*> ProviderComponents;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structure")

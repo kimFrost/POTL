@@ -8,6 +8,11 @@
 
 
 
+DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FRequestAllocatable, UClass*, FString);
+//DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FUAllocationSetSlotRequestAllocatableSet, TMap<UClass*, FString>);
+
+
+
 UCLASS(Blueprintable, BlueprintType)
 class POTL_API UAllocationSetSlot : public UObject
 {
@@ -42,6 +47,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Allocation")
 	void RequestAllocations();
+
+	FRequestAllocatable OnRequestAllocatable;
 };
 
 

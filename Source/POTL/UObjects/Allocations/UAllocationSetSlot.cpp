@@ -71,6 +71,8 @@ void UAllocationSetSlot::RequestAllocations()
 {
 	// Request as a package, that can come from multiple sources. If set is not complete, then don't allocate any of them.
 
+	// Multiple requests or single set request??
+
 	for (auto& Slot : AllocationSlots)
 	{
 		if (Slot && !Slot->Allocated)
@@ -78,7 +80,6 @@ void UAllocationSetSlot::RequestAllocations()
 
 		}
 	}
-
 
 	/*
 	if (!Allocated)

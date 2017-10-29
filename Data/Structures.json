@@ -57,7 +57,8 @@
 							"Fish": 1
 						}
 					}
-				]
+				],
+				"AllocationSlots": { "Laborer": 2 }
 			}
 		],
         "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
@@ -228,6 +229,7 @@
 		"Factories": [
 			{
 				"GatherRange": 5,
+				"AllocationSlots": { "Laborer": 2 }
 				"ResourceConversions": [
 					{
 						"ResourceID": "Lumber",
@@ -272,7 +274,8 @@
 							"Pelt": 2
 						}
 					}
-				]
+				],
+				"AllocationSlots": { "Laborer": 2 }
 			}
 		],
         "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
@@ -312,7 +315,8 @@
 							"Plantfiber": 1
 						}
 					}
-				]
+				],
+				"AllocationSlots": { "Laborer": 2 }
 			}
 		],
         "CubeRotationRoot": {"X":0, "Y":0, "Z":0},
@@ -348,7 +352,8 @@
 							"Resin": 1
 						}
 					}
-				]
+				],
+				"AllocationSlots": { "Laborer": 2 }
 			}
 		],
         "CubeRotationRoot": {"X":0, "Y":0, "Z":0},

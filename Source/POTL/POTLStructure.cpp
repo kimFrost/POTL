@@ -9,6 +9,7 @@
 #include "Components/UResidentsComponent.h"
 #include "Components/UConstructionComponent.h"
 #include "Components/UGatherComponent.h"
+#include "Components/Factory/UFactoryComponent.h"
 #include "Components/UProviderComponent.h"
 #include "Actors/AIsland.h"
 #include "UObjects/Allocations/UAllocationSlot.h"
@@ -765,7 +766,7 @@ void APOTLStructure::RemoveStructure()
 }
 void APOTLStructure::ProcessBaseData()
 {
-	// Add gatherers and providers based on StructureBaseData
+	// Add gatherers, factories and providers based on StructureBaseData
 	for (auto& Gather : StructureBaseData.Gatherers)
 	{
 		UGatherComponent* GatherComponent = NewObject<UGatherComponent>(this);
@@ -782,6 +783,22 @@ void APOTLStructure::ProcessBaseData()
 			GatherComponent->GatherRange = Gather.GatherRange;
 			GatherComponent->TileConversions = Gather.TileConversions;
 			GatherComponent->OnProductionChangedDelegate.AddDynamic(ProviderComponent, &UProviderComponent::SetProduction);
+		}
+	}
+	for (auto& Factory : StructureBaseData.Factories)
+	{
+		UFactoryComponent* FactoryComponent = NewObject<UFactoryComponent>(this);
+		UProviderComponent* ProviderComponent = NewObject<UProviderComponent>(this);
+		FactoryComponents.Add(FactoryComponent);
+		ProviderComponents.Add(ProviderComponent);
+		if (FactoryComponent && ProviderComponent)
+		{
+			FactoryComponent->RegisterComponent();
+			ProviderComponent->RegisterComponent();
+			AddOwnedComponent(FactoryComponent);
+			AddOwnedComponent(ProviderComponent);
+			FactoryComponent->BaseData = Factory;
+			FactoryComponent->OnProductionChangedDelegate.AddDynamic(ProviderComponent, &UProviderComponent::SetProduction);
 		}
 	}
 

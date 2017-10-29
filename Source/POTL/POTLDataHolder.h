@@ -539,9 +539,11 @@ struct FST_Factory : public FTableRowBase
 public:
 	FST_Factory(
 		int32 GatherRange = 5,
-		TArray<FST_ResourceConversion> TileConvertions = TArray<FST_ResourceConversion>())
+		TArray<FST_ResourceConversion> TileConvertions = TArray<FST_ResourceConversion>(),
+		TMap<FString, int32> AllocationSlots = TMap<FString, int32>())
 		: GatherRange(GatherRange)
 		, ResourceConversions(ResourceConversions)
+		, AllocationSlots(AllocationSlots)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
@@ -549,6 +551,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
 	TArray<FST_ResourceConversion> ResourceConversions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gatherer")
+	TMap<FString, int32> AllocationSlots;
 };
 
 
