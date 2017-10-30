@@ -949,6 +949,7 @@ UAllocatable* APOTLStructure::RequestAllocatable(UClass* AllocatableClass, FStri
 	//TSubclassOf<class UAllocatable>
 	//UClass*
 
+	//TODO:
 	// Loop through hexes in range, and if structure then request Allocatable. 
 	// Could this be used for both people and resources? Maybe even hexes?
 
