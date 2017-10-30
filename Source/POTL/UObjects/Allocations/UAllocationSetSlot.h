@@ -7,9 +7,12 @@
 #include "UAllocationSetSlot.generated.h"
 
 
+//~~~~~ Forward Declarations ~~~~~//
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUAllocationSetSlotOnAllocation, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUAllocationSetSlotOnUnallocation, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
 
-DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FRequestAllocatable, UClass*, FString);
-//DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FUAllocationSetSlotRequestAllocatableSet, TMap<UClass*, FString>);
+//DECLARE_DELEGATE_RetVal_TwoParams(UAllocatable*, FRequestAllocatable, UClass*, FString);
+DECLARE_DELEGATE_RetVal_TwoParams(TArray<UAllocatable*>, FUAllocationSetSlotRequestAllocatableSet, TMap<UClass*, FString>);
 
 
 
@@ -33,6 +36,7 @@ public:
 	//TMap<FString, UAllocationSlot*>
 
 private:
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Allocation")
 	TMap<UClass*, FString> SlotEntries;
 
@@ -41,14 +45,34 @@ private:
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Allocation")
+	bool bHasAllocation;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Allocation")
 	TArray<UAllocationSlot*> AllocationSlots;
 
 	void Construct(TMap<UClass*, FString> Slots);
 
 	UFUNCTION(BlueprintCallable, Category = "Allocation")
+	void Toggle();
+
+	UFUNCTION(BlueprintCallable, Category = "Allocation")
+	void Allocate();
+
+	UFUNCTION(BlueprintCallable, Category = "Allocation")
+	void Unallocate();
+
+	UFUNCTION(BlueprintCallable, Category = "Allocation")
 	void RequestAllocations();
 
-	FRequestAllocatable OnRequestAllocatable;
+
+	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
+	FUAllocationSetSlotOnAllocation OnAllocation;
+
+	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
+	FUAllocationSetSlotOnUnallocation OnUnallocation;
+
+	//FRequestAllocatable OnRequestAllocatable;
+	FUAllocationSetSlotRequestAllocatableSet OnRequestAllocatableSet;
 };
 
 

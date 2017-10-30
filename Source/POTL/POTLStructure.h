@@ -248,6 +248,8 @@ public:
 
 	UAllocatable* RequestAllocatable(UClass* AllocatableClass, FString AllocatableID);
 
+	//TArray<UAllocatable*> RequestAllocatableSet(TMap<UClass*, FString> SetRequest);
+
 
 	/** Map */
 

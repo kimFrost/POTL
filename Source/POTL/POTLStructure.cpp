@@ -964,8 +964,12 @@ UAllocatable* APOTLStructure::RequestAllocatable(UClass* AllocatableClass, FStri
 
 	return nullptr;
 }
-
-
+/*
+TArray<UAllocatable*> APOTLStructure::RequestAllocatableSet(TMap<UClass*, FString> SetRequest)
+{
+	return TArray<UAllocatable*>();
+}
+*/
 /******************** MAP *************************/
 APOTLStructure* APOTLStructure::GetNearestStructure()
 {

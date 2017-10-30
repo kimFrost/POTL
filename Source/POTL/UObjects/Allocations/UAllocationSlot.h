@@ -12,8 +12,8 @@
 
 
 //~~~~~ Deleagtes ~~~~~//
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUAllocationSlotOnUnallocated, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUAllocationSlotOnAllocated, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUAllocationSlotOnUnallocation, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUAllocationSlotOnAllocation, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUAllocationSlotOnChange, UAllocationSlot*, AllocationSlot, UAllocatable*, Allocatable);
 //DECLARE_DELEGATE_RetVal(UAllocatable*, FRequestAllocatable);
 
@@ -54,10 +54,10 @@ public:
 	void RequestAllocation();
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
-	FUAllocationSlotOnUnallocated OnUnallocationDelegate;
+	FUAllocationSlotOnUnallocation OnUnallocationDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
-	FUAllocationSlotOnAllocated OnAllocationDelegate;
+	FUAllocationSlotOnAllocation OnAllocationDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "Allocation|Event")
 	FUAllocationSlotOnChange OnAllocationChangeDelegate;

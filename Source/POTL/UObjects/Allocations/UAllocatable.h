@@ -31,6 +31,9 @@ private:
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsLocked;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	APOTLStructure* Owner;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

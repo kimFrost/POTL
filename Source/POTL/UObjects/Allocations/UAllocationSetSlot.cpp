@@ -57,14 +57,44 @@ void UAllocationSetSlot::Construct(TMap<UClass*, FString> _SlotEntries)
 			Slot->OnUnallocationDelegate.AddDynamic(this, &UAllocationSetSlot::AllocatableUnallocateToSlot);
 			Slot->OnAllocationChangeDelegate.AddDynamic(this, &UAllocationSetSlot::AllocatableAllocateToSlot);
 
-			//!! Add binding on allocate instead !!//
-
 			//Slot->OnAllocatedChange.AddDynamic(this, &UAllocationSetSlot::Update);
 
 			//!! On switch resources in a slot, might trigger some unwanted behaviour. Since it will trigger unallocate delegate.
 
 			AllocationSlots.Add(Slot);
 		}
+	}
+}
+void UAllocationSetSlot::Toggle()
+{
+	if (bHasAllocation)
+	{
+		Unallocate();
+	}
+	else
+	{
+		RequestAllocations();
+	}
+}
+void UAllocationSetSlot::Allocate()
+{
+	if (!bHasAllocation)
+	{
+		//Set as parameter?? // TArray<UResource*> ??
+	}
+}
+void UAllocationSetSlot::Unallocate()
+{
+	if (bHasAllocation)
+	{
+		for (auto& Slot : AllocationSlots)
+		{
+			if (Slot)
+			{
+				Slot->Unallocate();
+			}
+		}
+		bHasAllocation = false;
 	}
 }
 void UAllocationSetSlot::RequestAllocations()
@@ -80,6 +110,17 @@ void UAllocationSetSlot::RequestAllocations()
 
 		}
 	}
+
+	//TMap<UClass*, FString>
+	if (OnRequestAllocatableSet.IsBound())
+	{
+		TArray<UAllocatable*> AllocatableSet = OnRequestAllocatableSet.Execute(SlotEntries);
+		for (auto& Entry : AllocatableSet)
+		{
+
+		}
+	}
+	
 
 	/*
 	if (!Allocated)

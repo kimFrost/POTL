@@ -31,6 +31,29 @@ UAllocatable* UFactoryComponent::RequestAllocatable(UClass* AllocatableClass, FS
 	}
 	return nullptr;
 }
+TArray<UAllocatable*> UFactoryComponent::RequestAllocatableSet(TMap<UClass*, FString> SetRequest)
+{
+	TArray<UAllocatable*> Set = TArray<UAllocatable*>();
+	if (ParentStructure)
+	{
+		for (auto& Entry : SetRequest)
+		{
+			UAllocatable* Allocatable = RequestAllocatable(Entry.Key, Entry.Value);
+			if (Allocatable)
+			{
+				Allocatable->bIsLocked = true;
+				Set.Add(Allocatable);
+			}
+		}
+		//Loop request set and request resources one by one. 
+		//Lock each while request are done, and then allocate all in end if set is complete. 
+		//Else unlock all and return empty array
+		//bIsLocked
+
+		//return ParentStructure->RequestAllocatableSet(SetRequest);
+	}
+	return Set;
+}
 void UFactoryComponent::UpdateMaxSlotSets(UAllocationSlot* AllocationSlot, UAllocatable* Allocatable)
 {
 	int32 MaxNumberOfSets = 0;
@@ -58,7 +81,7 @@ void UFactoryComponent::UpdateMaxSlotSets(UAllocationSlot* AllocationSlot, UAllo
 				// IncludeSet
 				// ExcludeSet
 
-				//PersonSlot->OnRequestAllocatable.BindUObject(this, &UFactoryComponent::RequestAllocatable);
+				SetSlot->OnRequestAllocatableSet.BindUObject(this, &UFactoryComponent::RequestAllocatableSet);
 
 				/*
 				HexSlot->OnAllocationDelegate.AddDynamic(this, &UGatherComponent::IncludeHex);
