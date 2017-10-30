@@ -76,11 +76,32 @@ void UAllocationSetSlot::Toggle()
 		RequestAllocations();
 	}
 }
-void UAllocationSetSlot::Allocate()
+void UAllocationSetSlot::Allocate(TArray<UAllocatable*> AllocatableSet)
 {
 	if (!bHasAllocation)
 	{
-		//Set as parameter?? // TArray<UResource*> ??
+		for (auto& Allocatable : AllocatableSet)
+		{
+			if (Allocatable)
+			{
+				for (auto& Slot : AllocationSlots)
+				{
+					if (Slot && !Slot->Allocated)
+					{
+						Slot->Allocate(Allocatable);
+					}
+				}
+			}
+		}
+		bHasAllocation = true;
+		for (auto& Slot : AllocationSlots)
+		{
+			if (Slot && !Slot->Allocated)
+			{
+				bHasAllocation = false;
+				break;
+			}
+		}
 	}
 }
 void UAllocationSetSlot::Unallocate()
@@ -103,24 +124,14 @@ void UAllocationSetSlot::RequestAllocations()
 
 	// Multiple requests or single set request??
 
-	for (auto& Slot : AllocationSlots)
-	{
-		if (Slot && !Slot->Allocated)
-		{
-
-		}
-	}
-
 	//TMap<UClass*, FString>
 	if (OnRequestAllocatableSet.IsBound())
 	{
 		TArray<UAllocatable*> AllocatableSet = OnRequestAllocatableSet.Execute(SlotEntries);
-		for (auto& Entry : AllocatableSet)
-		{
-
-		}
+		Allocate(AllocatableSet);
 	}
 	
+
 
 	/*
 	if (!Allocated)

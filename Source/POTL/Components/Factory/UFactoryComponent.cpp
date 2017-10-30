@@ -44,6 +44,18 @@ TArray<UAllocatable*> UFactoryComponent::RequestAllocatableSet(TMap<UClass*, FSt
 				Allocatable->bIsLocked = true;
 				Set.Add(Allocatable);
 			}
+			else
+			{
+				for (auto& SetItem : Set)
+				{
+					if (SetItem)
+					{
+						SetItem->bIsLocked = false;
+					}
+				}
+				Set.Empty();
+				break;
+			}
 		}
 		//Loop request set and request resources one by one. 
 		//Lock each while request are done, and then allocate all in end if set is complete. 

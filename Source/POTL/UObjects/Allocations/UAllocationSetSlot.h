@@ -56,7 +56,7 @@ public:
 	void Toggle();
 
 	UFUNCTION(BlueprintCallable, Category = "Allocation")
-	void Allocate();
+	void Allocate(TArray<UAllocatable*> AllocatableSet);
 
 	UFUNCTION(BlueprintCallable, Category = "Allocation")
 	void Unallocate();
