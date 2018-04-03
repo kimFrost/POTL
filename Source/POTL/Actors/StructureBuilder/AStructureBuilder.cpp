@@ -21,7 +21,7 @@ AStructureBuilder::AStructureBuilder()
 	bIsBuildValid = false;
 	Rotation = 0;
 
-	USceneComponent* RootScene = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Scene"));
+	USceneComponent* RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	SetRootComponent(RootScene);
 
 	/*
